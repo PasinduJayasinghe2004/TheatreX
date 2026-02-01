@@ -18,19 +18,13 @@ import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
 import userRoutes from './routes/userRoutes.js';
 
-// Load environment variables from .env file
-// This must be called before accessing any process.env variables
+// Load environment variables
 dotenv.config();
 
-// Initialize Express application instance
+// Initialize Express app
 const app = express();
 
-// ============================================
-// MIDDLEWARE CONFIGURATION
-// ============================================
-
-// Enable CORS (Cross-Origin Resource Sharing) for frontend communication
-// Allows requests from different origins (e.g., React frontend on port 3000)
+// Middleware
 app.use(cors());
 
 // Parse incoming JSON payloads in request body
@@ -41,17 +35,10 @@ app.use(express.json());
 // extended: true allows for rich objects and arrays to be encoded
 app.use(express.urlencoded({ extended: true }));
 
-// ============================================
-// API ROUTES
-// ============================================
-
-// Mount user-related routes at /api/users endpoint
-// All routes in userRoutes will be prefixed with /api/users
+// Routes
 app.use('/api/users', userRoutes);
 
-// Health check endpoint
-// Used to verify that the API server is running and responsive
-// Returns: 200 OK with server status and current timestamp
+// Health check route
 app.get('/api/health', (req, res) => {
     res.status(200).json({
         success: true,
@@ -60,9 +47,7 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Root endpoint - API information
-// Provides welcome message and available API endpoints
-// Useful for API discovery and documentation
+// Root route
 app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
@@ -75,13 +60,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// ============================================
-// ERROR HANDLING MIDDLEWARE
-// ============================================
-
-// 404 Not Found handler
-// Catches all requests to undefined routes
-// Must be placed after all other route definitions
+// 404 handler
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -89,10 +68,7 @@ app.use((req, res) => {
     });
 });
 
-// Global error handling middleware
-// Catches any errors thrown in the application
-// In development mode, returns detailed error messages for debugging
-// In production mode, hides error details for security
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({
@@ -103,11 +79,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// ============================================
-// SERVER INITIALIZATION
-// ============================================
-
-// Get port from environment variables or use default port 5000
+// Start server
 const PORT = process.env.PORT || 5000;
 
 /**
@@ -121,22 +93,21 @@ const PORT = process.env.PORT || 5000;
  * If any step fails, the process exits with code 1
  */
 const startServer = async () => {
+    let dbConnected = false;
+
     try {
-        // Step 1: Test database connection
-        // Ensures we can connect to MySQL before starting the server
+        // Test database connection
         const dbConnected = await testConnection();
 
         if (!dbConnected) {
             console.error('❌ Failed to connect to database. Please check your configuration.');
-            process.exit(1); // Exit with error code
+            process.exit(1);
         }
 
-        // Step 2: Initialize database tables
-        // Creates the users table if it doesn't exist
+        // Initialize database tables
         await initializeTables();
 
-        // Step 3: Start the Express server
-        // Begin listening for incoming HTTP requests
+        // Start listening
         app.listen(PORT, () => {
             console.log('');
             console.log('🚀 ================================');
@@ -148,9 +119,8 @@ const startServer = async () => {
             console.log('');
         });
     } catch (error) {
-        // Handle any unexpected errors during server startup
         console.error('❌ Failed to start server:', error.message);
-        process.exit(1); // Exit with error code
+        process.exit(1);
     }
 };
 
