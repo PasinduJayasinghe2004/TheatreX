@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ButtonTest from '../pages/ButtonTest';
+import InputTest from '../pages/InputTest';
 
 // Placeholder pages - will be created in future days
 const Dashboard = () => (
@@ -39,8 +40,9 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Test Pages - M4 Day 1 */}
-            <Route path="/button-test" element={<ButtonTest />} />
+            {/* Test Pages */}
+            <Route path="/button-test" element={<ButtonTest />} /> {/* M4 Day 1 */}
+            <Route path="/input-test" element={<InputTest />} /> {/* M5 Day 1 */}
 
             {/* Protected Routes - will add authentication in Day 3-4 */}
             <Route path="/dashboard" element={<Dashboard />} />
