@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import React from 'react';
-import PropTypes from 'prop-types';
-import Header from './Header';
 
 /**
  * Layout Component
@@ -37,34 +34,6 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
                         isCollapsed={isSidebarCollapsed}
                         onToggle={handleSidebarToggle}
                     />
-                {/* Sidebar - Placeholder for M5's Sidebar component */}
-                {showSidebar && (
-                    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen sticky top-16">
-                        <nav className="p-4">
-                            <div className="space-y-2">
-                                <div className="px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg">
-                                    Dashboard
-                                </div>
-                                <div className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                    Surgeries
-                                </div>
-                                <div className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                    Theatres
-                                </div>
-                                <div className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                    Staff
-                                </div>
-                                <div className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer">
-                                    Patients
-                                </div>
-                                <div className="mt-4 pt-4 border-t border-gray-200">
-                                    <p className="px-4 text-xs text-gray-500">
-                                        Sidebar Component (M5)
-                                    </p>
-                                </div>
-                            </div>
-                        </nav>
-                    </aside>
                 )}
 
                 {/* Main Content Area */}
@@ -85,4 +54,3 @@ Layout.propTypes = {
 };
 
 export default Layout;
-
