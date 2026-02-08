@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Header from './Header';
 
 /**
  * Layout Component
  * Main application layout wrapper with Header, Sidebar, and content area
  * Created by: M6 (Dinil) - Day 2
+ * Updated by: M4 (Oneli) - Day 2 (Added Header component)
  * 
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Main content to render
@@ -14,21 +16,8 @@ import PropTypes from 'prop-types';
 const Layout = ({ children, showHeader = true, showSidebar = true }) => {
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header - Placeholder for M4's Header component */}
-            {showHeader && (
-                <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                        <div className="flex items-center justify-between">
-                            <h1 className="text-2xl font-bold text-gray-900">
-                                🎭 TheatreX
-                            </h1>
-                            <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-600">Header Component (M4)</span>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-            )}
+            {/* Header Component - Created by M4 */}
+            {showHeader && <Header />}
 
             <div className="flex">
                 {/* Sidebar - Placeholder for M5's Sidebar component */}
