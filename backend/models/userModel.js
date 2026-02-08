@@ -1,6 +1,7 @@
 import { promisePool } from '../config/database.js';
 import { createSurgeriesTable } from './surgeryModel.js';
 import { createTheatresTable } from './theatreModel.js';
+import { createPatientsTable } from './patientModel.js';
 
 // Create users table
 const createUsersTable = async () => {
@@ -35,6 +36,7 @@ const initializeTables = async () => {
         await createUsersTable();
         await createSurgeriesTable(); // M5 - Day 1
         await createTheatresTable();  // M6 - Day 1
+        await createPatientsTable();  // pasindu - Day 2
         console.log('✅ All tables initialized successfully');
     } catch (error) {
         console.error('❌ Error initializing tables:', error.message);
