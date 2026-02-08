@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from './components/ui';
+import { Layout } from '../components/ui';
 
 /**
  * Layout Component Demo
