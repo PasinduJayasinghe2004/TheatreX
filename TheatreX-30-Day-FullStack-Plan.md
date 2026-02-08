@@ -25,12 +25,12 @@
 
 | ID | Member | Role |
 |----|--------|------|
-| **M1** | Member 1 | Full-Stack + Team Coordination |
-| **M2** | Member 2 | Full-Stack Developer |
-| **M3** | Member 3 | Full-Stack Developer |
-| **M4** | Member 4 | Full-Stack Developer |
-| **M5** | Member 5 | Full-Stack Developer |
-| **M6** | Member 6 | Full-Stack + QA/Docs |
+| **M1** | Pasindu | Full-Stack + Team Coordination |
+| **M2** | Chandeepa | Full-Stack Developer |
+| **M3** | Janani | Full-Stack Developer |
+| **M4** | Oneli | Full-Stack Developer |
+| **M5** | Inthusha | Full-Stack Developer |
+| **M6** | Dinil | Full-Stack + QA/Docs |
 
 ---
 
