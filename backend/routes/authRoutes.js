@@ -1,9 +1,37 @@
-import express from 'express';
-import { login } from '../controllers/authController.js';
+// ============================================================================
+// Authentication Routes
+// ============================================================================
+// This file defines all authentication-related API routes
+// Created by: M1 (Pasindu) - Day 3 (Register) & M4 (Oneli) - Day 3 (Login)
+//
+// ROUTES:
+// - POST /api/auth/register - User registration
+// - POST /api/auth/login - User login
+// ============================================================================
 
+import express from 'express';
+import { register, login } from '../controllers/authController.js';
+
+// Create a new router instance
 const router = express.Router();
 
-// Authentication routes
+// ============================================================================
+// ROUTE: POST /api/auth/register
+// ============================================================================
+// Handles user registration
+// Expects: { name, email, password, role }
+// Returns: { success, message, user }
+// ============================================================================
+router.post('/register', register);
+
+// ============================================================================
+// ROUTE: POST /api/auth/login
+// ============================================================================
+// Handles user login
+// Expects: { email, password }
+// Returns: { success, message, token, user }
+// ============================================================================
 router.post('/login', login);
 
+// Export the router to be used in server.js
 export default router;
