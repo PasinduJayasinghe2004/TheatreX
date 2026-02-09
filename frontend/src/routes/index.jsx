@@ -5,6 +5,7 @@ import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
 import LayoutDemo from '../pages/LayoutDemo';
 import DatePickerTest from '../pages/DatePickerTest';
+import Register from '../pages/Register';
 
 // Placeholder pages - will be created in future days
 const Dashboard = () => (
@@ -21,7 +22,7 @@ const Login = () => (
     </div>
 );
 
-const Register = () => (
+const Register_Placeholder = () => (
     <div className="p-8">
         <h1 className="text-3xl font-bold">Register</h1>
         <p className="mt-4">Register page - Coming in Day 3</p>
@@ -41,7 +42,7 @@ const AppRoutes = () => {
         <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<Register />} /> {/* M1 Day 3 */}
 
             {/* Test Pages */}
             <Route path="/button-test" element={<ButtonTest />} /> {/* M4 Day 1 */}
