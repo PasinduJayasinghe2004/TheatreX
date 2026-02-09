@@ -3,7 +3,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
+import { createNotificationsTable } from './models/notificationModel.js';
+import { createAnaesthetistsTable } from './models/anaesthetistModel.js';
+import { createSurgeonsTable } from './models/surgeonModel.js';
+import { createNursesTable } from './models/nurseModel.js';
+import { createTechniciansTable } from './models/technicianModel.js';
 import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -14,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({
@@ -55,7 +62,7 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
     let dbConnected = false;
-    
+
     try {
         dbConnected = await testConnection();
 
@@ -63,6 +70,11 @@ const startServer = async () => {
             console.warn('Database connection failed. Running in limited mode.');
         } else {
             await initializeTables();
+            await createNotificationsTable();
+            await createAnaesthetistsTable();
+            await createSurgeonsTable();
+            await createNursesTable();
+            await createTechniciansTable();
         }
     } catch (error) {
         console.warn('Database error:', error.message);
