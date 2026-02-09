@@ -4,6 +4,7 @@ import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
 import LayoutDemo from '../pages/LayoutDemo';
+import DatePickerTest from '../pages/DatePickerTest';
 
 // Placeholder pages - will be created in future days
 const Dashboard = () => (
@@ -46,6 +47,7 @@ const AppRoutes = () => {
             <Route path="/button-test" element={<ButtonTest />} /> {/* M4 Day 1 */}
             <Route path="/input-test" element={<InputTest />} /> {/* M5 Day 1 */}
             <Route path="/modal-test" element={<ModalTest />} /> {/* M1 Day 2 */}
+            <Route path="/datepicker-test" element={<DatePickerTest />} /> {/* M3 Day 2 */}
             <Route path="/layout-demo" element={<LayoutDemo />} /> {/* M6 Day 2 */}
 
             {/* Protected Routes - will add authentication in Day 3-4 */}
