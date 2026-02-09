@@ -68,7 +68,7 @@ const DatePicker = ({
 
             // Return formatted date string
             return date.toLocaleDateString('en-US', options);
-        } catch (e) {
+        } catch {
             // If date parsing fails, return original string
             return dateString;
         }
