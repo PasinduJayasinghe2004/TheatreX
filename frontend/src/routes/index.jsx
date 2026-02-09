@@ -4,9 +4,9 @@ import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
 import LayoutDemo from '../pages/LayoutDemo';
+import RegisterForm from '../components/auth/RegisterForm';
+
 import DatePickerTest from '../pages/DatePickerTest';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
 
 // Placeholder pages - will be created in future days
 const Dashboard = () => (
@@ -28,8 +28,8 @@ const AppRoutes = () => {
     return (
         <Routes>
             {/* Public Routes */}
-            <Route path="/login" element={<Login />} /> {/* M4 Day 3 */}
-            <Route path="/register" element={<Register />} /> {/* M1 Day 3 */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<RegisterForm />} />
 
             {/* Test Pages */}
             <Route path="/button-test" element={<ButtonTest />} /> {/* M4 Day 1 */}
@@ -51,3 +51,4 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+
