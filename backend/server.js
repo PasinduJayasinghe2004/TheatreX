@@ -9,6 +9,7 @@ import { createSurgeonsTable } from './models/surgeonModel.js';
 import { createNursesTable } from './models/nurseModel.js';
 import { createTechniciansTable } from './models/technicianModel.js';
 import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({
