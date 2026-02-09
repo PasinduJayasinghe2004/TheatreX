@@ -8,26 +8,11 @@ import RegisterForm from '../components/auth/RegisterForm';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
-
 // Placeholder pages - will be created in future days
 const Dashboard = () => (
     <div className="p-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="mt-4">Welcome to TheatreX - Coming Soon</p>
-    </div>
-);
-
-const Login = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">Login</h1>
-        <p className="mt-4">Login page - Coming in Day 3</p>
-    </div>
-);
-
-const Register_Placeholder = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">Register</h1>
-        <p className="mt-4">Register page - Coming in Day 3</p>
     </div>
 );
 
