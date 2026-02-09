@@ -143,7 +143,8 @@ export const register = async (req, res) => {
 // ============================================================================
 // FUNCTION: Login User
 // ============================================================================
-// Authenticates user and generates JWT token
+// Authenticates user and generates JWT token using centralized utility
+// Updated by: M5 (Inthusha) - Day 3 (JWT Utility Integration)
 // 
 // REQUEST BODY:
 // {
@@ -204,16 +205,16 @@ export const login = async (req, res) => {
             });
         }
 
-        // Generate JWT token
-        const token = jwt.sign(
-            {
-                id: user.id,
-                email: user.email,
-                role: user.role
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRE || '7d' }
-        );
+        // ========================================
+        // STEP 4: Generate JWT Token
+        // ========================================
+        // Using centralized JWT utility (created by M5 - Day 3)
+        // This generates a signed token containing user id, email, and role
+        const token = generateToken({
+            id: user.id,
+            email: user.email,
+            role: user.role
+        });
 
         // Return user data (without password) and token
         res.status(200).json({
