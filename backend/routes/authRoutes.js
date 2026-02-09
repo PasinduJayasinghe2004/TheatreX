@@ -2,11 +2,11 @@
 // Authentication Routes
 // ============================================================================
 // This file defines all authentication-related API routes
-// Created by: M1 (Pasindu) - Day 3
+// Created by: M1 (Pasindu) - Day 3 (Register) & M4 (Oneli) - Day 3 (Login)
 //
 // ROUTES:
 // - POST /api/auth/register - User registration
-// - POST /api/auth/login - User login (Day 4)
+// - POST /api/auth/login - User login
 // ============================================================================
 
 import express from 'express';
@@ -27,7 +27,7 @@ router.post('/register', register);
 // ============================================================================
 // ROUTE: POST /api/auth/login
 // ============================================================================
-// Handles user login (Day 4 implementation)
+// Handles user login
 // Expects: { email, password }
 // Returns: { success, message, token, user }
 // ============================================================================
