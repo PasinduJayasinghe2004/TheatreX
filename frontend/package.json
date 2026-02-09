@@ -1,0 +1,1 @@
+{\n  "dependencies": {},\n  "devDependencies": {\n    "vitest": "latest",\n    "@vitest/ui": "latest",\n    "@testing-library/react": "latest",\n    "@testing-library/jest-dom": "latest",\n    "jsdom": "latest"\n  }\n}
