@@ -6,6 +6,8 @@ import { initializeTables } from './models/userModel.js';
 import { createNotificationsTable } from './models/notificationModel.js';
 import { createAnaesthetistsTable } from './models/anaesthetistModel.js';
 import { createSurgeonsTable } from './models/surgeonModel.js';
+import { createNursesTable } from './models/nurseModel.js';
+import { createTechniciansTable } from './models/technicianModel.js';
 import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
@@ -69,6 +71,8 @@ const startServer = async () => {
             await createNotificationsTable();
             await createAnaesthetistsTable();
             await createSurgeonsTable();
+            await createNursesTable();
+            await createTechniciansTable();
         }
     } catch (error) {
         console.warn('Database error:', error.message);
