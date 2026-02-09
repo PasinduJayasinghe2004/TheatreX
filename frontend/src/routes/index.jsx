@@ -1,19 +1,13 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ButtonTest from '../pages/ButtonTest';
+import Login from '../pages/Login';
 
 // Placeholder pages - will be created in future days
 const Dashboard = () => (
     <div className="p-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="mt-4">Welcome to TheatreX - Coming Soon</p>
-    </div>
-);
-
-const Login = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">Login</h1>
-        <p className="mt-4">Login page - Coming in Day 3</p>
     </div>
 );
 
