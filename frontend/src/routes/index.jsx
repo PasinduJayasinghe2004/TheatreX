@@ -8,6 +8,9 @@ import RegisterForm from '../components/auth/RegisterForm';
 import Login from '../pages/Login';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
+import Profile from '../pages/Profile';
+import ProtectedRoute from '../components/ProtectedRoute';
+import RoleBasedRoute from '../components/RoleBasedRoute';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
@@ -16,6 +19,14 @@ const Dashboard = () => (
     <div className="p-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="mt-4">Welcome to TheatreX - Coming Soon</p>
+    </div>
+);
+
+// Admin-only test page
+const AdminPanel = () => (
+    <div className="p-8">
+        <h1 className="text-3xl font-bold">Admin Panel</h1>
+        <p className="mt-4">This page is only accessible to administrators</p>
     </div>
 );
 
@@ -43,8 +54,25 @@ const AppRoutes = () => {
             <Route path="/datepicker-test" element={<DatePickerTest />} /> {/* M3 Day 2 */}
             <Route path="/layout-demo" element={<LayoutDemo />} /> {/* M6 Day 2 */}
 
-            {/* Protected Routes - will add authentication in Day 3-4 */}
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Protected Routes - Require Authentication */}
+            <Route path="/dashboard" element={
+                <ProtectedRoute>
+                    <Dashboard />
+                </ProtectedRoute>
+            } />
+
+            <Route path="/profile" element={
+                <ProtectedRoute>
+                    <Profile />
+                </ProtectedRoute>
+            } />
+
+            {/* Role-Based Routes - Require Specific Roles */}
+            <Route path="/admin" element={
+                <RoleBasedRoute allowedRoles={['admin']}>
+                    <AdminPanel />
+                </RoleBasedRoute>
+            } />
 
             {/* Default redirect */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

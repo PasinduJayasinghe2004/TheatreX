@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import RoleGuard from './RoleGuard';
+import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 
 /**
  * Header Component
@@ -15,11 +17,12 @@ const Header = ({ user, onLogout }) => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     const navigationLinks = [
-        { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-        { name: 'Surgeries', href: '/surgeries', icon: '🏥' },
-        { name: 'Theatres', href: '/theatres', icon: '🎭' },
-        { name: 'Staff', href: '/staff', icon: '👥' },
-        { name: 'Patients', href: '/patients', icon: '🧑‍⚕️' },
+        { name: 'Dashboard', href: '/dashboard', icon: '📊', roles: [] },
+        { name: 'Surgeries', href: '/surgeries', icon: '🏥', roles: [] },
+        { name: 'Theatres', href: '/theatres', icon: '🎭', roles: [] },
+        { name: 'Staff', href: '/staff', icon: '👥', roles: ['admin', 'coordinator'] },
+        { name: 'Patients', href: '/patients', icon: '🧑‍⚕️', roles: [] },
+        { name: 'Admin Panel', href: '/admin', icon: '⚙️', roles: ['admin'] },
     ];
 
     const handleLogout = () => {
@@ -45,14 +48,15 @@ const Header = ({ user, onLogout }) => {
                         {/* Desktop Navigation */}
                         <nav className="hidden md:ml-10 md:flex md:space-x-1">
                             {navigationLinks.map((link) => (
-                                <a
-                                    key={link.name}
-                                    href={link.href}
-                                    className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 flex items-center gap-2"
-                                >
-                                    <span>{link.icon}</span>
-                                    {link.name}
-                                </a>
+                                <RoleGuard key={link.name} allowedRoles={link.roles}>
+                                    <a
+                                        href={link.href}
+                                        className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 flex items-center gap-2"
+                                    >
+                                        <span>{link.icon}</span>
+                                        {link.name}
+                                    </a>
+                                </RoleGuard>
                             ))}
                         </nav>
                     </div>
@@ -83,9 +87,9 @@ const Header = ({ user, onLogout }) => {
                                     <p className="text-sm font-medium text-gray-900">
                                         {user?.name || 'User'}
                                     </p>
-                                    <p className="text-xs text-gray-500 capitalize">
-                                        {user?.role || 'Coordinator'}
-                                    </p>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${getRoleBadgeColor(user?.role || 'coordinator')}`}>
+                                        {getRoleDisplayName(user?.role || 'coordinator')}
+                                    </span>
                                 </div>
                                 <svg
                                     className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''
@@ -126,6 +130,14 @@ const Header = ({ user, onLogout }) => {
                                     >
                                         ⚙️ Settings
                                     </a>
+                                    <RoleGuard allowedRoles={['admin']}>
+                                        <a
+                                            href="/admin"
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                        >
+                                            🔧 Admin Panel
+                                        </a>
+                                    </RoleGuard>
                                     <div className="border-t border-gray-100 mt-1"></div>
                                     <button
                                         onClick={handleLogout}
@@ -174,14 +186,15 @@ const Header = ({ user, onLogout }) => {
                     <div className="md:hidden border-t border-gray-200 py-3">
                         <nav className="space-y-1">
                             {navigationLinks.map((link) => (
-                                <a
-                                    key={link.name}
-                                    href={link.href}
-                                    className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 flex items-center gap-2"
-                                >
-                                    <span>{link.icon}</span>
-                                    {link.name}
-                                </a>
+                                <RoleGuard key={link.name} allowedRoles={link.roles}>
+                                    <a
+                                        href={link.href}
+                                        className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 flex items-center gap-2"
+                                    >
+                                        <span>{link.icon}</span>
+                                        {link.name}
+                                    </a>
+                                </RoleGuard>
                             ))}
                         </nav>
                     </div>
