@@ -14,11 +14,7 @@
 // ============================================================================
 
 import express from 'express';
-<<<<<<<< < Temporary merge branch 1
-import { register, login, getProfile, updateProfile } from '../controllers/authController.js';
-=========
-import { register, login, getProfile } from '../controllers/authController.js';
->>>>>>>>> Temporary merge branch 2
+import { register, login, getProfile, updateProfile, forgotPassword, resetPassword } from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../middleware/validateUser.js';
 import { protect } from '../middleware/authMiddleware.js';
 

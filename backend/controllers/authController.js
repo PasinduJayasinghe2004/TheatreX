@@ -367,10 +367,7 @@ export const getProfile = async (req, res) => {
             success: true,
             user: req.user
         });
-<<<<<<<< < Temporary merge branch 1
-=========
 
->>>>>>>>> Temporary merge branch 2
     } catch (error) {
         console.error('Get Profile error:', error);
         res.status(500).json({
