@@ -8,6 +8,7 @@ import RegisterForm from '../components/auth/RegisterForm';
 import Login from '../pages/Login';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
+import Profile from '../pages/Profile';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
@@ -45,6 +46,7 @@ const AppRoutes = () => {
 
             {/* Protected Routes - will add authentication in Day 3-4 */}
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} /> {/* M2 Day 4 */}
 
             {/* Default redirect */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -349,3 +349,44 @@ export const resetPassword = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error resetting password' });
     }
 };
+
+// ============================================================================
+// FUNCTION: Get User Profile
+// ============================================================================
+// Returns the authenticated user's profile information
+// Created by: M2 (Chandeepa) - Day 4
+// 
+// AUTHENTICATION: Required (protect middleware)
+// 
+// RESPONSE:
+// {
+//   "success": true,
+//   "user": { id, name, email, role, phone, is_active, created_at }
+// }
+// ============================================================================
+export const getProfile = async (req, res) => {
+    try {
+        // req.user is set by the 'protect' middleware
+        // It already contains the user data (without password)
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
+
+        // Return user profile data
+        res.status(200).json({
+            success: true,
+            user: req.user
+        });
+
+    } catch (error) {
+        console.error('Get Profile error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching profile',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};

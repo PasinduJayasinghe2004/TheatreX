@@ -11,8 +11,9 @@
 // ============================================================================
 
 import express from 'express';
-import { register, login } from '../controllers/authController.js';
+import { register, login, getProfile } from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../middleware/validateUser.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 // Create a new router instance
 const router = express.Router();
@@ -36,6 +37,16 @@ router.post('/register', validateRegister, register);
 // Returns: { success, message, token, user }
 // ============================================================================
 router.post('/login', validateLogin, login);
+
+// ============================================================================
+// ROUTE: GET /api/auth/profile
+// ============================================================================
+// Returns authenticated user's profile
+// Middleware: protect (verifies JWT token)
+// Returns: { success, user }
+// Created by: M2 (Chandeepa) - Day 4
+// ============================================================================
+router.get('/profile', protect, getProfile);
 
 // ============================================================================
 // ROUTE: POST /api/auth/forgot-password
