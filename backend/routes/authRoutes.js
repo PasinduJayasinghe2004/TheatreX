@@ -11,7 +11,7 @@
 // ============================================================================
 
 import express from 'express';
-import { register, login, getProfile } from '../controllers/authController.js';
+import { register, login, getProfile, updateProfile } from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../middleware/validateUser.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -59,6 +59,28 @@ router.post('/forgot-password', forgotPassword);
 // ============================================================================
 router.post('/reset-password', resetPassword);
 
+// ============================================================================
+// ROUTE: GET /api/auth/profile
+// ============================================================================
+// Get current user's profile
+// Created by: M4 (Oneli) - Day 4
+// Middleware: protect (requires valid JWT token)
+// Returns: { success, user }
+// ============================================================================
+router.get('/profile', protect, getProfile);
+
+// ============================================================================
+// ROUTE: PUT /api/auth/profile
+// ============================================================================
+// Update current user's profile
+// Created by: M4 (Oneli) - Day 4
+// Middleware: protect (requires valid JWT token)
+// Expects: { name?, phone?, password? }
+// Returns: { success, message, user }
+// ============================================================================
+router.put('/profile', protect, updateProfile);
+
 // Export the router to be used in server.js
 export default router;
+
 
