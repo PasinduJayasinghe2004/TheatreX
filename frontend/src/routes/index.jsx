@@ -6,6 +6,8 @@ import ModalTest from '../pages/ModalTest';
 import LayoutDemo from '../pages/LayoutDemo';
 import RegisterForm from '../components/auth/RegisterForm';
 import Login from '../pages/Login';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
@@ -31,6 +33,8 @@ const AppRoutes = () => {
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Test Pages */}
             <Route path="/button-test" element={<ButtonTest />} /> {/* M4 Day 1 */}

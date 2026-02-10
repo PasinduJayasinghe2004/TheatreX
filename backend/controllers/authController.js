@@ -233,12 +233,119 @@ export const login = async (req, res) => {
             }
         });
 
+    });
+
+} catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+        success: false,
+        message: 'Error during login',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+}
+};
+
+// ============================================================================
+// FUNCTION: Forgot Password
+// ============================================================================
+// REQUEST BODY: { "email": "john@example.com" }
+// ============================================================================
+import crypto from 'crypto';
+import { sendResetEmail } from '../utils/emailService.js';
+
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ success: false, message: 'Email is required' });
+        }
+
+        // Check if user exists
+        const [users] = await promisePool.query('SELECT * FROM users WHERE email = ?', [email]);
+        if (users.length === 0) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const user = users[0];
+
+        // Generate Reset Token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+
+        // Save token to database
+        // Ideally we should have a password_resets table, but for now allow saving to users table if columns exist
+        // OR create a temporary table. Let's assume we create a password_resets table on the fly if not exists or use a simple updates
+        // For standard implementation, we'll create a `password_resets` table if it doesn't exist
+
+        await promisePool.query(`
+            CREATE TABLE IF NOT EXISTS password_resets (
+                email VARCHAR(255) NOT NULL,
+                token VARCHAR(255) NOT NULL,
+                expiry DATETIME NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (email)
+            )
+        `);
+
+        // Upsert token
+        await promisePool.query(`
+            INSERT INTO password_resets (email, token, expiry) 
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE token = ?, expiry = ?
+        `, [email, resetToken, tokenExpiry, resetToken, tokenExpiry]);
+
+        // Send Email
+        await sendResetEmail(email, resetToken);
+
+        res.status(200).json({ success: true, message: 'Password reset link sent to your email' });
+
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error during login',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        console.error('Forgot Password error:', error);
+        res.status(500).json({ success: false, message: 'Error sending email' });
+    }
+};
+
+// ============================================================================
+// FUNCTION: Reset Password
+// ============================================================================
+// REQUEST BODY: { "email": "...", "token": "...", "newPassword": "..." }
+// ============================================================================
+export const resetPassword = async (req, res) => {
+    try {
+        const { email, token, newPassword } = req.body;
+
+        if (!email || !token || !newPassword) {
+            return res.status(400).json({ success: false, message: 'All fields are required' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+        }
+
+        // Verify Token
+        const [resets] = await promisePool.query(
+            'SELECT * FROM password_resets WHERE email = ? AND token = ? AND expiry > NOW()',
+            [email, token]
+        );
+
+        if (resets.length === 0) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+        // Update User Password
+        await promisePool.query('UPDATE users SET password = ? WHERE email = ?', [hashedPassword, email]);
+
+        // Delete reset token
+        await promisePool.query('DELETE FROM password_resets WHERE email = ?', [email]);
+
+        res.status(200).json({ success: true, message: 'Password reset successfully' });
+
+    } catch (error) {
+        console.error('Reset Password error:', error);
+        res.status(500).json({ success: false, message: 'Error resetting password' });
     }
 };
