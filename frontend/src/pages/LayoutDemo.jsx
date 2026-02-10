@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Layout } from '../components/ui';
 
 /**
@@ -26,7 +26,7 @@ const LayoutDemo = () => {
                             ✅ Header Section
                         </h3>
                         <p className="text-sm text-gray-600">
-                            Sticky header with branding and navigation. Ready for M4's Header component integration.
+                            Sticky header with branding and navigation. Ready for M4&apos;s Header component integration.
                         </p>
                     </div>
 
@@ -35,7 +35,7 @@ const LayoutDemo = () => {
                             ✅ Sidebar Navigation
                         </h3>
                         <p className="text-sm text-gray-600">
-                            Fixed sidebar with navigation menu. Ready for M5's Sidebar component integration.
+                            Fixed sidebar with navigation menu. Ready for M5&apos;s Sidebar component integration.
                         </p>
                     </div>
 

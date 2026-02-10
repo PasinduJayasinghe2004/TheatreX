@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 /**
  * Card Component
@@ -66,6 +66,7 @@ Card.Header = ({ children, className = '' }) => (
         {children}
     </div>
 );
+Card.Header.displayName = 'Card.Header';
 
 // Card.Body subcomponent
 Card.Body = ({ children, className = '' }) => (
@@ -73,6 +74,7 @@ Card.Body = ({ children, className = '' }) => (
         {children}
     </div>
 );
+Card.Body.displayName = 'Card.Body';
 
 // Card.Footer subcomponent
 Card.Footer = ({ children, className = '' }) => (
@@ -80,5 +82,6 @@ Card.Footer = ({ children, className = '' }) => (
         {children}
     </div>
 );
+Card.Footer.displayName = 'Card.Footer';
 
 export default Card;

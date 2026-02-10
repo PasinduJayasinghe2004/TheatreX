@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Input, Button } from '../components/ui';
 import authService from '../services/authService';
@@ -166,7 +167,7 @@ const Login = () => {
 
                     {/* Register Link */}
                     <p className="text-center text-gray-400 text-sm mt-6">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link
                             to="/register"
                             className="text-blue-400 hover:text-blue-300 font-medium"

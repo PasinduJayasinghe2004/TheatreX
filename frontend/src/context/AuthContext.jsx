@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // ============================================================================
 // Authentication Context
 // ============================================================================
@@ -23,7 +24,7 @@
 // - useAuth: Custom hook to access auth state and functions
 // ============================================================================
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import authService from '../services/authService';
 
 // ============================================================================
