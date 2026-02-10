@@ -87,4 +87,10 @@ const startServer = async () => {
     });
 };
 
-startServer();
+// Only start server if this file is run directly (not imported for testing)
+if (import.meta.url === `file://${process.argv[1]}`) {
+    startServer();
+}
+
+// Export app for testing
+export default app;
