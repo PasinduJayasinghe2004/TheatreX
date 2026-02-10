@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Input, Button } from '../components/ui';
+
 import authService from '../services/authService';
 import { Mail, Lock, Eye, EyeOff, ChevronDown } from 'lucide-react';
 
@@ -401,7 +401,7 @@ const Login = () => {
 
                         {/* Sign Up Link */}
                         <p className="mt-8 text-center text-sm text-gray-600">
-                            Don't have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <Link to="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
                                 Sign Up
                             </Link>
