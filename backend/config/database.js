@@ -1,7 +1,14 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from backend root (one level up from config)
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Create MySQL connection pool with SSL support for Aiven
 const pool = mysql.createPool({
