@@ -37,6 +37,17 @@ router.post('/register', validateRegister, register);
 // ============================================================================
 router.post('/login', validateLogin, login);
 
+// ============================================================================
+// ROUTE: POST /api/auth/forgot-password
+// ============================================================================
+import { forgotPassword, resetPassword } from '../controllers/authController.js';
+router.post('/forgot-password', forgotPassword);
+
+// ============================================================================
+// ROUTE: POST /api/auth/reset-password
+// ============================================================================
+router.post('/reset-password', resetPassword);
+
 // Export the router to be used in server.js
 export default router;
 
