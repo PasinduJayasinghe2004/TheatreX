@@ -367,7 +367,10 @@ export const getProfile = async (req, res) => {
             success: true,
             user: req.user
         });
+<<<<<<<< < Temporary merge branch 1
+=========
 
+>>>>>>>>> Temporary merge branch 2
     } catch (error) {
         console.error('Get Profile error:', error);
         res.status(500).json({
@@ -383,11 +386,11 @@ export const getProfile = async (req, res) => {
 // ============================================================================
 // Updates current authenticated user's profile information
 // Created by: M4 (Oneli) - Day 4
-// 
+//
 // REQUIRES: protect middleware (sets req.user)
 // REQUEST BODY: { name?, phone?, password? }
 // RESPONSE: { success, message, user }
-// 
+//
 // NOTES:
 // - Email and role changes require admin privileges (not implemented here)
 // - Password is optional; if provided, it will be hashed
