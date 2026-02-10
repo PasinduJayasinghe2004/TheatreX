@@ -9,6 +9,7 @@
  */
 
 import { promisePool } from '../config/database.js';
+import { hashPassword } from '../utils/hashPassword.js';
 
 /**
  * Get all users from the database
@@ -101,34 +102,78 @@ export const getUserById = async (req, res) => {
     }
 };
 
-// ============================================
-// PLACEHOLDER ENDPOINTS - TO BE IMPLEMENTED
-// ============================================
-// These endpoints will be fully implemented in Day 3-4
-// when authentication and password hashing are added
-
-/**
- * Create a new user (PLACEHOLDER)
- * 
- * @desc    Will create a new user with hashed password and validation
- * @route   POST /api/users
- * @access  Public (registration) / Admin (creating other users)
- * 
- * @todo    Implement in Day 3-4 with:
- *          - Password hashing (bcrypt)
- *          - Input validation
- *          - Email uniqueness check
- *          - JWT token generation
- * 
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @returns {Object} 501 Not Implemented status
- */
+// @desc    Create new user (Register)
+// @route   POST /api/users
+// @access  Public
 export const createUser = async (req, res) => {
-    res.status(501).json({
-        success: false,
-        message: 'Create user endpoint - Coming in Day 3 (Authentication)'
-    });
+    try {
+        const { name, email, password, role, phone } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide name, email, and password'
+            });
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid email address'
+            });
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 6 characters'
+            });
+        }
+
+        // Check if email already exists
+        const [existingUsers] = await promisePool.query(
+            'SELECT id FROM users WHERE email = ?',
+            [email]
+        );
+
+        if (existingUsers.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email already exists'
+            });
+        }
+
+        // Hash password
+        const hashedPassword = await hashPassword(password);
+
+        // Insert user into database
+        const [result] = await promisePool.query(
+            'INSERT INTO users (name, email, password, role, phone) VALUES (?, ?, ?, ?, ?)',
+            [name, email, hashedPassword, role || 'coordinator', phone || null]
+        );
+
+        // Get the created user (without password)
+        const [newUser] = await promisePool.query(
+            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = ?',
+            [result.insertId]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully',
+            data: newUser[0]
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error creating user',
+            error: error.message
+        });
+    }
 };
 
 /**
@@ -151,7 +196,7 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     res.status(501).json({
         success: false,
-        message: 'Update user endpoint - Coming in Day 3 (Authentication)'
+        message: 'Update user endpoint - Coming in Day 4 (Authentication)'
     });
 };
 
@@ -175,6 +220,6 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     res.status(501).json({
         success: false,
-        message: 'Delete user endpoint - Coming in Day 3 (Authentication)'
+        message: 'Delete user endpoint - Coming in Day 4 (Authentication)'
     });
 };

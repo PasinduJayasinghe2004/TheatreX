@@ -89,12 +89,6 @@ npm start            # Start production server
 - bcryptjs for password hashing
 - CORS enabled
 
-## 📝 Documentation
-
-For detailed project planning and system architecture, see:
-- [30-Day Development Plan](TheatreX-30-Day-FullStack-Plan.md)
-- [System Idea Document](TheatreX-System-Idea-Document.md)
-
 ## 👥 Team
 
 TheatreX Team
