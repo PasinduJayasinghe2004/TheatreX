@@ -354,7 +354,7 @@ export const resetPassword = async (req, res) => {
 // FUNCTION: Get User Profile
 // ============================================================================
 // Returns current authenticated user's profile information
-// Created by: M4 (Oneli) - Day 4
+// Created by: M2 (Chandeepa) & M4 (Oneli) - Day 4
 // 
 // REQUIRES: protect middleware (sets req.user)
 // RESPONSE: { success, user: { id, name, email, role, phone, is_active, created_at } }
@@ -367,6 +367,7 @@ export const getProfile = async (req, res) => {
             success: true,
             user: req.user
         });
+
     } catch (error) {
         console.error('Get Profile error:', error);
         res.status(500).json({
@@ -382,11 +383,11 @@ export const getProfile = async (req, res) => {
 // ============================================================================
 // Updates current authenticated user's profile information
 // Created by: M4 (Oneli) - Day 4
-// 
+//
 // REQUIRES: protect middleware (sets req.user)
 // REQUEST BODY: { name?, phone?, password? }
 // RESPONSE: { success, message, user }
-// 
+//
 // NOTES:
 // - Email and role changes require admin privileges (not implemented here)
 // - Password is optional; if provided, it will be hashed
