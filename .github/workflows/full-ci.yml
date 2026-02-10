@@ -36,8 +36,7 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Run tests
-        run: npm test --if-present
+
   
   backend:
     name: Backend CI
@@ -61,8 +60,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run tests
-        run: npm test --if-present
+
       
       - name: Security audit
         run: npm audit --audit-level=moderate

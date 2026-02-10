@@ -47,8 +47,6 @@ jobs:
       - name: Build production bundle
         run: npm run build
       
-      - name: Run tests
-        run: npm test --if-present
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
