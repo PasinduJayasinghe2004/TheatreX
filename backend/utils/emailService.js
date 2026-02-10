@@ -23,10 +23,9 @@ const createTransporter = async () => {
 export const sendResetEmail = async (email, resetToken) => {
     const { transporter } = await createTransporter();
 
-    // Reset Link (assuming frontend runs on port 5173... verify this dynamically or use env var)
-    // For now hardcoding to localhost:5173 as base (standard Vite port), user can adjust via env
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}&email=${email}`;
+    // Reset Link (assuming frontend runs on port 5173/5174/5175... verify this dynamically or use env var)
+    // For now hardcoding to localhost:5173 as base, user can adjust
+    const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}&email=${email}`;
 
     const info = await transporter.sendMail({
         from: '"TheatreX Support" <support@theatrex.com>', // sender address
