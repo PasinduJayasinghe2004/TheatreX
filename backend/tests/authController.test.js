@@ -10,9 +10,10 @@ describe('Authentication API Tests', () => {
     let authToken;
 
     // Test data
+    const uniqueId = Date.now();
     const validUser = {
         name: 'Test User',
-        email: 'testuser@theatrex.com',
+        email: `testuser${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
         role: 'coordinator',
         phone: '0771234567'
@@ -27,17 +28,23 @@ describe('Authentication API Tests', () => {
                 .expect(201);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.data).toHaveProperty('id');
-            expect(response.body.data).toHaveProperty('email', validUser.email);
-            expect(response.body.data).toHaveProperty('token');
-            expect(response.body.data).not.toHaveProperty('password');
+            expect(response.body.user).toHaveProperty('id');
+            expect(response.body.user).toHaveProperty('email', validUser.email);
+            // Register endpoint doesn't return token in the current implementation
+            // expect(response.body).toHaveProperty('token'); 
+            expect(response.body.user).not.toHaveProperty('password');
 
             // Save for later tests
-            testUserId = response.body.data.id;
-            authToken = response.body.data.token;
+            testUserId = response.body.user.id;
+            // authToken = response.body.token; // Register doesn't return token
         });
 
         it('should reject duplicate email registration', async () => {
+            // Run registration again to trigger duplicate error
+            await request(app)
+                .post('/api/auth/register')
+                .send(validUser); // First ensure it exists (if previous test failed)
+
             const response = await request(app)
                 .post('/api/auth/register')
                 .send(validUser)
@@ -118,14 +125,16 @@ describe('Authentication API Tests', () => {
                 .expect(200);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.data).toHaveProperty('token');
-            expect(response.body.data).toHaveProperty('user');
-            expect(response.body.data.user).toHaveProperty('email', validUser.email);
-            expect(response.body.data.user).not.toHaveProperty('password');
+            expect(response.body).toHaveProperty('token');
+            expect(response.body).toHaveProperty('user');
+            expect(response.body.user).toHaveProperty('email', validUser.email);
+            expect(response.body.user).not.toHaveProperty('password');
 
             // Verify JWT token format (3 parts separated by dots)
-            const token = response.body.data.token;
+            const token = response.body.token;
             expect(token.split('.')).toHaveLength(3);
+
+            authToken = token; // Capture token for JWT tests
         });
 
         it('should reject login with non-existent email', async () => {

@@ -137,5 +137,10 @@ const startServer = async () => {
     }
 };
 
-// Execute the server startup function
-startServer();
+// Export app for testing
+export default app;
+
+// Start server only if run directly
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+    startServer();
+}

@@ -12,6 +12,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { promisePool } from '../config/database.js';
+import { generateToken } from '../utils/jwtUtils.js';
 
 // ============================================================================
 // CONSTANT: Salt Rounds for Password Hashing
