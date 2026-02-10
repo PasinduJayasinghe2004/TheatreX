@@ -233,16 +233,16 @@ export const login = async (req, res) => {
             }
         });
 
-    });
 
-} catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({
-        success: false,
-        message: 'Error during login',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-}
+
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error during login',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
 };
 
 // ============================================================================
