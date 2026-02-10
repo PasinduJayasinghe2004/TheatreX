@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import authService from '../services/authService';
 import { Lock, Eye, EyeOff } from 'lucide-react';
@@ -18,12 +18,7 @@ const ResetPassword = () => {
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [message, setMessage] = useState('');
 
-    useEffect(() => {
-        if (!token || !email) {
-            setStatus('error');
-            setMessage('Invalid or missing reset token.');
-        }
-    }, [token, email]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
