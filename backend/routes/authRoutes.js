@@ -39,6 +39,16 @@ router.post('/register', validateRegister, register);
 router.post('/login', validateLogin, login);
 
 // ============================================================================
+// ROUTE: GET /api/auth/profile
+// ============================================================================
+// Returns authenticated user's profile
+// Middleware: protect (verifies JWT token)
+// Returns: { success, user }
+// Created by: M2 (Chandeepa) - Day 4
+// ============================================================================
+router.get('/profile', protect, getProfile);
+
+// ============================================================================
 // ROUTE: POST /api/auth/forgot-password
 // ============================================================================
 import { forgotPassword, resetPassword } from '../controllers/authController.js';

@@ -88,6 +88,17 @@ const authService = {
             const message = error.response?.data?.message || 'Error resetting password.';
             throw new Error(message);
         }
+    },
+
+    // Get User Profile
+    getProfile: async () => {
+        try {
+            const response = await api.get('/auth/profile');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching profile.';
+            throw new Error(message);
+        }
     }
 };
 
