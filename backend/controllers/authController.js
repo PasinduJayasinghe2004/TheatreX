@@ -353,29 +353,16 @@ export const resetPassword = async (req, res) => {
 // ============================================================================
 // FUNCTION: Get User Profile
 // ============================================================================
-// Returns the authenticated user's profile information
-// Created by: M2 (Chandeepa) - Day 4
+// Returns current authenticated user's profile information
+// Created by: M2 (Chandeepa) & M4 (Oneli) - Day 4
 // 
-// AUTHENTICATION: Required (protect middleware)
-// 
-// RESPONSE:
-// {
-//   "success": true,
-//   "user": { id, name, email, role, phone, is_active, created_at }
-// }
+// REQUIRES: protect middleware (sets req.user)
+// RESPONSE: { success, user: { id, name, email, role, phone, is_active, created_at } }
 // ============================================================================
 export const getProfile = async (req, res) => {
     try {
-        // req.user is set by the 'protect' middleware
-        // It already contains the user data (without password)
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                message: 'User not authenticated'
-            });
-        }
-
-        // Return user profile data
+        // req.user is set by protect middleware
+        // It already excludes the password field
         res.status(200).json({
             success: true,
             user: req.user
@@ -386,6 +373,96 @@ export const getProfile = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching profile',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+// ============================================================================
+// FUNCTION: Update User Profile
+// ============================================================================
+// Updates current authenticated user's profile information
+// Created by: M4 (Oneli) - Day 4
+// 
+// REQUIRES: protect middleware (sets req.user)
+// REQUEST BODY: { name?, phone?, password? }
+// RESPONSE: { success, message, user }
+// 
+// NOTES:
+// - Email and role changes require admin privileges (not implemented here)
+// - Password is optional; if provided, it will be hashed
+// - Returns updated user data without password
+// ============================================================================
+export const updateProfile = async (req, res) => {
+    try {
+        const { name, phone, password } = req.body;
+        const userId = req.user.id;
+
+        // Build update query dynamically based on provided fields
+        const updates = [];
+        const values = [];
+
+        if (name) {
+            updates.push('name = ?');
+            values.push(name);
+        }
+
+        if (phone) {
+            updates.push('phone = ?');
+            values.push(phone);
+        }
+
+        if (password) {
+            // Validate password length
+            if (password.length < 8) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Password must be at least 8 characters long'
+                });
+            }
+
+            // Hash new password
+            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+            updates.push('password = ?');
+            values.push(hashedPassword);
+        }
+
+        // Check if there are any fields to update
+        if (updates.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No fields to update. Provide name, phone, or password.'
+            });
+        }
+
+        // Add user ID to values array
+        values.push(userId);
+
+        // Execute update query
+        await promisePool.query(
+            `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
+            values
+        );
+
+        // Fetch updated user data (without password)
+        const [users] = await promisePool.query(
+            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = ?',
+            [userId]
+        );
+
+        const updatedUser = users[0];
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.error('Update Profile error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating profile',
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
