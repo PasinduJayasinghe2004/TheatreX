@@ -1,9 +1,10 @@
-import { promisePool } from '../config/database.js';
+import { pool } from '../config/database.js';
 
 /**
  * Notification Model
  * Handles notifications table creation and management
  * Created by: M2 - Day 2
+ * Updated: Migrated from MySQL to PostgreSQL
  * 
  * Used for:
  * - Surgery reminders (15 min before)
@@ -15,45 +16,41 @@ import { promisePool } from '../config/database.js';
 const createNotificationsTable = async () => {
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS notifications (
-      id INT AUTO_INCREMENT PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
       
       -- Who receives the notification
-      user_id INT NOT NULL COMMENT 'FK to users table - recipient',
+      user_id INT NOT NULL,
       
       -- What surgery it relates to (optional)
-      surgery_id INT NULL COMMENT 'FK to surgeries table - NULL for system notifications',
+      surgery_id INT NULL,
       
       -- Notification content
-      type ENUM('reminder', 'alert', 'info', 'warning', 'success') NOT NULL DEFAULT 'info',
+      type VARCHAR(20) NOT NULL DEFAULT 'info'
+        CHECK (type IN ('reminder', 'alert', 'info', 'warning', 'success')),
       title VARCHAR(255) NOT NULL,
       message TEXT NOT NULL,
       
       -- Read status
       is_read BOOLEAN DEFAULT FALSE,
-      read_at TIMESTAMP NULL COMMENT 'When the notification was read',
+      read_at TIMESTAMP NULL,
       
       -- Timestamps
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      
-      -- Indexes for performance
-      INDEX idx_user_id (user_id),
-      INDEX idx_surgery_id (surgery_id),
-      INDEX idx_is_read (is_read),
-      INDEX idx_type (type),
-      INDEX idx_created_at (created_at),
-      
-      -- Composite index for common query: get unread notifications for a user
-      INDEX idx_user_unread (user_id, is_read, created_at)
-      
-      -- Foreign key constraints (will be enabled when related tables exist)
-      -- CONSTRAINT fk_notification_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      -- CONSTRAINT fk_notification_surgery FOREIGN KEY (surgery_id) REFERENCES surgeries(id) ON DELETE SET NULL
-      
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
+  const createIndexes = `
+    CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications (user_id);
+    CREATE INDEX IF NOT EXISTS idx_notifications_surgery_id ON notifications (surgery_id);
+    CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications (is_read);
+    CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications (type);
+    CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications (created_at);
+    CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications (user_id, is_read, created_at);
   `;
 
   try {
-    await promisePool.query(createTableQuery);
+    await pool.query(createTableQuery);
+    await pool.query(createIndexes);
     console.log('✅ Notifications table created/verified successfully');
   } catch (error) {
     console.error('❌ Error creating notifications table:', error.message);

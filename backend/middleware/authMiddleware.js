@@ -3,6 +3,7 @@
 // ============================================================================
 // Protects routes by verifying JWT tokens and enforcing role-based access
 // Created by: M4 (Oneli) - Day 4
+// Updated: Migrated from MySQL to PostgreSQL
 // 
 // EXPORTS:
 // - protect: Verifies valid JWT token in Authorization header
@@ -10,7 +11,7 @@
 // ============================================================================
 
 import { verifyToken } from '../utils/jwtUtils.js';
-import { promisePool } from '../config/database.js';
+import { pool } from '../config/database.js';
 
 // ============================================================================
 // MIDDLEWARE: Protect Routes (Verify JWT)
@@ -39,8 +40,8 @@ export const protect = async (req, res, next) => {
 
             // Fetch user from database (exclude password)
             // check if user still exists/is active
-            const [users] = await promisePool.query(
-                'SELECT id, name, email, role, phone, is_active FROM users WHERE id = ?',
+            const { rows: users } = await pool.query(
+                'SELECT id, name, email, role, phone, is_active FROM users WHERE id = $1',
                 [decoded.id]
             );
 

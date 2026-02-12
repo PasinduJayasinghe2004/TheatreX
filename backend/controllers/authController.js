@@ -3,15 +3,20 @@
 // ============================================================================
 // This file handles all authentication-related business logic
 // Created by: M1 (Pasindu) - Day 3 (Register) & M4 (Oneli) - Day 3 (Login)
+// Updated: Migrated from MySQL to PostgreSQL
 // 
 // ENDPOINTS HANDLED:
 // - POST /api/auth/register - User registration with password hashing
 // - POST /api/auth/login - User login with JWT token generation
+// - POST /api/auth/forgot-password - Password reset request
+// - POST /api/auth/reset-password - Password reset
+// - GET /api/auth/profile - Get user profile
+// - PUT /api/auth/profile - Update user profile
 // ============================================================================
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { promisePool } from '../config/database.js';
+import { pool } from '../config/database.js';
 import { generateToken } from '../utils/jwtUtils.js';
 
 // ============================================================================
@@ -85,8 +90,8 @@ export const register = async (req, res) => {
         // ========================================
         // STEP 2: Check if User Already Exists
         // ========================================
-        const [existingUsers] = await promisePool.query(
-            'SELECT id FROM users WHERE email = ?',
+        const { rows: existingUsers } = await pool.query(
+            'SELECT id FROM users WHERE email = $1',
             [email]
         );
 
@@ -107,9 +112,11 @@ export const register = async (req, res) => {
         // ========================================
         // STEP 4: Insert User into Database
         // ========================================
-        const [result] = await promisePool.query(
+        // PostgreSQL uses RETURNING to get the inserted row's id
+        const { rows: insertResult } = await pool.query(
             `INSERT INTO users (name, email, password, role) 
-             VALUES (?, ?, ?, ?)`,
+             VALUES ($1, $2, $3, $4)
+             RETURNING id`,
             [name, email, hashedPassword, role]
         );
 
@@ -121,7 +128,7 @@ export const register = async (req, res) => {
             success: true,
             message: 'User registered successfully',
             user: {
-                id: result.insertId,
+                id: insertResult[0].id,
                 name,
                 email,
                 role
@@ -174,8 +181,8 @@ export const login = async (req, res) => {
         }
 
         // Check if user exists
-        const [users] = await promisePool.query(
-            'SELECT * FROM users WHERE email = ?',
+        const { rows: users } = await pool.query(
+            'SELECT * FROM users WHERE email = $1',
             [email]
         );
 
@@ -262,7 +269,7 @@ export const forgotPassword = async (req, res) => {
         }
 
         // Check if user exists
-        const [users] = await promisePool.query('SELECT * FROM users WHERE email = ?', [email]);
+        const { rows: users } = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (users.length === 0) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
@@ -273,27 +280,22 @@ export const forgotPassword = async (req, res) => {
         const resetToken = crypto.randomBytes(32).toString('hex');
         const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
 
-        // Save token to database
-        // Ideally we should have a password_resets table, but for now allow saving to users table if columns exist
-        // OR create a temporary table. Let's assume we create a password_resets table on the fly if not exists or use a simple updates
-        // For standard implementation, we'll create a `password_resets` table if it doesn't exist
-
-        await promisePool.query(`
+        // Create password_resets table if it doesn't exist (PostgreSQL syntax)
+        await pool.query(`
             CREATE TABLE IF NOT EXISTS password_resets (
-                email VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL PRIMARY KEY,
                 token VARCHAR(255) NOT NULL,
-                expiry DATETIME NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (email)
+                expiry TIMESTAMP NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
 
-        // Upsert token
-        await promisePool.query(`
+        // Upsert token (PostgreSQL ON CONFLICT syntax)
+        await pool.query(`
             INSERT INTO password_resets (email, token, expiry) 
-            VALUES (?, ?, ?) 
-            ON DUPLICATE KEY UPDATE token = ?, expiry = ?
-        `, [email, resetToken, tokenExpiry, resetToken, tokenExpiry]);
+            VALUES ($1, $2, $3) 
+            ON CONFLICT (email) DO UPDATE SET token = $2, expiry = $3
+        `, [email, resetToken, tokenExpiry]);
 
         // Send Email
         await sendResetEmail(email, resetToken);
@@ -324,8 +326,8 @@ export const resetPassword = async (req, res) => {
         }
 
         // Verify Token
-        const [resets] = await promisePool.query(
-            'SELECT * FROM password_resets WHERE email = ? AND token = ? AND expiry > NOW()',
+        const { rows: resets } = await pool.query(
+            'SELECT * FROM password_resets WHERE email = $1 AND token = $2 AND expiry > NOW()',
             [email, token]
         );
 
@@ -337,10 +339,10 @@ export const resetPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
         // Update User Password
-        await promisePool.query('UPDATE users SET password = ? WHERE email = ?', [hashedPassword, email]);
+        await pool.query('UPDATE users SET password = $1 WHERE email = $2', [hashedPassword, email]);
 
         // Delete reset token
-        await promisePool.query('DELETE FROM password_resets WHERE email = ?', [email]);
+        await pool.query('DELETE FROM password_resets WHERE email = $1', [email]);
 
         res.status(200).json({ success: true, message: 'Password reset successfully' });
 
@@ -399,16 +401,18 @@ export const updateProfile = async (req, res) => {
         const userId = req.user.id;
 
         // Build update query dynamically based on provided fields
+        // PostgreSQL uses numbered placeholders ($1, $2, etc.)
         const updates = [];
         const values = [];
+        let paramIndex = 1;
 
         if (name) {
-            updates.push('name = ?');
+            updates.push(`name = $${paramIndex++}`);
             values.push(name);
         }
 
         if (phone) {
-            updates.push('phone = ?');
+            updates.push(`phone = $${paramIndex++}`);
             values.push(phone);
         }
 
@@ -423,7 +427,7 @@ export const updateProfile = async (req, res) => {
 
             // Hash new password
             const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-            updates.push('password = ?');
+            updates.push(`password = $${paramIndex++}`);
             values.push(hashedPassword);
         }
 
@@ -439,14 +443,14 @@ export const updateProfile = async (req, res) => {
         values.push(userId);
 
         // Execute update query
-        await promisePool.query(
-            `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
+        await pool.query(
+            `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIndex}`,
             values
         );
 
         // Fetch updated user data (without password)
-        const [users] = await promisePool.query(
-            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = ?',
+        const { rows: users } = await pool.query(
+            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = $1',
             [userId]
         );
 
