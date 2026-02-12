@@ -1,6 +1,6 @@
-// ============================================================================
+
 // JWT Utilities
-// ============================================================================
+
 // This file contains reusable JWT (JSON Web Token) utility functions
 // Created by: M5 (Inthusha) - Day 3
 // 
@@ -13,13 +13,13 @@
 // - generateToken(payload) - Create a new JWT token
 // - verifyToken(token) - Verify and decode a JWT token
 // - decodeToken(token) - Decode token without verification (for debugging)
-// ============================================================================
+
 
 import jwt from 'jsonwebtoken';
 
-// ============================================================================
+
 // FUNCTION: Generate JWT Token
-// ============================================================================
+
 // Creates a signed JWT token with the provided payload
 //
 // PARAMETERS:
@@ -42,7 +42,7 @@ import jwt from 'jsonwebtoken';
 // ENVIRONMENT VARIABLES USED:
 // - JWT_SECRET: Secret key for signing tokens (required)
 // - JWT_EXPIRE: Token expiration time (default: '7d')
-// ============================================================================
+
 export const generateToken = (payload) => {
     try {
         // Validate that JWT_SECRET exists
@@ -78,9 +78,9 @@ export const generateToken = (payload) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Verify JWT Token
-// ============================================================================
+
 // Verifies the token signature and decodes the payload
 //
 // PARAMETERS:
@@ -107,7 +107,7 @@ export const generateToken = (payload) => {
 // } catch (error) {
 //   console.error('Invalid token:', error.message);
 // }
-// ============================================================================
+
 export const verifyToken = (token) => {
     try {
         // Validate that JWT_SECRET exists
@@ -144,9 +144,9 @@ export const verifyToken = (token) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Decode JWT Token (Without Verification)
-// ============================================================================
+
 // Decodes a JWT token WITHOUT verifying its signature
 //
 // ⚠️ WARNING: This function does NOT verify the token's authenticity!
@@ -171,7 +171,7 @@ export const verifyToken = (token) => {
 // - Debugging token contents
 // - Checking token expiration without verification
 // - Inspecting token structure
-// ============================================================================
+
 export const decodeToken = (token) => {
     try {
         // Validate token is provided
@@ -198,9 +198,9 @@ export const decodeToken = (token) => {
     }
 };
 
-// ============================================================================
+
 // HELPER FUNCTION: Check if Token is Expired
-// ============================================================================
+
 // Checks if a token has expired without verifying signature
 //
 // PARAMETERS:
@@ -213,7 +213,7 @@ export const decodeToken = (token) => {
 // if (isTokenExpired(token)) {
 //   console.log('Token has expired, please login again');
 // }
-// ============================================================================
+
 export const isTokenExpired = (token) => {
     try {
         const decoded = decodeToken(token);
@@ -234,11 +234,123 @@ export const isTokenExpired = (token) => {
 };
 
 // ============================================================================
+// FUNCTION: Generate Refresh Token
+// ============================================================================
+// Creates a long-lived refresh token used to obtain new access tokens
+// without requiring the user to re-enter their credentials.
+//
+// Created by: M5 (Inthusha) - Day 4
+//
+// PARAMETERS:
+// @param {Object} payload - Data to encode in the token
+//   - id: User ID (required)
+//   - email: User email (required)
+//   - role: User role (required)
+//
+// RETURNS:
+// @returns {String} - Signed JWT refresh token
+//
+// ENVIRONMENT VARIABLES USED:
+// - JWT_REFRESH_SECRET: Separate secret for refresh tokens (required)
+// - JWT_REFRESH_EXPIRE: Refresh token expiration time (default: '30d')
+//
+// 
+// ============================================================================
+export const generateRefreshToken = (payload) => {
+    try {
+        // Validate that JWT_REFRESH_SECRET exists
+        if (!process.env.JWT_REFRESH_SECRET) {
+            throw new Error('JWT_REFRESH_SECRET is not defined in environment variables');
+        }
+
+        // Validate payload has required fields
+        if (!payload.id || !payload.email || !payload.role) {
+            throw new Error('Token payload must include id, email, and role');
+        }
+
+        // Generate refresh token with separate secret and longer expiry
+        const refreshToken = jwt.sign(
+            payload,
+            process.env.JWT_REFRESH_SECRET,
+            {
+                expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d'
+            }
+        );
+
+        return refreshToken;
+
+    } catch (error) {
+        console.error('Error generating refresh token:', error.message);
+        throw error;
+    }
+};
+
+// ============================================================================
+// FUNCTION: Verify Refresh Token
+// ============================================================================
+// Verifies a refresh token's signature and decodes the payload.
+// Uses the separate JWT_REFRESH_SECRET to ensure refresh tokens
+// cannot be used as access tokens and vice versa.
+//
+// Created by: M5 (Inthusha) - Day 4
+//
+// PARAMETERS:
+// @param {String} token - Refresh token to verify
+//
+// RETURNS:
+// @returns {Object} - Decoded token payload containing user data
+//
+// THROWS:
+// - Error if token is expired, invalid, or JWT_REFRESH_SECRET is missing
+//
+// EXAMPLE:
+// try {
+//   const decoded = verifyRefreshToken(refreshToken);
+//   // Generate a new access token using decoded.id, decoded.email, decoded.role
+// } catch (error) {
+//   console.error('Refresh token invalid:', error.message);
+// }
+// ============================================================================
+export const verifyRefreshToken = (token) => {
+    try {
+        // Validate that JWT_REFRESH_SECRET exists
+        if (!process.env.JWT_REFRESH_SECRET) {
+            throw new Error('JWT_REFRESH_SECRET is not defined in environment variables');
+        }
+
+        // Validate token is provided
+        if (!token) {
+            throw new Error('No refresh token provided');
+        }
+
+        // Verify and decode the refresh token
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+        return decoded;
+
+    } catch (error) {
+        // Handle specific JWT errors
+        if (error.name === 'TokenExpiredError') {
+            throw new Error('Refresh token has expired');
+        } else if (error.name === 'JsonWebTokenError') {
+            throw new Error('Invalid refresh token');
+        } else if (error.name === 'NotBeforeError') {
+            throw new Error('Refresh token not yet valid');
+        }
+
+        // Re-throw other errors
+        throw error;
+    }
+};
+
+// ============================================================================
 // Export all functions as default object (alternative import style)
 // ============================================================================
 export default {
     generateToken,
     verifyToken,
     decodeToken,
-    isTokenExpired
+    isTokenExpired,
+    generateRefreshToken,
+    verifyRefreshToken
 };

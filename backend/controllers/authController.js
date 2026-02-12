@@ -17,7 +17,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool } from '../config/database.js';
-import { generateToken } from '../utils/jwtUtils.js';
+import { generateToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwtUtils.js';
 
 // ============================================================================
 // CONSTANT: Salt Rounds for Password Hashing
@@ -87,9 +87,9 @@ export const register = async (req, res) => {
             });
         }
 
-        // ========================================
+        
         // STEP 2: Check if User Already Exists
-        // ========================================
+        
         const { rows: existingUsers } = await pool.query(
             'SELECT id FROM users WHERE email = $1',
             [email]
@@ -102,16 +102,16 @@ export const register = async (req, res) => {
             });
         }
 
-        // ========================================
+        
         // STEP 3: Hash Password with Bcrypt
-        // ========================================
+        
         // This converts plain text password into a secure hash
         // Example: "password123" -> "$2b$10$N9qo8uLOickgx2ZMRZoMye..."
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        // ========================================
+        
         // STEP 4: Insert User into Database
-        // ========================================
+        
         // PostgreSQL uses RETURNING to get the inserted row's id
         const { rows: insertResult } = await pool.query(
             `INSERT INTO users (name, email, password, role) 
@@ -120,9 +120,9 @@ export const register = async (req, res) => {
             [name, email, hashedPassword, role]
         );
 
-        // ========================================
+        
         // STEP 5: Return Success Response
-        // ========================================
+        
         // Note: We don't return the password (even hashed) for security
         res.status(201).json({
             success: true,
@@ -136,9 +136,8 @@ export const register = async (req, res) => {
         });
 
     } catch (error) {
-        // ========================================
+        
         // ERROR HANDLING
-        // ========================================
         console.error('Registration error:', error);
         res.status(500).json({
             success: false,
@@ -148,9 +147,9 @@ export const register = async (req, res) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Login User
-// ============================================================================
+
 // Authenticates user and generates JWT token using centralized utility
 // Updated by: M5 (Inthusha) - Day 3 (JWT Utility Integration)
 // 
@@ -167,7 +166,7 @@ export const register = async (req, res) => {
 //   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
 //   "user": { id, name, email, role, phone, is_active, created_at }
 // }
-// ============================================================================
+
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -213,22 +212,28 @@ export const login = async (req, res) => {
             });
         }
 
-        // ========================================
-        // STEP 4: Generate JWT Token
-        // ========================================
+        
+        // STEP 4: Generate JWT Tokens (Access + Refresh)
+        
         // Using centralized JWT utility (created by M5 - Day 3)
-        // This generates a signed token containing user id, email, and role
-        const token = generateToken({
+        // Access token: short-lived, used for API authorization
+        // Refresh token: long-lived, used to obtain new access tokens
+        // Updated by: M5 (Inthusha) - Day 4 (Refresh Token Logic)
+        const tokenPayload = {
             id: user.id,
             email: user.email,
             role: user.role
-        });
+        };
 
-        // Return user data (without password) and token
+        const token = generateToken(tokenPayload);
+        const refreshToken = generateRefreshToken(tokenPayload);
+
+        // Return user data (without password), access token, and refresh token
         res.status(200).json({
             success: true,
             message: 'Login successful',
             token,
+            refreshToken,
             user: {
                 id: user.id,
                 name: user.name,
@@ -252,11 +257,11 @@ export const login = async (req, res) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Forgot Password
-// ============================================================================
+
 // REQUEST BODY: { "email": "john@example.com" }
-// ============================================================================
+
 import crypto from 'crypto';
 import { sendResetEmail } from '../utils/emailService.js';
 
@@ -308,11 +313,11 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Reset Password
-// ============================================================================
+
 // REQUEST BODY: { "email": "...", "token": "...", "newPassword": "..." }
-// ============================================================================
+
 export const resetPassword = async (req, res) => {
     try {
         const { email, token, newPassword } = req.body;
@@ -352,15 +357,112 @@ export const resetPassword = async (req, res) => {
     }
 };
 
+
+// FUNCTION: Refresh Access Token
+
+// Accepts a valid refresh token and returns a new access token
+// This allows users to stay logged in without re-entering credentials
+// Created by: M5 (Inthusha) - Day 4
+//
+// REQUEST BODY:
+// {
+//   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+// }
+//
+// RESPONSE:
+// {
+//   "success": true,
+//   "message": "Token refreshed successfully",
+//   "token": "<new access token>"
+// }
 // ============================================================================
+export const refreshTokenHandler = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        // ========================================
+        // STEP 1: Validate Input
+        // ========================================
+        if (!refreshToken) {
+            return res.status(400).json({
+                success: false,
+                message: 'Refresh token is required'
+            });
+        }
+
+        
+        // STEP 2: Verify Refresh Token
+        
+        // This will throw an error if the token is expired or invalid
+        let decoded;
+        try {
+            decoded = verifyRefreshToken(refreshToken);
+        } catch (error) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid or expired refresh token',
+                error: error.message
+            });
+        }
+
+        
+        // STEP 3: Verify User Still Exists and Is Active
+        
+        const { rows: users } = await pool.query(
+            'SELECT id, name, email, role, is_active FROM users WHERE id = $1',
+            [decoded.id]
+        );
+
+        if (users.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: 'User no longer exists'
+            });
+        }
+
+        const user = users[0];
+
+        if (!user.is_active) {
+            return res.status(401).json({
+                success: false,
+                message: 'Account is deactivated'
+            });
+        }
+
+        
+        // STEP 4: Generate New Access Token
+        
+        const newAccessToken = generateToken({
+            id: user.id,
+            email: user.email,
+            role: user.role
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Token refreshed successfully',
+            token: newAccessToken
+        });
+
+    } catch (error) {
+        console.error('Refresh token error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error refreshing token',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+
 // FUNCTION: Get User Profile
-// ============================================================================
+
 // Returns current authenticated user's profile information
 // Created by: M2 (Chandeepa) & M4 (Oneli) - Day 4
 // 
 // REQUIRES: protect middleware (sets req.user)
 // RESPONSE: { success, user: { id, name, email, role, phone, is_active, created_at } }
-// ============================================================================
+
 export const getProfile = async (req, res) => {
     try {
         // req.user is set by protect middleware
