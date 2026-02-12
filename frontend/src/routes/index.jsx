@@ -12,6 +12,7 @@ import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Profile';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
