@@ -10,7 +10,7 @@
 │                                                                    │
 │   EVERY MEMBER = FULL-STACK DEVELOPER                              │
 │                                                                    │
-│   Morning   →  Backend Tasks (Node.js + Express + MySQL)           │
+│   Morning   →  Backend Tasks (Node.js + Express + PostgreSQL)      │
 │   Afternoon →  Frontend Tasks (React + TailwindCSS)                │
 │   Evening   →  Integration + Testing + Bug Fixes                   │
 │                                                                    │
@@ -55,7 +55,7 @@
 |--------|--------------|---------------|------------------|
 | **M1** | Create GitHub repo + branch rules | Initialize React + Vite project | Verify FE runs |
 | **M2** | Initialize Express server | Setup React Router (routes file) | Verify BE runs |
-| **M3** | Setup MySQL connection | Setup TailwindCSS + config | Test DB connection |
+| **M3** | Setup PostgreSQL connection (Neon) | Setup TailwindCSS + config | Test DB connection |
 | **M4** | Create `users` table | Create `Button` component | Test component |
 | **M5** | Create `surgeries` table | Create `Input` component | Test component |
 | **M6** | Create `theatres` table | Create `Card` component | Setup CI/CD |
@@ -64,7 +64,7 @@
 - [ ] GitHub repo with branch protection ✓
 - [ ] React app running on localhost:5173 ✓
 - [ ] Express server running on localhost:5000 ✓
-- [ ] MySQL database created with 3 tables ✓
+- [ ] PostgreSQL database (Neon Cloud) created with 3 tables ✓
 - [ ] 3 base UI components ready ✓
 
 ---
@@ -496,7 +496,7 @@
 | Member | Backend Task | Frontend Task | Integration Task |
 |--------|--------------|---------------|------------------|
 | **M1** | RBAC audit (all routes) | Protected routes audit | Test access |
-| **M2** | SQL injection prevention | XSS prevention | Security test |
+| **M2** | SQL injection prevention (parameterized queries) | XSS prevention | Security test |
 | **M3** | Input sanitization | Form sanitization | Test inputs |
 | **M4** | Rate limiting setup | Error messages (no leak) | Test rate limit |
 | **M5** | CORS configuration | Secure token storage | Test CORS |
@@ -535,7 +535,7 @@
 | Member | Backend Task | Frontend Task | DevOps Task |
 |--------|--------------|---------------|-------------|
 | **M1** | Environment variables | Build frontend | Setup staging server |
-| **M2** | Production DB config | Test build | Deploy backend |
+| **M2** | Production PostgreSQL config | Test build | Deploy backend |
 | **M3** | Seed staging data | Test production build | Deploy frontend |
 | **M4** | Migration scripts | Fix build errors | Test staging |
 | **M5** | Logging setup | Fix any issues | Monitor staging |
@@ -562,7 +562,7 @@
 |--------|---------|-----------|---------|
 | **M1** | Production server setup | DEPLOY BACKEND | Monitor + celebrate 🎉 |
 | **M2** | Final build | DEPLOY FRONTEND | Monitor + celebrate 🎉 |
-| **M3** | Production DB setup | Verify deployment | Monitor + celebrate 🎉 |
+| **M3** | Production PostgreSQL setup | Verify deployment | Monitor + celebrate 🎉 |
 | **M4** | DNS/Domain setup | Test production | Monitor + celebrate 🎉 |
 | **M5** | SSL certificate | Test production | Monitor + celebrate 🎉 |
 | **M6** | Deployment checklist | Final verification | LAUNCH PARTY! 🎉 |
@@ -575,7 +575,7 @@ By the end of 30 days, **EVERY member** will have hands-on experience with:
 
 ### Backend Skills
 - [ ] Node.js + Express setup
-- [ ] MySQL database design
+- [ ] PostgreSQL database design (Neon Cloud)
 - [ ] REST API development
 - [ ] JWT authentication
 - [ ] RBAC middleware

@@ -8,9 +8,11 @@ import RegisterForm from '../components/auth/RegisterForm';
 import Login from '../pages/Login';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
+
 import Profile from '../pages/Profile';
-import ProtectedRoute from '../components/ProtectedRoute';
+
 import RoleBasedRoute from '../components/RoleBasedRoute';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
@@ -54,7 +56,7 @@ const AppRoutes = () => {
             <Route path="/datepicker-test" element={<DatePickerTest />} /> {/* M3 Day 2 */}
             <Route path="/layout-demo" element={<LayoutDemo />} /> {/* M6 Day 2 */}
 
-            {/* Protected Routes - Require Authentication */}
+            {/* Protected Routes */}
             <Route path="/dashboard" element={
                 <ProtectedRoute>
                     <Dashboard />

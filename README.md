@@ -84,7 +84,7 @@ npm start            # Start production server
 
 ### Backend
 - Node.js + Express 4.18.2
-- MySQL2 3.6.5
+- PostgreSQL (pg) 8.13.1
 - JWT Authentication
 - bcryptjs for password hashing
 - CORS enabled

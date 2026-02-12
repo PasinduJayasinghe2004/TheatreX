@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { promisePool } from './config/database.js';
+import { pool } from './config/database.js';
 
 // Create a test user for login testing
 const createTestUser = async () => {
@@ -7,13 +7,14 @@ const createTestUser = async () => {
         // Hash password
         const hashedPassword = await bcrypt.hash('password123', 10);
 
-        // Insert test user
-        const [result] = await promisePool.query(
+        // Insert test user (PostgreSQL ON CONFLICT syntax)
+        const { rows } = await pool.query(
             `INSERT INTO users (name, email, password, role, phone) 
-             VALUES (?, ?, ?, ?, ?)
-             ON DUPLICATE KEY UPDATE 
-             password = VALUES(password),
-             name = VALUES(name)`,
+             VALUES ($1, $2, $3, $4, $5)
+             ON CONFLICT (email) DO UPDATE SET
+             password = EXCLUDED.password,
+             name = EXCLUDED.name
+             RETURNING id`,
             [
                 'Test User',
                 'test@example.com',

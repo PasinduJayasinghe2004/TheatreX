@@ -5,10 +5,10 @@
  * Contains CRUD operations for user management.
  * 
  * @module controllers/userController
- * @requires config/database - MySQL connection pool
+ * @requires config/database - PostgreSQL connection pool
  */
 
-import { promisePool } from '../config/database.js';
+import { pool } from '../config/database.js';
 import { hashPassword } from '../utils/hashPassword.js';
 
 /**
@@ -32,7 +32,7 @@ export const getAllUsers = async (req, res) => {
     try {
         // Query database for all users
         // Note: Password field is excluded for security
-        const [rows] = await promisePool.query(
+        const { rows } = await pool.query(
             'SELECT id, name, email, role, phone, is_active, created_at FROM users'
         );
 
@@ -73,9 +73,9 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try {
         // Query database for user with specific ID
-        // Using parameterized query to prevent SQL injection
-        const [rows] = await promisePool.query(
-            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = ?',
+        // Using parameterized query ($1) to prevent SQL injection
+        const { rows } = await pool.query(
+            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = $1',
             [req.params.id]
         );
 
@@ -135,8 +135,8 @@ export const createUser = async (req, res) => {
         }
 
         // Check if email already exists
-        const [existingUsers] = await promisePool.query(
-            'SELECT id FROM users WHERE email = ?',
+        const { rows: existingUsers } = await pool.query(
+            'SELECT id FROM users WHERE email = $1',
             [email]
         );
 
@@ -150,16 +150,16 @@ export const createUser = async (req, res) => {
         // Hash password
         const hashedPassword = await hashPassword(password);
 
-        // Insert user into database
-        const [result] = await promisePool.query(
-            'INSERT INTO users (name, email, password, role, phone) VALUES (?, ?, ?, ?, ?)',
+        // Insert user into database using RETURNING to get the new id
+        const { rows: insertResult } = await pool.query(
+            'INSERT INTO users (name, email, password, role, phone) VALUES ($1, $2, $3, $4, $5) RETURNING id',
             [name, email, hashedPassword, role || 'coordinator', phone || null]
         );
 
         // Get the created user (without password)
-        const [newUser] = await promisePool.query(
-            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = ?',
-            [result.insertId]
+        const { rows: newUser } = await pool.query(
+            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = $1',
+            [insertResult[0].id]
         );
 
         res.status(201).json({

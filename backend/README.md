@@ -6,7 +6,7 @@ Operating Theatre Management System - Backend Server
 
 ### Prerequisites
 - Node.js (v18 or higher)
-- MySQL Database (Aiven Cloud configured)
+- PostgreSQL Database (Neon Cloud configured)
 
 ### Installation
 
@@ -17,7 +17,7 @@ npm install
 
 2. Configure environment variables:
    - Copy `.env.example` to `.env`
-   - Update with your database credentials (already configured for Aiven)
+   - Update with your database connection string (already configured for Neon)
 
 3. Start development server:
 ```bash
@@ -65,8 +65,8 @@ npm start
 
 - **Runtime:** Node.js
 - **Framework:** Express.js
-- **Database:** MySQL (Aiven Cloud)
-- **ORM:** mysql2 (Promise-based)
+- **Database:** PostgreSQL (Neon Cloud)
+- **Driver:** pg (Promise-based)
 - **Security:** bcryptjs, jsonwebtoken (for future auth)
 - **Environment:** dotenv
 - **CORS:** cors
@@ -76,7 +76,7 @@ npm start
 ```
 backend/
 ├── config/
-│   └── database.js          # MySQL connection configuration
+│   └── database.js          # PostgreSQL connection configuration
 ├── controllers/
 │   └── userController.js    # User business logic
 ├── models/
@@ -96,19 +96,14 @@ backend/
 ```env
 PORT=5000
 NODE_ENV=development
-DB_HOST=your-database-host
-DB_PORT=26057
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_NAME=defaultdb
-DB_SSL=true
+DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 JWT_SECRET=your-secret-key
 JWT_EXPIRE=7d
 ```
 
 ## 👥 Team Members
 
-- **M1:** GitHub setup, Express server, MySQL config, users table
+- **M1:** GitHub setup, Express server, PostgreSQL config, users table
 - **M2:** Surgeries table (Day 1)
 - **M3:** Theatres table (Day 1)
 - **M4:** Patients table (Day 1)
@@ -118,7 +113,7 @@ JWT_EXPIRE=7d
 ## 📝 Development Notes
 
 - Server runs on port 5000
-- Database uses SSL connection (Aiven Cloud)
+- Database uses SSL connection (Neon Cloud)
 - All API responses follow standard format:
   ```json
   {
@@ -131,9 +126,9 @@ JWT_EXPIRE=7d
 ## 🐛 Troubleshooting
 
 ### Database Connection Issues
-- Verify `.env` credentials
+- Verify `.env` has correct `DATABASE_URL`
 - Check SSL configuration
-- Ensure Aiven database is accessible
+- Ensure Neon database is accessible
 
 ### Port Already in Use
 ```bash
