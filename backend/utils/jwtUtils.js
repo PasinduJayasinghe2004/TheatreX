@@ -234,11 +234,128 @@ export const isTokenExpired = (token) => {
 };
 
 // ============================================================================
+// FUNCTION: Generate Refresh Token
+// ============================================================================
+// Creates a long-lived refresh token used to obtain new access tokens
+// without requiring the user to re-enter their credentials.
+//
+// Created by: M5 (Inthusha) - Day 4
+//
+// PARAMETERS:
+// @param {Object} payload - Data to encode in the token
+//   - id: User ID (required)
+//   - email: User email (required)
+//   - role: User role (required)
+//
+// RETURNS:
+// @returns {String} - Signed JWT refresh token
+//
+// ENVIRONMENT VARIABLES USED:
+// - JWT_REFRESH_SECRET: Separate secret for refresh tokens (required)
+// - JWT_REFRESH_EXPIRE: Refresh token expiration time (default: '30d')
+//
+// EXAMPLE:
+// const refreshToken = generateRefreshToken({
+//   id: 1,
+//   email: 'user@example.com',
+//   role: 'coordinator'
+// });
+// ============================================================================
+export const generateRefreshToken = (payload) => {
+    try {
+        // Validate that JWT_REFRESH_SECRET exists
+        if (!process.env.JWT_REFRESH_SECRET) {
+            throw new Error('JWT_REFRESH_SECRET is not defined in environment variables');
+        }
+
+        // Validate payload has required fields
+        if (!payload.id || !payload.email || !payload.role) {
+            throw new Error('Token payload must include id, email, and role');
+        }
+
+        // Generate refresh token with separate secret and longer expiry
+        const refreshToken = jwt.sign(
+            payload,
+            process.env.JWT_REFRESH_SECRET,
+            {
+                expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d'
+            }
+        );
+
+        return refreshToken;
+
+    } catch (error) {
+        console.error('Error generating refresh token:', error.message);
+        throw error;
+    }
+};
+
+// ============================================================================
+// FUNCTION: Verify Refresh Token
+// ============================================================================
+// Verifies a refresh token's signature and decodes the payload.
+// Uses the separate JWT_REFRESH_SECRET to ensure refresh tokens
+// cannot be used as access tokens and vice versa.
+//
+// Created by: M5 (Inthusha) - Day 4
+//
+// PARAMETERS:
+// @param {String} token - Refresh token to verify
+//
+// RETURNS:
+// @returns {Object} - Decoded token payload containing user data
+//
+// THROWS:
+// - Error if token is expired, invalid, or JWT_REFRESH_SECRET is missing
+//
+// EXAMPLE:
+// try {
+//   const decoded = verifyRefreshToken(refreshToken);
+//   // Generate a new access token using decoded.id, decoded.email, decoded.role
+// } catch (error) {
+//   console.error('Refresh token invalid:', error.message);
+// }
+// ============================================================================
+export const verifyRefreshToken = (token) => {
+    try {
+        // Validate that JWT_REFRESH_SECRET exists
+        if (!process.env.JWT_REFRESH_SECRET) {
+            throw new Error('JWT_REFRESH_SECRET is not defined in environment variables');
+        }
+
+        // Validate token is provided
+        if (!token) {
+            throw new Error('No refresh token provided');
+        }
+
+        // Verify and decode the refresh token
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+        return decoded;
+
+    } catch (error) {
+        // Handle specific JWT errors
+        if (error.name === 'TokenExpiredError') {
+            throw new Error('Refresh token has expired');
+        } else if (error.name === 'JsonWebTokenError') {
+            throw new Error('Invalid refresh token');
+        } else if (error.name === 'NotBeforeError') {
+            throw new Error('Refresh token not yet valid');
+        }
+
+        // Re-throw other errors
+        throw error;
+    }
+};
+
+// ============================================================================
 // Export all functions as default object (alternative import style)
 // ============================================================================
 export default {
     generateToken,
     verifyToken,
     decodeToken,
-    isTokenExpired
+    isTokenExpired,
+    generateRefreshToken,
+    verifyRefreshToken
 };

@@ -5,16 +5,18 @@
 // Created by: M1 (Pasindu) - Day 3 (Register) & M4 (Oneli) - Day 3 (Login)
 // Updated by: M3 - Day 3 (Validation Middleware)
 // Updated by: M2 (Chandeepa) & M4 (Oneli) - Day 4 (Profile endpoints)
+// Updated by: M5 (Inthusha) - Day 4 (Refresh token endpoint)
 //
 // ROUTES:
 // - POST /api/auth/register - User registration (with validation)
 // - POST /api/auth/login - User login (with validation)
+// - POST /api/auth/refresh - Refresh access token
 // - GET /api/auth/profile - Get user profile (protected)
 // - PUT /api/auth/profile - Update user profile (protected)
 // ============================================================================
 
 import express from 'express';
-import { register, login, getProfile, updateProfile, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { register, login, getProfile, updateProfile, forgotPassword, resetPassword, refreshTokenHandler } from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../middleware/validateUser.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -37,9 +39,19 @@ router.post('/register', validateRegister, register);
 // Handles user login
 // Middleware: validateLogin (validates email, password)
 // Expects: { email, password }
-// Returns: { success, message, token, user }
+// Returns: { success, message, token, refreshToken, user }
 // ============================================================================
 router.post('/login', validateLogin, login);
+
+// ============================================================================
+// ROUTE: POST /api/auth/refresh
+// ============================================================================
+// Refreshes the access token using a valid refresh token
+// Created by: M5 (Inthusha) - Day 4
+// Expects: { refreshToken }
+// Returns: { success, message, token }
+// ============================================================================
+router.post('/refresh', refreshTokenHandler);
 
 // ============================================================================
 // ROUTE: GET /api/auth/profile
@@ -74,3 +86,4 @@ router.post('/reset-password', resetPassword);
 
 // Export the router to be used in server.js
 export default router;
+

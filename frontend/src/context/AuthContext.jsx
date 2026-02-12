@@ -4,6 +4,7 @@
 // ============================================================================
 // This file provides global authentication state management using React Context
 // Created by: M5 (Inthusha) - Day 3
+// Updated by: M5 (Inthusha) - Day 4 (Refresh token support)
 // 
 // PURPOSE:
 // - Manage authentication state across the entire application
@@ -137,6 +138,9 @@ export const AuthProvider = ({ children }) => {
                 setToken(response.token);
 
                 console.log('✅ Login successful:', response.user.email);
+                if (response.refreshToken) {
+                    console.log('✅ Refresh token stored');
+                }
 
                 return response;
             } else {
