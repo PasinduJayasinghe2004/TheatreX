@@ -1,6 +1,6 @@
-// ============================================================================
+
 // JWT Utilities
-// ============================================================================
+
 // This file contains reusable JWT (JSON Web Token) utility functions
 // Created by: M5 (Inthusha) - Day 3
 // 
@@ -13,13 +13,13 @@
 // - generateToken(payload) - Create a new JWT token
 // - verifyToken(token) - Verify and decode a JWT token
 // - decodeToken(token) - Decode token without verification (for debugging)
-// ============================================================================
+
 
 import jwt from 'jsonwebtoken';
 
-// ============================================================================
+
 // FUNCTION: Generate JWT Token
-// ============================================================================
+
 // Creates a signed JWT token with the provided payload
 //
 // PARAMETERS:
@@ -42,7 +42,7 @@ import jwt from 'jsonwebtoken';
 // ENVIRONMENT VARIABLES USED:
 // - JWT_SECRET: Secret key for signing tokens (required)
 // - JWT_EXPIRE: Token expiration time (default: '7d')
-// ============================================================================
+
 export const generateToken = (payload) => {
     try {
         // Validate that JWT_SECRET exists
@@ -78,9 +78,9 @@ export const generateToken = (payload) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Verify JWT Token
-// ============================================================================
+
 // Verifies the token signature and decodes the payload
 //
 // PARAMETERS:
@@ -107,7 +107,7 @@ export const generateToken = (payload) => {
 // } catch (error) {
 //   console.error('Invalid token:', error.message);
 // }
-// ============================================================================
+
 export const verifyToken = (token) => {
     try {
         // Validate that JWT_SECRET exists
@@ -144,9 +144,9 @@ export const verifyToken = (token) => {
     }
 };
 
-// ============================================================================
+
 // FUNCTION: Decode JWT Token (Without Verification)
-// ============================================================================
+
 // Decodes a JWT token WITHOUT verifying its signature
 //
 // ⚠️ WARNING: This function does NOT verify the token's authenticity!
@@ -171,7 +171,7 @@ export const verifyToken = (token) => {
 // - Debugging token contents
 // - Checking token expiration without verification
 // - Inspecting token structure
-// ============================================================================
+
 export const decodeToken = (token) => {
     try {
         // Validate token is provided
@@ -198,9 +198,9 @@ export const decodeToken = (token) => {
     }
 };
 
-// ============================================================================
+
 // HELPER FUNCTION: Check if Token is Expired
-// ============================================================================
+
 // Checks if a token has expired without verifying signature
 //
 // PARAMETERS:
@@ -213,7 +213,7 @@ export const decodeToken = (token) => {
 // if (isTokenExpired(token)) {
 //   console.log('Token has expired, please login again');
 // }
-// ============================================================================
+
 export const isTokenExpired = (token) => {
     try {
         const decoded = decodeToken(token);
@@ -254,12 +254,7 @@ export const isTokenExpired = (token) => {
 // - JWT_REFRESH_SECRET: Separate secret for refresh tokens (required)
 // - JWT_REFRESH_EXPIRE: Refresh token expiration time (default: '30d')
 //
-// EXAMPLE:
-// const refreshToken = generateRefreshToken({
-//   id: 1,
-//   email: 'user@example.com',
-//   role: 'coordinator'
-// });
+// 
 // ============================================================================
 export const generateRefreshToken = (payload) => {
     try {

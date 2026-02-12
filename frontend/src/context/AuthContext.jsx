@@ -1,10 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-// ============================================================================
+
 // Authentication Context
-// ============================================================================
+
 // This file provides global authentication state management using React Context
 // Created by: M5 (Inthusha) - Day 3
-// Updated by: M5 (Inthusha) - Day 4 (Refresh token support)
+// Updated by: M5 (Inthusha) - Day 4 
 // 
 // PURPOSE:
 // - Manage authentication state across the entire application
@@ -157,9 +157,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // ========================================
+   
     // FUNCTION: Logout User
-    // ========================================
     // Clears authentication state and localStorage
     // Redirects user to login page (optional)
     //
@@ -183,18 +182,18 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // ========================================
+   
     // EFFECT: Check Auth on Mount
-    // ========================================
+    
     // Runs once when component mounts
     // Restores user session if valid token exists
     useEffect(() => {
         checkAuth();
     }, []); // Empty dependency array = run once on mount
 
-    // ========================================
+    
     // CONTEXT VALUE
-    // ========================================
+    
     // This object is provided to all consuming components
     // Contains all state and functions needed for authentication
     const contextValue = {
@@ -210,9 +209,9 @@ export const AuthProvider = ({ children }) => {
         checkAuth          // Manual auth check function (rarely needed)
     };
 
-    // ========================================
+   
     // RENDER PROVIDER
-    // ========================================
+    
     // Wrap children with Context Provider
     // All child components can now access auth state via useAuth()
     return (
@@ -222,9 +221,9 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-// ============================================================================
+
 // CUSTOM HOOK: useAuth
-// ============================================================================
+
 // Provides easy access to authentication context
 // Must be used within AuthProvider
 //
@@ -256,7 +255,7 @@ export const AuthProvider = ({ children }) => {
 //     </div>
 //   );
 // };
-// ============================================================================
+
 export const useAuth = () => {
     // Get context value
     const context = useContext(AuthContext);
@@ -272,9 +271,8 @@ export const useAuth = () => {
     return context;
 };
 
-// ============================================================================
 // Export Context (for advanced use cases)
-// ============================================================================
+
 // Typically you should use useAuth() hook instead
 // This is exported for testing or advanced scenarios
 export default AuthContext;
