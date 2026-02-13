@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "theatrex-auth-collection",
-		"name": "TheatreX - Authentication API Tests",
-		"description": "Comprehensive test collection for TheatreX authentication endpoints (Day 3)",
+		"name": "TheatreX - Authentication API Tests (Day 3 & 4)",
+		"description": "Comprehensive test collection for TheatreX authentication endpoints, including RBAC and Profile management (Day 3 & 4)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -475,6 +475,143 @@
 				}
 			],
 			"description": "Authentication endpoint tests for registration and login"
+		},
+		{
+			"name": "Profile & RBAC",
+			"item": [
+				{
+					"name": "Get Profile - Authorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response contains profile data', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"    pm.expect(jsonData.data).to.have.property('email');",
+									"    pm.expect(jsonData.data.email).to.eql('testuser@example.com');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Get user profile with valid token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile - Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Attempt to get profile without token"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response shows updated name', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.name).to.eql('Updated Name');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Name\",\r\n    \"phone\": \"0779876543\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Test profile update functionality"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for Profile access and RBAC"
 		},
 		{
 			"name": "Health Check",
