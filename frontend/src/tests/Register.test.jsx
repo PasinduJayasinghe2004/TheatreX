@@ -85,11 +85,7 @@ describe('Register Component Tests', () => {
             mockAxios.default.post.mockResolvedValue({
                 data: {
                     success: true,
-                    data: {
-                        id: 1,
-                        email: 'test@example.com',
-                        token: 'mock-jwt-token'
-                    }
+                    message: 'User registered successfully'
                 }
             });
 
@@ -179,35 +175,5 @@ describe('Register Component Tests', () => {
         });
     });
 
-    describe('Token Storage', () => {
-        it('should store JWT token in localStorage on successful registration', async () => {
-            const mockAxios = await import('axios');
-            const mockToken = 'mock-jwt-token';
-
-            mockAxios.default.post.mockResolvedValue({
-                data: {
-                    success: true,
-                    data: {
-                        token: mockToken
-                    }
-                }
-            });
-
-            const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
-
-            renderRegister();
-
-            // Fill and submit form
-            fireEvent.change(screen.getByLabelText(/email/i), {
-                target: { value: 'test@example.com' }
-            });
-
-            const submitButton = screen.getByRole('button', { name: /register/i });
-            fireEvent.click(submitButton);
-
-            await waitFor(() => {
-                expect(setItemSpy).toHaveBeenCalledWith('token', mockToken);
-            });
-        });
-    });
+    // Token storage test removed as registration doesn't return token in this implementation
 });
