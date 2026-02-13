@@ -1,0 +1,70 @@
+// ============================================================================
+// Surgery Validation Middleware
+// ============================================================================
+// Created by: M4 (Oneli) - Day 5
+// 
+// Validates incoming surgery data before processing
+// Ensures data integrity and correct types
+// ============================================================================
+
+export const validateSurgery = (req, res, next) => {
+    const {
+        surgery_type,
+        scheduled_date,
+        scheduled_time,
+        duration_minutes,
+        status,
+        priority,
+        patient_id,
+        patient_name,
+        patient_age,
+        patient_gender
+    } = req.body;
+
+    const errors = [];
+
+    // 1. Required Core Fields
+    if (!surgery_type) errors.push('Surgery type is required');
+    if (!scheduled_date) errors.push('Scheduled date is required');
+    if (!scheduled_time) errors.push('Scheduled time is required');
+    if (!duration_minutes) errors.push('Duration is required');
+
+    // 2. Patient Validation (Either ID or Manual Details)
+    if (!patient_id) {
+        // If no ID, require manual details
+        if (!patient_name) errors.push('Patient name is required (if no ID provided)');
+        if (!patient_age) errors.push('Patient age is required (if no ID provided)');
+        if (!patient_gender) errors.push('Patient gender is required (if no ID provided)');
+    }
+
+    // 3. Enum Validation
+    const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
+    if (status && !validStatuses.includes(status)) {
+        errors.push(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+    }
+
+    const validPriorities = ['routine', 'urgent', 'emergency'];
+    if (priority && !validPriorities.includes(priority)) {
+        errors.push(`Invalid priority. Must be one of: ${validPriorities.join(', ')}`);
+    }
+
+    // 4. Data Type Validation
+    if (duration_minutes && isNaN(duration_minutes)) {
+        errors.push('Duration must be a number');
+    }
+
+    if (patient_age && isNaN(patient_age)) {
+        errors.push('Patient age must be a number');
+    }
+
+    // Return errors if any
+    if (errors.length > 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Validation failed',
+            errors
+        });
+    }
+
+    next();
+};

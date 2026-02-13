@@ -1,6 +1,6 @@
-// ============================================================================
+
 // Role-Based Route Component
-// ============================================================================
+
 // Created by: M4 (Oneli) - Day 4
 // 
 // Wraps routes that require specific user roles
@@ -14,7 +14,7 @@
 //     <AdminPanel />
 //   </RoleBasedRoute>
 // } />
-// ============================================================================
+
 
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
