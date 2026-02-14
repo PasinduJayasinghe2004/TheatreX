@@ -2,9 +2,23 @@ import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend only if API key is available
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+} else {
+    console.warn('⚠️  RESEND_API_KEY not set - email functionality will be disabled');
+}
 
 export const sendResetEmail = async (email, resetToken) => {
+    // Check if Resend is configured
+    if (!resend) {
+        console.warn('Email service not configured. Skipping email send.');
+        console.log(`[DEV MODE] Reset link would be sent to: ${email}`);
+        console.log(`[DEV MODE] Reset token: ${resetToken}`);
+        return { success: true, message: 'Email skipped - no API key configured' };
+    }
+
     // Reset Link (assuming frontend runs on port 5173/5174/5175... verify this dynamically or use env var)
     // For now hardcoding to localhost:5173 as base, user can adjust
     // Ideally this base URL should be in .env as well (e.g., CLIENT_URL)

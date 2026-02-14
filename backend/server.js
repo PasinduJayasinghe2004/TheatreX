@@ -24,6 +24,7 @@ import { createTechniciansTable } from './models/technicianModel.js';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
+import surgeryRoutes from './routes/surgeryRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -46,6 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes); // RBAC test routes - M4 Day 4
+app.use('/api/surgeries', surgeryRoutes); // Surgery routes - M1 Day 5
 
 // Health check route
 app.get('/api/health', (req, res) => {
