@@ -124,19 +124,55 @@ export const createSurgery = async (req, res) => {
 };
 
 // ============================================================================
-// GET ALL SURGERIES (Placeholder for M2)
+// GET ALL SURGERIES
+// ============================================================================
+// @desc    Get all surgeries with surgeon details
+// @route   GET /api/surgeries
+// @access  Protected
+// Updated by: M2 (Chandeepa) - Day 5 (Added surgeon JOIN)
 // ============================================================================
 export const getAllSurgeries = async (req, res) => {
     try {
         const { rows } = await pool.query(`
-            SELECT * FROM surgeries 
-            ORDER BY scheduled_date ASC, scheduled_time ASC
+            SELECT 
+                s.*,
+                u.name as surgeon_name,
+                u.email as surgeon_email
+            FROM surgeries s
+            LEFT JOIN users u ON s.surgeon_id = u.id
+            ORDER BY s.scheduled_date ASC, s.scheduled_time ASC
         `);
+
+        // Transform the flat result into nested structure
+        const surgeries = rows.map(row => ({
+            id: row.id,
+            patient_id: row.patient_id,
+            patient_name: row.patient_name,
+            patient_age: row.patient_age,
+            patient_gender: row.patient_gender,
+            surgery_type: row.surgery_type,
+            description: row.description,
+            scheduled_date: row.scheduled_date,
+            scheduled_time: row.scheduled_time,
+            duration_minutes: row.duration_minutes,
+            theatre_id: row.theatre_id,
+            surgeon_id: row.surgeon_id,
+            surgeon: row.surgeon_id ? {
+                id: row.surgeon_id,
+                name: row.surgeon_name,
+                email: row.surgeon_email
+            } : null,
+            status: row.status,
+            priority: row.priority,
+            notes: row.notes,
+            created_at: row.created_at,
+            updated_at: row.updated_at
+        }));
 
         res.status(200).json({
             success: true,
-            count: rows.length,
-            data: rows
+            count: surgeries.length,
+            data: surgeries
         });
     } catch (error) {
         console.error('Error fetching surgeries:', error);
