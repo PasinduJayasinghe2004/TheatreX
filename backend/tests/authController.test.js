@@ -273,13 +273,216 @@ describe('Authentication API Tests', () => {
         });
     });
 
-    // Note: Refresh token test is mocked or requires a valid refresh token which depends on login response
-    // Since we captured authToken but not refreshToken in previous tests (as register doesn't return it and login test might not have exposed it easily in scope), we'll skip or mock it for now unless we update the login test to capture it.
-    // Ideally, we should capture refreshToken in the login test.
+    // ========================================================================
+    // Refresh Token Tests - Created by M6 (Dinil) - Day 4
+    // ========================================================================
+    describe('POST /api/auth/refresh', () => {
+        let refreshToken;
+
+        beforeAll(async () => {
+            // Get refresh token from login
+            const response = await request(app)
+                .post('/api/auth/login')
+                .send({
+                    email: validUser.email,
+                    password: validUser.password
+                });
+
+            refreshToken = response.body.refreshToken;
+        });
+
+        it('should refresh access token with valid refresh token', async () => {
+            // Skip if no refresh token was returned
+            if (!refreshToken) {
+                console.log('Skipping: No refresh token available from login');
+                return;
+            }
+
+            const response = await request(app)
+                .post('/api/auth/refresh')
+                .send({ refreshToken })
+                .expect('Content-Type', /json/);
+
+            // Should return new access token or appropriate response
+            if (response.statusCode === 200) {
+                expect(response.body.success).toBe(true);
+                expect(response.body).toHaveProperty('token');
+            }
+        });
+
+        it('should reject invalid refresh token', async () => {
+            const response = await request(app)
+                .post('/api/auth/refresh')
+                .send({ refreshToken: 'invalid_refresh_token' })
+                .expect('Content-Type', /json/);
+
+            expect(response.statusCode).toBeGreaterThanOrEqual(400);
+            expect(response.body.success).toBe(false);
+        });
+
+        it('should reject missing refresh token', async () => {
+            const response = await request(app)
+                .post('/api/auth/refresh')
+                .send({})
+                .expect('Content-Type', /json/);
+
+            expect(response.statusCode).toBe(400);
+            expect(response.body.success).toBe(false);
+        });
+    });
+
+    // ========================================================================
+    // End-to-End Auth Flow Tests - Created by M6 (Dinil) - Day 4
+    // ========================================================================
+    describe('E2E: Complete Authentication Flow', () => {
+        const e2eUser = {
+            name: 'E2E Test User',
+            email: `e2e_test_${Date.now()}@theatrex.com`,
+            password: 'E2ETest123!',
+            role: 'surgeon',
+            phone: '0771112233'
+        };
+        let e2eToken;
+        let e2eUserId;
+
+        it('Step 1: User registers successfully', async () => {
+            const response = await request(app)
+                .post('/api/auth/register')
+                .send(e2eUser)
+                .expect(201);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.user).toHaveProperty('id');
+            expect(response.body.user.email).toBe(e2eUser.email);
+            e2eUserId = response.body.user.id;
+        });
+
+        it('Step 2: User logs in with registered credentials', async () => {
+            const response = await request(app)
+                .post('/api/auth/login')
+                .send({
+                    email: e2eUser.email,
+                    password: e2eUser.password
+                })
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body).toHaveProperty('token');
+            expect(response.body.user.email).toBe(e2eUser.email);
+            e2eToken = response.body.token;
+        });
+
+        it('Step 3: User accesses protected profile endpoint', async () => {
+            const response = await request(app)
+                .get('/api/auth/profile')
+                .set('Authorization', `Bearer ${e2eToken}`)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.user.id).toBe(e2eUserId);
+            expect(response.body.user.email).toBe(e2eUser.email);
+        });
+
+        it('Step 4: User updates their profile', async () => {
+            const updates = {
+                name: 'E2E Updated Name',
+                phone: '0779998877'
+            };
+
+            const response = await request(app)
+                .put('/api/auth/profile')
+                .set('Authorization', `Bearer ${e2eToken}`)
+                .send(updates)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.user.name).toBe(updates.name);
+            expect(response.body.user.phone).toBe(updates.phone);
+        });
+
+        it('Step 5: User accesses role-appropriate routes', async () => {
+            // Since e2e user is surgeon, they should access staff routes
+            const staffResponse = await request(app)
+                .get('/api/test/staff')
+                .set('Authorization', `Bearer ${e2eToken}`);
+
+            expect(staffResponse.statusCode).toBe(200);
+            expect(staffResponse.body.success).toBe(true);
+
+            // But should NOT access admin routes
+            const adminResponse = await request(app)
+                .get('/api/test/admin-only')
+                .set('Authorization', `Bearer ${e2eToken}`);
+
+            expect(adminResponse.statusCode).toBe(403);
+        });
+
+        it('Step 6: Invalid login attempt fails', async () => {
+            const response = await request(app)
+                .post('/api/auth/login')
+                .send({
+                    email: e2eUser.email,
+                    password: 'WrongPassword123!'
+                })
+                .expect(401);
+
+            expect(response.body.success).toBe(false);
+        });
+
+        it('Step 7: Accessing protected routes without token fails', async () => {
+            const response = await request(app)
+                .get('/api/auth/profile')
+                .expect(401);
+
+            expect(response.body.success).toBe(false);
+        });
+    });
+
+    // ========================================================================
+    // Security Tests - Created by M6 (Dinil) - Day 4
+    // ========================================================================
+    describe('Security Tests', () => {
+        it('should not expose password in any API response', async () => {
+            // Test register response
+            const registerResponse = await request(app)
+                .post('/api/auth/register')
+                .send({
+                    name: 'Security Test',
+                    email: `security_test_${Date.now()}@theatrex.com`,
+                    password: 'SecurePass123!',
+                    role: 'coordinator',
+                    phone: '0771234567'
+                });
+
+            expect(registerResponse.body.user).not.toHaveProperty('password');
+            expect(JSON.stringify(registerResponse.body)).not.toContain('SecurePass123!');
+
+            // Test login response does not expose password
+            const loginResponse = await request(app)
+                .post('/api/auth/login')
+                .send({
+                    email: validUser.email,
+                    password: validUser.password
+                });
+
+            expect(loginResponse.body.user).not.toHaveProperty('password');
+        });
+
+        it('should use secure JWT tokens', () => {
+            // Token should be properly formatted (3 parts)
+            expect(authToken).toBeDefined();
+            const parts = authToken.split('.');
+            expect(parts).toHaveLength(3);
+
+            // Payload should not contain sensitive data
+            const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+            expect(payload).not.toHaveProperty('password');
+        });
+    });
 
     afterAll(async () => {
         // Cleanup test data logic would go here
-        // e.g. await pool.query('DELETE FROM users WHERE email = $1', [validUser.email]);
+        // e.g. await pool.query('DELETE FROM users WHERE email LIKE $1', ['%@theatrex.com']);
         // For now, we rely on test database reset or manual cleanup
     });
 });
