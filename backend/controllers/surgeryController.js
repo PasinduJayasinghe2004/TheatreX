@@ -185,14 +185,33 @@ export const getAllSurgeries = async (req, res) => {
 };
 
 // ============================================================================
-// GET SURGERY BY ID (Placeholder for M3)
+// GET SURGERY BY ID
+// ============================================================================
+// @desc    Get a single surgery by ID with surgeon details
+// @route   GET /api/surgeries/:id
+// @access  Protected
+// Created by: M3 (Janani) - Day 5
 // ============================================================================
 export const getSurgeryById = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Validate ID is a positive integer
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgery ID'
+            });
+        }
+
         const { rows } = await pool.query(
-            'SELECT * FROM surgeries WHERE id = $1',
+            `SELECT 
+                s.*,
+                u.name   AS surgeon_name,
+                u.email  AS surgeon_email
+             FROM surgeries s
+             LEFT JOIN users u ON s.surgeon_id = u.id
+             WHERE s.id = $1`,
             [id]
         );
 
@@ -203,9 +222,37 @@ export const getSurgeryById = async (req, res) => {
             });
         }
 
+        const row = rows[0];
+
+        // Transform into a nested structure consistent with getAllSurgeries
+        const surgery = {
+            id: row.id,
+            patient_id: row.patient_id,
+            patient_name: row.patient_name,
+            patient_age: row.patient_age,
+            patient_gender: row.patient_gender,
+            surgery_type: row.surgery_type,
+            description: row.description,
+            scheduled_date: row.scheduled_date,
+            scheduled_time: row.scheduled_time,
+            duration_minutes: row.duration_minutes,
+            theatre_id: row.theatre_id,
+            surgeon_id: row.surgeon_id,
+            surgeon: row.surgeon_id ? {
+                id: row.surgeon_id,
+                name: row.surgeon_name,
+                email: row.surgeon_email
+            } : null,
+            status: row.status,
+            priority: row.priority,
+            notes: row.notes,
+            created_at: row.created_at,
+            updated_at: row.updated_at
+        };
+
         res.status(200).json({
             success: true,
-            data: rows[0]
+            data: surgery
         });
     } catch (error) {
         console.error('Error fetching surgery:', error);

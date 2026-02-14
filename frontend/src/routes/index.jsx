@@ -12,6 +12,7 @@ import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Profile';
 import CreateSurgery from '../pages/CreateSurgery';
 import SurgeryList from '../pages/SurgeryList';
+import SurgeryDetail from '../pages/SurgeryDetail';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -89,6 +90,13 @@ const AppRoutes = () => {
             <Route path="/surgeries" element={
                 <ProtectedRoute>
                     <SurgeryList />
+                </ProtectedRoute>
+            } />
+
+            {/* Surgery Detail - M3 Day 5 */}
+            <Route path="/surgeries/:id" element={
+                <ProtectedRoute>
+                    <SurgeryDetail />
                 </ProtectedRoute>
             } />
 
