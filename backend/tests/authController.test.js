@@ -204,10 +204,82 @@ describe('Authentication API Tests', () => {
         });
     });
 
-    // Cleanup after all tests
+    describe('GET /api/auth/profile', () => {
+        it('should return user profile when authenticated', async () => {
+            const response = await request(app)
+                .get('/api/auth/profile')
+                .set('Authorization', `Bearer ${authToken}`)
+                .expect('Content-Type', /json/)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.user).toHaveProperty('id', testUserId);
+            expect(response.body.user).toHaveProperty('email', validUser.email);
+            expect(response.body.user).not.toHaveProperty('password');
+        });
+
+        it('should reject unauthenticated access', async () => {
+            const response = await request(app)
+                .get('/api/auth/profile')
+                .expect('Content-Type', /json/)
+                .expect(401);
+
+            expect(response.body.success).toBe(false);
+        });
+
+        it('should reject access with invalid token', async () => {
+            const response = await request(app)
+                .get('/api/auth/profile')
+                .set('Authorization', 'Bearer invalidtoken123')
+                .expect('Content-Type', /json/)
+                .expect(401);
+
+            expect(response.body.success).toBe(false);
+        });
+    });
+
+    describe('PUT /api/auth/profile', () => {
+        it('should update user profile successfully', async () => {
+            const updates = {
+                name: 'Updated Name',
+                phone: '0779876543'
+            };
+
+            const response = await request(app)
+                .put('/api/auth/profile')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(updates)
+                .expect('Content-Type', /json/)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.user).toHaveProperty('name', updates.name);
+            expect(response.body.user).toHaveProperty('phone', updates.phone);
+        });
+
+        it('should reject update with invalid data', async () => {
+            const updates = {
+                password: 'short' // Password too short
+            };
+
+            const response = await request(app)
+                .put('/api/auth/profile')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(updates)
+                .expect('Content-Type', /json/)
+                .expect(400);
+
+            expect(response.body.success).toBe(false);
+        });
+    });
+
+    // Note: Refresh token test is mocked or requires a valid refresh token which depends on login response
+    // Since we captured authToken but not refreshToken in previous tests (as register doesn't return it and login test might not have exposed it easily in scope), we'll skip or mock it for now unless we update the login test to capture it.
+    // Ideally, we should capture refreshToken in the login test.
+
     afterAll(async () => {
-        // Clean up test data from database
-        // This would require database access
-        // Placeholder for now
+        // Cleanup test data logic would go here
+        // e.g. await pool.query('DELETE FROM users WHERE email = $1', [validUser.email]);
+        // For now, we rely on test database reset or manual cleanup
     });
 });
