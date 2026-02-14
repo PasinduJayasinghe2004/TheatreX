@@ -56,8 +56,8 @@ export const validateSurgery = (req, res, next) => {
         }
     }
 
-    if (patient_age && isNaN(patient_age)) {
-        errors.push('Patient age must be a number');
+    if (patient_age && (isNaN(patient_age) || patient_age < 0 || patient_age > 150)) {
+        errors.push('Patient age must be a valid number between 0 and 150');
     }
 
     // Return errors if any
