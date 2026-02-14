@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String?  @default("staff") // 'admin', 'doctor', 'nurse', 'staff', 'patient'
+  phone     String?
+  is_active Boolean? @default(true)
+  created_at DateTime @default(now())
+  
+  // Relations
+  surgeries_as_surgeon Surgery[] @relation("SurgeonSurgeries")
+  
+  @@map("users")
+}
+
+model Surgery {
+  id               Int      @id @default(autoincrement())
+  
+  // Patient Information
+  patient_id       Int?
+  patient_name     String?
+  patient_age      Int?
+  patient_gender   String?  // 'male', 'female', 'other'
+  
+  // Surgery Details
+  surgery_type     String
+  description      String?
+  scheduled_date   DateTime @db.Date
+  scheduled_time   DateTime @db.Time
+  duration_minutes Int
+  
+  // Resource Assignment
+  theatre_id       Int?
+  surgeon_id       Int?
+  surgeon          User?    @relation("SurgeonSurgeries", fields: [surgeon_id], references: [id])
+  
+  // Status and Priority
+  status           String   @default("scheduled") // 'scheduled', 'in_progress', 'completed', 'cancelled'
+  priority         String   @default("routine")   // 'routine', 'urgent', 'emergency'
+  
+  // Additional Information
+  notes            String?
+  
+  // Timestamps
+  created_at       DateTime @default(now())
+  updated_at       DateTime @default(now()) @updatedAt
+
+  @@map("surgeries")
+  @@index([scheduled_date])
+  @@index([status])
+  @@index([priority])
+  @@index([theatre_id])
+  @@index([surgeon_id])
+  @@index([patient_id])
+}
+
