@@ -7,9 +7,11 @@
 // Used in the Surgery List view
 
 import React from 'react';
-import { Clock, Calendar, User, Activity } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Calendar, User, Activity, Eye } from 'lucide-react';
 
 const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
+    const navigate = useNavigate();
     // Helper to get status color
     const getStatusColor = (status) => {
         switch (status) {
@@ -95,6 +97,14 @@ const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
                 </span>
 
                 <div className="flex gap-2">
+                    <button
+                        onClick={() => navigate(`/surgeries/${surgery.id}`)}
+                        className="text-sm text-gray-600 hover:text-gray-800 font-medium px-2 py-1 rounded hover:bg-gray-50 transition-colors"
+                        aria-label={`View surgery details for ${surgery.patient_name}`}
+                    >
+                        <Eye className="w-4 h-4 inline mr-1" />
+                        View
+                    </button>
                     <button
                         onClick={() => onEdit(surgery.id)}
                         className="text-sm text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors"
