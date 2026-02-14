@@ -76,7 +76,10 @@ const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
                 </div>
                 <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-2 text-gray-400" />
-                    <span>{formatTime(surgery.scheduled_time)} ({surgery.duration_minutes} min)</span>
+                    <span>
+                        {formatTime(surgery.scheduled_time)}
+                        {surgery.duration_minutes != null ? ` (${surgery.duration_minutes} min)` : ''}
+                    </span>
                 </div>
                 <div className="flex items-center col-span-2">
                     <Activity className="w-4 h-4 mr-2 text-gray-400" />
