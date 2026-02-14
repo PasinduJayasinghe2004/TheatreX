@@ -7,7 +7,7 @@
 // Uses SurgeryCard component created by M4
 // ============================================================================
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, AlertCircle } from 'lucide-react';
 import SurgeryCard from '../components/SurgeryCard';
@@ -130,7 +130,7 @@ const SurgeryList = () => {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-2">No Surgeries Found</h3>
                             <p className="text-gray-600 mb-6">
-                                Get started by creating your first surgery. Click the "Create Surgery" button above.
+                                Get started by creating your first surgery. Click the &quot;Create Surgery&quot; button above.
                             </p>
                             <button
                                 onClick={() => navigate('/surgeries/new')}
