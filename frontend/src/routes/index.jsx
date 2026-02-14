@@ -10,6 +10,7 @@ import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 
 import Profile from '../pages/Profile';
+import CreateSurgery from '../pages/CreateSurgery';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -73,6 +74,13 @@ const AppRoutes = () => {
             <Route path="/admin" element={
                 <RoleBasedRoute allowedRoles={['admin']}>
                     <AdminPanel />
+                </RoleBasedRoute>
+            } />
+
+            {/* Surgery Routes - M1 Day 5 */}
+            <Route path="/surgeries/new" element={
+                <RoleBasedRoute allowedRoles={['coordinator', 'admin']}>
+                    <CreateSurgery />
                 </RoleBasedRoute>
             } />
 
