@@ -29,6 +29,38 @@ export const validateSurgery = (req, res, next) => {
     if (!scheduled_time) errors.push('Scheduled time is required');
     if (!duration_minutes) errors.push('Duration is required');
 
+    // 1a. Date and Time Format & Logical Validation
+    if (scheduled_date) {
+        const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateFormatRegex.test(scheduled_date)) {
+            errors.push('Scheduled date must be in YYYY-MM-DD format');
+        } else {
+            const parsedDate = new Date(scheduled_date);
+            if (isNaN(parsedDate.getTime())) {
+                errors.push('Scheduled date must be a valid calendar date');
+            }
+        }
+    }
+
+    if (scheduled_time) {
+        const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+        if (!timeFormatRegex.test(scheduled_time)) {
+            errors.push('Scheduled time must be in HH:MM 24-hour format');
+        }
+    }
+
+    if (scheduled_date && scheduled_time) {
+        const dateTimeString = `${scheduled_date}T${scheduled_time}:00`;
+        const scheduledDateTime = new Date(dateTimeString);
+        if (isNaN(scheduledDateTime.getTime())) {
+            errors.push('Scheduled date and time must form a valid datetime');
+        } else {
+            const now = new Date();
+            if (scheduledDateTime < now) {
+                errors.push('Scheduled date and time cannot be in the past');
+            }
+        }
+    }
     // 2. Patient Validation (Either ID or Manual Details)
     if (!patient_id) {
         // If no ID, require manual details
