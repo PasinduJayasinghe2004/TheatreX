@@ -49,8 +49,11 @@ export const validateSurgery = (req, res, next) => {
     }
 
     // 4. Data Type Validation
-    if (duration_minutes && isNaN(duration_minutes)) {
-        errors.push('Duration must be a number');
+    if (duration_minutes) {
+        const durationValue = Number(duration_minutes);
+        if (Number.isNaN(durationValue) || durationValue <= 0 || !Number.isInteger(durationValue)) {
+            errors.push('Duration must be a positive integer number of minutes');
+        }
     }
 
     if (patient_age && isNaN(patient_age)) {
