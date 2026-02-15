@@ -2,12 +2,14 @@
 // Surgery Controller
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 5
+// Updated by: M2 (Chandeepa) - Day 6 (Added deleteSurgery)
 // 
 // Handles all surgery-related HTTP requests and business logic.
 // Contains CRUD operations for surgery management.
 //
 // EXPORTS:
 // - createSurgery: POST /api/surgeries - Create new surgery
+// - deleteSurgery: DELETE /api/surgeries/:id - Delete surgery
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -293,6 +295,71 @@ export const getSurgeryById = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgery',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// DELETE SURGERY
+// ============================================================================
+// @desc    Delete a surgery by ID
+// @route   DELETE /api/surgeries/:id
+// @access  Protected (Coordinator, Admin)
+// Created by: M2 (Chandeepa) - Day 6
+// ============================================================================
+export const deleteSurgery = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validate ID is a positive integer
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgery ID'
+            });
+        }
+
+        // Check if surgery exists before deleting
+        const { rows: existing } = await pool.query(
+            'SELECT id, surgery_type, status FROM surgeries WHERE id = $1',
+            [id]
+        );
+
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Surgery not found'
+            });
+        }
+
+        const surgery = existing[0];
+
+        // Prevent deletion of in-progress surgeries
+        if (surgery.status === 'in_progress') {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot delete a surgery that is currently in progress'
+            });
+        }
+
+        // Delete the surgery
+        await pool.query('DELETE FROM surgeries WHERE id = $1', [id]);
+
+        res.status(200).json({
+            success: true,
+            message: 'Surgery deleted successfully',
+            data: {
+                id: surgery.id,
+                surgery_type: surgery.surgery_type
+            }
+        });
+
+    } catch (error) {
+        console.error('Error deleting surgery:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting surgery',
             error: error.message
         });
     }

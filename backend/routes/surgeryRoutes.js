@@ -2,7 +2,7 @@
 // Surgery Routes
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 5
-// Updated by: M1 (Pasindu) - Day 6 (Added PUT endpoint)
+// Updated by: M2 (Chandeepa) - Day 6 (Added DELETE route)
 // 
 // Defines all surgery-related API routes
 //
@@ -12,6 +12,7 @@
 // - GET    /api/surgeries/:id     - Get surgery by ID (Protected)
 // - PUT    /api/surgeries/:id     - Update surgery (Coordinator, Admin)
 // - GET    /api/surgeries/surgeons - Get surgeons for dropdown (Protected)
+// - DELETE /api/surgeries/:id     - Delete surgery (Coordinator, Admin)
 // ============================================================================
 
 import express from 'express';
@@ -20,7 +21,7 @@ import {
     getAllSurgeries,
     getSurgeryById,
     getSurgeonsDropdown,
-    updateSurgery
+    deleteSurgery
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -62,12 +63,12 @@ router.get('/', protect, getAllSurgeries);
 router.get('/:id', protect, getSurgeryById);
 
 // ============================================================================
-// ROUTE: PUT /api/surgeries/:id
+// ROUTE: DELETE /api/surgeries/:id
 // ============================================================================
-// Update a surgery
-// Protected - only coordinators and admins can update surgeries
-// Created by: M1 (Pasindu) - Day 6
+// Delete a surgery by ID
+// Protected - only coordinators and admins can delete surgeries
+// Created by: M2 (Chandeepa) - Day 6
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
+router.delete('/:id', protect, authorize('coordinator', 'admin'), deleteSurgery);
 
 export default router;
