@@ -19,10 +19,23 @@ import { api } from './authService.js';
 const surgeryService = {
     // ========================================
     // Get all surgeries
+    // Updated by: M4 (Oneli) - Day 6 (Added filter support)
     // ========================================
-    getAllSurgeries: async () => {
+    getAllSurgeries: async (filters = {}) => {
         try {
-            const response = await api.get('/surgeries');
+            // Build query string from filters
+            const params = new URLSearchParams();
+            if (filters.startDate) {
+                params.append('startDate', filters.startDate);
+            }
+            if (filters.endDate) {
+                params.append('endDate', filters.endDate);
+            }
+
+            const queryString = params.toString();
+            const url = queryString ? `/surgeries?${queryString}` : '/surgeries';
+
+            const response = await api.get(url);
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching surgeries. Please try again.';

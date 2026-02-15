@@ -2,6 +2,7 @@
 // Surgery List Page
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 5
+// Updated by: M4 (Oneli) - Day 6 (Added date filtering)
 // 
 // Displays a list of all surgeries in a responsive grid layout
 // Uses SurgeryCard component created by M4
@@ -11,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, AlertCircle } from 'lucide-react';
 import SurgeryCard from '../components/SurgeryCard';
+import DateFilter from '../components/DateFilter';
 import surgeryService from '../services/surgeryService';
 import Loading from '../components/ui/Loading';
 
@@ -19,17 +21,21 @@ const SurgeryList = () => {
     const [surgeries, setSurgeries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [filters, setFilters] = useState({
+        startDate: null,
+        endDate: null
+    });
 
-    // Fetch surgeries on component mount
+    // Fetch surgeries on component mount and when filters change
     useEffect(() => {
         fetchSurgeries();
-    }, []);
+    }, [filters]);
 
     const fetchSurgeries = async () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await surgeryService.getAllSurgeries();
+            const response = await surgeryService.getAllSurgeries(filters);
 
             if (response.success) {
                 setSurgeries(response.data);
@@ -56,6 +62,19 @@ const SurgeryList = () => {
         // TODO: Implement delete confirmation modal and API call (Day 6)
         console.log('Delete surgery:', surgeryId);
         alert(`Delete functionality will be implemented in Day 6. Surgery ID: ${surgeryId}`);
+    };
+
+    // Handle filter change
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    // Handle clear filter
+    const handleClearFilter = () => {
+        setFilters({
+            startDate: null,
+            endDate: null
+        });
     };
 
     // Loading state
@@ -113,6 +132,12 @@ const SurgeryList = () => {
                         Create Surgery
                     </button>
                 </div>
+
+                {/* Date Filter */}
+                <DateFilter
+                    onFilterChange={handleFilterChange}
+                    onClearFilter={handleClearFilter}
+                />
 
                 {/* Surgery Count */}
                 <div className="mb-6">
