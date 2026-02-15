@@ -3,11 +3,13 @@
 // ============================================================================
 // Handles all surgery-related API calls
 // Created by: M2 (Chandeepa) - Day 5
+// Updated by: M2 (Chandeepa) - Day 6 (Added deleteSurgery)
 //
 // FEATURES:
 // - Get all surgeries
 // - Get surgery by ID
 // - Create new surgery
+// - Delete surgery by ID
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -65,6 +67,20 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error creating surgery. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Delete surgery by ID
+    // Created by: M2 (Chandeepa) - Day 6
+    // ========================================
+    deleteSurgery: async (id) => {
+        try {
+            const response = await api.delete(`/surgeries/${id}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error deleting surgery. Please try again.';
             throw new Error(message);
         }
     },
