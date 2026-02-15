@@ -10,6 +10,7 @@
 // - POST   /api/surgeries         - Create new surgery (Coordinator, Admin)
 // - GET    /api/surgeries         - Get all surgeries (Protected)
 // - GET    /api/surgeries/:id     - Get surgery by ID (Protected)
+// - PUT    /api/surgeries/:id     - Update surgery (Coordinator, Admin)
 // - GET    /api/surgeries/surgeons - Get surgeons for dropdown (Protected)
 // - DELETE /api/surgeries/:id     - Delete surgery (Coordinator, Admin)
 // ============================================================================

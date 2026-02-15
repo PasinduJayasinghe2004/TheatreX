@@ -3,6 +3,7 @@
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 5
 // Updated by: M4 (Oneli) - Day 6 (Added date filtering)
+// Updated by: M1 (Pasindu) - Day 6 (Added edit surgery modal)
 // 
 // Displays a list of all surgeries in a responsive grid layout
 // Uses SurgeryCard component created by M4
@@ -13,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, AlertCircle } from 'lucide-react';
 import SurgeryCard from '../components/SurgeryCard';
 import DateFilter from '../components/DateFilter';
+import EditSurgeryModal from '../components/EditSurgeryModal';
 import surgeryService from '../services/surgeryService';
 import Loading from '../components/ui/Loading';
 
@@ -25,6 +27,10 @@ const SurgeryList = () => {
         startDate: null,
         endDate: null
     });
+    
+    // Edit modal state
+    const [editingSurgery, setEditingSurgery] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     // Fetch surgeries on component mount and when filters change
     useEffect(() => {
@@ -50,11 +56,26 @@ const SurgeryList = () => {
         }
     };
 
-    // Handle edit surgery
+    // Handle edit surgery - opens modal
     const handleEdit = (surgeryId) => {
-        // TODO: Navigate to edit page when implemented (Day 6)
-        console.log('Edit surgery:', surgeryId);
-        alert(`Edit functionality will be implemented in Day 6. Surgery ID: ${surgeryId}`);
+        const surgery = surgeries.find(s => s.id === surgeryId);
+        if (surgery) {
+            setEditingSurgery(surgery);
+            setShowEditModal(true);
+        }
+    };
+
+    // Handle edit success - refresh list and close modal
+    const handleEditSuccess = () => {
+        setShowEditModal(false);
+        setEditingSurgery(null);
+        fetchSurgeries(); // Refresh the list
+    };
+
+    // Handle edit cancel - close modal
+    const handleEditCancel = () => {
+        setShowEditModal(false);
+        setEditingSurgery(null);
     };
 
     // Handle delete surgery
@@ -180,6 +201,15 @@ const SurgeryList = () => {
                     </div>
                 )}
             </div>
+
+            {/* Edit Surgery Modal */}
+            {showEditModal && editingSurgery && (
+                <EditSurgeryModal
+                    surgery={editingSurgery}
+                    onSuccess={handleEditSuccess}
+                    onCancel={handleEditCancel}
+                />
+            )}
         </div>
     );
 };
