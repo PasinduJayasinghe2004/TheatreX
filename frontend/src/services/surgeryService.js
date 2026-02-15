@@ -3,11 +3,13 @@
 // ============================================================================
 // Handles all surgery-related API calls
 // Created by: M2 (Chandeepa) - Day 5
+// Updated by: M1 (Pasindu) - Day 6 (Added updateSurgery)
 //
 // FEATURES:
 // - Get all surgeries
 // - Get surgery by ID
 // - Create new surgery
+// - Update surgery
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -65,6 +67,20 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error creating surgery. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update surgery
+    // Created by: M1 (Pasindu) - Day 6
+    // ========================================
+    updateSurgery: async (id, surgeryData) => {
+        try {
+            const response = await api.put(`/surgeries/${id}`, surgeryData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating surgery. Please try again.';
             throw new Error(message);
         }
     },

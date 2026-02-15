@@ -2,6 +2,7 @@
 // Surgery Routes
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 5
+// Updated by: M1 (Pasindu) - Day 6 (Added PUT endpoint)
 // 
 // Defines all surgery-related API routes
 //
@@ -9,6 +10,7 @@
 // - POST   /api/surgeries         - Create new surgery (Coordinator, Admin)
 // - GET    /api/surgeries         - Get all surgeries (Protected)
 // - GET    /api/surgeries/:id     - Get surgery by ID (Protected)
+// - PUT    /api/surgeries/:id     - Update surgery (Coordinator, Admin)
 // - GET    /api/surgeries/surgeons - Get surgeons for dropdown (Protected)
 // ============================================================================
 
@@ -17,7 +19,8 @@ import {
     createSurgery,
     getAllSurgeries,
     getSurgeryById,
-    getSurgeonsDropdown
+    getSurgeonsDropdown,
+    updateSurgery
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -57,5 +60,14 @@ router.get('/', protect, getAllSurgeries);
 // Protected - any authenticated user can view
 // ============================================================================
 router.get('/:id', protect, getSurgeryById);
+
+// ============================================================================
+// ROUTE: PUT /api/surgeries/:id
+// ============================================================================
+// Update a surgery
+// Protected - only coordinators and admins can update surgeries
+// Created by: M1 (Pasindu) - Day 6
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
 
 export default router;

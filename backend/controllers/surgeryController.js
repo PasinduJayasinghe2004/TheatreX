@@ -324,3 +324,185 @@ export const getSurgeonsDropdown = async (req, res) => {
         });
     }
 };
+
+// ============================================================================
+// UPDATE SURGERY
+// ============================================================================
+// @desc    Update an existing surgery
+// @route   PUT /api/surgeries/:id
+// @access  Protected (Coordinator, Admin)
+// Created by: M1 (Pasindu) - Day 6
+// ============================================================================
+export const updateSurgery = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validate ID is a positive integer
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgery ID'
+            });
+        }
+
+        // Check if surgery exists
+        const existingResult = await pool.query(
+            'SELECT * FROM surgeries WHERE id = $1',
+            [id]
+        );
+
+        if (existingResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Surgery not found'
+            });
+        }
+
+        const {
+            patient_id,
+            patient_name,
+            patient_age,
+            patient_gender,
+            surgery_type,
+            description,
+            scheduled_date,
+            scheduled_time,
+            duration_minutes,
+            theatre_id,
+            surgeon_id,
+            status,
+            priority,
+            notes
+        } = req.body;
+
+        // Build dynamic UPDATE query with only provided fields
+        const updates = [];
+        const values = [];
+        let paramCounter = 1;
+
+        if (patient_id !== undefined) {
+            updates.push(`patient_id = $${paramCounter++}`);
+            values.push(patient_id || null);
+        }
+        if (patient_name !== undefined) {
+            updates.push(`patient_name = $${paramCounter++}`);
+            values.push(patient_name || null);
+        }
+        if (patient_age !== undefined) {
+            updates.push(`patient_age = $${paramCounter++}`);
+            values.push(patient_age || null);
+        }
+        if (patient_gender !== undefined) {
+            updates.push(`patient_gender = $${paramCounter++}`);
+            values.push(patient_gender || null);
+        }
+        if (surgery_type !== undefined) {
+            updates.push(`surgery_type = $${paramCounter++}`);
+            values.push(surgery_type);
+        }
+        if (description !== undefined) {
+            updates.push(`description = $${paramCounter++}`);
+            values.push(description || null);
+        }
+        if (scheduled_date !== undefined) {
+            updates.push(`scheduled_date = $${paramCounter++}`);
+            values.push(scheduled_date);
+        }
+        if (scheduled_time !== undefined) {
+            updates.push(`scheduled_time = $${paramCounter++}`);
+            values.push(scheduled_time);
+        }
+        if (duration_minutes !== undefined) {
+            updates.push(`duration_minutes = $${paramCounter++}`);
+            values.push(duration_minutes);
+        }
+        if (theatre_id !== undefined) {
+            updates.push(`theatre_id = $${paramCounter++}`);
+            values.push(theatre_id || null);
+        }
+        if (surgeon_id !== undefined) {
+            updates.push(`surgeon_id = $${paramCounter++}`);
+            values.push(surgeon_id || null);
+        }
+        if (status !== undefined) {
+            updates.push(`status = $${paramCounter++}`);
+            values.push(status);
+        }
+        if (priority !== undefined) {
+            updates.push(`priority = $${paramCounter++}`);
+            values.push(priority);
+        }
+        if (notes !== undefined) {
+            updates.push(`notes = $${paramCounter++}`);
+            values.push(notes || null);
+        }
+
+        // Always update the updated_at timestamp
+        updates.push(`updated_at = NOW()`);
+
+        if (updates.length === 1) {
+            return res.status(400).json({
+                success: false,
+                message: 'No fields provided to update'
+            });
+        }
+
+        // Add surgery ID to values
+        values.push(id);
+
+        const updateQuery = `
+            UPDATE surgeries 
+            SET ${updates.join(', ')}
+            WHERE id = $${paramCounter}
+            RETURNING *
+        `;
+
+        const { rows } = await pool.query(updateQuery, values);
+        const updatedSurgery = rows[0];
+
+        // Fetch surgeon details for response
+        let surgeonDetails = null;
+        if (updatedSurgery.surgeon_id) {
+            const surgeonResult = await pool.query(
+                'SELECT id, name, email FROM users WHERE id = $1',
+                [updatedSurgery.surgeon_id]
+            );
+            if (surgeonResult.rows.length > 0) {
+                surgeonDetails = surgeonResult.rows[0];
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Surgery updated successfully',
+            data: {
+                ...updatedSurgery,
+                surgeon: surgeonDetails
+            }
+        });
+
+    } catch (error) {
+        console.error('Error updating surgery:', error);
+
+        // Handle specific PostgreSQL errors
+        if (error.code === '23503') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid reference - theatre or surgeon does not exist'
+            });
+        }
+
+        if (error.code === '23514') {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed - check enum values (status, priority, gender)'
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Error updating surgery',
+            error: error.message
+        });
+    }
+};
