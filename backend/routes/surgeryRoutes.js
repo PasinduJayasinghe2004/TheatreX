@@ -2,6 +2,7 @@
 // Surgery Routes
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 5
+// Updated by: M2 (Chandeepa) - Day 6 (Added DELETE route)
 // 
 // Defines all surgery-related API routes
 //
@@ -10,6 +11,7 @@
 // - GET    /api/surgeries         - Get all surgeries (Protected)
 // - GET    /api/surgeries/:id     - Get surgery by ID (Protected)
 // - GET    /api/surgeries/surgeons - Get surgeons for dropdown (Protected)
+// - DELETE /api/surgeries/:id     - Delete surgery (Coordinator, Admin)
 // ============================================================================
 
 import express from 'express';
@@ -17,7 +19,8 @@ import {
     createSurgery,
     getAllSurgeries,
     getSurgeryById,
-    getSurgeonsDropdown
+    getSurgeonsDropdown,
+    deleteSurgery
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -57,5 +60,14 @@ router.get('/', protect, getAllSurgeries);
 // Protected - any authenticated user can view
 // ============================================================================
 router.get('/:id', protect, getSurgeryById);
+
+// ============================================================================
+// ROUTE: DELETE /api/surgeries/:id
+// ============================================================================
+// Delete a surgery by ID
+// Protected - only coordinators and admins can delete surgeries
+// Created by: M2 (Chandeepa) - Day 6
+// ============================================================================
+router.delete('/:id', protect, authorize('coordinator', 'admin'), deleteSurgery);
 
 export default router;

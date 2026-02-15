@@ -2,9 +2,11 @@
 // Surgery Detail Page
 // ============================================================================
 // Created by: M3 (Janani) - Day 5
+// Updated by: M2 (Chandeepa) - Day 6 (Added delete confirmation modal)
 //
 // Displays full details of a single surgery fetched by ID.
 // Uses surgeryService.getSurgeryById() for data retrieval.
+// Uses surgeryService.deleteSurgery() for deletion with confirmation modal.
 // ============================================================================
 
 import { useState, useEffect } from 'react';
@@ -23,6 +25,7 @@ import {
 } from 'lucide-react';
 import surgeryService from '../services/surgeryService';
 import Loading from '../components/ui/Loading';
+import Modal from '../components/ui/Modal';
 
 // ============================================================================
 // Helper Functions
@@ -94,6 +97,11 @@ const SurgeryDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Delete modal state - M2 (Chandeepa) Day 6
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
+
     // Fetch surgery data on mount / id change
     useEffect(() => {
         const fetchSurgery = async () => {
@@ -117,6 +125,30 @@ const SurgeryDetail = () => {
 
         fetchSurgery();
     }, [id]);
+
+    // ── Delete Surgery Handler ── M2 (Chandeepa) Day 6 ──────────────────
+    const handleDeleteSurgery = async () => {
+        try {
+            setDeleting(true);
+            setDeleteError(null);
+            const response = await surgeryService.deleteSurgery(id);
+
+            if (response.success) {
+                // Close modal and navigate back to surgeries list
+                setShowDeleteModal(false);
+                navigate('/surgeries', {
+                    state: { message: `Surgery "${surgery.surgery_type}" deleted successfully` }
+                });
+            } else {
+                setDeleteError(response.message || 'Failed to delete surgery');
+            }
+        } catch (err) {
+            setDeleteError(err.message || 'An error occurred while deleting the surgery');
+            console.error('Error deleting surgery:', err);
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     // ── Loading ──────────────────────────────────────────────────────────
     if (loading) {
@@ -202,8 +234,8 @@ const SurgeryDetail = () => {
                         <div className="flex items-start gap-2">
                             <button
                                 onClick={() => {
-                                    // TODO: Navigate to edit page (Day 6)
-                                    alert(`Edit functionality coming in Day 6. Surgery ID: ${surgery.id}`);
+                                    // TODO: Navigate to edit page (Day 6 - M1)
+                                    alert(`Edit functionality coming soon. Surgery ID: ${surgery.id}`);
                                 }}
                                 className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
                             >
@@ -211,10 +243,7 @@ const SurgeryDetail = () => {
                                 Edit
                             </button>
                             <button
-                                onClick={() => {
-                                    // TODO: Delete confirmation modal (Day 6)
-                                    alert(`Delete functionality coming in Day 6. Surgery ID: ${surgery.id}`);
-                                }}
+                                onClick={() => setShowDeleteModal(true)}
                                 className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -390,6 +419,76 @@ const SurgeryDetail = () => {
                     )}
                 </div>
             </div>
+
+            {/* ── Delete Confirmation Modal ── M2 (Chandeepa) Day 6 ── */}
+            <Modal
+                isOpen={showDeleteModal}
+                onClose={() => {
+                    if (!deleting) {
+                        setShowDeleteModal(false);
+                        setDeleteError(null);
+                    }
+                }}
+                title="Delete Surgery"
+                size="sm"
+                footer={
+                    <div className="flex justify-end gap-3">
+                        <button
+                            onClick={() => {
+                                setShowDeleteModal(false);
+                                setDeleteError(null);
+                            }}
+                            disabled={deleting}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleDeleteSurgery}
+                            disabled={deleting}
+                            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                        >
+                            {deleting ? (
+                                <>
+                                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete Surgery
+                                </>
+                            )}
+                        </button>
+                    </div>
+                }
+            >
+                <div className="text-center sm:text-left">
+                    <div className="mx-auto sm:mx-0 flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4">
+                        <AlertCircle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <p className="text-gray-700 mb-2">
+                        Are you sure you want to delete this surgery?
+                    </p>
+                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                        <p className="font-semibold text-gray-900">{surgery.surgery_type}</p>
+                        <p className="text-sm text-gray-500">
+                            Surgery #{surgery.id} &middot; {surgery.patient_name || 'Unknown Patient'}
+                        </p>
+                    </div>
+                    <p className="text-sm text-red-600 font-medium">
+                        This action cannot be undone.
+                    </p>
+                    {deleteError && (
+                        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-sm text-red-700">{deleteError}</p>
+                        </div>
+                    )}
+                </div>
+            </Modal>
         </div>
     );
 };
