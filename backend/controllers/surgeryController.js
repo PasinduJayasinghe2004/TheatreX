@@ -130,18 +130,48 @@ export const createSurgery = async (req, res) => {
 // @route   GET /api/surgeries
 // @access  Protected
 // Updated by: M2 (Chandeepa) - Day 5 (Added surgeon JOIN)
+// Updated by: M4 (Oneli) - Day 6 (Added date filtering)
 // ============================================================================
 export const getAllSurgeries = async (req, res) => {
     try {
-        const { rows } = await pool.query(`
+        // Extract query parameters for filtering
+        const { startDate, endDate } = req.query;
+
+        // Build dynamic WHERE clause
+        let whereConditions = [];
+        let queryParams = [];
+        let paramCounter = 1;
+
+        if (startDate) {
+            whereConditions.push(`s.scheduled_date >= $${paramCounter}`);
+            queryParams.push(startDate);
+            paramCounter++;
+        }
+
+        if (endDate) {
+            whereConditions.push(`s.scheduled_date <= $${paramCounter}`);
+            queryParams.push(endDate);
+            paramCounter++;
+        }
+
+        // Construct the WHERE clause
+        const whereClause = whereConditions.length > 0
+            ? `WHERE ${whereConditions.join(' AND ')}`
+            : '';
+
+        // Build the complete query
+        const query = `
             SELECT 
                 s.*,
                 u.name as surgeon_name,
                 u.email as surgeon_email
             FROM surgeries s
             LEFT JOIN users u ON s.surgeon_id = u.id
+            ${whereClause}
             ORDER BY s.scheduled_date ASC, s.scheduled_time ASC
-        `);
+        `;
+
+        const { rows } = await pool.query(query, queryParams);
 
         // Transform the flat result into nested structure
         const surgeries = rows.map(row => ({
@@ -172,7 +202,11 @@ export const getAllSurgeries = async (req, res) => {
         res.status(200).json({
             success: true,
             count: surgeries.length,
-            data: surgeries
+            data: surgeries,
+            filters: {
+                startDate: startDate || null,
+                endDate: endDate || null
+            }
         });
     } catch (error) {
         console.error('Error fetching surgeries:', error);
