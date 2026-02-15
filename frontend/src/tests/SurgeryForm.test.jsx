@@ -1,20 +1,56 @@
 // ============================================================================
-// Surgery Form Component Tests
+// Surgery Form Component Tests - Modal UI Design
 // ============================================================================
 // Created by: M6 (Dinil) - Day 5
 // 
-// Tests for the SurgeryForm component used for creating new surgeries
+// Tests for the new modal-style SurgeryForm component
 // ============================================================================
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import SurgeryForm from '../components/SurgeryForm';
-import { AuthContext } from '../context/AuthContext';
+import React, { createContext } from 'react';
 import axios from 'axios';
 
-// Mock axios
-vi.mock('axios');
+// Mock the AuthContext module
+vi.mock('../context/AuthContext', () => {
+    const MockContext = React.createContext(null);
+    return {
+        AuthContext: MockContext,
+        useAuth: () => ({
+            token: 'mock-jwt-token',
+            user: { role: 'coordinator' }
+        }),
+        AuthProvider: ({ children }) => children
+    };
+});
+
+// Mock axios with interceptors
+vi.mock('axios', () => {
+    const mockAxios = {
+        get: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
+        delete: vi.fn(),
+        create: vi.fn(function() { return this; }),
+        interceptors: {
+            request: { use: vi.fn(), eject: vi.fn() },
+            response: { use: vi.fn(), eject: vi.fn() }
+        },
+        defaults: {
+            headers: {
+                common: {}
+            }
+        }
+    };
+    return {
+        default: mockAxios,
+        ...mockAxios
+    };
+});
+
+// Import components after mocks
+import SurgeryForm from '../components/SurgeryForm';
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -26,14 +62,14 @@ vi.mock('react-router-dom', async () => {
     };
 });
 
-describe('SurgeryForm Component Tests', () => {
+describe('SurgeryForm Modal Component Tests', () => {
     const mockToken = 'mock-jwt-token';
     const mockOnSuccess = vi.fn();
     const mockOnCancel = vi.fn();
 
     const mockSurgeons = [
-        { id: 1, name: 'Dr. Smith', email: 'smith@hospital.com' },
-        { id: 2, name: 'Dr. Johnson', email: 'johnson@hospital.com' }
+        { id: 1, name: 'Dr. Smith' },
+        { id: 2, name: 'Dr. Johnson' }
     ];
 
     beforeEach(() => {
@@ -50,82 +86,94 @@ describe('SurgeryForm Component Tests', () => {
 
     const renderForm = (props = {}) => {
         return render(
-            <AuthContext.Provider value={{ token: mockToken, user: { role: 'coordinator' } }}>
-                <BrowserRouter>
-                    <SurgeryForm
-                        onSuccess={props.onSuccess}
-                        onCancel={props.onCancel}
-                    />
-                </BrowserRouter>
-            </AuthContext.Provider>
+            <BrowserRouter>
+                <SurgeryForm
+                    onSuccess={props.onSuccess}
+                    onCancel={props.onCancel}
+                    isModal={props.isModal !== undefined ? props.isModal : true}
+                />
+            </BrowserRouter>
         );
     };
 
     // ========================================================================
-    // Component Rendering Tests
+    // Modal Rendering Tests
     // ========================================================================
-    describe('Component Rendering', () => {
-        it('should render page title', async () => {
+    describe('Modal Rendering', () => {
+        it('should render modal with title', async () => {
             renderForm();
             await waitFor(() => {
-                expect(screen.getByText('Schedule New Surgery')).toBeInTheDocument();
+                expect(screen.getByText('Schedule Surgery')).toBeInTheDocument();
             });
         });
 
-        it('should render Patient Information section', async () => {
+        it('should render close button', async () => {
             renderForm();
             await waitFor(() => {
-                expect(screen.getByText(/Patient Information/)).toBeInTheDocument();
+                expect(screen.getByLabelText('Close')).toBeInTheDocument();
             });
         });
 
-        it('should render patient input fields', async () => {
+        it('should render Patient Details section', async () => {
             renderForm();
             await waitFor(() => {
-                expect(screen.getByPlaceholderText('Enter patient ID')).toBeInTheDocument();
+                expect(screen.getByText('Patient Details')).toBeInTheDocument();
             });
         });
 
-        it('should render surgery type input', async () => {
+        it('should render procedure name input', async () => {
             renderForm();
             await waitFor(() => {
-                expect(screen.getByLabelText(/Surgery Type/i)).toBeInTheDocument();
+                expect(screen.getByPlaceholderText('e.g. Appendectomy')).toBeInTheDocument();
             });
         });
 
-        it('should render scheduled date input', async () => {
+        it('should render Confirm Schedule button', async () => {
             renderForm();
             await waitFor(() => {
-                expect(screen.getByLabelText(/Scheduled Date/i)).toBeInTheDocument();
+                expect(screen.getByRole('button', { name: /Confirm Schedule/i })).toBeInTheDocument();
             });
         });
 
-        it('should render scheduled time input', async () => {
+        it('should render Cancel button', async () => {
             renderForm();
             await waitFor(() => {
-                expect(screen.getByLabelText(/Scheduled Time/i)).toBeInTheDocument();
-            });
-        });
-
-        it('should render duration input', async () => {
-            renderForm();
-            await waitFor(() => {
-                expect(screen.getByLabelText(/Duration/i)).toBeInTheDocument();
-            });
-        });
-
-        it('should render submit button', async () => {
-            renderForm();
-            await waitFor(() => {
-                expect(screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i })).toBeInTheDocument();
+                expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
             });
         });
     });
 
     // ========================================================================
-    // Surgeon Dropdown Tests
+    // Patient Selection Tests
     // ========================================================================
-    describe('Surgeon Dropdown', () => {
+    describe('Patient Selection', () => {
+        it('should render patient dropdown', async () => {
+            renderForm();
+            await waitFor(() => {
+                expect(screen.getByText('-- Select Patient --')).toBeInTheDocument();
+            });
+        });
+
+        it('should render new patient name input', async () => {
+            renderForm();
+            await waitFor(() => {
+                expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
+            });
+        });
+
+        it('should have existing patients in dropdown', async () => {
+            renderForm();
+            await waitFor(() => {
+                expect(screen.getByText('John Smith')).toBeInTheDocument();
+                expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
+            });
+        });
+    });
+
+    // ========================================================================
+    // Staff Dropdown Tests
+    // ========================================================================
+    describe('Staff Dropdowns', () => {
         it('should fetch surgeons on mount', async () => {
             renderForm();
 
@@ -139,55 +187,59 @@ describe('SurgeryForm Component Tests', () => {
             });
         });
 
-        it('should display surgeons in dropdown after loading', async () => {
+        it('should display surgeon dropdown', async () => {
             renderForm();
-
             await waitFor(() => {
-                const surgeonSelect = screen.getByLabelText(/Surgeon/i);
-                expect(surgeonSelect).toBeInTheDocument();
+                expect(screen.getByText('Select Surgeon')).toBeInTheDocument();
+            });
+        });
+
+        it('should display nurse dropdown', async () => {
+            renderForm();
+            await waitFor(() => {
+                expect(screen.getByText('Select Nurse')).toBeInTheDocument();
+            });
+        });
+
+        it('should display anaesthetist dropdown', async () => {
+            renderForm();
+            await waitFor(() => {
+                expect(screen.getByText('Select Anaesthetist')).toBeInTheDocument();
+            });
+        });
+
+        it('should display theatre dropdown', async () => {
+            renderForm();
+            await waitFor(() => {
+                expect(screen.getByText('Select Theatre')).toBeInTheDocument();
             });
         });
     });
 
     // ========================================================================
-    // Form Input Tests
+    // Scheduling Fields Tests
     // ========================================================================
-    describe('Form Input', () => {
-        it('should update patient name on input', async () => {
+    describe('Scheduling Fields', () => {
+        it('should render date input', async () => {
             renderForm();
-
             await waitFor(() => {
-                const patientNameInput = screen.getByPlaceholderText(/patient name/i);
-                fireEvent.change(patientNameInput, { target: { value: 'Test Patient' } });
-                expect(patientNameInput.value).toBe('Test Patient');
+                expect(screen.getByLabelText(/Date/i)).toBeInTheDocument();
             });
         });
 
-        it('should update surgery type on input', async () => {
+        it('should render start time input', async () => {
             renderForm();
-
             await waitFor(() => {
-                const surgeryTypeInput = screen.getByLabelText(/Surgery Type/i);
-                fireEvent.change(surgeryTypeInput, { target: { value: 'Appendectomy' } });
-                expect(surgeryTypeInput.value).toBe('Appendectomy');
+                expect(screen.getByLabelText(/Start Time/i)).toBeInTheDocument();
             });
         });
 
-        it('should have status defaulted to scheduled', async () => {
+        it('should render duration input with default value', async () => {
             renderForm();
-
             await waitFor(() => {
-                const statusSelect = screen.getByLabelText(/Status/i);
-                expect(statusSelect.value).toBe('scheduled');
-            });
-        });
-
-        it('should have priority defaulted to routine', async () => {
-            renderForm();
-
-            await waitFor(() => {
-                const prioritySelect = screen.getByLabelText(/Priority/i);
-                expect(prioritySelect.value).toBe('routine');
+                const durationInput = screen.getByLabelText(/Duration/i);
+                expect(durationInput).toBeInTheDocument();
+                expect(durationInput.value).toBe('60');
             });
         });
     });
@@ -196,16 +248,16 @@ describe('SurgeryForm Component Tests', () => {
     // Form Validation Tests
     // ========================================================================
     describe('Form Validation', () => {
-        it('should show error when required fields are missing', async () => {
+        it('should show error when procedure name is missing', async () => {
             renderForm();
 
             await waitFor(async () => {
-                const submitButton = screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i });
+                const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
                 fireEvent.click(submitButton);
             });
 
             await waitFor(() => {
-                expect(screen.getByText(/Please fill in all required fields/i)).toBeInTheDocument();
+                expect(screen.getByText(/Please enter procedure name/i)).toBeInTheDocument();
             });
         });
 
@@ -213,18 +265,38 @@ describe('SurgeryForm Component Tests', () => {
             renderForm();
 
             await waitFor(async () => {
-                // Fill only non-patient fields
-                fireEvent.change(screen.getByLabelText(/Surgery Type/i), { target: { value: 'Appendectomy' } });
-                fireEvent.change(screen.getByLabelText(/Scheduled Date/i), { target: { value: '2026-03-15' } });
-                fireEvent.change(screen.getByLabelText(/Scheduled Time/i), { target: { value: '10:00' } });
-                fireEvent.change(screen.getByLabelText(/Duration/i), { target: { value: '90' } });
+                // Fill procedure name only
+                fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
+                    target: { value: 'Appendectomy' } 
+                });
 
-                const submitButton = screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i });
+                const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
                 fireEvent.click(submitButton);
             });
 
             await waitFor(() => {
-                expect(screen.getByText(/patient information/i)).toBeInTheDocument();
+                expect(screen.getByText(/Please select a patient or enter patient name/i)).toBeInTheDocument();
+            });
+        });
+
+        it('should show error when date/time is missing', async () => {
+            renderForm();
+
+            await waitFor(async () => {
+                // Fill procedure name and patient name
+                fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
+                    target: { value: 'Appendectomy' } 
+                });
+                fireEvent.change(screen.getByPlaceholderText('Enter Name'), { 
+                    target: { value: 'Test Patient' } 
+                });
+
+                const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
+                fireEvent.click(submitButton);
+            });
+
+            await waitFor(() => {
+                expect(screen.getByText(/Please select date and time/i)).toBeInTheDocument();
             });
         });
     });
@@ -233,43 +305,25 @@ describe('SurgeryForm Component Tests', () => {
     // Form Submission Tests
     // ========================================================================
     describe('Form Submission', () => {
-        const validFormData = {
-            patient_name: 'John Doe',
-            patient_age: '45',
-            patient_gender: 'male',
-            surgery_type: 'Appendectomy',
-            scheduled_date: '2026-03-15',
-            scheduled_time: '10:00',
-            duration_minutes: '90'
-        };
-
-        const fillForm = async () => {
+        const fillValidForm = async () => {
             await waitFor(() => {
-                const patientNameInput = screen.getByPlaceholderText(/patient name/i);
-                fireEvent.change(patientNameInput, { target: { value: validFormData.patient_name } });
-            });
-
-            fireEvent.change(screen.getByPlaceholderText(/patient age/i) || screen.getByLabelText(/age/i), {
-                target: { value: validFormData.patient_age }
-            });
-
-            const genderSelect = screen.getByLabelText(/Gender/i);
-            fireEvent.change(genderSelect, { target: { value: validFormData.patient_gender } });
-
-            fireEvent.change(screen.getByLabelText(/Surgery Type/i), {
-                target: { value: validFormData.surgery_type }
-            });
-
-            fireEvent.change(screen.getByLabelText(/Scheduled Date/i), {
-                target: { value: validFormData.scheduled_date }
-            });
-
-            fireEvent.change(screen.getByLabelText(/Scheduled Time/i), {
-                target: { value: validFormData.scheduled_time }
-            });
-
-            fireEvent.change(screen.getByLabelText(/Duration/i), {
-                target: { value: validFormData.duration_minutes }
+                // Fill procedure name
+                fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
+                    target: { value: 'Appendectomy' } 
+                });
+                
+                // Fill patient name
+                fireEvent.change(screen.getByPlaceholderText('Enter Name'), { 
+                    target: { value: 'Test Patient' } 
+                });
+                
+                // Fill date
+                const dateInput = screen.getByLabelText(/Date/i);
+                fireEvent.change(dateInput, { target: { value: '2026-03-15' } });
+                
+                // Fill time
+                const timeInput = screen.getByLabelText(/Start Time/i);
+                fireEvent.change(timeInput, { target: { value: '10:00' } });
             });
         };
 
@@ -277,21 +331,22 @@ describe('SurgeryForm Component Tests', () => {
             axios.post.mockResolvedValueOnce({
                 data: {
                     success: true,
-                    data: { id: 1, ...validFormData }
+                    data: { id: 1, surgery_type: 'Appendectomy' }
                 }
             });
 
             renderForm();
-            await fillForm();
+            await fillValidForm();
 
-            const submitButton = screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i });
+            const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
             fireEvent.click(submitButton);
 
             await waitFor(() => {
                 expect(axios.post).toHaveBeenCalledWith(
                     'http://localhost:5000/api/surgeries',
                     expect.objectContaining({
-                        surgery_type: validFormData.surgery_type
+                        surgery_type: 'Appendectomy',
+                        patient_name: 'Test Patient'
                     }),
                     expect.objectContaining({
                         headers: { Authorization: `Bearer ${mockToken}` }
@@ -304,18 +359,18 @@ describe('SurgeryForm Component Tests', () => {
             axios.post.mockResolvedValueOnce({
                 data: {
                     success: true,
-                    data: { id: 1, ...validFormData }
+                    data: { id: 1 }
                 }
             });
 
             renderForm();
-            await fillForm();
+            await fillValidForm();
 
-            const submitButton = screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i });
+            const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
             fireEvent.click(submitButton);
 
             await waitFor(() => {
-                expect(screen.getByText(/Surgery created successfully/i)).toBeInTheDocument();
+                expect(screen.getByText(/Surgery scheduled successfully/i)).toBeInTheDocument();
             });
         });
 
@@ -329,13 +384,13 @@ describe('SurgeryForm Component Tests', () => {
             });
 
             renderForm();
-            await fillForm();
+            await fillValidForm();
 
-            const submitButton = screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i });
+            const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
             fireEvent.click(submitButton);
 
             await waitFor(() => {
-                expect(screen.getByText(/Server error|Error creating surgery/i)).toBeInTheDocument();
+                expect(screen.getByText(/Server error|Error scheduling surgery/i)).toBeInTheDocument();
             });
         });
 
@@ -343,41 +398,83 @@ describe('SurgeryForm Component Tests', () => {
             axios.post.mockResolvedValueOnce({
                 data: {
                     success: true,
-                    data: { id: 1, ...validFormData }
+                    data: { id: 1 }
                 }
             });
 
             renderForm({ onSuccess: mockOnSuccess });
-            await fillForm();
+            await fillValidForm();
 
-            const submitButton = screen.getByRole('button', { name: /Schedule Surgery|Create Surgery|Submit/i });
+            const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
             fireEvent.click(submitButton);
 
             await waitFor(() => {
                 expect(mockOnSuccess).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
             });
         });
+
+        it('should disable button during submission', async () => {
+            axios.post.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 1000)));
+
+            renderForm();
+            await fillValidForm();
+
+            const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
+            fireEvent.click(submitButton);
+
+            await waitFor(() => {
+                expect(screen.getByRole('button', { name: /Scheduling.../i })).toBeDisabled();
+            });
+        });
     });
 
     // ========================================================================
-    // Priority and Status Options Tests
+    // Cancel and Close Tests
     // ========================================================================
-    describe('Priority and Status Options', () => {
-        it('should have all status options available', async () => {
-            renderForm();
+    describe('Cancel and Close Actions', () => {
+        it('should call onCancel when Cancel button is clicked', async () => {
+            renderForm({ onCancel: mockOnCancel });
 
             await waitFor(() => {
-                const statusSelect = screen.getByLabelText(/Status/i);
-                expect(statusSelect).toContainHTML('scheduled');
+                const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+                fireEvent.click(cancelButton);
             });
+
+            expect(mockOnCancel).toHaveBeenCalled();
         });
 
-        it('should have all priority options available', async () => {
+        it('should call onCancel when close button is clicked', async () => {
+            renderForm({ onCancel: mockOnCancel });
+
+            await waitFor(() => {
+                const closeButton = screen.getByLabelText('Close');
+                fireEvent.click(closeButton);
+            });
+
+            expect(mockOnCancel).toHaveBeenCalled();
+        });
+
+        it('should navigate back when Cancel clicked without onCancel prop', async () => {
             renderForm();
 
             await waitFor(() => {
-                const prioritySelect = screen.getByLabelText(/Priority/i);
-                expect(prioritySelect).toContainHTML('routine');
+                const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+                fireEvent.click(cancelButton);
+            });
+
+            expect(mockNavigate).toHaveBeenCalledWith(-1);
+        });
+    });
+
+    // ========================================================================
+    // Full Page Mode Tests
+    // ========================================================================
+    describe('Full Page Mode', () => {
+        it('should render as full page when isModal is false', async () => {
+            renderForm({ isModal: false });
+            
+            await waitFor(() => {
+                expect(screen.getByText('Schedule Surgery')).toBeInTheDocument();
             });
         });
     });
