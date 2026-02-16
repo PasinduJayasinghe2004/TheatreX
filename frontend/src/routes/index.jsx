@@ -13,6 +13,7 @@ import Profile from '../pages/Profile';
 import CreateSurgery from '../pages/CreateSurgery';
 import SurgeryList from '../pages/SurgeryList';
 import SurgeryDetail from '../pages/SurgeryDetail';
+import Calendar from '../pages/Calendar';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -97,6 +98,13 @@ const AppRoutes = () => {
             <Route path="/surgeries/:id" element={
                 <ProtectedRoute>
                     <SurgeryDetail />
+                </ProtectedRoute>
+            } />
+
+            {/* Calendar View - M1 (Pasindu) Day 7 */}
+            <Route path="/calendar" element={
+                <ProtectedRoute>
+                    <Calendar />
                 </ProtectedRoute>
             } />
 
