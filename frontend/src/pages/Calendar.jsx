@@ -2,189 +2,160 @@
 // Calendar Page Component
 
 // Created by: M1 (Pasindu) - Day 7
+// Updated by: M2 (Chandeepa) - Day 7 (Calendar layout, events integration,
+//   status/priority color coding, legend, event detail popover)
 
 // Displays surgeries in a calendar view using FullCalendar
 // Features:
 // - Month/Week/Day views
 // - Click on event to view surgery details
-// - Color-coded by status/priority
-// - Fetches surgeries by date range for performance
+// - Color-coded by status and priority
+// - Legend showing color meanings
+// - Event detail popover on click
+// - Fetches pre-formatted events from /api/surgeries/events
 
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, X, Clock, User, MapPin, Activity, Flag } from 'lucide-react';
 import surgeryService from '../services/surgeryService';
 
 
-// Event Colors - Match UI Design (Blue theme)
+// ── Legend colour config (matches backend STATUS_COLORS / PRIORITY_COLORS) ──
 
-const EVENT_COLOR = {
-    backgroundColor: '#3B82F6',  // Blue
-    borderColor: '#2563EB',
-    textColor: '#FFFFFF'
-};
+const STATUS_LEGEND = [
+    { label: 'Scheduled',   color: '#3B82F6' },
+    { label: 'In Progress', color: '#F59E0B' },
+    { label: 'Completed',   color: '#10B981' },
+    { label: 'Cancelled',   color: '#EF4444' }
+];
+
+const PRIORITY_LEGEND = [
+    { label: 'Routine',   color: '#3B82F6' },
+    { label: 'Urgent',    color: '#F97316' },
+    { label: 'Emergency', color: '#EF4444' }
+];
 
 
-// Calendar Component
+// ── Calendar Component ──
 
 const Calendar = () => {
     const navigate = useNavigate();
     const calendarRef = useRef(null);
-    
+
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentView, setCurrentView] = useState('dayGridMonth');
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 });
 
-    
-    // Transform Surgery to Calendar Event
-   
-    const transformSurgeryToEvent = (surgery) => {
-        // Combine date and time for start
-        let start = surgery.scheduled_date;
-        let startTimeStr = '';
-        if (surgery.scheduled_time) {
-            // Handle both ISO time and HH:mm:ss formats
-            startTimeStr = surgery.scheduled_time.includes('T') 
-                ? surgery.scheduled_time.split('T')[1].substring(0, 5)
-                : surgery.scheduled_time.substring(0, 5);
-            start = `${surgery.scheduled_date.split('T')[0]}T${startTimeStr}`;
-        }
 
-        // Calculate end time based on duration
-        let end = null;
-        let endTimeStr = '';
-        if (surgery.duration_minutes && surgery.scheduled_time) {
-            const startDate = new Date(start);
-            const endDate = new Date(startDate.getTime() + surgery.duration_minutes * 60000);
-            end = endDate.toISOString();
-            endTimeStr = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        }
+    // ── Fetch events from the new /events API ──
 
-        // Format start time for display
-        const formattedStartTime = startTimeStr ? 
-            new Date(`2000-01-01T${startTimeStr}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
-
-        return {
-            id: surgery.id.toString(),
-            title: surgery.surgery_type || 'Surgery',
-            start,
-            end,
-            allDay: !surgery.scheduled_time,
-            extendedProps: {
-                surgeryId: surgery.id,
-                surgeryType: surgery.surgery_type,
-                patientName: surgery.patient_name,
-                surgeonName: surgery.surgeon?.name || 'Unassigned',
-                theatreName: surgery.theatre_id ? `Theatre:-${String(surgery.theatre_id).padStart(2, '0')}` : 'No Theatre',
-                status: surgery.status,
-                priority: surgery.priority,
-                duration: surgery.duration_minutes,
-                startTime: formattedStartTime,
-                endTime: endTimeStr
-            },
-            ...EVENT_COLOR
-        };
-    };
-
-    
-    // Fetch Surgeries for Date Range
-    
-    const fetchSurgeries = async (startDate, endDate) => {
+    const fetchEvents = useCallback(async (startDate, endDate) => {
         try {
             setLoading(true);
             setError(null);
 
-            const response = await surgeryService.getAllSurgeries({
+            const response = await surgeryService.getCalendarEvents({
                 startDate: startDate?.toISOString().split('T')[0],
                 endDate: endDate?.toISOString().split('T')[0]
             });
 
             if (response.success) {
-                const calendarEvents = response.data.map(transformSurgeryToEvent);
-                setEvents(calendarEvents);
+                setEvents(response.data);
             } else {
-                setError(response.message || 'Failed to fetch surgeries');
+                setError(response.message || 'Failed to fetch events');
             }
         } catch (err) {
-            setError(err.message || 'Error loading surgeries');
-            console.error('Error fetching surgeries for calendar:', err);
+            setError(err.message || 'Error loading calendar events');
+            console.error('Error fetching calendar events:', err);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    
-    // Initial Load - Fetch Current Month
-    
+
+    // ── Initial load – current month ──
+
     useEffect(() => {
         const today = new Date();
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        fetchSurgeries(startOfMonth, endOfMonth);
+        fetchEvents(startOfMonth, endOfMonth);
+    }, [fetchEvents]);
+
+
+    // ── Handle view / date-range change ──
+
+    const handleDatesSet = useCallback((dateInfo) => {
+        fetchEvents(dateInfo.start, dateInfo.end);
+    }, [fetchEvents]);
+
+
+    // ── Event click → show popover ──
+
+    const handleEventClick = useCallback((clickInfo) => {
+        const rect = clickInfo.el.getBoundingClientRect();
+        setPopoverPos({
+            top: rect.top + window.scrollY - 10,
+            left: rect.right + 12
+        });
+        setSelectedEvent(clickInfo.event);
     }, []);
 
-    
-    // Handle Date Range Change (view change/navigation)
-    
-    const handleDatesSet = (dateInfo) => {
-        fetchSurgeries(dateInfo.start, dateInfo.end);
-        setCurrentView(dateInfo.view.type);
-    };
 
-    
-    // Handle Event Click - Navigate to Surgery Detail
-    
-    const handleEventClick = (clickInfo) => {
-        const surgeryId = clickInfo.event.extendedProps.surgeryId;
-        navigate(`/surgeries/${surgeryId}`);
-    };
+    // ── Date click → create surgery ──
 
-    
-    // Handle Date Click - Navigate to Create Surgery
-   
-    const handleDateClick = (dateInfo) => {
-        navigate('/surgeries/new', { 
-            state: { 
-                prefilledDate: dateInfo.dateStr 
-            } 
+    const handleDateClick = useCallback((dateInfo) => {
+        navigate('/surgeries/new', {
+            state: { prefilledDate: dateInfo.dateStr }
         });
-    };
+    }, [navigate]);
 
-   
-    // Refresh Calendar
-    
-    const handleRefresh = () => {
+
+    // ── Refresh ──
+
+    const handleRefresh = useCallback(() => {
         if (calendarRef.current) {
             const calendarApi = calendarRef.current.getApi();
             const view = calendarApi.view;
-            fetchSurgeries(view.activeStart, view.activeEnd);
+            fetchEvents(view.activeStart, view.activeEnd);
         }
-    };
+    }, [fetchEvents]);
 
-    // Custom Event Content Renderer - Match UI Design
-    
+
+    // ── Close popover on outside click ──
+
+    useEffect(() => {
+        const close = () => setSelectedEvent(null);
+        if (selectedEvent) {
+            window.addEventListener('click', close, { once: true });
+        }
+        return () => window.removeEventListener('click', close);
+    }, [selectedEvent]);
+
+
+    // ── Custom event content renderer ──
+
     const renderEventContent = (eventInfo) => {
-        const { startTime, endTime, surgeonName, theatreName } = eventInfo.event.extendedProps;
-        
+        const { surgeonName, theatreName } = eventInfo.event.extendedProps;
+        const timeText = eventInfo.timeText;
+
         return (
             <div className="p-1.5 overflow-hidden text-xs text-white leading-tight">
-                {/* Time Range */}
-                {startTime && endTime && (
+                {timeText && (
                     <div className="font-medium text-[10px] opacity-90">
-                        {startTime} - {endTime}
+                        {timeText}
                     </div>
                 )}
-                {/* Doctor Name */}
                 <div className="font-semibold truncate">
                     {surgeonName ? `Dr. ${surgeonName.split(' ').pop()}` : 'Unassigned'}
                 </div>
-                {/* Theatre */}
                 <div className="text-[10px] opacity-90 truncate">
                     {theatreName}
                 </div>
@@ -192,26 +163,67 @@ const Calendar = () => {
         );
     };
 
-    
-    // Render
-    
+
+    // ── Helper: format status label ──
+
+    const formatStatus = (s) =>
+        s ? s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : '';
+
+
+    // ── Render ──
+
     return (
         <div className="min-h-screen bg-gray-50 py-6 px-4">
             <div className="max-w-7xl mx-auto">
-                {/* Page Header - Match UI Design */}
-                <div className="mb-6 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Theatre Schedule Calendar</h1>
+
+                {/* ── Page header ── */}
+                <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Theatre Schedule Calendar</h1>
+                        <p className="text-sm text-gray-500 mt-1">
+                            Click an event for details · Click a date to schedule
+                        </p>
+                    </div>
                     <button
                         onClick={handleRefresh}
                         disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 self-start"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                         Refresh
                     </button>
                 </div>
 
-                {/* Error State */}
+                {/* ── Legend ── */}
+                <div className="mb-4 flex flex-col sm:flex-row gap-4 bg-white rounded-lg border border-gray-200 p-3">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status:</span>
+                        {STATUS_LEGEND.map(({ label, color }) => (
+                            <span key={label} className="flex items-center gap-1.5 text-xs text-gray-700">
+                                <span
+                                    className="w-3 h-3 rounded-sm inline-block"
+                                    style={{ backgroundColor: color }}
+                                />
+                                {label}
+                            </span>
+                        ))}
+                    </div>
+                    <div className="hidden sm:block w-px bg-gray-200" />
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Priority:</span>
+                        {PRIORITY_LEGEND.map(({ label, color }) => (
+                            <span key={label} className="flex items-center gap-1.5 text-xs text-gray-700">
+                                <span
+                                    className="w-3 h-3 rounded-full inline-block"
+                                    style={{ backgroundColor: color }}
+                                />
+                                {label}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
+                {/* ── Error state ── */}
                 {error && (
                     <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
                         <AlertCircle className="w-5 h-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
@@ -227,7 +239,7 @@ const Calendar = () => {
                     </div>
                 )}
 
-                {/* Calendar Container */}
+                {/* ── Calendar container ── */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 theatre-calendar">
                     <FullCalendar
                         ref={calendarRef}
@@ -273,9 +285,78 @@ const Calendar = () => {
                     />
                 </div>
 
-                {/* Loading Overlay */}
+                {/* ── Event detail popover ── */}
+                {selectedEvent && (
+                    <div
+                        className="fixed z-50 w-72 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+                        style={{ top: popoverPos.top, left: Math.min(popoverPos.left, window.innerWidth - 300) }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Popover header */}
+                        <div
+                            className="px-4 py-3 flex items-center justify-between"
+                            style={{ backgroundColor: selectedEvent.backgroundColor || '#3B82F6' }}
+                        >
+                            <h3 className="text-sm font-semibold text-white truncate pr-2">
+                                {selectedEvent.title}
+                            </h3>
+                            <button
+                                onClick={() => setSelectedEvent(null)}
+                                className="text-white/80 hover:text-white transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        {/* Popover body */}
+                        <div className="p-4 space-y-2.5 text-sm text-gray-700">
+                            <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium">Patient:</span>
+                                <span>{selectedEvent.extendedProps.patientName}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium">Surgeon:</span>
+                                <span>{selectedEvent.extendedProps.surgeonName}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium">Theatre:</span>
+                                <span>{selectedEvent.extendedProps.theatreName}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium">Duration:</span>
+                                <span>{selectedEvent.extendedProps.duration} min</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Activity className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium">Status:</span>
+                                <span className="capitalize">{formatStatus(selectedEvent.extendedProps.status)}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Flag className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium">Priority:</span>
+                                <span className="capitalize">{selectedEvent.extendedProps.priority}</span>
+                            </div>
+                        </div>
+
+                        {/* View full details button */}
+                        <div className="px-4 pb-3">
+                            <button
+                                onClick={() => navigate(`/surgeries/${selectedEvent.extendedProps.surgeryId}`)}
+                                className="w-full px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                View Full Details
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── Loading overlay ── */}
                 {loading && (
-                    <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 pointer-events-none">
+                    <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-40 pointer-events-none">
                         <div className="bg-white rounded-lg p-4 shadow-lg flex items-center gap-3">
                             <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
                             <span className="text-gray-700">Loading surgeries...</span>
@@ -284,7 +365,7 @@ const Calendar = () => {
                 )}
             </div>
 
-            {/* Custom Styles for FullCalendar to match UI design */}
+            {/* ── Custom FullCalendar styles ── */}
             <style>{`
                 .theatre-calendar .fc {
                     font-family: inherit;

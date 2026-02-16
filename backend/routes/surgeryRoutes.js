@@ -15,6 +15,7 @@
 // - PUT    /api/surgeries/:id          - Update surgery (Coordinator, Admin)
 // - PATCH  /api/surgeries/:id/status   - Update surgery status (Coordinator, Admin)
 // - GET    /api/surgeries/surgeons     - Get surgeons for dropdown (Protected)
+// - GET    /api/surgeries/events       - Get calendar events (Protected) - M2 Day 7
 // - DELETE /api/surgeries/:id          - Delete surgery (Coordinator, Admin)
 // ============================================================================
 
@@ -26,7 +27,8 @@ import {
     getSurgeonsDropdown,
     updateSurgery,
     updateSurgeryStatus,
-    deleteSurgery
+    deleteSurgery,
+    getCalendarEvents
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -41,6 +43,16 @@ const router = express.Router();
 // Protected - any authenticated user can view
 // ============================================================================
 router.get('/surgeons', protect, getSurgeonsDropdown);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/events
+// ============================================================================
+// Get surgeries formatted as FullCalendar-compatible events
+// Supports date range + status filters via query params
+// Protected - any authenticated user can view
+// Created by: M2 (Chandeepa) - Day 7
+// ============================================================================
+router.get('/events', protect, getCalendarEvents);
 
 // ============================================================================
 // ROUTE: POST /api/surgeries
