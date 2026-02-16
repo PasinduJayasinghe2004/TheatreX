@@ -4,11 +4,13 @@
 // Handles all surgery-related API calls
 // Created by: M2 (Chandeepa) - Day 5
 // Updated by: M2 (Chandeepa) - Day 6 (Added deleteSurgery)
+// Updated by: M3 (Janani) - Day 6 (Added updateSurgeryStatus, status filter)
 //
 // FEATURES:
-// - Get all surgeries
+// - Get all surgeries (with date + status filters)
 // - Get surgery by ID
 // - Create new surgery
+// - Update surgery status
 // - Delete surgery by ID
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
@@ -26,12 +28,16 @@ const surgeryService = {
     getAllSurgeries: async (filters = {}) => {
         try {
             // Build query string from filters
+            // Updated by: M3 (Janani) - Day 6 (Added status filter)
             const params = new URLSearchParams();
             if (filters.startDate) {
                 params.append('startDate', filters.startDate);
             }
             if (filters.endDate) {
                 params.append('endDate', filters.endDate);
+            }
+            if (filters.status) {
+                params.append('status', filters.status);
             }
 
             const queryString = params.toString();
@@ -81,6 +87,20 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error deleting surgery. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update surgery status
+    // Created by: M3 (Janani) - Day 6
+    // ========================================
+    updateSurgeryStatus: async (id, status) => {
+        try {
+            const response = await api.patch(`/surgeries/${id}/status`, { status });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating surgery status. Please try again.';
             throw new Error(message);
         }
     },
