@@ -16,6 +16,7 @@
 // - updateSurgeryStatus: PATCH /api/surgeries/:id/status - Update surgery status
 // - deleteSurgery: DELETE /api/surgeries/:id - Delete surgery
 // - getSurgeonsDropdown: GET /api/surgeries/surgeons - Surgeons list
+// - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -586,6 +587,146 @@ export const updateSurgery = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error updating surgery',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET SURGERY CALENDAR EVENTS
+// ============================================================================
+// @desc    Get surgeries formatted as FullCalendar-compatible events
+// @route   GET /api/surgeries/events
+// @access  Protected
+// Created by: M2 (Chandeepa) - Day 7
+//
+// Returns surgeries with start/end ISO strings, color coding by
+// status & priority, and extendedProps for tooltip/detail rendering.
+// Accepts optional query params: startDate, endDate, status
+// ============================================================================
+
+// Color maps for status and priority
+const STATUS_COLORS = {
+    scheduled:   { backgroundColor: '#3B82F6', borderColor: '#2563EB' }, // blue
+    in_progress: { backgroundColor: '#F59E0B', borderColor: '#D97706' }, // amber
+    completed:   { backgroundColor: '#10B981', borderColor: '#059669' }, // green
+    cancelled:   { backgroundColor: '#EF4444', borderColor: '#DC2626' }  // red
+};
+
+const PRIORITY_COLORS = {
+    emergency: { backgroundColor: '#EF4444', borderColor: '#DC2626' }, // red
+    urgent:    { backgroundColor: '#F97316', borderColor: '#EA580C' }, // orange
+    routine:   null // use status color
+};
+
+export const getCalendarEvents = async (req, res) => {
+    try {
+        const { startDate, endDate, status } = req.query;
+
+        // Build dynamic WHERE clause
+        let whereConditions = [];
+        let queryParams = [];
+        let paramCounter = 1;
+
+        if (startDate) {
+            whereConditions.push(`s.scheduled_date >= $${paramCounter}`);
+            queryParams.push(startDate);
+            paramCounter++;
+        }
+        if (endDate) {
+            whereConditions.push(`s.scheduled_date <= $${paramCounter}`);
+            queryParams.push(endDate);
+            paramCounter++;
+        }
+        const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
+        if (status && validStatuses.includes(status)) {
+            whereConditions.push(`s.status = $${paramCounter}`);
+            queryParams.push(status);
+            paramCounter++;
+        }
+
+        const whereClause = whereConditions.length > 0
+            ? `WHERE ${whereConditions.join(' AND ')}`
+            : '';
+
+        const query = `
+            SELECT
+                s.*,
+                u.name AS surgeon_name
+            FROM surgeries s
+            LEFT JOIN users u ON s.surgeon_id = u.id
+            ${whereClause}
+            ORDER BY s.scheduled_date ASC, s.scheduled_time ASC
+        `;
+
+        const { rows } = await pool.query(query, queryParams);
+
+        // Transform each surgery row into a FullCalendar event object
+        const events = rows.map(row => {
+            // Build ISO start string
+            const dateStr = row.scheduled_date instanceof Date
+                ? row.scheduled_date.toISOString().split('T')[0]
+                : String(row.scheduled_date).split('T')[0];
+
+            let timeStr = '';
+            if (row.scheduled_time) {
+                const raw = String(row.scheduled_time);
+                timeStr = raw.includes('T')
+                    ? raw.split('T')[1].substring(0, 8)
+                    : raw.substring(0, 8);
+            }
+
+            const start = timeStr ? `${dateStr}T${timeStr}` : dateStr;
+
+            // Calculate end from duration
+            let end = null;
+            if (row.duration_minutes && timeStr) {
+                const startDate = new Date(`${dateStr}T${timeStr}`);
+                end = new Date(startDate.getTime() + row.duration_minutes * 60000).toISOString();
+            }
+
+            // Determine colors: emergency/urgent override status color
+            const priorityColor = PRIORITY_COLORS[row.priority];
+            const statusColor = STATUS_COLORS[row.status] || STATUS_COLORS.scheduled;
+            const colors = priorityColor || statusColor;
+
+            return {
+                id: String(row.id),
+                title: row.surgery_type || 'Surgery',
+                start,
+                end,
+                allDay: !timeStr,
+                backgroundColor: colors.backgroundColor,
+                borderColor: colors.borderColor,
+                textColor: '#FFFFFF',
+                extendedProps: {
+                    surgeryId: row.id,
+                    surgeryType: row.surgery_type,
+                    patientName: row.patient_name || 'Unknown',
+                    surgeonName: row.surgeon_name || 'Unassigned',
+                    theatreId: row.theatre_id,
+                    theatreName: row.theatre_id
+                        ? `Theatre-${String(row.theatre_id).padStart(2, '0')}`
+                        : 'No Theatre',
+                    status: row.status,
+                    priority: row.priority,
+                    duration: row.duration_minutes,
+                    description: row.description,
+                    notes: row.notes
+                }
+            };
+        });
+
+        res.status(200).json({
+            success: true,
+            count: events.length,
+            data: events
+        });
+    } catch (error) {
+        console.error('Error fetching calendar events:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching calendar events',
             error: error.message
         });
     }

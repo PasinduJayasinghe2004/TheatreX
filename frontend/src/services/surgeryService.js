@@ -5,6 +5,7 @@
 // Created by: M2 (Chandeepa) - Day 5
 // Updated by: M2 (Chandeepa) - Day 6 (Added deleteSurgery)
 // Updated by: M3 (Janani) - Day 6 (Added updateSurgeryStatus, status filter)
+// Updated by: M2 (Chandeepa) - Day 7 (Added getCalendarEvents)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -12,6 +13,7 @@
 // - Create new surgery
 // - Update surgery status
 // - Delete surgery by ID
+// - Get calendar events (FullCalendar format) - M2 Day 7
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -114,6 +116,34 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching surgeons. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get calendar events (FullCalendar format)
+    // Created by: M2 (Chandeepa) - Day 7
+    // ========================================
+    getCalendarEvents: async (filters = {}) => {
+        try {
+            const params = new URLSearchParams();
+            if (filters.startDate) {
+                params.append('startDate', filters.startDate);
+            }
+            if (filters.endDate) {
+                params.append('endDate', filters.endDate);
+            }
+            if (filters.status) {
+                params.append('status', filters.status);
+            }
+
+            const queryString = params.toString();
+            const url = queryString ? `/surgeries/events?${queryString}` : '/surgeries/events';
+
+            const response = await api.get(url);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching calendar events. Please try again.';
             throw new Error(message);
         }
     }
