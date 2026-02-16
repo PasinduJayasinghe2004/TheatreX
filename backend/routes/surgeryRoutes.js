@@ -3,16 +3,19 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 5
 // Updated by: M2 (Chandeepa) - Day 6 (Added DELETE route)
+// Updated by: M1 (Pasindu) - Day 6 (Added PUT route)
+// Updated by: M3 (Janani) - Day 6 (Added PATCH status route)
 // 
 // Defines all surgery-related API routes
 //
 // ROUTES:
-// - POST   /api/surgeries         - Create new surgery (Coordinator, Admin)
-// - GET    /api/surgeries         - Get all surgeries (Protected)
-// - GET    /api/surgeries/:id     - Get surgery by ID (Protected)
-// - PUT    /api/surgeries/:id     - Update surgery (Coordinator, Admin)
-// - GET    /api/surgeries/surgeons - Get surgeons for dropdown (Protected)
-// - DELETE /api/surgeries/:id     - Delete surgery (Coordinator, Admin)
+// - POST   /api/surgeries              - Create new surgery (Coordinator, Admin)
+// - GET    /api/surgeries              - Get all surgeries (Protected)
+// - GET    /api/surgeries/:id          - Get surgery by ID (Protected)
+// - PUT    /api/surgeries/:id          - Update surgery (Coordinator, Admin)
+// - PATCH  /api/surgeries/:id/status   - Update surgery status (Coordinator, Admin)
+// - GET    /api/surgeries/surgeons     - Get surgeons for dropdown (Protected)
+// - DELETE /api/surgeries/:id          - Delete surgery (Coordinator, Admin)
 // ============================================================================
 
 import express from 'express';
@@ -21,6 +24,8 @@ import {
     getAllSurgeries,
     getSurgeryById,
     getSurgeonsDropdown,
+    updateSurgery,
+    updateSurgeryStatus,
     deleteSurgery
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
@@ -61,6 +66,24 @@ router.get('/', protect, getAllSurgeries);
 // Protected - any authenticated user can view
 // ============================================================================
 router.get('/:id', protect, getSurgeryById);
+
+// ============================================================================
+// ROUTE: PUT /api/surgeries/:id
+// ============================================================================
+// Update a surgery's details
+// Protected - only coordinators and admins can update surgeries
+// Created by: M1 (Pasindu) - Day 6
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
+
+// ============================================================================
+// ROUTE: PATCH /api/surgeries/:id/status
+// ============================================================================
+// Update only the status of a surgery (with transition validation)
+// Protected - only coordinators and admins can change status
+// Created by: M3 (Janani) - Day 6
+// ============================================================================
+router.patch('/:id/status', protect, authorize('coordinator', 'admin'), updateSurgeryStatus);
 
 // ============================================================================
 // ROUTE: DELETE /api/surgeries/:id

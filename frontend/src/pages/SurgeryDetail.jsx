@@ -3,13 +3,15 @@
 // ============================================================================
 // Created by: M3 (Janani) - Day 5
 // Updated by: M2 (Chandeepa) - Day 6 (Added delete confirmation modal)
+// Updated by: M3 (Janani) - Day 6 (Added StatusBadge + status change UI)
 //
 // Displays full details of a single surgery fetched by ID.
 // Uses surgeryService.getSurgeryById() for data retrieval.
 // Uses surgeryService.deleteSurgery() for deletion with confirmation modal.
+// Uses surgeryService.updateSurgeryStatus() for inline status changes.
 // ============================================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
     ArrowLeft,
@@ -21,29 +23,18 @@ import {
     FileText,
     AlertCircle,
     Edit,
-    Trash2
+    Trash2,
+    ChevronDown,
+    CheckCircle2
 } from 'lucide-react';
 import surgeryService from '../services/surgeryService';
 import Loading from '../components/ui/Loading';
 import Modal from '../components/ui/Modal';
+import StatusBadge, { VALID_STATUS_TRANSITIONS, STATUS_LABELS } from '../components/StatusBadge';
 
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-/** Return Tailwind classes for the status badge */
-const getStatusStyle = (status) => {
-    switch (status) {
-        case 'completed':
-            return 'bg-green-100 text-green-800 border-green-200';
-        case 'in_progress':
-            return 'bg-blue-100 text-blue-800 border-blue-200';
-        case 'cancelled':
-            return 'bg-red-100 text-red-800 border-red-200';
-        default: // scheduled
-            return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-};
 
 /** Return Tailwind classes for the priority badge */
 const getPriorityStyle = (priority) => {
@@ -102,6 +93,31 @@ const SurgeryDetail = () => {
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
 
+    // ── Status change state ── M3 (Janani) Day 6 ──────────────────────────
+    const [showStatusMenu, setShowStatusMenu] = useState(false);
+    const [statusUpdating, setStatusUpdating] = useState(false);
+    const [statusMessage, setStatusMessage] = useState(null); // { type, text }
+    const statusMenuRef = useRef(null);
+
+    // Close status dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (statusMenuRef.current && !statusMenuRef.current.contains(e.target)) {
+                setShowStatusMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Auto-dismiss status messages after 4s
+    useEffect(() => {
+        if (statusMessage) {
+            const t = setTimeout(() => setStatusMessage(null), 4000);
+            return () => clearTimeout(t);
+        }
+    }, [statusMessage]);
+
     // Fetch surgery data on mount / id change
     useEffect(() => {
         const fetchSurgery = async () => {
@@ -149,6 +165,43 @@ const SurgeryDetail = () => {
             setDeleting(false);
         }
     };
+
+    // ── Status Change Handler ── M3 (Janani) Day 6 ──────────────────────
+    const handleStatusChange = async (newStatus) => {
+        try {
+            setStatusUpdating(true);
+            setShowStatusMenu(false);
+            setStatusMessage(null);
+
+            const response = await surgeryService.updateSurgeryStatus(id, newStatus);
+
+            if (response.success) {
+                setSurgery(prev => ({ ...prev, ...response.data }));
+                setStatusMessage({
+                    type: 'success',
+                    text: response.message || `Status updated to ${STATUS_LABELS[newStatus]}`
+                });
+            } else {
+                setStatusMessage({
+                    type: 'error',
+                    text: response.message || 'Failed to update status'
+                });
+            }
+        } catch (err) {
+            setStatusMessage({
+                type: 'error',
+                text: err.message || 'An error occurred while updating status'
+            });
+            console.error('Error updating surgery status:', err);
+        } finally {
+            setStatusUpdating(false);
+        }
+    };
+
+    // Get allowed next statuses for the current surgery
+    const allowedTransitions = surgery
+        ? (VALID_STATUS_TRANSITIONS[surgery.status] || [])
+        : [];
 
     // ── Loading ──────────────────────────────────────────────────────────
     if (loading) {
@@ -207,6 +260,23 @@ const SurgeryDetail = () => {
                     Back to Surgeries
                 </Link>
 
+                {/* ── Status change success / error toast ── M3 Day 6 ── */}
+                {statusMessage && (
+                    <div
+                        className={`mb-4 p-3 rounded-lg flex items-center gap-2 text-sm font-medium animate-in fade-in ${statusMessage.type === 'success'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-red-50 text-red-700 border border-red-200'
+                            }`}
+                    >
+                        {statusMessage.type === 'success' ? (
+                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                        ) : (
+                            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                        )}
+                        {statusMessage.text}
+                    </div>
+                )}
+
                 {/* ── Header Card ─────────────────────────────────── */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                     <div className="flex flex-col sm:flex-row justify-between gap-4">
@@ -216,12 +286,49 @@ const SurgeryDetail = () => {
                                 {surgery.surgery_type}
                             </h1>
                             <p className="text-gray-500 mt-1">Surgery #{surgery.id}</p>
-                            <div className="flex flex-wrap gap-2 mt-3">
-                                <span
-                                    className={`px-3 py-1 rounded-full text-xs font-semibold border capitalize ${getStatusStyle(surgery.status)}`}
-                                >
-                                    {surgery.status?.replace('_', ' ') || 'Scheduled'}
-                                </span>
+                            <div className="flex flex-wrap gap-2 mt-3 items-center">
+                                {/* ── Status Badge with dropdown ── M3 Day 6 ── */}
+                                <div className="relative" ref={statusMenuRef}>
+                                    <StatusBadge
+                                        status={surgery.status}
+                                        size="md"
+                                        onClick={allowedTransitions.length > 0 ? () => setShowStatusMenu(!showStatusMenu) : undefined}
+                                    />
+                                    {allowedTransitions.length > 0 && (
+                                        <ChevronDown
+                                            className={`inline w-3.5 h-3.5 ml-0.5 text-gray-500 transition-transform ${showStatusMenu ? 'rotate-180' : ''
+                                                }`}
+                                        />
+                                    )}
+
+                                    {/* Status dropdown menu */}
+                                    {showStatusMenu && (
+                                        <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                                            <p className="px-3 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wide">
+                                                Change status to
+                                            </p>
+                                            {allowedTransitions.map((nextStatus) => (
+                                                <button
+                                                    key={nextStatus}
+                                                    onClick={() => handleStatusChange(nextStatus)}
+                                                    disabled={statusUpdating}
+                                                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                                >
+                                                    <StatusBadge status={nextStatus} size="sm" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Loading indicator during status update */}
+                                {statusUpdating && (
+                                    <svg className="animate-spin h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                )}
+
                                 <span
                                     className={`px-3 py-1 rounded-full text-xs font-semibold border capitalize ${getPriorityStyle(surgery.priority)}`}
                                 >

@@ -3,13 +3,19 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 5
 // Updated by: M2 (Chandeepa) - Day 6 (Added deleteSurgery)
+// Updated by: M3 (Janani) - Day 6 (Added updateSurgeryStatus, status filter)
 // 
 // Handles all surgery-related HTTP requests and business logic.
 // Contains CRUD operations for surgery management.
 //
 // EXPORTS:
 // - createSurgery: POST /api/surgeries - Create new surgery
+// - getAllSurgeries: GET /api/surgeries - List surgeries (with date/status filters)
+// - getSurgeryById: GET /api/surgeries/:id - Get single surgery
+// - updateSurgery: PUT /api/surgeries/:id - Update surgery fields
+// - updateSurgeryStatus: PATCH /api/surgeries/:id/status - Update surgery status
 // - deleteSurgery: DELETE /api/surgeries/:id - Delete surgery
+// - getSurgeonsDropdown: GET /api/surgeries/surgeons - Surgeons list
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -137,7 +143,9 @@ export const createSurgery = async (req, res) => {
 export const getAllSurgeries = async (req, res) => {
     try {
         // Extract query parameters for filtering
-        const { startDate, endDate } = req.query;
+        // Updated by: M3 (Janani) - Day 6 (Added status filter)
+        // Updated by: M4 (Oneli) - Day 6 (Added date filtering)
+        const { startDate, endDate, status } = req.query;
 
         // Build dynamic WHERE clause
         let whereConditions = [];
@@ -153,6 +161,14 @@ export const getAllSurgeries = async (req, res) => {
         if (endDate) {
             whereConditions.push(`s.scheduled_date <= $${paramCounter}`);
             queryParams.push(endDate);
+            paramCounter++;
+        }
+
+        // Status filter - M3 (Janani) Day 6
+        const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
+        if (status && validStatuses.includes(status)) {
+            whereConditions.push(`s.status = $${paramCounter}`);
+            queryParams.push(status);
             paramCounter++;
         }
 
@@ -207,7 +223,8 @@ export const getAllSurgeries = async (req, res) => {
             data: surgeries,
             filters: {
                 startDate: startDate || null,
-                endDate: endDate || null
+                endDate: endDate || null,
+                status: status || null
             }
         });
     } catch (error) {
@@ -569,6 +586,130 @@ export const updateSurgery = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error updating surgery',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// UPDATE SURGERY STATUS
+// ============================================================================
+// @desc    Update only the status of a surgery (with transition validation)
+// @route   PATCH /api/surgeries/:id/status
+// @access  Protected (Coordinator, Admin)
+// Created by: M3 (Janani) - Day 6
+// ============================================================================
+
+// Valid status transitions map
+const VALID_STATUS_TRANSITIONS = {
+    scheduled:   ['in_progress', 'cancelled'],
+    in_progress: ['completed', 'cancelled'],
+    completed:   [],           // terminal state
+    cancelled:   ['scheduled'] // allow rescheduling
+};
+
+export const updateSurgeryStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Validate ID
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgery ID'
+            });
+        }
+
+        // Validate status is provided
+        if (!status) {
+            return res.status(400).json({
+                success: false,
+                message: 'Status is required'
+            });
+        }
+
+        // Validate status is a valid enum value
+        const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+            });
+        }
+
+        // Fetch current surgery
+        const existingResult = await pool.query(
+            'SELECT id, status, surgery_type FROM surgeries WHERE id = $1',
+            [id]
+        );
+
+        if (existingResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Surgery not found'
+            });
+        }
+
+        const currentStatus = existingResult.rows[0].status;
+
+        // Same status — no-op
+        if (currentStatus === status) {
+            return res.status(200).json({
+                success: true,
+                message: 'Status is already set to ' + status,
+                data: existingResult.rows[0]
+            });
+        }
+
+        // Validate status transition
+        const allowedTransitions = VALID_STATUS_TRANSITIONS[currentStatus] || [];
+        if (!allowedTransitions.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot transition from '${currentStatus}' to '${status}'. Allowed transitions: ${allowedTransitions.length > 0 ? allowedTransitions.join(', ') : 'none (terminal state)'}`,
+                currentStatus,
+                allowedTransitions
+            });
+        }
+
+        // Perform the status update
+        const { rows } = await pool.query(
+            `UPDATE surgeries
+             SET status = $1, updated_at = NOW()
+             WHERE id = $2
+             RETURNING *`,
+            [status, id]
+        );
+
+        const updatedSurgery = rows[0];
+
+        // Fetch surgeon details for response
+        let surgeonDetails = null;
+        if (updatedSurgery.surgeon_id) {
+            const surgeonResult = await pool.query(
+                'SELECT id, name, email FROM users WHERE id = $1',
+                [updatedSurgery.surgeon_id]
+            );
+            if (surgeonResult.rows.length > 0) {
+                surgeonDetails = surgeonResult.rows[0];
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Surgery status updated from '${currentStatus}' to '${status}'`,
+            data: {
+                ...updatedSurgery,
+                surgeon: surgeonDetails
+            }
+        });
+
+    } catch (error) {
+        console.error('Error updating surgery status:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating surgery status',
             error: error.message
         });
     }
