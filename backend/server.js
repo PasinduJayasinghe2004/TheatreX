@@ -25,6 +25,7 @@ import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import surgeryRoutes from './routes/surgeryRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js'; // M4 - Day 7
 
 // Load environment variables
 dotenv.config();
@@ -48,6 +49,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes); // RBAC test routes - M4 Day 4
 app.use('/api/surgeries', surgeryRoutes); // Surgery routes - M1 Day 5
+app.use('/api/dashboard', dashboardRoutes); // Dashboard routes - M4 Day 7
 
 // Health check route
 app.get('/api/health', (req, res) => {
