@@ -63,10 +63,16 @@ export const validateSurgery = (req, res, next) => {
     }
     // 2. Patient Validation (Either ID or Manual Details)
     if (!patient_id) {
-        // If no ID, require manual details
-        if (!patient_name) errors.push('Patient name is required (if no ID provided)');
-        if (!patient_age) errors.push('Patient age is required (if no ID provided)');
-        if (!patient_gender) errors.push('Patient gender is required (if no ID provided)');
+        // If no ID, require manual details for emergency or manual patient entry
+        if (!patient_name) {
+            errors.push('Patient name is required when not selecting an existing patient');
+        }
+        if (!patient_age) {
+            errors.push('Patient age is required when not selecting an existing patient');
+        }
+        if (!patient_gender) {
+            errors.push('Patient gender is required when not selecting an existing patient');
+        }
     }
 
     // 3. Enum Validation
@@ -78,6 +84,12 @@ export const validateSurgery = (req, res, next) => {
     const validPriorities = ['routine', 'urgent', 'emergency'];
     if (priority && !validPriorities.includes(priority)) {
         errors.push(`Invalid priority. Must be one of: ${validPriorities.join(', ')}`);
+    }
+
+    // Gender enum validation (matches database constraint)
+    const validGenders = ['male', 'female', 'other'];
+    if (patient_gender && !validGenders.includes(patient_gender.toLowerCase())) {
+        errors.push(`Invalid patient gender. Must be one of: ${validGenders.join(', ')}`);
     }
 
     // 4. Data Type Validation
