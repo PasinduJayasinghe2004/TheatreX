@@ -21,11 +21,13 @@ import { createAnaesthetistsTable } from './models/anaesthetistModel.js';
 import { createSurgeonsTable } from './models/surgeonModel.js';
 import { createNursesTable } from './models/nurseModel.js';
 import { createTechniciansTable } from './models/technicianModel.js';
+import { createTheatresTable } from './models/theatreModel.js'; // M2 - Day 8
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import surgeryRoutes from './routes/surgeryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js'; // M4 - Day 7
+import theatreRoutes from './routes/theatreRoutes.js'; // M2 - Day 8
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +52,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes); // RBAC test routes - M4 Day 4
 app.use('/api/surgeries', surgeryRoutes); // Surgery routes - M1 Day 5
 app.use('/api/dashboard', dashboardRoutes); // Dashboard routes - M4 Day 7
+app.use('/api/theatres', theatreRoutes); // Theatre routes - M2 Day 8
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -121,6 +124,7 @@ const startServer = async () => {
             await createSurgeonsTable();
             await createNursesTable();
             await createTechniciansTable();
+            await createTheatresTable(); // M2 - Day 8
         }
 
         // Initialize database tables

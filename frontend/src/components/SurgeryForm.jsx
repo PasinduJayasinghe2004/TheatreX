@@ -7,10 +7,11 @@
 // Clean modal form for scheduling surgeries
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import surgeryService from '../services/surgeryService';
 
 // Mock data for dropdowns (replace with API calls when available)
 const MOCK_PATIENTS = [
@@ -32,12 +33,7 @@ const MOCK_ANAESTHETISTS = [
     { id: 3, name: 'Dr. Robert Taylor' },
 ];
 
-const MOCK_THEATRES = [
-    { id: 1, name: 'Theatre 1 - General Surgery' },
-    { id: 2, name: 'Theatre 2 - Cardiac' },
-    { id: 3, name: 'Theatre 3 - Orthopedic' },
-    { id: 4, name: 'Theatre 4 - Neuro' },
-];
+// MOCK_THEATRES removed — now fetched from API (M2 - Day 8)
 
 const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const { token } = useAuth();
@@ -47,6 +43,12 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const [message, setMessage] = useState({ type: '', text: '' });
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
+
+    // Theatre state - M2 (Chandeepa) Day 8
+    const [theatres, setTheatres] = useState([]);
+    const [loadingTheatres, setLoadingTheatres] = useState(true);
+    const [theatreAvailability, setTheatreAvailability] = useState(null); // map of id -> { available, conflict_reason }
+    const [checkingAvailability, setCheckingAvailability] = useState(false);
 
     // Form state - enhanced for emergency booking with manual patient entry
     const [formData, setFormData] = useState({
@@ -89,6 +91,57 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             fetchSurgeons();
         }
     }, [token]);
+
+    // Fetch theatres for dropdown - M2 (Chandeepa) Day 8
+    useEffect(() => {
+        const fetchTheatres = async () => {
+            try {
+                const result = await surgeryService.getTheatres();
+                if (result.success) {
+                    setTheatres(result.data);
+                }
+            } catch (error) {
+                console.error('Error fetching theatres:', error);
+            } finally {
+                setLoadingTheatres(false);
+            }
+        };
+
+        fetchTheatres();
+    }, []);
+
+    // Check theatre availability when date/time/duration change - M2 Day 8
+    const checkAvailability = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes } = formData;
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setTheatreAvailability(null);
+            return;
+        }
+
+        try {
+            setCheckingAvailability(true);
+            const result = await surgeryService.checkTheatreAvailability(
+                scheduled_date,
+                scheduled_time,
+                duration_minutes
+            );
+            if (result.success) {
+                const availMap = {};
+                result.data.forEach(t => {
+                    availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason };
+                });
+                setTheatreAvailability(availMap);
+            }
+        } catch (error) {
+            console.error('Error checking availability:', error);
+        } finally {
+            setCheckingAvailability(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
+
+    useEffect(() => {
+        checkAvailability();
+    }, [checkAvailability]);
 
     // Handle input change
     const handleChange = (e) => {
@@ -421,22 +474,47 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 </div>
             </div>
 
-            {/* Theatre */}
+            {/* Theatre - Updated by M2 (Chandeepa) Day 8: API-driven with availability */}
             <div>
-                <label className={labelClass}>Theatre</label>
+                <div className="flex items-center justify-between mb-1.5">
+                    <label className={labelClass}>Theatre</label>
+                    {checkingAvailability && (
+                        <span className="text-xs text-blue-500 animate-pulse">Checking availability...</span>
+                    )}
+                    {theatreAvailability && !checkingAvailability && (
+                        <span className="text-xs text-green-600">
+                            {Object.values(theatreAvailability).filter(t => t.available).length} available
+                        </span>
+                    )}
+                </div>
                 <select
                     name="theatre_id"
                     value={formData.theatre_id}
                     onChange={handleChange}
                     className={selectClass}
+                    disabled={loadingTheatres}
                 >
-                    <option value="">Select Theatre</option>
-                    {MOCK_THEATRES.map(theatre => (
-                        <option key={theatre.id} value={theatre.id}>
-                            {theatre.name}
-                        </option>
-                    ))}
+                    <option value="">{loadingTheatres ? 'Loading theatres...' : 'Select Theatre'}</option>
+                    {theatres.map(theatre => {
+                        const avail = theatreAvailability?.[theatre.id];
+                        const isUnavailable = avail && !avail.available;
+                        const label = `${theatre.name}${theatre.location ? ` - ${theatre.location}` : ''}${avail ? (avail.available ? ' ✅' : ' ❌ Unavailable') : ''}`;
+                        return (
+                            <option
+                                key={theatre.id}
+                                value={theatre.id}
+                                disabled={isUnavailable}
+                            >
+                                {label}
+                            </option>
+                        );
+                    })}
                 </select>
+                {formData.theatre_id && theatreAvailability?.[formData.theatre_id] && !theatreAvailability[formData.theatre_id].available && (
+                    <p className="text-xs text-red-500 mt-1">
+                        ⚠️ {theatreAvailability[formData.theatre_id].conflict_reason}
+                    </p>
+                )}
             </div>
 
             {/* Date, Time, Duration - 3 column grid */}
