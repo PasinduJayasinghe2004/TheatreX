@@ -138,7 +138,7 @@ const EmergencyBooking = () => {
     // Check all conflicts (theatre, surgeon, staff) - M1 Day 8
     const checkAllConflicts = useCallback(async () => {
         const { scheduled_date, scheduled_time, duration_minutes, theatre_id, surgeon_id, anaesthetist_id } = formData;
-        
+
         if (!scheduled_date || !scheduled_time || !duration_minutes) {
             setConflicts(null);
             return;
@@ -167,8 +167,8 @@ const EmergencyBooking = () => {
         } finally {
             setCheckingConflicts(false);
         }
-    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes, 
-        formData.theatre_id, formData.surgeon_id, formData.anaesthetist_id, token]);
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes,
+    formData.theatre_id, formData.surgeon_id, formData.anaesthetist_id, token]);
 
     // Debounced conflict check
     useEffect(() => {
@@ -274,11 +274,10 @@ const EmergencyBooking = () => {
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             {/* Alert Messages */}
                             {message.text && (
-                                <div className={`p-4 rounded-lg text-sm ${
-                                    message.type === 'success'
+                                <div className={`p-4 rounded-lg text-sm ${message.type === 'success'
                                         ? 'bg-green-50 text-green-700 border border-green-200'
                                         : 'bg-red-50 text-red-700 border border-red-200'
-                                }`}>
+                                    }`}>
                                     {message.text}
                                 </div>
                             )}
@@ -311,8 +310,9 @@ const EmergencyBooking = () => {
                             {/* Row 1: Procedure & Priority Badge */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="md:col-span-2">
-                                    <label className={labelClass}>Procedure Name *</label>
+                                    <label htmlFor="procedure_name" className={labelClass}>Procedure Name *</label>
                                     <input
+                                        id="procedure_name"
                                         type="text"
                                         name="procedure_name"
                                         value={formData.procedure_name}
@@ -466,12 +466,12 @@ const EmergencyBooking = () => {
                                         );
                                     })}
                                 </select>
-                                {formData.theatre_id && theatreAvailability?.[formData.theatre_id] && 
-                                 !theatreAvailability[formData.theatre_id].available && (
-                                    <p className="text-xs text-red-500 mt-1">
-                                        ⚠️ {theatreAvailability[formData.theatre_id].conflict_reason}
-                                    </p>
-                                )}
+                                {formData.theatre_id && theatreAvailability?.[formData.theatre_id] &&
+                                    !theatreAvailability[formData.theatre_id].available && (
+                                        <p className="text-xs text-red-500 mt-1">
+                                            ⚠️ {theatreAvailability[formData.theatre_id].conflict_reason}
+                                        </p>
+                                    )}
                             </div>
 
                             {/* Staff Assignment */}
@@ -563,8 +563,8 @@ const EmergencyBooking = () => {
                                     {loading ? (
                                         <>
                                             <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                             </svg>
                                             Scheduling...
                                         </>
