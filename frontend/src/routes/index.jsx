@@ -13,19 +13,14 @@ import Profile from '../pages/Profile';
 import CreateSurgery from '../pages/CreateSurgery';
 import SurgeryList from '../pages/SurgeryList';
 import SurgeryDetail from '../pages/SurgeryDetail';
+import Calendar from '../pages/Calendar';
+import Dashboard from '../pages/Dashboard'; // M4 - Day 7
+import EmergencyBooking from '../pages/EmergencyBooking'; // M1 - Day 8
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 import DatePickerTest from '../pages/DatePickerTest';
-
-// Placeholder pages - will be created in future days
-const Dashboard = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="mt-4">Welcome to TheatreX - Coming Soon</p>
-    </div>
-);
 
 // Admin-only test page
 const AdminPanel = () => (
@@ -86,6 +81,13 @@ const AppRoutes = () => {
                 </RoleBasedRoute>
             } />
 
+            {/* Emergency Booking - M1 Day 8 */}
+            <Route path="/emergency" element={
+                <RoleBasedRoute allowedRoles={['coordinator', 'admin']}>
+                    <EmergencyBooking />
+                </RoleBasedRoute>
+            } />
+
             {/* Surgery List - M2 Day 5 */}
             <Route path="/surgeries" element={
                 <ProtectedRoute>
@@ -97,6 +99,13 @@ const AppRoutes = () => {
             <Route path="/surgeries/:id" element={
                 <ProtectedRoute>
                     <SurgeryDetail />
+                </ProtectedRoute>
+            } />
+
+            {/* Calendar View - M1 (Pasindu) Day 7 */}
+            <Route path="/calendar" element={
+                <ProtectedRoute>
+                    <Calendar />
                 </ProtectedRoute>
             } />
 

@@ -2,6 +2,9 @@
 // Surgery List Page
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 5
+// Updated by: M4 (Oneli) - Day 6 (Added date filtering)
+// Updated by: M1 (Pasindu) - Day 6 (Added edit surgery modal)
+// Updated by: M3 (Janani) - Day 6 (Added status filter)
 // 
 // Displays a list of all surgeries in a responsive grid layout
 // Uses SurgeryCard component created by M4
@@ -9,8 +12,11 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, AlertCircle } from 'lucide-react';
+import { Plus, AlertCircle, Filter } from 'lucide-react';
 import SurgeryCard from '../components/SurgeryCard';
+import DateFilter from '../components/DateFilter';
+import EditSurgeryModal from '../components/EditSurgeryModal';
+import { ALL_STATUSES, STATUS_LABELS } from '../components/StatusBadge';
 import surgeryService from '../services/surgeryService';
 import Loading from '../components/ui/Loading';
 
@@ -19,17 +25,26 @@ const SurgeryList = () => {
     const [surgeries, setSurgeries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [filters, setFilters] = useState({
+        startDate: null,
+        endDate: null,
+        status: null      // M3 (Janani) Day 6 — status filter
+    });
 
-    // Fetch surgeries on component mount
+    // Edit modal state
+    const [editingSurgery, setEditingSurgery] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    // Fetch surgeries on component mount and when filters change
     useEffect(() => {
         fetchSurgeries();
-    }, []);
+    }, [filters]);
 
     const fetchSurgeries = async () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await surgeryService.getAllSurgeries();
+            const response = await surgeryService.getAllSurgeries(filters);
 
             if (response.success) {
                 setSurgeries(response.data);
@@ -44,11 +59,26 @@ const SurgeryList = () => {
         }
     };
 
-    // Handle edit surgery
+    // Handle edit surgery - opens modal
     const handleEdit = (surgeryId) => {
-        // TODO: Navigate to edit page when implemented (Day 6)
-        console.log('Edit surgery:', surgeryId);
-        alert(`Edit functionality will be implemented in Day 6. Surgery ID: ${surgeryId}`);
+        const surgery = surgeries.find(s => s.id === surgeryId);
+        if (surgery) {
+            setEditingSurgery(surgery);
+            setShowEditModal(true);
+        }
+    };
+
+    // Handle edit success - refresh list and close modal
+    const handleEditSuccess = () => {
+        setShowEditModal(false);
+        setEditingSurgery(null);
+        fetchSurgeries(); // Refresh the list
+    };
+
+    // Handle edit cancel - close modal
+    const handleEditCancel = () => {
+        setShowEditModal(false);
+        setEditingSurgery(null);
     };
 
     // Handle delete surgery
@@ -56,6 +86,29 @@ const SurgeryList = () => {
         // TODO: Implement delete confirmation modal and API call (Day 6)
         console.log('Delete surgery:', surgeryId);
         alert(`Delete functionality will be implemented in Day 6. Surgery ID: ${surgeryId}`);
+    };
+
+    // Handle filter change
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    // Handle clear filter
+    const handleClearFilter = () => {
+        setFilters({
+            startDate: null,
+            endDate: null,
+            status: null
+        });
+    };
+
+    // Handle status filter change - M3 (Janani) Day 6
+    const handleStatusFilterChange = (e) => {
+        const value = e.target.value;
+        setFilters(prev => ({
+            ...prev,
+            status: value === 'all' ? null : value
+        }));
     };
 
     // Loading state
@@ -114,6 +167,28 @@ const SurgeryList = () => {
                     </button>
                 </div>
 
+                {/* Filters Row: Date + Status — M3 (Janani) Day 6 */}
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end mb-2">
+                    <DateFilter
+                        onFilterChange={handleFilterChange}
+                        onClearFilter={handleClearFilter}
+                    />
+
+                    {/* Status filter dropdown */}
+                    <div className="flex items-center gap-2">
+                        <Filter className="w-4 h-4 text-gray-400" />
+                        <select
+                            value={filters.status || 'all'}
+                            onChange={handleStatusFilterChange}
+                            className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        >
+                            <option value="all">All Statuses</option>
+                            {ALL_STATUSES.map(s => (
+                                <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
                 {/* Surgery Count */}
                 <div className="mb-6">
                     <p className="text-sm text-gray-600">
@@ -155,6 +230,15 @@ const SurgeryList = () => {
                     </div>
                 )}
             </div>
+
+            {/* Edit Surgery Modal */}
+            {showEditModal && editingSurgery && (
+                <EditSurgeryModal
+                    surgery={editingSurgery}
+                    onSuccess={handleEditSuccess}
+                    onCancel={handleEditCancel}
+                />
+            )}
         </div>
     );
 };

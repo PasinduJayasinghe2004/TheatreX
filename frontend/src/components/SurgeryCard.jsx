@@ -2,6 +2,7 @@
 // Surgery Card Component
 
 // Created by: M4 (Oneli) - Day 5
+// Updated by: M3 (Janani) - Day 6 (Integrated StatusBadge component)
 // 
 // Displays a summary of a single surgery
 // Used in the Surgery List view
@@ -9,18 +10,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Calendar, User, Activity, Eye } from 'lucide-react';
+import StatusBadge from './StatusBadge';
 
 const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
     const navigate = useNavigate();
-    // Helper to get status color
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'completed': return 'bg-green-100 text-green-800 border-green-200';
-            case 'in_progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-            default: return 'bg-gray-100 text-gray-800 border-gray-200'; // scheduled
-        }
-    };
 
     // Helper to get priority color
     const getPriorityColor = (priority) => {
@@ -65,9 +58,7 @@ const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
                         <span>{surgery.patient_name || 'Unknown Patient'}</span>
                     </div>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getStatusColor(surgery.status)} capitalize`}>
-                    {surgery.status?.replace('_', ' ') || 'Scheduled'}
-                </span>
+                <StatusBadge status={surgery.status} size="sm" />
             </div>
 
             {/* Details Grid */}
