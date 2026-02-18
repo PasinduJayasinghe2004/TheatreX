@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
  * Sidebar Component
  * Navigation sidebar for the main application layout
  * Created by: M5 - Day 2
+ * Updated by: M1 (Pasindu) - Day 8 (Added Emergency Booking link)
  * 
  * @param {Object} props - Component props
  * @param {boolean} props.isCollapsed - Whether the sidebar is collapsed (default: false)
@@ -145,6 +146,23 @@ const Sidebar = ({ isCollapsed = false, onToggle }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                     </svg>
                 </button>
+            </div>
+
+            {/* Emergency Booking Button - M1 Day 8 */}
+            <div className="px-2 mb-4">
+                <Link
+                    to="/emergency"
+                    className={`
+                        flex items-center gap-2 px-3 py-3 rounded-lg
+                        bg-red-600 hover:bg-red-700 text-white font-semibold
+                        transition-all duration-200 shadow-md hover:shadow-lg
+                        ${isCollapsed ? 'justify-center' : ''}
+                        ${isActive('/emergency') ? 'ring-2 ring-red-300' : ''}
+                    `}
+                >
+                    <span className="text-xl">🚨</span>
+                    {!isCollapsed && <span>Emergency</span>}
+                </Link>
             </div>
 
             {/* Navigation */}

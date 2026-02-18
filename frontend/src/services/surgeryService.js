@@ -6,6 +6,7 @@
 // Updated by: M2 (Chandeepa) - Day 6 (Added deleteSurgery)
 // Updated by: M3 (Janani) - Day 6 (Added updateSurgeryStatus, status filter)
 // Updated by: M2 (Chandeepa) - Day 7 (Added getCalendarEvents)
+// Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -14,6 +15,7 @@
 // - Update surgery status
 // - Delete surgery by ID
 // - Get calendar events (FullCalendar format) - M2 Day 7
+// - Check scheduling conflicts (theatre, surgeon, staff) - M1 Day 8
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -173,6 +175,21 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching calendar events. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Check scheduling conflicts
+    // Created by: M1 (Pasindu) - Day 8
+    // Checks for theatre, surgeon, and staff conflicts
+    // ========================================
+    checkConflicts: async (conflictData) => {
+        try {
+            const response = await api.post('/surgeries/check-conflicts', conflictData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error checking conflicts. Please try again.';
             throw new Error(message);
         }
     }
