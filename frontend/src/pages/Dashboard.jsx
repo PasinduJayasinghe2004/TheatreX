@@ -1,11 +1,11 @@
-// ============================================================================
+
 // Dashboard Page
-// ============================================================================
+
 // Created by: M4 (Oneli) - Day 7
 // 
 // Main dashboard page displaying key statistics and metrics.
 // Shows surgery counts, status breakdown, and theatre status summary.
-// ============================================================================
+
 
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
