@@ -42,17 +42,19 @@ const MOCK_THEATRES = [
 const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const { token } = useAuth();
     const navigate = useNavigate();
-    
+
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
 
-    // Form state - simplified for modal design
+    // Form state - enhanced for emergency booking with manual patient entry
     const [formData, setFormData] = useState({
         procedure_name: '',
         patient_id: '',
         patient_name: '',
+        patient_age: '',
+        patient_gender: '',
         surgeon_id: '',
         nurse_id: '',
         anaesthetist_id: '',
@@ -60,6 +62,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         scheduled_date: '',
         scheduled_time: '',
         duration_minutes: '60',
+        priority: 'routine',
     });
 
     // Fetch surgeons for dropdown
@@ -95,12 +98,12 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             [name]: value
         }));
 
-        // Clear patient_name if patient_id is selected
+        // Clear manual patient fields if patient_id is selected
         if (name === 'patient_id' && value) {
-            setFormData(prev => ({ ...prev, patient_name: '' }));
+            setFormData(prev => ({ ...prev, patient_name: '', patient_age: '', patient_gender: '' }));
         }
-        // Clear patient_id if patient_name is entered
-        if (name === 'patient_name' && value) {
+        // Clear patient_id if manual patient fields are entered
+        if ((name === 'patient_name' || name === 'patient_age' || name === 'patient_gender') && value) {
             setFormData(prev => ({ ...prev, patient_id: '' }));
         }
     };
@@ -116,9 +119,26 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             return;
         }
 
+        // Patient validation - either existing patient or complete manual entry
         if (!formData.patient_id && !formData.patient_name) {
-            setMessage({ type: 'error', text: 'Please select a patient or enter patient name' });
+            setMessage({ type: 'error', text: 'Please select a patient or enter patient details manually' });
             return;
+        }
+
+        // If manual patient entry, validate all required fields
+        if (!formData.patient_id) {
+            if (!formData.patient_name) {
+                setMessage({ type: 'error', text: 'Patient name is required' });
+                return;
+            }
+            if (!formData.patient_age) {
+                setMessage({ type: 'error', text: 'Patient age is required for manual entry' });
+                return;
+            }
+            if (!formData.patient_gender) {
+                setMessage({ type: 'error', text: 'Patient gender is required for manual entry' });
+                return;
+            }
         }
 
         if (!formData.scheduled_date || !formData.scheduled_time) {
@@ -135,8 +155,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     surgery_type: formData.procedure_name,
                     patient_id: formData.patient_id ? parseInt(formData.patient_id) : null,
                     patient_name: formData.patient_name || null,
-                    patient_age: null,
-                    patient_gender: null,
+                    patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
+                    patient_gender: formData.patient_gender || null,
                     surgeon_id: formData.surgeon_id ? parseInt(formData.surgeon_id) : null,
                     nurse_id: formData.nurse_id ? parseInt(formData.nurse_id) : null,
                     anaesthetist_id: formData.anaesthetist_id ? parseInt(formData.anaesthetist_id) : null,
@@ -145,7 +165,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     scheduled_time: formData.scheduled_time,
                     duration_minutes: parseInt(formData.duration_minutes) || 60,
                     status: 'scheduled',
-                    priority: 'routine',
+                    priority: formData.priority || 'routine',
                 },
                 {
                     headers: { Authorization: `Bearer ${token}` }
@@ -154,12 +174,14 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
 
             if (response.data.success) {
                 setMessage({ type: 'success', text: 'Surgery scheduled successfully!' });
-                
+
                 // Reset form
                 setFormData({
                     procedure_name: '',
                     patient_id: '',
                     patient_name: '',
+                    patient_age: '',
+                    patient_gender: '',
                     surgeon_id: '',
                     nurse_id: '',
                     anaesthetist_id: '',
@@ -167,6 +189,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     scheduled_date: '',
                     scheduled_time: '',
                     duration_minutes: '60',
+                    priority: 'routine',
                 });
 
                 // Callback or navigate
@@ -203,11 +226,10 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         <form onSubmit={handleSubmit} className="space-y-5">
             {/* Error/Success Message */}
             {message.text && (
-                <div className={`p-3 rounded-lg text-sm ${
-                    message.type === 'success'
+                <div className={`p-3 rounded-lg text-sm ${message.type === 'success'
                         ? 'bg-green-50 text-green-700 border border-green-200'
                         : 'bg-red-50 text-red-700 border border-red-200'
-                }`}>
+                    }`}>
                     {message.text}
                 </div>
             )}
@@ -225,38 +247,123 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 />
             </div>
 
+            {/* Priority Selector */}
+            <div>
+                <label className={labelClass}>Priority Level</label>
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, priority: 'routine' }))}
+                        className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${formData.priority === 'routine'
+                                ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                                : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
+                            }`}
+                    >
+                        Routine
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, priority: 'urgent' }))}
+                        className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${formData.priority === 'urgent'
+                                ? 'bg-yellow-100 text-yellow-700 border-2 border-yellow-500'
+                                : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
+                            }`}
+                    >
+                        Urgent
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, priority: 'emergency' }))}
+                        className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${formData.priority === 'emergency'
+                                ? 'bg-red-100 text-red-700 border-2 border-red-500'
+                                : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
+                            }`}
+                    >
+                        🚨 Emergency
+                    </button>
+                </div>
+            </div>
+
             {/* Patient Details Section */}
-            <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Patient Details</h3>
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className={labelClass}>Select Existing Patient</label>
-                        <select
-                            name="patient_id"
-                            value={formData.patient_id}
-                            onChange={handleChange}
-                            className={selectClass}
-                            disabled={!!formData.patient_name}
-                        >
-                            <option value="">-- Select Patient --</option>
-                            {MOCK_PATIENTS.map(patient => (
-                                <option key={patient.id} value={patient.id}>
-                                    {patient.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className={labelClass}>Or New Patient Name</label>
-                        <input
-                            type="text"
-                            name="patient_name"
-                            value={formData.patient_name}
-                            onChange={handleChange}
-                            className={inputClass}
-                            placeholder="Enter Name"
-                            disabled={!!formData.patient_id}
-                        />
+            <div className={`rounded-lg p-4 border-2 ${formData.priority === 'emergency'
+                    ? 'bg-red-50 border-red-200'
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-gray-700">Patient Details</h3>
+                    {formData.priority === 'emergency' && (
+                        <span className="text-xs bg-red-500 text-white px-2 py-1 rounded-full font-medium">
+                            Emergency - Manual Entry Available
+                        </span>
+                    )}
+                </div>
+
+                {/* Existing Patient Selection */}
+                <div className="mb-3">
+                    <label className={labelClass}>Select Existing Patient</label>
+                    <select
+                        name="patient_id"
+                        value={formData.patient_id}
+                        onChange={handleChange}
+                        className={selectClass}
+                        disabled={!!(formData.patient_name || formData.patient_age || formData.patient_gender)}
+                    >
+                        <option value="">-- Select Patient --</option>
+                        {MOCK_PATIENTS.map(patient => (
+                            <option key={patient.id} value={patient.id}>
+                                {patient.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Manual Patient Entry */}
+                <div className="border-t border-gray-300 pt-3 mt-3">
+                    <p className="text-xs text-gray-600 mb-3">
+                        <strong>Or enter patient details manually</strong> (for emergency cases or new patients)
+                    </p>
+                    <div className="grid grid-cols-3 gap-3">
+                        <div>
+                            <label className={labelClass}>Patient Name</label>
+                            <input
+                                type="text"
+                                name="patient_name"
+                                value={formData.patient_name}
+                                onChange={handleChange}
+                                className={inputClass}
+                                placeholder="Full Name"
+                                disabled={!!formData.patient_id}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Age</label>
+                            <input
+                                type="number"
+                                name="patient_age"
+                                value={formData.patient_age}
+                                onChange={handleChange}
+                                className={inputClass}
+                                placeholder="Age"
+                                min="0"
+                                max="150"
+                                disabled={!!formData.patient_id}
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Gender</label>
+                            <select
+                                name="patient_gender"
+                                value={formData.patient_gender}
+                                onChange={handleChange}
+                                className={selectClass}
+                                disabled={!!formData.patient_id}
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
