@@ -14,6 +14,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
 import { createNotificationsTable } from './models/notificationModel.js';
@@ -127,9 +128,6 @@ const startServer = async () => {
             await createTheatresTable(); // M2 - Day 8
         }
 
-        // Initialize database tables
-        await initializeTables();
-
         // Start listening
         app.listen(PORT, () => {
             console.log('');
@@ -151,6 +149,7 @@ const startServer = async () => {
 export default app;
 
 // Start server only if run directly
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+const __filename = fileURLToPath(import.meta.url);
+if (process.argv[1] === __filename) {
     startServer();
 }
