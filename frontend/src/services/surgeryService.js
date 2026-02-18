@@ -121,6 +121,35 @@ const surgeryService = {
     },
 
     // ========================================
+    // Get all active theatres for dropdown
+    // Created by: M2 (Chandeepa) - Day 8
+    // ========================================
+    getTheatres: async () => {
+        try {
+            const response = await api.get('/theatres');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching theatres. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Check theatre availability for a date/time/duration
+    // Created by: M2 (Chandeepa) - Day 8
+    // ========================================
+    checkTheatreAvailability: async (date, time, duration) => {
+        try {
+            const params = new URLSearchParams({ date, time, duration: String(duration) });
+            const response = await api.get(`/theatres/availability?${params.toString()}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error checking theatre availability. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
     // Get calendar events (FullCalendar format)
     // Created by: M2 (Chandeepa) - Day 7
     // ========================================
