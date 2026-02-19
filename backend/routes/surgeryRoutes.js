@@ -7,6 +7,7 @@
 // Updated by: M3 (Janani) - Day 6 (Added PATCH status route)
 // Updated by: M1 (Pasindu) - Day 8 (Added conflict detection route)
 // Updated by: M1 (Pasindu) - Day 9 (Added available surgeons route)
+// Updated by: M2 (Chandeepa) - Day 9 (Added available nurses route)
 // 
 // Defines all surgery-related API routes
 //
@@ -19,6 +20,7 @@
 // - PATCH  /api/surgeries/:id/status                - Update surgery status (Coordinator, Admin)
 // - GET    /api/surgeries/surgeons                  - Get surgeons for dropdown (Protected)
 // - GET    /api/surgeries/surgeons/available         - Get available surgeons (Protected) - M1 Day 9
+// - GET    /api/surgeries/nurses/available           - Get available nurses (Protected) - M2 Day 9
 // - GET    /api/surgeries/events                    - Get calendar events (Protected) - M2 Day 7
 // - DELETE /api/surgeries/:id                       - Delete surgery (Coordinator, Admin)
 // ============================================================================
@@ -30,6 +32,7 @@ import {
     getSurgeryById,
     getSurgeonsDropdown,
     getAvailableSurgeons,
+    getAvailableNurses,
     updateSurgery,
     updateSurgeryStatus,
     deleteSurgery,
@@ -59,6 +62,16 @@ router.get('/surgeons', protect, getSurgeonsDropdown);
 // Created by: M1 (Pasindu) - Day 9
 // ============================================================================
 router.get('/surgeons/available', protect, getAvailableSurgeons);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/nurses/available
+// ============================================================================
+// Get nurses with availability status for a given date/time slot
+// Query params: date, time, duration, exclude_surgery_id (optional)
+// Protected - any authenticated user can view
+// Created by: M2 (Chandeepa) - Day 9
+// ============================================================================
+router.get('/nurses/available', protect, getAvailableNurses);
 
 // ============================================================================
 // ROUTE: GET /api/surgeries/events

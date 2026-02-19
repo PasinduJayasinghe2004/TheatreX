@@ -23,6 +23,7 @@ import { createSurgeonsTable } from './models/surgeonModel.js';
 import { createNursesTable } from './models/nurseModel.js';
 import { createTechniciansTable } from './models/technicianModel.js';
 import { createTheatresTable } from './models/theatreModel.js'; // M2 - Day 8
+import { createSurgeryNursesTable } from './models/surgeryNurseModel.js'; // M2 - Day 9
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
@@ -126,6 +127,7 @@ const startServer = async () => {
             await createNursesTable();
             await createTechniciansTable();
             await createTheatresTable(); // M2 - Day 8
+            await createSurgeryNursesTable(); // M2 - Day 9
         }
 
         // Start listening
