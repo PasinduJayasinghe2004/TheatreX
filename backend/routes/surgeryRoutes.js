@@ -30,6 +30,8 @@ import {
     getSurgeryById,
     getSurgeonsDropdown,
     getAvailableSurgeons,
+    getAvailableNurses,
+    getAvailableAnaesthetists,
     updateSurgery,
     updateSurgeryStatus,
     deleteSurgery,
@@ -59,6 +61,24 @@ router.get('/surgeons', protect, getSurgeonsDropdown);
 // Created by: M1 (Pasindu) - Day 9
 // ============================================================================
 router.get('/surgeons/available', protect, getAvailableSurgeons);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/nurses/available
+// ============================================================================
+// Get nurses with availability status for a given date/time slot
+// Protected - any authenticated user can view
+// Created by: M1 (Pasindu) - Day 9
+// ============================================================================
+router.get('/nurses/available', protect, getAvailableNurses);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/anaesthetists/available
+// ============================================================================
+// Get anaesthetists with availability status for a given date/time slot
+// Protected - any authenticated user can view
+// Created by: M1 (Pasindu) - Day 9
+// ============================================================================
+router.get('/anaesthetists/available', protect, getAvailableAnaesthetists);
 
 // ============================================================================
 // ROUTE: GET /api/surgeries/events
