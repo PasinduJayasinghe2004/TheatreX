@@ -2,12 +2,13 @@
 // Edit Surgery Modal Component
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 6
+// Updated by: M1 (Pasindu) - Day 9 (Surgeon availability filtering)
 // 
 // Modal for editing existing surgeries
 // Similar design to SurgeryForm but pre-populated with surgery data
 // ============================================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import surgeryService from '../services/surgeryService';
 
@@ -45,6 +46,10 @@ const EditSurgeryModal = ({ surgery, onSuccess, onCancel }) => {
     const [message, setMessage] = useState({ type: '', text: '' });
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
+
+    // Surgeon availability state - M1 (Pasindu) Day 9
+    const [surgeonAvailability, setSurgeonAvailability] = useState(null);
+    const [checkingSurgeonAvail, setCheckingSurgeonAvail] = useState(false);
 
     // Form state - pre-populated with surgery data
     const [formData, setFormData] = useState({
@@ -108,6 +113,41 @@ const EditSurgeryModal = ({ surgery, onSuccess, onCancel }) => {
             fetchSurgeons();
         }
     }, [token]);
+
+    // Check surgeon availability when date/time/duration change - M1 (Pasindu) Day 9
+    const checkSurgeonAvailability = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes } = formData;
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setSurgeonAvailability(null);
+            return;
+        }
+
+        try {
+            setCheckingSurgeonAvail(true);
+            const result = await surgeryService.getAvailableSurgeons(
+                scheduled_date,
+                scheduled_time,
+                duration_minutes,
+                surgery?.id // exclude current surgery from conflict check
+            );
+            if (result.success) {
+                setSurgeons(result.data);
+                const availMap = {};
+                result.data.forEach(s => {
+                    availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason };
+                });
+                setSurgeonAvailability(availMap);
+            }
+        } catch (error) {
+            console.error('Error checking surgeon availability:', error);
+        } finally {
+            setCheckingSurgeonAvail(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes, surgery?.id]);
+
+    useEffect(() => {
+        checkSurgeonAvailability();
+    }, [checkSurgeonAvailability]);
 
     // Handle input change
     const handleChange = (e) => {
@@ -278,7 +318,17 @@ const EditSurgeryModal = ({ surgery, onSuccess, onCancel }) => {
                         {/* Staff Assignment - 3 column grid */}
                         <div className="grid grid-cols-3 gap-4">
                             <div>
-                                <label className={labelClass}>Surgeon</label>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className={labelClass}>Surgeon</label>
+                                    {checkingSurgeonAvail && (
+                                        <span className="text-xs text-blue-500 animate-pulse">Checking...</span>
+                                    )}
+                                    {surgeonAvailability && !checkingSurgeonAvail && (
+                                        <span className="text-xs text-green-600">
+                                            {Object.values(surgeonAvailability).filter(s => s.available).length} available
+                                        </span>
+                                    )}
+                                </div>
                                 <select
                                     name="surgeon_id"
                                     value={formData.surgeon_id}
@@ -286,13 +336,27 @@ const EditSurgeryModal = ({ surgery, onSuccess, onCancel }) => {
                                     className={selectClass}
                                     disabled={loadingSurgeons}
                                 >
-                                    <option value="">Select Surgeon</option>
-                                    {surgeons.map(surgeon => (
-                                        <option key={surgeon.id} value={surgeon.id}>
-                                            {surgeon.name}
-                                        </option>
-                                    ))}
+                                    <option value="">{loadingSurgeons ? 'Loading...' : 'Select Surgeon'}</option>
+                                    {surgeons.map(surgeon => {
+                                        const avail = surgeonAvailability?.[surgeon.id];
+                                        const isUnavailable = avail && !avail.available;
+                                        const label = `${surgeon.name}${avail ? (avail.available ? ' ✅' : ' ❌ Busy') : ''}`;
+                                        return (
+                                            <option
+                                                key={surgeon.id}
+                                                value={surgeon.id}
+                                                disabled={isUnavailable}
+                                            >
+                                                {label}
+                                            </option>
+                                        );
+                                    })}
                                 </select>
+                                {formData.surgeon_id && surgeonAvailability?.[formData.surgeon_id] && !surgeonAvailability[formData.surgeon_id].available && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        ⚠️ {surgeonAvailability[formData.surgeon_id].conflict_reason}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label className={labelClass}>Nurse</label>

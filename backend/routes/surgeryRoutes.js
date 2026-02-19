@@ -6,19 +6,21 @@
 // Updated by: M1 (Pasindu) - Day 6 (Added PUT route)
 // Updated by: M3 (Janani) - Day 6 (Added PATCH status route)
 // Updated by: M1 (Pasindu) - Day 8 (Added conflict detection route)
+// Updated by: M1 (Pasindu) - Day 9 (Added available surgeons route)
 // 
 // Defines all surgery-related API routes
 //
 // ROUTES:
-// - POST   /api/surgeries                  - Create new surgery (Coordinator, Admin)
-// - POST   /api/surgeries/check-conflicts  - Check scheduling conflicts (Protected) - M1 Day 8
-// - GET    /api/surgeries                  - Get all surgeries (Protected)
-// - GET    /api/surgeries/:id              - Get surgery by ID (Protected)
-// - PUT    /api/surgeries/:id              - Update surgery (Coordinator, Admin)
-// - PATCH  /api/surgeries/:id/status       - Update surgery status (Coordinator, Admin)
-// - GET    /api/surgeries/surgeons         - Get surgeons for dropdown (Protected)
-// - GET    /api/surgeries/events           - Get calendar events (Protected) - M2 Day 7
-// - DELETE /api/surgeries/:id              - Delete surgery (Coordinator, Admin)
+// - POST   /api/surgeries                           - Create new surgery (Coordinator, Admin)
+// - POST   /api/surgeries/check-conflicts            - Check scheduling conflicts (Protected) - M1 Day 8
+// - GET    /api/surgeries                           - Get all surgeries (Protected)
+// - GET    /api/surgeries/:id                       - Get surgery by ID (Protected)
+// - PUT    /api/surgeries/:id                       - Update surgery (Coordinator, Admin)
+// - PATCH  /api/surgeries/:id/status                - Update surgery status (Coordinator, Admin)
+// - GET    /api/surgeries/surgeons                  - Get surgeons for dropdown (Protected)
+// - GET    /api/surgeries/surgeons/available         - Get available surgeons (Protected) - M1 Day 9
+// - GET    /api/surgeries/events                    - Get calendar events (Protected) - M2 Day 7
+// - DELETE /api/surgeries/:id                       - Delete surgery (Coordinator, Admin)
 // ============================================================================
 
 import express from 'express';
@@ -27,6 +29,7 @@ import {
     getAllSurgeries,
     getSurgeryById,
     getSurgeonsDropdown,
+    getAvailableSurgeons,
     updateSurgery,
     updateSurgeryStatus,
     deleteSurgery,
@@ -46,6 +49,16 @@ const router = express.Router();
 // Protected - any authenticated user can view
 // ============================================================================
 router.get('/surgeons', protect, getSurgeonsDropdown);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/surgeons/available
+// ============================================================================
+// Get surgeons with availability status for a given date/time slot
+// Query params: date, time, duration, exclude_surgery_id (optional)
+// Protected - any authenticated user can view
+// Created by: M1 (Pasindu) - Day 9
+// ============================================================================
+router.get('/surgeons/available', protect, getAvailableSurgeons);
 
 // ============================================================================
 // ROUTE: GET /api/surgeries/events

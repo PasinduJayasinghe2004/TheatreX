@@ -17,6 +17,7 @@
 // - updateSurgeryStatus: PATCH /api/surgeries/:id/status - Update surgery status
 // - deleteSurgery: DELETE /api/surgeries/:id - Delete surgery
 // - getSurgeonsDropdown: GET /api/surgeries/surgeons - Surgeons list
+// - getAvailableSurgeons: GET /api/surgeries/surgeons/available - Available surgeons (M1 Day 9)
 // - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // - checkConflicts: POST /api/surgeries/check-conflicts - Conflict detection (M1 Day 8)
 // ============================================================================
@@ -407,6 +408,112 @@ export const getSurgeonsDropdown = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgeons',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET AVAILABLE SURGEONS (M1 - Day 9)
+// ============================================================================
+// @desc    Get surgeons with availability status for a given date/time/duration
+// @route   GET /api/surgeries/surgeons/available?date=...&time=...&duration=...
+// @access  Protected
+// Created by: M1 (Pasindu) - Day 9
+// ============================================================================
+export const getAvailableSurgeons = async (req, res) => {
+    try {
+        const { date, time, duration, exclude_surgery_id } = req.query;
+
+        // Validate required query params
+        if (!date || !time || !duration) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required query params: date, time, duration'
+            });
+        }
+
+        const durationMins = parseInt(duration, 10);
+        if (isNaN(durationMins) || durationMins <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Duration must be a positive number (minutes)'
+            });
+        }
+
+        // Build exclusion clause if editing an existing surgery
+        const excludeClause = exclude_surgery_id
+            ? `AND s.id <> $4`
+            : '';
+        const conflictParams = exclude_surgery_id
+            ? [date, time, durationMins, parseInt(exclude_surgery_id, 10)]
+            : [date, time, durationMins];
+
+        // 1. Get all active surgeons from users table
+        const { rows: allSurgeons } = await pool.query(`
+            SELECT id, name, email
+            FROM users
+            WHERE role = 'surgeon' AND is_active = true
+            ORDER BY name ASC
+        `);
+
+        // 2. Find surgeon IDs that have conflicting surgeries at the given time
+        const conflictQuery = `
+            SELECT DISTINCT s.surgeon_id,
+                   json_agg(json_build_object(
+                       'surgery_id', s.id,
+                       'surgery_type', s.surgery_type,
+                       'scheduled_time', s.scheduled_time,
+                       'duration_minutes', s.duration_minutes,
+                       'patient_name', s.patient_name
+                   )) AS conflicting_surgeries
+            FROM surgeries s
+            WHERE s.surgeon_id IS NOT NULL
+              AND s.scheduled_date = $1
+              AND s.status IN ('scheduled', 'in_progress')
+              ${excludeClause}
+              AND (
+                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
+                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
+              )
+            GROUP BY s.surgeon_id
+        `;
+        const { rows: conflicts } = await pool.query(conflictQuery, conflictParams);
+
+        // Build a map of surgeon_id -> conflict details
+        const conflictMap = {};
+        conflicts.forEach(c => {
+            conflictMap[c.surgeon_id] = {
+                conflicting_surgeries: c.conflicting_surgeries
+            };
+        });
+
+        // 3. Merge availability info into surgeon list
+        const surgeonsWithAvailability = allSurgeons.map(surgeon => {
+            const conflict = conflictMap[surgeon.id];
+            return {
+                ...surgeon,
+                available: !conflict,
+                conflict_reason: conflict
+                    ? `Surgeon has ${conflict.conflicting_surgeries.length} conflicting surgery(ies) at this time`
+                    : null,
+                conflicting_surgeries: conflict ? conflict.conflicting_surgeries : []
+            };
+        });
+
+        const availableCount = surgeonsWithAvailability.filter(s => s.available).length;
+
+        res.status(200).json({
+            success: true,
+            count: surgeonsWithAvailability.length,
+            available_count: availableCount,
+            data: surgeonsWithAvailability
+        });
+    } catch (error) {
+        console.error('Error fetching available surgeons:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching available surgeons',
             error: error.message
         });
     }

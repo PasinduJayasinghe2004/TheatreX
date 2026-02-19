@@ -3,6 +3,7 @@
 
 // Created by: M1 (Pasindu) - Day 5
 // Updated by: M6 (Dinil) - Day 5 - New modal UI design
+// Updated by: M1 (Pasindu) - Day 9 - Surgeon availability filtering
 // 
 // Clean modal form for scheduling surgeries
 
@@ -43,6 +44,10 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const [message, setMessage] = useState({ type: '', text: '' });
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
+
+    // Surgeon availability state - M1 (Pasindu) Day 9
+    const [surgeonAvailability, setSurgeonAvailability] = useState(null); // map of id -> { available, conflict_reason }
+    const [checkingSurgeonAvail, setCheckingSurgeonAvail] = useState(false);
 
     // Theatre state - M2 (Chandeepa) Day 8
     const [theatres, setTheatres] = useState([]);
@@ -91,6 +96,41 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             fetchSurgeons();
         }
     }, [token]);
+
+    // Check surgeon availability when date/time/duration change - M1 (Pasindu) Day 9
+    const checkSurgeonAvailability = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes } = formData;
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setSurgeonAvailability(null);
+            return;
+        }
+
+        try {
+            setCheckingSurgeonAvail(true);
+            const result = await surgeryService.getAvailableSurgeons(
+                scheduled_date,
+                scheduled_time,
+                duration_minutes
+            );
+            if (result.success) {
+                // Update surgeons list with availability data
+                setSurgeons(result.data);
+                const availMap = {};
+                result.data.forEach(s => {
+                    availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason };
+                });
+                setSurgeonAvailability(availMap);
+            }
+        } catch (error) {
+            console.error('Error checking surgeon availability:', error);
+        } finally {
+            setCheckingSurgeonAvail(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
+
+    useEffect(() => {
+        checkSurgeonAvailability();
+    }, [checkSurgeonAvailability]);
 
     // Fetch theatres for dropdown - M2 (Chandeepa) Day 8
     useEffect(() => {
@@ -424,7 +464,17 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             {/* Staff Assignment - 3 column grid */}
             <div className="grid grid-cols-3 gap-4">
                 <div>
-                    <label className={labelClass}>Surgeon</label>
+                    <div className="flex items-center justify-between mb-1.5">
+                        <label className={labelClass}>Surgeon</label>
+                        {checkingSurgeonAvail && (
+                            <span className="text-xs text-blue-500 animate-pulse">Checking...</span>
+                        )}
+                        {surgeonAvailability && !checkingSurgeonAvail && (
+                            <span className="text-xs text-green-600">
+                                {Object.values(surgeonAvailability).filter(s => s.available).length} available
+                            </span>
+                        )}
+                    </div>
                     <select
                         name="surgeon_id"
                         value={formData.surgeon_id}
@@ -432,13 +482,27 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         className={selectClass}
                         disabled={loadingSurgeons}
                     >
-                        <option value="">Select Surgeon</option>
-                        {surgeons.map(surgeon => (
-                            <option key={surgeon.id} value={surgeon.id}>
-                                {surgeon.name}
-                            </option>
-                        ))}
+                        <option value="">{loadingSurgeons ? 'Loading...' : 'Select Surgeon'}</option>
+                        {surgeons.map(surgeon => {
+                            const avail = surgeonAvailability?.[surgeon.id];
+                            const isUnavailable = avail && !avail.available;
+                            const label = `${surgeon.name}${avail ? (avail.available ? ' ✅' : ' ❌ Busy') : ''}`;
+                            return (
+                                <option
+                                    key={surgeon.id}
+                                    value={surgeon.id}
+                                    disabled={isUnavailable}
+                                >
+                                    {label}
+                                </option>
+                            );
+                        })}
                     </select>
+                    {formData.surgeon_id && surgeonAvailability?.[formData.surgeon_id] && !surgeonAvailability[formData.surgeon_id].available && (
+                        <p className="text-xs text-red-500 mt-1">
+                            ⚠️ {surgeonAvailability[formData.surgeon_id].conflict_reason}
+                        </p>
+                    )}
                 </div>
                 <div>
                     <label className={labelClass}>Nurse</label>

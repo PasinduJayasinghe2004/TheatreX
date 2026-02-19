@@ -7,6 +7,7 @@
 // Updated by: M3 (Janani) - Day 6 (Added updateSurgeryStatus, status filter)
 // Updated by: M2 (Chandeepa) - Day 7 (Added getCalendarEvents)
 // Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
+// Updated by: M1 (Pasindu) - Day 9 (Added getAvailableSurgeons for filtered dropdown)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -16,6 +17,7 @@
 // - Delete surgery by ID
 // - Get calendar events (FullCalendar format) - M2 Day 7
 // - Check scheduling conflicts (theatre, surgeon, staff) - M1 Day 8
+// - Get available surgeons for a time slot - M1 Day 9
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -118,6 +120,25 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching surgeons. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get available surgeons for a time slot
+    // Returns surgeons with availability info
+    // Created by: M1 (Pasindu) - Day 9
+    // ========================================
+    getAvailableSurgeons: async (date, time, duration, excludeSurgeryId = null) => {
+        try {
+            const params = new URLSearchParams({ date, time, duration: String(duration) });
+            if (excludeSurgeryId) {
+                params.append('exclude_surgery_id', String(excludeSurgeryId));
+            }
+            const response = await api.get(`/surgeries/surgeons/available?${params.toString()}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching available surgeons. Please try again.';
             throw new Error(message);
         }
     },
