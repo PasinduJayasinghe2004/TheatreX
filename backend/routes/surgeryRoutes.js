@@ -8,6 +8,7 @@
 // Updated by: M1 (Pasindu) - Day 8 (Added conflict detection route)
 // Updated by: M1 (Pasindu) - Day 9 (Added available surgeons route)
 // Updated by: M2 (Chandeepa) - Day 9 (Added available nurses route)
+// Updated by: M3 (Janani) - Day 9 (Added available anaesthetists route)
 // 
 // Defines all surgery-related API routes
 //
@@ -21,6 +22,7 @@
 // - GET    /api/surgeries/surgeons                  - Get surgeons for dropdown (Protected)
 // - GET    /api/surgeries/surgeons/available         - Get available surgeons (Protected) - M1 Day 9
 // - GET    /api/surgeries/nurses/available           - Get available nurses (Protected) - M2 Day 9
+// - GET    /api/surgeries/anaesthetists/available    - Get available anaesthetists (Protected) - M3 Day 9
 // - GET    /api/surgeries/events                    - Get calendar events (Protected) - M2 Day 7
 // - DELETE /api/surgeries/:id                       - Delete surgery (Coordinator, Admin)
 // ============================================================================
@@ -33,6 +35,7 @@ import {
     getSurgeonsDropdown,
     getAvailableSurgeons,
     getAvailableNurses,
+    getAvailableAnaesthetists,
     updateSurgery,
     updateSurgeryStatus,
     deleteSurgery,
@@ -72,6 +75,16 @@ router.get('/surgeons/available', protect, getAvailableSurgeons);
 // Created by: M2 (Chandeepa) - Day 9
 // ============================================================================
 router.get('/nurses/available', protect, getAvailableNurses);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/anaesthetists/available
+// ============================================================================
+// Get anaesthetists with availability status for a given date/time slot
+// Query params: date, time, duration, exclude_surgery_id (optional)
+// Protected - any authenticated user can view
+// Created by: M3 (Janani) - Day 9
+// ============================================================================
+router.get('/anaesthetists/available', protect, getAvailableAnaesthetists);
 
 // ============================================================================
 // ROUTE: GET /api/surgeries/events

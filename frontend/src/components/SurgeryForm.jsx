@@ -5,6 +5,7 @@
 // Updated by: M6 (Dinil) - Day 5 - New modal UI design
 // Updated by: M1 (Pasindu) - Day 9 - Surgeon availability filtering
 // Updated by: M2 (Chandeepa) - Day 9 - Multi-select nurses with availability
+// Updated by: M3 (Janani) - Day 9 - Anaesthetist dropdown with availability
 // 
 // Clean modal form for scheduling surgeries
 
@@ -23,11 +24,7 @@ const MOCK_PATIENTS = [
     { id: 4, name: 'Emily Davis' },
 ];
 
-const MOCK_ANAESTHETISTS = [
-    { id: 1, name: 'Dr. James Wilson' },
-    { id: 2, name: 'Dr. Lisa Anderson' },
-    { id: 3, name: 'Dr. Robert Taylor' },
-];
+// MOCK_ANAESTHETISTS removed — now fetched from API (M3 - Day 9)
 
 // MOCK_THEATRES removed — now fetched from API (M2 - Day 8)
 
@@ -49,6 +46,12 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const [loadingNurses, setLoadingNurses] = useState(true);
     const [nurseAvailability, setNurseAvailability] = useState(null); // map of id -> { available, conflict_reason }
     const [checkingNurseAvail, setCheckingNurseAvail] = useState(false);
+
+    // Anaesthetist state - M3 (Janani) Day 9
+    const [anaesthetists, setAnaesthetists] = useState([]);
+    const [loadingAnaesthetists, setLoadingAnaesthetists] = useState(true);
+    const [anaesthetistAvailability, setAnaesthetistAvailability] = useState(null);
+    const [checkingAnaesAvail, setCheckingAnaesAvail] = useState(false);
 
     // Theatre state - M2 (Chandeepa) Day 8
     const [theatres, setTheatres] = useState([]);
@@ -171,6 +174,44 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     useEffect(() => {
         checkNurseAvailability();
     }, [checkNurseAvailability]);
+
+    // Check anaesthetist availability when date/time/duration change - M3 (Janani) Day 9
+    const checkAnaesthetistAvailability = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes } = formData;
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setAnaesthetistAvailability(null);
+            return;
+        }
+
+        try {
+            setCheckingAnaesAvail(true);
+            const result = await surgeryService.getAvailableAnaesthetists(
+                scheduled_date,
+                scheduled_time,
+                duration_minutes
+            );
+            if (result.success) {
+                setAnaesthetists(result.data);
+                setLoadingAnaesthetists(false);
+                const availMap = {};
+                result.data.forEach(a => {
+                    availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason };
+                });
+                setAnaesthetistAvailability(availMap);
+            }
+        } catch (error) {
+            console.error('Error checking anaesthetist availability:', error);
+            if (anaesthetists.length === 0) {
+                setLoadingAnaesthetists(false);
+            }
+        } finally {
+            setCheckingAnaesAvail(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
+
+    useEffect(() => {
+        checkAnaesthetistAvailability();
+    }, [checkAnaesthetistAvailability]);
 
     // Fetch theatres for dropdown - M2 (Chandeepa) Day 8
     useEffect(() => {
@@ -560,20 +601,45 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     )}
                 </div>
                 <div>
-                    <label className={labelClass}>Anaesthetist</label>
+                    <div className="flex items-center justify-between mb-1.5">
+                        <label className={labelClass}>Anaesthetist</label>
+                        {checkingAnaesAvail && (
+                            <span className="text-xs text-blue-500 animate-pulse">Checking...</span>
+                        )}
+                        {anaesthetistAvailability && !checkingAnaesAvail && (
+                            <span className="text-xs text-green-600">
+                                {Object.values(anaesthetistAvailability).filter(a => a.available).length} available
+                            </span>
+                        )}
+                    </div>
                     <select
                         name="anaesthetist_id"
                         value={formData.anaesthetist_id}
                         onChange={handleChange}
                         className={selectClass}
+                        disabled={loadingAnaesthetists}
                     >
-                        <option value="">Select Anaesthetist</option>
-                        {MOCK_ANAESTHETISTS.map(anaesthetist => (
-                            <option key={anaesthetist.id} value={anaesthetist.id}>
-                                {anaesthetist.name}
-                            </option>
-                        ))}
+                        <option value="">{loadingAnaesthetists ? 'Loading...' : 'Select Anaesthetist'}</option>
+                        {anaesthetists.map(anaes => {
+                            const avail = anaesthetistAvailability?.[anaes.id];
+                            const isUnavailable = avail && !avail.available;
+                            const label = `${anaes.name}${avail ? (avail.available ? ' ✅' : ' ❌ Busy') : ''}`;
+                            return (
+                                <option
+                                    key={anaes.id}
+                                    value={anaes.id}
+                                    disabled={isUnavailable}
+                                >
+                                    {label}
+                                </option>
+                            );
+                        })}
                     </select>
+                    {formData.anaesthetist_id && anaesthetistAvailability?.[formData.anaesthetist_id] && !anaesthetistAvailability[formData.anaesthetist_id].available && (
+                        <p className="text-xs text-red-500 mt-1">
+                            ⚠️ {anaesthetistAvailability[formData.anaesthetist_id].conflict_reason}
+                        </p>
+                    )}
                 </div>
             </div>
 

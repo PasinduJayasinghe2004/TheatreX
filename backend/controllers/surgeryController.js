@@ -6,6 +6,7 @@
 // Updated by: M3 (Janani) - Day 6 (Added updateSurgeryStatus, status filter)
 // Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
 // Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses, nurse assignment)
+// Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists, anaesthetist dropdown)
 // 
 // Handles all surgery-related HTTP requests and business logic.
 // Contains CRUD operations for surgery management.
@@ -20,6 +21,7 @@
 // - getSurgeonsDropdown: GET /api/surgeries/surgeons - Surgeons list
 // - getAvailableSurgeons: GET /api/surgeries/surgeons/available - Available surgeons (M1 Day 9)
 // - getAvailableNurses: GET /api/surgeries/nurses/available - Available nurses (M2 Day 9)
+// - getAvailableAnaesthetists: GET /api/surgeries/anaesthetists/available - Available anaesthetists (M3 Day 9)
 // - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // - checkConflicts: POST /api/surgeries/check-conflicts - Conflict detection (M1 Day 8)
 // ============================================================================
@@ -51,6 +53,7 @@ export const createSurgery = async (req, res) => {
             // Resource Assignment
             theatre_id,
             surgeon_id,
+            anaesthetist_id, // M3 Day 9
             // Nurse Assignment (M2 Day 9)
             nurse_ids,  // array of nurse IDs (up to 3)
             // Status and Priority
@@ -74,10 +77,11 @@ export const createSurgery = async (req, res) => {
                 duration_minutes,
                 theatre_id,
                 surgeon_id,
+                anaesthetist_id,
                 status,
                 priority,
                 notes
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
             RETURNING *
         `;
 
@@ -93,6 +97,7 @@ export const createSurgery = async (req, res) => {
             duration_minutes,
             theatre_id || null,
             surgeon_id || null,
+            anaesthetist_id || null, // M3 Day 9
             status,
             priority,
             notes || null
@@ -652,6 +657,115 @@ export const getAvailableNurses = async (req, res) => {
 };
 
 // ============================================================================
+// GET AVAILABLE ANAESTHETISTS (M3 - Day 9)
+// ============================================================================
+// @desc    Get anaesthetists with availability status for a given date/time/duration
+// @route   GET /api/surgeries/anaesthetists/available?date=...&time=...&duration=...
+// @access  Protected
+// Created by: M3 (Janani) - Day 9
+// ============================================================================
+export const getAvailableAnaesthetists = async (req, res) => {
+    try {
+        const { date, time, duration, exclude_surgery_id } = req.query;
+
+        // Validate required query params
+        if (!date || !time || !duration) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required query params: date, time, duration'
+            });
+        }
+
+        const durationMins = parseInt(duration, 10);
+        if (isNaN(durationMins) || durationMins <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Duration must be a positive number (minutes)'
+            });
+        }
+
+        // Build exclusion clause if editing an existing surgery
+        const excludeClause = exclude_surgery_id
+            ? `AND s.id <> $4`
+            : '';
+        const conflictParams = exclude_surgery_id
+            ? [date, time, durationMins, parseInt(exclude_surgery_id, 10)]
+            : [date, time, durationMins];
+
+        // 1. Get all active & available anaesthetists from anaesthetists table
+        const { rows: allAnaesthetists } = await pool.query(`
+            SELECT id, name, email, specialization, phone, shift_preference,
+                   years_of_experience, qualification
+            FROM anaesthetists
+            WHERE is_active = TRUE
+            ORDER BY name ASC
+        `);
+
+        // 2. Find anaesthetist IDs that have conflicting surgeries at the given time
+        //    An anaesthetist is "busy" if they are assigned (via surgeries.anaesthetist_id)
+        //    to a surgery that overlaps the requested time slot.
+        const conflictQuery = `
+            SELECT DISTINCT s.anaesthetist_id,
+                   json_agg(json_build_object(
+                       'surgery_id', s.id,
+                       'surgery_type', s.surgery_type,
+                       'scheduled_time', s.scheduled_time,
+                       'duration_minutes', s.duration_minutes,
+                       'patient_name', s.patient_name
+                   )) AS conflicting_surgeries
+            FROM surgeries s
+            WHERE s.anaesthetist_id IS NOT NULL
+              AND s.scheduled_date = $1
+              AND s.status IN ('scheduled', 'in_progress')
+              ${excludeClause}
+              AND (
+                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
+                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
+              )
+            GROUP BY s.anaesthetist_id
+        `;
+        const { rows: conflicts } = await pool.query(conflictQuery, conflictParams);
+
+        // Build a map of anaesthetist_id -> conflict details
+        const conflictMap = {};
+        conflicts.forEach(c => {
+            conflictMap[c.anaesthetist_id] = {
+                conflicting_surgeries: c.conflicting_surgeries
+            };
+        });
+
+        // 3. Merge availability info into anaesthetist list
+        const anaesthetistsWithAvailability = allAnaesthetists.map(anaes => {
+            const conflict = conflictMap[anaes.id];
+            return {
+                ...anaes,
+                available: !conflict,
+                conflict_reason: conflict
+                    ? `Anaesthetist has ${conflict.conflicting_surgeries.length} conflicting surgery(ies) at this time`
+                    : null,
+                conflicting_surgeries: conflict ? conflict.conflicting_surgeries : []
+            };
+        });
+
+        const availableCount = anaesthetistsWithAvailability.filter(a => a.available).length;
+
+        res.status(200).json({
+            success: true,
+            count: anaesthetistsWithAvailability.length,
+            available_count: availableCount,
+            data: anaesthetistsWithAvailability
+        });
+    } catch (error) {
+        console.error('Error fetching available anaesthetists:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching available anaesthetists',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
 // UPDATE SURGERY
 // ============================================================================
 // @desc    Update an existing surgery
@@ -696,6 +810,7 @@ export const updateSurgery = async (req, res) => {
             duration_minutes,
             theatre_id,
             surgeon_id,
+            anaesthetist_id, // M3 Day 9
             status,
             priority,
             notes,
@@ -751,6 +866,10 @@ export const updateSurgery = async (req, res) => {
             updates.push(`surgeon_id = $${paramCounter++}`);
             values.push(surgeon_id || null);
         }
+        if (anaesthetist_id !== undefined) {
+            updates.push(`anaesthetist_id = $${paramCounter++}`);
+            values.push(anaesthetist_id || null);
+        }
         if (status !== undefined) {
             updates.push(`status = $${paramCounter++}`);
             values.push(status);
@@ -799,6 +918,22 @@ export const updateSurgery = async (req, res) => {
             }
         }
 
+        // Fetch anaesthetist details for response (M3 Day 9)
+        let anaesthetistDetails = null;
+        if (updatedSurgery.anaesthetist_id) {
+            try {
+                const anaesResult = await pool.query(
+                    'SELECT id, name, email, specialization FROM anaesthetists WHERE id = $1',
+                    [updatedSurgery.anaesthetist_id]
+                );
+                if (anaesResult.rows.length > 0) {
+                    anaesthetistDetails = anaesResult.rows[0];
+                }
+            } catch (err) {
+                console.log('Warning: Error fetching anaesthetist details:', err.message);
+            }
+        }
+
         // Update nurse assignments if nurse_ids provided (M2 Day 9)
         let assignedNurses = [];
         if (nurse_ids !== undefined && Array.isArray(nurse_ids)) {
@@ -824,6 +959,7 @@ export const updateSurgery = async (req, res) => {
             data: {
                 ...updatedSurgery,
                 surgeon: surgeonDetails,
+                anaesthetist: anaesthetistDetails,
                 nurses: assignedNurses
             }
         });
@@ -869,16 +1005,16 @@ export const updateSurgery = async (req, res) => {
 
 // Color maps for status and priority
 const STATUS_COLORS = {
-    scheduled:   { backgroundColor: '#3B82F6', borderColor: '#2563EB' }, // blue
+    scheduled: { backgroundColor: '#3B82F6', borderColor: '#2563EB' }, // blue
     in_progress: { backgroundColor: '#F59E0B', borderColor: '#D97706' }, // amber
-    completed:   { backgroundColor: '#10B981', borderColor: '#059669' }, // green
-    cancelled:   { backgroundColor: '#EF4444', borderColor: '#DC2626' }  // red
+    completed: { backgroundColor: '#10B981', borderColor: '#059669' }, // green
+    cancelled: { backgroundColor: '#EF4444', borderColor: '#DC2626' }  // red
 };
 
 const PRIORITY_COLORS = {
     emergency: { backgroundColor: '#EF4444', borderColor: '#DC2626' }, // red
-    urgent:    { backgroundColor: '#F97316', borderColor: '#EA580C' }, // orange
-    routine:   null // use status color
+    urgent: { backgroundColor: '#F97316', borderColor: '#EA580C' }, // orange
+    routine: null // use status color
 };
 
 export const getCalendarEvents = async (req, res) => {
@@ -1005,10 +1141,10 @@ export const getCalendarEvents = async (req, res) => {
 
 // Valid status transitions map
 const VALID_STATUS_TRANSITIONS = {
-    scheduled:   ['in_progress', 'cancelled'],
+    scheduled: ['in_progress', 'cancelled'],
     in_progress: ['completed', 'cancelled'],
-    completed:   [],           // terminal state
-    cancelled:   ['scheduled'] // allow rescheduling
+    completed: [],           // terminal state
+    cancelled: ['scheduled'] // allow rescheduling
 };
 
 // 
@@ -1056,9 +1192,9 @@ export const checkConflicts = async (req, res) => {
             ? `AND s.id <> ${parseInt(exclude_surgery_id, 10)}`
             : '';
 
-        
+
         // 1. Theatre Conflict Check
-        
+
         if (theatre_id) {
             const theatreConflictQuery = `
                 SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
