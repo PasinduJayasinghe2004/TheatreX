@@ -4,6 +4,8 @@
 // Created by: M1 (Pasindu) - Day 5
 // Updated by: M6 (Dinil) - Day 5 - New modal UI design
 // Updated by: M1 (Pasindu) - Day 9 - Surgeon availability filtering
+// Updated by: M2 (Chandeepa) - Day 9 - Multi-select nurses with availability
+// Updated by: M3 (Janani) - Day 9 - Anaesthetist dropdown with availability
 // 
 // Clean modal form for scheduling surgeries
 
@@ -22,7 +24,9 @@ const MOCK_PATIENTS = [
     { id: 4, name: 'Emily Davis' },
 ];
 
-// MOCK_NURSES and MOCK_ANAESTHETISTS removed — now fetched from API (M1 - Day 9)
+// MOCK_ANAESTHETISTS removed — now fetched from API (M3 - Day 9)
+
+// MOCK_THEATRES removed — now fetched from API (M2 - Day 8)
 
 const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const { token } = useAuth();
@@ -37,17 +41,17 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const [surgeonAvailability, setSurgeonAvailability] = useState(null);
     const [checkingSurgeonAvail, setCheckingSurgeonAvail] = useState(false);
 
-    // Nurse State - M1 Day 9
+    // Nurse state - M2 (Chandeepa) Day 9
     const [nurses, setNurses] = useState([]);
     const [loadingNurses, setLoadingNurses] = useState(true);
-    const [nurseAvailability, setNurseAvailability] = useState(null);
+    const [nurseAvailability, setNurseAvailability] = useState(null); // map of id -> { available, conflict_reason }
     const [checkingNurseAvail, setCheckingNurseAvail] = useState(false);
 
-    // Anaesthetist State - M1 Day 9
+    // Anaesthetist state - M3 (Janani) Day 9
     const [anaesthetists, setAnaesthetists] = useState([]);
     const [loadingAnaesthetists, setLoadingAnaesthetists] = useState(true);
     const [anaesthetistAvailability, setAnaesthetistAvailability] = useState(null);
-    const [checkingAnaesthetistAvail, setCheckingAnaesthetistAvail] = useState(false);
+    const [checkingAnaesAvail, setCheckingAnaesAvail] = useState(false);
 
     // Theatre state - M2 (Chandeepa) Day 8
     const [theatres, setTheatres] = useState([]);
@@ -63,7 +67,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         patient_age: '',
         patient_gender: '',
         surgeon_id: '',
-        nurse_id: '',
+        nurse_ids: [],  // M2 Day 9: array of up to 3 nurse IDs
         anaesthetist_id: '',
         theatre_id: '',
         scheduled_date: '',
@@ -154,12 +158,95 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 setSurgeonAvailability(availMap);
             }
 
-            // Process Nurse Availability
-            if (nurseRes.success) {
-                setNurses(nurseRes.data);
+    // Check nurse availability when date/time/duration change - M2 (Chandeepa) Day 9
+    const checkNurseAvailability = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes } = formData;
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setNurseAvailability(null);
+            return;
+        }
+
+        try {
+            setCheckingNurseAvail(true);
+            const result = await surgeryService.getAvailableNurses(
+                scheduled_date,
+                scheduled_time,
+                duration_minutes
+            );
+            if (result.success) {
+                setNurses(result.data);
+                setLoadingNurses(false);
                 const availMap = {};
-                nurseRes.data.forEach(n => availMap[n.id] = { available: n.available, conflict_reason: n.conflict_reason });
+                result.data.forEach(n => {
+                    availMap[n.id] = { available: n.available, conflict_reason: n.conflict_reason };
+                });
                 setNurseAvailability(availMap);
+            }
+        } catch (error) {
+            console.error('Error checking nurse availability:', error);
+            // If availability check fails, still try to load nurses list
+            if (nurses.length === 0) {
+                setLoadingNurses(false);
+            }
+        } finally {
+            setCheckingNurseAvail(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
+
+    useEffect(() => {
+        checkNurseAvailability();
+    }, [checkNurseAvailability]);
+
+    // Check anaesthetist availability when date/time/duration change - M3 (Janani) Day 9
+    const checkAnaesthetistAvailability = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes } = formData;
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setAnaesthetistAvailability(null);
+            return;
+        }
+
+        try {
+            setCheckingAnaesAvail(true);
+            const result = await surgeryService.getAvailableAnaesthetists(
+                scheduled_date,
+                scheduled_time,
+                duration_minutes
+            );
+            if (result.success) {
+                setAnaesthetists(result.data);
+                setLoadingAnaesthetists(false);
+                const availMap = {};
+                result.data.forEach(a => {
+                    availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason };
+                });
+                setAnaesthetistAvailability(availMap);
+            }
+        } catch (error) {
+            console.error('Error checking anaesthetist availability:', error);
+            if (anaesthetists.length === 0) {
+                setLoadingAnaesthetists(false);
+            }
+        } finally {
+            setCheckingAnaesAvail(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
+
+    useEffect(() => {
+        checkAnaesthetistAvailability();
+    }, [checkAnaesthetistAvailability]);
+
+    // Fetch theatres for dropdown - M2 (Chandeepa) Day 8
+    useEffect(() => {
+        const fetchTheatres = async () => {
+            try {
+                const result = await surgeryService.getTheatres();
+                if (result.success) {
+                    setTheatres(result.data);
+                }
+            } catch (error) {
+                console.error('Error fetching theatres:', error);
+            } finally {
+                setLoadingTheatres(false);
             }
 
             // Process Anaesthetist Availability
@@ -207,6 +294,21 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         if ((name === 'patient_name' || name === 'patient_age' || name === 'patient_gender') && value) {
             setFormData(prev => ({ ...prev, patient_id: '' }));
         }
+    };
+
+    // Handle nurse checkbox toggle - M2 (Chandeepa) Day 9
+    const handleNurseToggle = (nurseId) => {
+        setFormData(prev => {
+            const currentIds = prev.nurse_ids;
+            if (currentIds.includes(nurseId)) {
+                // Remove nurse
+                return { ...prev, nurse_ids: currentIds.filter(id => id !== nurseId) };
+            } else if (currentIds.length < 3) {
+                // Add nurse (max 3)
+                return { ...prev, nurse_ids: [...currentIds, nurseId] };
+            }
+            return prev; // Already at max
+        });
     };
 
     // Handle form submit
@@ -278,7 +380,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
                     patient_gender: formData.patient_gender || null,
                     surgeon_id: formData.surgeon_id ? parseInt(formData.surgeon_id) : null,
-                    nurse_id: formData.nurse_id ? parseInt(formData.nurse_id) : null,
+                    nurse_ids: formData.nurse_ids.map(Number),  // M2 Day 9: send nurse_ids array
                     anaesthetist_id: formData.anaesthetist_id ? parseInt(formData.anaesthetist_id) : null,
                     theatre_id: formData.theatre_id ? parseInt(formData.theatre_id) : null,
                     scheduled_date: formData.scheduled_date,
@@ -303,7 +405,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     patient_age: '',
                     patient_gender: '',
                     surgeon_id: '',
-                    nurse_id: '',
+                    nurse_ids: [],
                     anaesthetist_id: '',
                     theatre_id: '',
                     scheduled_date: '',
@@ -488,9 +590,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 </div>
             </div>
 
-            {/* Staff Assignment - 3 column grid */}
-            <div className="grid grid-cols-3 gap-4">
-                {/* Surgeon */}
+            {/* Staff Assignment - Surgeon & Anaesthetist */}
+            <div className="grid grid-cols-2 gap-4">
                 <div>
                     <div className="flex items-center justify-between mb-1.5">
                         <label className={labelClass}>Surgeon</label>
@@ -536,50 +637,11 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 {/* Nurse */}
                 <div>
                     <div className="flex items-center justify-between mb-1.5">
-                        <label className={labelClass}>Nurse</label>
-                        {checkingNurseAvail && (
-                            <span className="text-xs text-blue-500 animate-pulse">Checking...</span>
-                        )}
-                        {nurseAvailability && !checkingNurseAvail && (
-                            <span className="text-xs text-green-600">
-                                {Object.values(nurseAvailability).filter(n => n.available).length} available
-                            </span>
-                        )}
-                    </div>
-                    <select
-                        name="nurse_id"
-                        value={formData.nurse_id}
-                        onChange={handleChange}
-                        className={selectClass}
-                        disabled={loadingNurses}
-                    >
-                        <option value="">{loadingNurses ? 'Loading...' : 'Select Nurse'}</option>
-                        {nurses.map(nurse => {
-                            const avail = nurseAvailability?.[nurse.id];
-                            const isUnavailable = avail && !avail.available;
-                            const label = `${nurse.name}${avail ? (avail.available ? ' ✅' : ' ❌ Busy') : ''}`;
-                            return (
-                                <option key={nurse.id} value={nurse.id} disabled={isUnavailable}>
-                                    {label}
-                                </option>
-                            );
-                        })}
-                    </select>
-                    {formData.nurse_id && nurseAvailability?.[formData.nurse_id] && !nurseAvailability[formData.nurse_id].available && (
-                        <p className="text-xs text-red-500 mt-1">
-                            ⚠️ {nurseAvailability[formData.nurse_id].conflict_reason}
-                        </p>
-                    )}
-                </div>
-
-                {/* Anaesthetist */}
-                <div>
-                    <div className="flex items-center justify-between mb-1.5">
                         <label className={labelClass}>Anaesthetist</label>
-                        {checkingAnaesthetistAvail && (
+                        {checkingAnaesAvail && (
                             <span className="text-xs text-blue-500 animate-pulse">Checking...</span>
                         )}
-                        {anaesthetistAvailability && !checkingAnaesthetistAvail && (
+                        {anaesthetistAvailability && !checkingAnaesAvail && (
                             <span className="text-xs text-green-600">
                                 {Object.values(anaesthetistAvailability).filter(a => a.available).length} available
                             </span>
@@ -593,12 +655,16 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         disabled={loadingAnaesthetists}
                     >
                         <option value="">{loadingAnaesthetists ? 'Loading...' : 'Select Anaesthetist'}</option>
-                        {anaesthetists.map(anaesthetist => {
-                            const avail = anaesthetistAvailability?.[anaesthetist.id];
+                        {anaesthetists.map(anaes => {
+                            const avail = anaesthetistAvailability?.[anaes.id];
                             const isUnavailable = avail && !avail.available;
-                            const label = `${anaesthetist.name}${avail ? (avail.available ? ' ✅' : ' ❌ Busy') : ''}`;
+                            const label = `${anaes.name}${avail ? (avail.available ? ' ✅' : ' ❌ Busy') : ''}`;
                             return (
-                                <option key={anaesthetist.id} value={anaesthetist.id} disabled={isUnavailable}>
+                                <option
+                                    key={anaes.id}
+                                    value={anaes.id}
+                                    disabled={isUnavailable}
+                                >
                                     {label}
                                 </option>
                             );
@@ -610,6 +676,87 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         </p>
                     )}
                 </div>
+            </div>
+
+            {/* Nurse Multi-Select - M2 (Chandeepa) Day 9 */}
+            <div>
+                <div className="flex items-center justify-between mb-1.5">
+                    <label className={labelClass}>
+                        Nurses <span className="text-gray-400 font-normal">(select up to 3)</span>
+                    </label>
+                    {checkingNurseAvail && (
+                        <span className="text-xs text-blue-500 animate-pulse">Checking...</span>
+                    )}
+                    {nurseAvailability && !checkingNurseAvail && (
+                        <span className="text-xs text-green-600">
+                            {Object.values(nurseAvailability).filter(n => n.available).length} available
+                        </span>
+                    )}
+                    {formData.nurse_ids.length > 0 && (
+                        <span className="text-xs text-blue-600 font-medium">
+                            {formData.nurse_ids.length}/3 selected
+                        </span>
+                    )}
+                </div>
+                {loadingNurses && !nurseAvailability ? (
+                    <div className="text-sm text-gray-400 py-2">
+                        Enter date, time &amp; duration to see available nurses...
+                    </div>
+                ) : (
+                    <div className="border border-gray-200 rounded-lg max-h-36 overflow-y-auto">
+                        {nurses.length === 0 ? (
+                            <div className="px-3 py-2 text-sm text-gray-400">No nurses found</div>
+                        ) : (
+                            nurses.map(nurse => {
+                                const avail = nurseAvailability?.[nurse.id];
+                                const isUnavailable = avail && !avail.available;
+                                const isSelected = formData.nurse_ids.includes(String(nurse.id)) || formData.nurse_ids.includes(nurse.id);
+                                const isMaxReached = formData.nurse_ids.length >= 3 && !isSelected;
+
+                                return (
+                                    <label
+                                        key={nurse.id}
+                                        className={`flex items-center px-3 py-2 text-sm border-b last:border-b-0 cursor-pointer transition-colors
+                                            ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                                            ${(isUnavailable || isMaxReached) && !isSelected ? 'opacity-50 cursor-not-allowed' : ''}
+                                        `}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={isSelected}
+                                            onChange={() => handleNurseToggle(nurse.id)}
+                                            disabled={isUnavailable || (isMaxReached && !isSelected)}
+                                            className="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span className={`flex-1 ${isUnavailable ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                                            {nurse.name}
+                                            {nurse.specialization && (
+                                                <span className="text-gray-400 ml-1">({nurse.specialization})</span>
+                                            )}
+                                        </span>
+                                        {avail && (
+                                            <span className={`text-xs ml-2 ${avail.available ? 'text-green-600' : 'text-red-500'}`}>
+                                                {avail.available ? '✅' : '❌ Busy'}
+                                            </span>
+                                        )}
+                                    </label>
+                                );
+                            })
+                        )}
+                    </div>
+                )}
+                {/* Show conflict warnings for selected unavailable nurses */}
+                {formData.nurse_ids.map(nurseId => {
+                    const avail = nurseAvailability?.[nurseId];
+                    if (avail && !avail.available) {
+                        return (
+                            <p key={nurseId} className="text-xs text-red-500 mt-1">
+                                ⚠️ {avail.conflict_reason}
+                            </p>
+                        );
+                    }
+                    return null;
+                })}
             </div>
 
             {/* Theatre - Updated by M2 (Chandeepa) Day 8: API-driven with availability */}

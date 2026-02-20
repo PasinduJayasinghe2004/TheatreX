@@ -8,6 +8,7 @@
 // Updated by: M2 (Chandeepa) - Day 7 (Added getCalendarEvents)
 // Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
 // Updated by: M1 (Pasindu) - Day 9 (Added getAvailableSurgeons for filtered dropdown)
+// Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses for multi-select)\n// Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists for dropdown)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -18,6 +19,8 @@
 // - Get calendar events (FullCalendar format) - M2 Day 7
 // - Check scheduling conflicts (theatre, surgeon, staff) - M1 Day 8
 // - Get available surgeons for a time slot - M1 Day 9
+// - Get available nurses for a time slot - M2 Day 9
+// - Get available anaesthetists for a time slot - M3 Day 9
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -145,7 +148,8 @@ const surgeryService = {
 
     // ========================================
     // Get available nurses for a time slot
-    // Created by: M1 (Pasindu) - Day 9
+    // Returns nurses with availability info
+    // Created by: M2 (Chandeepa) - Day 9
     // ========================================
     getAvailableNurses: async (date, time, duration, excludeSurgeryId = null) => {
         try {
@@ -163,7 +167,8 @@ const surgeryService = {
 
     // ========================================
     // Get available anaesthetists for a time slot
-    // Created by: M1 (Pasindu) - Day 9
+    // Returns anaesthetists with availability info
+    // Created by: M3 (Janani) - Day 9
     // ========================================
     getAvailableAnaesthetists: async (date, time, duration, excludeSurgeryId = null) => {
         try {
@@ -232,6 +237,20 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching calendar events. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update an existing surgery
+    // Created by: M2 (Chandeepa) - Day 9
+    // ========================================
+    updateSurgery: async (id, updateData) => {
+        try {
+            const response = await api.put(`/surgeries/${id}`, updateData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating surgery. Please try again.';
             throw new Error(message);
         }
     },
