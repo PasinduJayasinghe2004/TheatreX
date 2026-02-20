@@ -28,15 +28,15 @@ import surgeryService from '../services/surgeryService';
 // ── Legend colour config (matches backend STATUS_COLORS / PRIORITY_COLORS) ──
 
 const STATUS_LEGEND = [
-    { label: 'Scheduled',   color: '#3B82F6' },
+    { label: 'Scheduled', color: '#3B82F6' },
     { label: 'In Progress', color: '#F59E0B' },
-    { label: 'Completed',   color: '#10B981' },
-    { label: 'Cancelled',   color: '#EF4444' }
+    { label: 'Completed', color: '#10B981' },
+    { label: 'Cancelled', color: '#EF4444' }
 ];
 
 const PRIORITY_LEGEND = [
-    { label: 'Routine',   color: '#3B82F6' },
-    { label: 'Urgent',    color: '#F97316' },
+    { label: 'Routine', color: '#3B82F6' },
+    { label: 'Urgent', color: '#F97316' },
     { label: 'Emergency', color: '#EF4444' }
 ];
 

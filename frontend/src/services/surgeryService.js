@@ -8,7 +8,7 @@
 // Updated by: M2 (Chandeepa) - Day 7 (Added getCalendarEvents)
 // Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
 // Updated by: M1 (Pasindu) - Day 9 (Added getAvailableSurgeons for filtered dropdown)
-// Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses for multi-select)
+// Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses for multi-select)\n// Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists for dropdown)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -20,6 +20,7 @@
 // - Check scheduling conflicts (theatre, surgeon, staff) - M1 Day 8
 // - Get available surgeons for a time slot - M1 Day 9
 // - Get available nurses for a time slot - M2 Day 9
+// - Get available anaesthetists for a time slot - M3 Day 9
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -160,6 +161,25 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching available nurses. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get available anaesthetists for a time slot
+    // Returns anaesthetists with availability info
+    // Created by: M3 (Janani) - Day 9
+    // ========================================
+    getAvailableAnaesthetists: async (date, time, duration, excludeSurgeryId = null) => {
+        try {
+            const params = new URLSearchParams({ date, time, duration: String(duration) });
+            if (excludeSurgeryId) {
+                params.append('exclude_surgery_id', String(excludeSurgeryId));
+            }
+            const response = await api.get(`/surgeries/anaesthetists/available?${params.toString()}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching available anaesthetists. Please try again.';
             throw new Error(message);
         }
     },

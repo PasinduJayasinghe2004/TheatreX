@@ -31,6 +31,7 @@ const createSurgeriesTable = async () => {
       -- Resource Assignment (nullable until assigned)
       theatre_id INT NULL,
       surgeon_id INT NULL,
+      anaesthetist_id INT NULL,
       
       -- Status and Priority
       status VARCHAR(20) DEFAULT 'scheduled'
@@ -60,6 +61,22 @@ const createSurgeriesTable = async () => {
     CREATE INDEX IF NOT EXISTS idx_surgeries_theatre_id ON surgeries (theatre_id);
     CREATE INDEX IF NOT EXISTS idx_surgeries_surgeon_id ON surgeries (surgeon_id);
     CREATE INDEX IF NOT EXISTS idx_surgeries_patient_id ON surgeries (patient_id);
+    CREATE INDEX IF NOT EXISTS idx_surgeries_anaesthetist_id ON surgeries (anaesthetist_id);
+  `;
+
+  // Add anaesthetist_id column if it doesn't exist (M3 - Day 9)
+  const addAnaesthetistColumn = `
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'surgeries' AND column_name = 'anaesthetist_id'
+        ) THEN
+            ALTER TABLE surgeries ADD COLUMN anaesthetist_id INT NULL;
+            CREATE INDEX IF NOT EXISTS idx_surgeries_anaesthetist_id ON surgeries (anaesthetist_id);
+        END IF;
+    END
+    $$;
   `;
 
   const createTrigger = `
@@ -78,6 +95,7 @@ const createSurgeriesTable = async () => {
   try {
     await pool.query(createTableQuery);
     await pool.query(createIndexes);
+    await pool.query(addAnaesthetistColumn); // M3 - Day 9
     await pool.query(createTrigger);
     console.log('✅ Surgeries table created/verified successfully');
   } catch (error) {
