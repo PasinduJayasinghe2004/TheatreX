@@ -15,6 +15,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import StatsCard from '../components/StatsCard';
 import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
@@ -77,7 +78,7 @@ const StatusBadge = ({ status }) => {
 
 // Live Theatre Card component
 const LiveTheatreCard = ({ theatre, surgery }) => {
-    const progress = surgery?.progress || 50; // Default progress if not available
+    const progress = surgery?.progress || Math.floor(Math.random() * 60 + 20); // Mock progress if not available
     const duration = surgery?.elapsed_minutes || 0;
 
     return (
@@ -178,6 +179,13 @@ const Dashboard = () => {
                 }
             } catch (surgeryErr) {
                 console.error('Error fetching surgeries:', surgeryErr);
+                // Surface surgeries-specific error to the UI
+                setError(
+                    surgeryErr.response?.data?.message || 'Failed to load today\'s surgeries'
+                );
+                // Ensure we don't show stale surgery data on error
+                setSurgeries([]);
+                setLiveSurgeries([]);
             }
 
         } catch (err) {
@@ -201,9 +209,9 @@ const Dashboard = () => {
     const avgDuration = stats?.avgDuration || 125;
 
     // Get upcoming surgeries (scheduled, not in progress)
-    const upcomingSurgeries = surgeries.filter(s => 
-        s.status === 'scheduled' || s.status === 'completed'
-    ).slice(0, 5);
+    const upcomingSurgeries = surgeries
+        .filter(s => s.status === 'scheduled')
+        .slice(0, 5);
 
     // Format time for display
     const formatTime = (timeStr) => {
@@ -317,7 +325,7 @@ const Dashboard = () => {
                                     <p className="text-sm text-blue-600 font-medium mb-1">Staff on Duty</p>
                                     <p className="text-4xl font-bold text-gray-900">{staffOnDuty.total || 13}</p>
                                     <p className="text-sm text-gray-500 mt-2">
-                                        {staffOnDuty.surgeons || 7} surgeons, {staffOnDuty.nurses || 3} nurses, {staffOnDuty.anaesthetists || 1} anaesth., {staffOnDuty.technicians || 2} techs
+                                        {staffOnDuty.surgeons || 7} surgeons, {staffOnDuty.nurses || 3} nurses, {staffOnDuty.anaesthetists || 1} anaesthetists, {staffOnDuty.technicians || 2} techs
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
