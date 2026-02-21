@@ -318,7 +318,7 @@ const Dashboard = () => {
                                     <p className="text-sm text-blue-600 font-medium mb-1">Staff on Duty</p>
                                     <p className="text-4xl font-bold text-gray-900">{staffOnDuty.total || 13}</p>
                                     <p className="text-sm text-gray-500 mt-2">
-                                        {staffOnDuty.surgeons || 7} surgeons, {staffOnDuty.nurses || 3} nurses, {staffOnDuty.anaesthetists || 1} anaesth., {staffOnDuty.technicians || 2} techs
+                                        {staffOnDuty.surgeons || 7} surgeons, {staffOnDuty.nurses || 3} nurses, {staffOnDuty.anaesthetists || 1} anaesthetists, {staffOnDuty.technicians || 2} techs
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
