@@ -77,7 +77,7 @@ const StatusBadge = ({ status }) => {
 
 // Live Theatre Card component
 const LiveTheatreCard = ({ theatre, surgery }) => {
-    const progress = surgery?.progress || Math.floor(Math.random() * 60 + 20); // Mock progress if not available
+    const progress = surgery?.progress || 50; // Default progress if not available
     const duration = surgery?.elapsed_minutes || 0;
 
     return (
@@ -293,7 +293,7 @@ const Dashboard = () => {
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <p className="text-sm text-blue-600 font-medium mb-1">Today's Surgeries</p>
+                                    <p className="text-sm text-blue-600 font-medium mb-1">Today&apos;s Surgeries</p>
                                     <p className="text-4xl font-bold text-gray-900">{todaysSurgeries}</p>
                                     <p className="text-sm text-green-500 mt-2 flex items-center gap-1">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
