@@ -2,6 +2,7 @@
 // Emergency Booking Page
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 8
+// Updated by: M4 (Oneli) - Day 9 - Added staff conflict warning integration
 // 
 // Dedicated page for emergency surgery booking with:
 // - Streamlined form layout optimized for urgent cases
@@ -9,6 +10,7 @@
 // - Manual patient entry (no need to pre-register)
 // - Priority defaulted to "emergency"
 // - Visual indicators for conflicts and availability
+// - Staff conflict warnings (M4 Day 9)
 // ============================================================================
 
 import { useState, useEffect, useCallback } from 'react';
@@ -17,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import surgeryService from '../services/surgeryService';
 import axios from 'axios';
 import Layout from '../components/Layout';
+import StaffConflictWarning from '../components/StaffConflictWarning';
 
 // Mock data for staff (replace with API calls when available)
 const MOCK_NURSES = [
@@ -49,6 +52,10 @@ const EmergencyBooking = () => {
     const [conflicts, setConflicts] = useState(null);
     const [checkingConflicts, setCheckingConflicts] = useState(false);
     const [theatreAvailability, setTheatreAvailability] = useState(null);
+
+    // Staff conflict warnings - M4 (Oneli) Day 9
+    const [staffConflicts, setStaffConflicts] = useState(null);
+    const [checkingStaffConflicts, setCheckingStaffConflicts] = useState(false);
 
     // Form state - emergency defaults
     const [formData, setFormData] = useState({
@@ -178,6 +185,51 @@ const EmergencyBooking = () => {
 
         return () => clearTimeout(timer);
     }, [checkAllConflicts]);
+
+    // Check staff conflicts when staff selections change - M4 (Oneli) Day 9
+    const checkStaffConflictsCallback = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes, surgeon_id, anaesthetist_id } = formData;
+        
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setStaffConflicts(null);
+            return;
+        }
+        
+        const hasStaff = surgeon_id || anaesthetist_id;
+        if (!hasStaff) {
+            setStaffConflicts(null);
+            return;
+        }
+
+        try {
+            setCheckingStaffConflicts(true);
+            const result = await surgeryService.checkStaffConflicts({
+                scheduled_date,
+                scheduled_time,
+                duration_minutes: parseInt(duration_minutes),
+                surgeon_id: surgeon_id ? parseInt(surgeon_id) : null,
+                anaesthetist_id: anaesthetist_id ? parseInt(anaesthetist_id) : null,
+                nurse_ids: []
+            });
+            if (result.success) {
+                setStaffConflicts(result);
+            }
+        } catch (error) {
+            console.error('Error checking staff conflicts:', error);
+        } finally {
+            setCheckingStaffConflicts(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes, 
+        formData.surgeon_id, formData.anaesthetist_id]);
+
+    // Debounced staff conflict check
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            checkStaffConflictsCallback();
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [checkStaffConflictsCallback]);
 
     // Handle input change
     const handleChange = (e) => {
@@ -531,6 +583,13 @@ const EmergencyBooking = () => {
                                     </select>
                                 </div>
                             </div>
+
+                            {/* Staff Conflict Warnings - M4 (Oneli) Day 9 */}
+                            <StaffConflictWarning
+                                warnings={staffConflicts?.warnings || []}
+                                loading={checkingStaffConflicts}
+                                className="mt-2"
+                            />
 
                             {/* Notes */}
                             <div>

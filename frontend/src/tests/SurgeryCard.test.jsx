@@ -107,30 +107,30 @@ describe('SurgeryCard Component Tests', () => {
     describe('Status Badge', () => {
         it('should display scheduled status correctly', () => {
             renderCard();
-            const statusBadge = screen.getByText('scheduled');
+            const statusBadge = screen.getByText('Scheduled');
             expect(statusBadge).toBeInTheDocument();
-            expect(statusBadge.className).toContain('bg-gray-100');
+            expect(statusBadge.className).toContain('bg-amber-50');
         });
 
         it('should display completed status with green styling', () => {
             const completedSurgery = { ...mockSurgery, status: 'completed' };
             renderCard(completedSurgery);
-            const statusBadge = screen.getByText('completed');
-            expect(statusBadge.className).toContain('bg-green-100');
+            const statusBadge = screen.getByText('Completed');
+            expect(statusBadge.className).toContain('bg-emerald-50');
         });
 
         it('should display in_progress status with blue styling', () => {
             const inProgressSurgery = { ...mockSurgery, status: 'in_progress' };
             renderCard(inProgressSurgery);
-            const statusBadge = screen.getByText('in progress');
-            expect(statusBadge.className).toContain('bg-blue-100');
+            const statusBadge = screen.getByText('In Progress');
+            expect(statusBadge.className).toContain('bg-blue-50');
         });
 
         it('should display cancelled status with red styling', () => {
             const cancelledSurgery = { ...mockSurgery, status: 'cancelled' };
             renderCard(cancelledSurgery);
-            const statusBadge = screen.getByText('cancelled');
-            expect(statusBadge.className).toContain('bg-red-100');
+            const statusBadge = screen.getByText('Cancelled');
+            expect(statusBadge.className).toContain('bg-red-50');
         });
     });
 

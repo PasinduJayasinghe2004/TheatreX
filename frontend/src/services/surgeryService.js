@@ -8,7 +8,9 @@
 // Updated by: M2 (Chandeepa) - Day 7 (Added getCalendarEvents)
 // Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
 // Updated by: M1 (Pasindu) - Day 9 (Added getAvailableSurgeons for filtered dropdown)
-// Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses for multi-select)\n// Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists for dropdown)
+// Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses for multi-select)
+// Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists for dropdown)
+// Updated by: M4 (Oneli) - Day 9 (Added checkStaffConflicts for warning UI)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -18,6 +20,7 @@
 // - Delete surgery by ID
 // - Get calendar events (FullCalendar format) - M2 Day 7
 // - Check scheduling conflicts (theatre, surgeon, staff) - M1 Day 8
+// - Check staff-specific conflicts with warnings - M4 Day 9
 // - Get available surgeons for a time slot - M1 Day 9
 // - Get available nurses for a time slot - M2 Day 9
 // - Get available anaesthetists for a time slot - M3 Day 9
@@ -266,6 +269,36 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error checking conflicts. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Check staff-specific conflicts with warnings
+    // Created by: M4 (Oneli) - Day 9
+    // Returns detailed warnings for surgeon, anaesthetist, and nurse conflicts
+    // ========================================
+    checkStaffConflicts: async (staffConflictData) => {
+        try {
+            const response = await api.post('/surgeries/check-staff-conflicts', staffConflictData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error checking staff conflicts. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Unified staff assignment
+    // Created by: M5 (User) - Day 9
+    // Assigns surgeon, anaesthetist, and nurses in one call
+    // ========================================
+    assignStaff: async (id, staffData) => {
+        try {
+            const response = await api.patch(`/surgeries/${id}/staff`, staffData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error assigning staff. Please try again.';
             throw new Error(message);
         }
     }

@@ -9,12 +9,14 @@
 // Updated by: M1 (Pasindu) - Day 9 (Added available surgeons route)
 // Updated by: M2 (Chandeepa) - Day 9 (Added available nurses route)
 // Updated by: M3 (Janani) - Day 9 (Added available anaesthetists route)
+// Updated by: M4 (Oneli) - Day 9 (Added staff conflict check route)
 // 
 // Defines all surgery-related API routes
 //
 // ROUTES:
 // - POST   /api/surgeries                           - Create new surgery (Coordinator, Admin)
 // - POST   /api/surgeries/check-conflicts            - Check scheduling conflicts (Protected) - M1 Day 8
+// - POST   /api/surgeries/check-staff-conflicts      - Check staff conflicts (Protected) - M4 Day 9
 // - GET    /api/surgeries                           - Get all surgeries (Protected)
 // - GET    /api/surgeries/:id                       - Get surgery by ID (Protected)
 // - PUT    /api/surgeries/:id                       - Update surgery (Coordinator, Admin)
@@ -40,7 +42,8 @@ import {
     updateSurgeryStatus,
     deleteSurgery,
     getCalendarEvents,
-    checkConflicts
+    checkConflicts,
+    checkStaffConflicts
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -107,6 +110,16 @@ router.get('/events', protect, getCalendarEvents);
 router.post('/check-conflicts', protect, checkConflicts);
 
 // ============================================================================
+// ROUTE: POST /api/surgeries/check-staff-conflicts
+// ============================================================================
+// Check for staff-specific scheduling conflicts with detailed warnings
+// Returns warning UI data for surgeon, anaesthetist, and nurse conflicts
+// Protected - any authenticated user can check
+// Created by: M4 (Oneli) - Day 9
+// ============================================================================
+router.post('/check-staff-conflicts', protect, checkStaffConflicts);
+
+// ============================================================================
 // ROUTE: POST /api/surgeries
 // ============================================================================
 // Create a new surgery
@@ -148,6 +161,15 @@ router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
 // Created by: M3 (Janani) - Day 6
 // ============================================================================
 router.patch('/:id/status', protect, authorize('coordinator', 'admin'), updateSurgeryStatus);
+
+// ============================================================================
+// ROUTE: PATCH /api/surgeries/:id/staff
+// ============================================================================
+// Unified staff assignment (surgeon, anaesthetist, and nurses)
+// Protected - only coordinators and admins can assign staff
+// Created by: M5 (User) - Day 9
+// ============================================================================
+router.patch('/:id/staff', protect, authorize('coordinator', 'admin'), assignStaff);
 
 // ============================================================================
 // ROUTE: DELETE /api/surgeries/:id

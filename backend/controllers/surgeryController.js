@@ -7,6 +7,7 @@
 // Updated by: M1 (Pasindu) - Day 8 (Added checkConflicts for emergency booking)
 // Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses, nurse assignment)
 // Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists, anaesthetist dropdown)
+// Updated by: M4 (Oneli) - Day 9 (Added checkStaffConflicts for warning UI)
 // 
 // Handles all surgery-related HTTP requests and business logic.
 // Contains CRUD operations for surgery management.
@@ -22,8 +23,10 @@
 // - getAvailableSurgeons: GET /api/surgeries/surgeons/available - Available surgeons (M1 Day 9)
 // - getAvailableNurses: GET /api/surgeries/nurses/available - Available nurses (M2 Day 9)
 // - getAvailableAnaesthetists: GET /api/surgeries/anaesthetists/available - Available anaesthetists (M3 Day 9)
+// - assignStaff: PATCH /api/surgeries/:id/staff - Unified staff assignment (M5 Day 9)
 // - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // - checkConflicts: POST /api/surgeries/check-conflicts - Conflict detection (M1 Day 8)
+// - checkStaffConflicts: POST /api/surgeries/check-staff-conflicts - Staff conflict warnings (M4 Day 9)
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -211,7 +214,7 @@ export const getAllSurgeries = async (req, res) => {
 
         // Build the complete query
         const query = `
-            SELECT 
+            SELECT
                 s.*,
                 u.name as surgeon_name,
                 u.email as surgeon_email
@@ -290,7 +293,7 @@ export const getSurgeryById = async (req, res) => {
         }
 
         const { rows } = await pool.query(
-            `SELECT 
+            `SELECT
                 s.*,
                 u.name   AS surgeon_name,
                 u.email  AS surgeon_email
@@ -420,8 +423,8 @@ export const deleteSurgery = async (req, res) => {
 export const getSurgeonsDropdown = async (req, res) => {
     try {
         const { rows } = await pool.query(`
-            SELECT id, name, email 
-            FROM users 
+            SELECT id, name, email
+            FROM users
             WHERE role = 'surgeon' AND is_active = true
             ORDER BY name ASC
         `);
@@ -897,7 +900,7 @@ export const updateSurgery = async (req, res) => {
         values.push(id);
 
         const updateQuery = `
-            UPDATE surgeries 
+            UPDATE surgeries
             SET ${updates.join(', ')}
             WHERE id = $${paramCounter}
             RETURNING *
@@ -987,6 +990,213 @@ export const updateSurgery = async (req, res) => {
             message: 'Error updating surgery',
             error: error.message
         });
+    }
+};
+
+// ============================================================================
+// UPDATE SURGERY STATUS
+// ============================================================================
+// @desc    Update only the status of a surgery (with transition validation)
+// @route   PATCH /api/surgeries/:id/status
+// @access  Protected (Coordinator, Admin)
+// Created by: M3 (Janani) - Day 6
+// ============================================================================
+
+// Valid status transitions map
+const VALID_STATUS_TRANSITIONS = {
+    scheduled: ['in_progress', 'cancelled'],
+    in_progress: ['completed', 'cancelled'],
+    completed: [],           // terminal state
+    cancelled: ['scheduled'] // allow rescheduling
+};
+
+export const updateSurgeryStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({ success: false, message: 'Invalid surgery ID' });
+        }
+        if (!status) {
+            return res.status(400).json({ success: false, message: 'New status is required' });
+        }
+
+        const { rows: existingSurgery } = await pool.query(
+            'SELECT id, status FROM surgeries WHERE id = $1',
+            [id]
+        );
+
+        if (existingSurgery.length === 0) {
+            return res.status(404).json({ success: false, message: 'Surgery not found' });
+        }
+
+        const currentStatus = existingSurgery[0].status;
+
+        // Validate status transition
+        const allowedTransitions = VALID_STATUS_TRANSITIONS[currentStatus];
+        if (!allowedTransitions || !allowedTransitions.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status transition from '${currentStatus}' to '${status}'. Allowed transitions: ${allowedTransitions.join(', ')}`
+            });
+        }
+
+        const { rows } = await pool.query(
+            'UPDATE surgeries SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+            [status, id]
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Surgery status updated from '${currentStatus}' to '${status}'`,
+            data: rows[0]
+        });
+
+    } catch (error) {
+        console.error('Error updating surgery status:', error);
+        if (error.code === '23514') { // Check constraint violation (e.g., invalid enum value)
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status value provided',
+                error: error.message
+            });
+        }
+        res.status(500).json({
+            success: false,
+            message: 'Error updating surgery status',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// ASSIGN STAFF (M5 - Day 9)
+// ============================================================================
+// @desc    Assign or reassign surgeon, anaesthetist, and nurses to a surgery
+// @route   PATCH /api/surgeries/:id/staff
+// @access  Protected (Coordinator, Admin)
+export const assignStaff = async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id } = req.params;
+        const { surgeon_id, anaesthetist_id, nurse_ids } = req.body;
+
+        // Validate ID
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({ success: false, message: 'Invalid surgery ID' });
+        }
+
+        // Check if surgery exists
+        const existingSurgeryResult = await client.query(
+            'SELECT id FROM surgeries WHERE id = $1',
+            [id]
+        );
+        if (existingSurgeryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Surgery not found' });
+        }
+
+        await client.query('BEGIN');
+
+        const updates = [];
+        const values = [];
+        let paramCounter = 1;
+
+        if (surgeon_id !== undefined) {
+            updates.push(`surgeon_id = $${paramCounter++}`);
+            values.push(surgeon_id || null);
+        }
+        if (anaesthetist_id !== undefined) {
+            updates.push(`anaesthetist_id = $${paramCounter++}`);
+            values.push(anaesthetist_id || null);
+        }
+
+        // Only update if there are fields to update in the surgeries table
+        let updatedSurgery;
+        if (updates.length > 0) {
+            updates.push(`updated_at = NOW()`);
+            values.push(id); // Add surgery ID for WHERE clause
+
+            const updateQuery = `
+                UPDATE surgeries
+                SET ${updates.join(', ')}
+                WHERE id = $${paramCounter}
+                RETURNING *
+            `;
+            const { rows } = await client.query(updateQuery, values);
+            updatedSurgery = rows[0];
+        } else {
+            // If no direct surgery fields updated, fetch the existing one
+            const { rows } = await client.query('SELECT * FROM surgeries WHERE id = $1', [id]);
+            updatedSurgery = rows[0];
+        }
+
+        // Handle nurse assignments (M2 Day 9)
+        let assignedNurses = [];
+        if (nurse_ids !== undefined && Array.isArray(nurse_ids)) {
+            const validNurseIds = nurse_ids.filter(nid => nid && !isNaN(nid)).map(Number).slice(0, 3);
+            await assignNursesToSurgery(updatedSurgery.id, validNurseIds, client); // Pass client for transaction
+            assignedNurses = await getNursesBySurgeryId(updatedSurgery.id, client); // Pass client for transaction
+        } else {
+            // Fetch existing nurse assignments if not provided in the request
+            assignedNurses = await getNursesBySurgeryId(updatedSurgery.id, client);
+        }
+
+        await client.query('COMMIT');
+
+        // Fetch surgeon and anaesthetist details for the response
+        let surgeonDetails = null;
+        if (updatedSurgery.surgeon_id) {
+            const surgeonResult = await pool.query(
+                'SELECT id, name, email FROM users WHERE id = $1',
+                [updatedSurgery.surgeon_id]
+            );
+            if (surgeonResult.rows.length > 0) {
+                surgeonDetails = surgeonResult.rows[0];
+            }
+        }
+
+        let anaesthetistDetails = null;
+        if (updatedSurgery.anaesthetist_id) {
+            const anaesResult = await pool.query(
+                'SELECT id, name, email, specialization FROM anaesthetists WHERE id = $1',
+                [updatedSurgery.anaesthetist_id]
+            );
+            if (anaesResult.rows.length > 0) {
+                anaesthetistDetails = anaesResult.rows[0];
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Staff assigned successfully',
+            data: {
+                ...updatedSurgery,
+                surgeon: surgeonDetails,
+                anaesthetist: anaesthetistDetails,
+                nurses: assignedNurses
+            }
+        });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error assigning staff to surgery:', error);
+
+        if (error.code === '23503') { // Foreign key violation
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid staff ID provided (surgeon, anaesthetist, or nurse does not exist)',
+                error: error.message
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Error assigning staff to surgery',
+            error: error.message
+        });
+    } finally {
+        client.release();
     }
 };
 
@@ -1147,7 +1357,7 @@ const VALID_STATUS_TRANSITIONS = {
     cancelled: ['scheduled'] // allow rescheduling
 };
 
-// 
+//
 // CHECK CONFLICTS
 
 // @desc    Check for scheduling conflicts (theatre, surgeon, staff) for a
@@ -1458,132 +1668,244 @@ export const checkConflicts = async (req, res) => {
 };
 
 // ============================================================================
-// GET AVAILABLE NURSES (M1 - Day 9)
+// CHECK STAFF CONFLICTS
 // ============================================================================
-export const getAvailableNurses = async (req, res) => {
+// @desc    Check for staff-specific scheduling conflicts and return warnings
+//          Specifically designed for UI warning display during staff assignment
+// @route   POST /api/surgeries/check-staff-conflicts
+// @access  Protected
+// Created by: M4 (Oneli) - Day 9
+// ============================================================================
+export const checkStaffConflicts = async (req, res) => {
     try {
-        const { date, time, duration, exclude_surgery_id } = req.query;
+        const {
+            scheduled_date,
+            scheduled_time,
+            duration_minutes,
+            surgeon_id,
+            nurse_ids,        // array of nurse IDs
+            anaesthetist_id,
+            exclude_surgery_id // optional: exclude this surgery (for edits)
+        } = req.body;
 
-        if (!date || !time || !duration) {
-            return res.status(400).json({ success: false, message: 'Missing date, time, or duration' });
+        // Validate required params
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields: scheduled_date, scheduled_time, duration_minutes'
+            });
         }
-        const durationMins = parseInt(duration, 10);
 
-        const excludeClause = exclude_surgery_id ? `AND s.id <> $4` : '';
-        const conflictParams = exclude_surgery_id
-            ? [date, time, durationMins, parseInt(exclude_surgery_id)]
-            : [date, time, durationMins];
+        const durationMins = parseInt(duration_minutes, 10);
+        if (isNaN(durationMins) || durationMins <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Duration must be a positive number (minutes)'
+            });
+        }
 
-        // 1. Get all active nurses
-        const { rows: allNurses } = await pool.query(`
-            SELECT id, name, email FROM users WHERE role = 'nurse' AND is_active = true ORDER BY name ASC
-        `);
+        const warnings = [];
 
-        // 2. Find conflicts
-        const conflictQuery = `
-            SELECT s.nurse_id,
-                   json_agg(json_build_object(
-                       'surgery_id', s.id,
-                       'scheduled_time', s.scheduled_time,
-                       'duration_minutes', s.duration_minutes
-                   )) AS conflicting_surgeries
-            FROM surgeries s
-            WHERE s.nurse_id IS NOT NULL
-              AND s.scheduled_date = $1
-              AND s.status IN ('scheduled', 'in_progress')
-              ${excludeClause}
-              AND (
-                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
-                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
-              )
-            GROUP BY s.nurse_id
-        `;
-        const { rows: conflicts } = await pool.query(conflictQuery, conflictParams);
-        const conflictMap = {};
-        conflicts.forEach(c => { conflictMap[c.nurse_id] = c; });
+        // Build exclusion clause if editing an existing surgery
+        const excludeClause = exclude_surgery_id
+            ? `AND s.id <> ${parseInt(exclude_surgery_id, 10)}`
+            : '';
 
-        // 3. Merge
-        const nursesWithAvailability = allNurses.map(nurse => {
-            const conflict = conflictMap[nurse.id];
-            return {
-                ...nurse,
-                available: !conflict,
-                conflict_reason: conflict ? `Nurse has conflicting surgery` : null
-            };
-        });
+        // -------------------------------------------------------------------
+        // 1. Surgeon Conflict Check
+        // -------------------------------------------------------------------
+        if (surgeon_id) {
+            const surgeonConflictQuery = `
+                SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
+                       s.patient_name, t.name AS theatre_name, s.priority
+                FROM surgeries s
+                LEFT JOIN theatres t ON s.theatre_id = t.id
+                WHERE s.surgeon_id = $1
+                  AND s.scheduled_date = $2
+                  AND s.status IN ('scheduled', 'in_progress')
+                  ${excludeClause}
+                  AND (
+                      s.scheduled_time < ($3::time + ($4 || ' minutes')::interval)
+                      AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $3::time
+                  )
+            `;
+            const { rows: surgeonConflicts } = await pool.query(surgeonConflictQuery, [
+                surgeon_id,
+                scheduled_date,
+                scheduled_time,
+                durationMins
+            ]);
+
+            if (surgeonConflicts.length > 0) {
+                // Fetch surgeon name
+                const surgeonResult = await pool.query('SELECT name FROM users WHERE id = $1', [surgeon_id]);
+                const surgeonName = surgeonResult.rows[0]?.name || 'Unknown Surgeon';
+
+                warnings.push({
+                    type: 'surgeon',
+                    severity: 'error',
+                    staff_id: parseInt(surgeon_id),
+                    staff_name: surgeonName,
+                    staff_role: 'Surgeon',
+                    message: `${surgeonName} is already assigned to another surgery at this time`,
+                    conflicting_surgeries: surgeonConflicts.map(c => ({
+                        surgery_id: c.id,
+                        surgery_type: c.surgery_type,
+                        scheduled_time: c.scheduled_time,
+                        duration: c.duration_minutes,
+                        patient: c.patient_name,
+                        theatre: c.theatre_name,
+                        priority: c.priority
+                    }))
+                });
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // 2. Anaesthetist Conflict Check
+        // -------------------------------------------------------------------
+        if (anaesthetist_id) {
+            try {
+                const anaesConflictQuery = `
+                    SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
+                           s.patient_name, t.name AS theatre_name, s.priority
+                    FROM surgeries s
+                    LEFT JOIN theatres t ON s.theatre_id = t.id
+                    WHERE s.anaesthetist_id = $1
+                      AND s.scheduled_date = $2
+                      AND s.status IN ('scheduled', 'in_progress')
+                      ${excludeClause}
+                      AND (
+                          s.scheduled_time < ($3::time + ($4 || ' minutes')::interval)
+                          AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $3::time
+                      )
+                `;
+                const { rows: anaesConflicts } = await pool.query(anaesConflictQuery, [
+                    anaesthetist_id,
+                    scheduled_date,
+                    scheduled_time,
+                    durationMins
+                ]);
+
+                if (anaesConflicts.length > 0) {
+                    // Fetch anaesthetist name
+                    const anaesResult = await pool.query('SELECT name FROM anaesthetists WHERE id = $1', [anaesthetist_id]);
+                    const anaesName = anaesResult.rows[0]?.name || 'Unknown Anaesthetist';
+
+                    warnings.push({
+                        type: 'anaesthetist',
+                        severity: 'error',
+                        staff_id: parseInt(anaesthetist_id),
+                        staff_name: anaesName,
+                        staff_role: 'Anaesthetist',
+                        message: `${anaesName} is already assigned to another surgery at this time`,
+                        conflicting_surgeries: anaesConflicts.map(c => ({
+                            surgery_id: c.id,
+                            surgery_type: c.surgery_type,
+                            scheduled_time: c.scheduled_time,
+                            duration: c.duration_minutes,
+                            patient: c.patient_name,
+                            theatre: c.theatre_name,
+                            priority: c.priority
+                        }))
+                    });
+                }
+            } catch (err) {
+                // Column might not exist yet — skip silently
+                console.log('Anaesthetist conflict check skipped (column may not exist):', err.message);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // 3. Nurse Conflict Check (multiple nurses)
+        // -------------------------------------------------------------------
+        if (nurse_ids && Array.isArray(nurse_ids) && nurse_ids.length > 0) {
+            for (const nurseId of nurse_ids) {
+                try {
+                    const nurseConflictQuery = `
+                        SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
+                               s.patient_name, t.name AS theatre_name, s.priority
+                        FROM surgery_nurses sn
+                        JOIN surgeries s ON sn.surgery_id = s.id
+                        LEFT JOIN theatres t ON s.theatre_id = t.id
+                        WHERE sn.nurse_id = $1
+                          AND s.scheduled_date = $2
+                          AND s.status IN ('scheduled', 'in_progress')
+                          ${excludeClause}
+                          AND (
+                              s.scheduled_time < ($3::time + ($4 || ' minutes')::interval)
+                              AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $3::time
+                          )
+                    `;
+                    const { rows: nurseConflicts } = await pool.query(nurseConflictQuery, [
+                        nurseId,
+                        scheduled_date,
+                        scheduled_time,
+                        durationMins
+                    ]);
+
+                    if (nurseConflicts.length > 0) {
+                        // Fetch nurse name
+                        const nurseResult = await pool.query('SELECT name FROM nurses WHERE id = $1', [nurseId]);
+                        const nurseName = nurseResult.rows[0]?.name || 'Unknown Nurse';
+
+                        warnings.push({
+                            type: 'nurse',
+                            severity: 'warning',
+                            staff_id: parseInt(nurseId),
+                            staff_name: nurseName,
+                            staff_role: 'Nurse',
+                            message: `${nurseName} is already assigned to another surgery at this time`,
+                            conflicting_surgeries: nurseConflicts.map(c => ({
+                                surgery_id: c.id,
+                                surgery_type: c.surgery_type,
+                                scheduled_time: c.scheduled_time,
+                                duration: c.duration_minutes,
+                                patient: c.patient_name,
+                                theatre: c.theatre_name,
+                                priority: c.priority
+                            }))
+                        });
+                    }
+                } catch (err) {
+                    console.log(`Nurse conflict check for nurse ${nurseId} skipped:`, err.message);
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // Build response with warnings summary
+        // -------------------------------------------------------------------
+        const hasWarnings = warnings.length > 0;
+        const errorCount = warnings.filter(w => w.severity === 'error').length;
+        const warningCount = warnings.filter(w => w.severity === 'warning').length;
 
         res.status(200).json({
             success: true,
-            data: nursesWithAvailability,
-            available_count: nursesWithAvailability.filter(n => n.available).length
+            has_conflicts: hasWarnings,
+            summary: {
+                total: warnings.length,
+                errors: errorCount,
+                warnings: warningCount
+            },
+            warnings,
+            query: {
+                scheduled_date,
+                scheduled_time,
+                duration_minutes: durationMins,
+                surgeon_id: surgeon_id || null,
+                anaesthetist_id: anaesthetist_id || null,
+                nurse_ids: nurse_ids || []
+            }
         });
+
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Error fetching nurses', error: error.message });
-    }
-};
-
-// ============================================================================
-// GET AVAILABLE ANAESTHETISTS (M1 - Day 9)
-// ============================================================================
-export const getAvailableAnaesthetists = async (req, res) => {
-    try {
-        const { date, time, duration, exclude_surgery_id } = req.query;
-
-        if (!date || !time || !duration) {
-            return res.status(400).json({ success: false, message: 'Missing date, time, or duration' });
-        }
-        const durationMins = parseInt(duration, 10);
-
-        const excludeClause = exclude_surgery_id ? `AND s.id <> $4` : '';
-        const conflictParams = exclude_surgery_id
-            ? [date, time, durationMins, parseInt(exclude_surgery_id)]
-            : [date, time, durationMins];
-
-        // 1. Get all active anaesthetists
-        const { rows: allAnaesthetists } = await pool.query(`
-            SELECT id, name, email FROM users WHERE role = 'anaesthetist' AND is_active = true ORDER BY name ASC
-        `);
-
-        // 2. Find conflicts
-        const conflictQuery = `
-            SELECT s.anaesthetist_id,
-                   json_agg(json_build_object(
-                       'surgery_id', s.id,
-                       'scheduled_time', s.scheduled_time,
-                       'duration_minutes', s.duration_minutes
-                   )) AS conflicting_surgeries
-            FROM surgeries s
-            WHERE s.anaesthetist_id IS NOT NULL
-              AND s.scheduled_date = $1
-              AND s.status IN ('scheduled', 'in_progress')
-              ${excludeClause}
-              AND (
-                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
-                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
-              )
-            GROUP BY s.anaesthetist_id
-        `;
-        const { rows: conflicts } = await pool.query(conflictQuery, conflictParams);
-        const conflictMap = {};
-        conflicts.forEach(c => { conflictMap[c.anaesthetist_id] = c; });
-
-        // 3. Merge
-        const anaesthetistsWithAvailability = allAnaesthetists.map(anaesthetist => {
-            const conflict = conflictMap[anaesthetist.id];
-            return {
-                ...anaesthetist,
-                available: !conflict,
-                conflict_reason: conflict ? `Anaesthetist has conflicting surgery` : null
-            };
+        console.error('Error checking staff conflicts:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error checking staff scheduling conflicts',
+            error: error.message
         });
-
-        res.status(200).json({
-            success: true,
-            data: anaesthetistsWithAvailability,
-            available_count: anaesthetistsWithAvailability.filter(a => a.available).length
-        });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Error fetching anaesthetists', error: error.message });
     }
 };
 

@@ -99,14 +99,18 @@ describe('EmergencyBooking Component', () => {
     it('validates required fields on submit', async () => {
         renderComponent();
 
+        // Wait for page to load then click submit
+        await waitFor(() => {
+            expect(screen.getByRole('button', { name: /Schedule Emergency Surgery/i })).toBeInTheDocument();
+        });
+
         const submitBtn = screen.getByRole('button', { name: /Schedule Emergency Surgery/i });
         fireEvent.click(submitBtn);
 
-        // Should show error message (mocked or DOM check)
-        // The component sets message state on error. 
-        // We look for the error message div or text content.
+        // Should show error message for missing procedure name
         await waitFor(() => {
-            expect(screen.getByText(/Please fill in all required fields/i)).toBeInTheDocument();
+            const errorMessage = screen.queryByText(/procedure name|enter procedure/i);
+            expect(errorMessage).toBeTruthy();
         });
     });
 

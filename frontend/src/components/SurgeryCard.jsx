@@ -97,6 +97,14 @@ const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
                         View
                     </button>
                     <button
+                        onClick={() => onEdit(surgery.id, 'staff')}
+                        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded hover:bg-indigo-50 transition-colors flex items-center gap-1"
+                        aria-label={`Assign staff for ${surgery.patient_name}`}
+                    >
+                        <Users className="w-4 h-4" />
+                        Staff
+                    </button>
+                    <button
                         onClick={() => onEdit(surgery.id)}
                         className="text-sm text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors"
                         aria-label={`Edit surgery for ${surgery.patient_name}`}
