@@ -1349,14 +1349,6 @@ export const getCalendarEvents = async (req, res) => {
 // Created by: M3 (Janani) - Day 6
 // ============================================================================
 
-// Valid status transitions map
-const VALID_STATUS_TRANSITIONS = {
-    scheduled: ['in_progress', 'cancelled'],
-    in_progress: ['completed', 'cancelled'],
-    completed: [],           // terminal state
-    cancelled: ['scheduled'] // allow rescheduling
-};
-
 //
 // CHECK CONFLICTS
 
