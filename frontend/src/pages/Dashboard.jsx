@@ -78,7 +78,7 @@ const StatusBadge = ({ status }) => {
 
 // Live Theatre Card component
 const LiveTheatreCard = ({ theatre, surgery }) => {
-    const progress = surgery?.progress || Math.floor(Math.random() * 60 + 20); // Mock progress if not available
+    const progress = surgery?.progress ?? 0; // Default to 0% progress if not available
     const duration = surgery?.elapsed_minutes || 0;
 
     return (
