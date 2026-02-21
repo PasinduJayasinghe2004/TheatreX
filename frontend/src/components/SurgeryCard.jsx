@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Calendar, User, Activity, Eye } from 'lucide-react';
+import { Clock, Calendar, User, Activity, Eye, Users } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 
 const SurgeryCard = ({ surgery, onEdit, onDelete }) => {

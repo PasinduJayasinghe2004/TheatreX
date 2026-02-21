@@ -105,11 +105,22 @@ const SurgeryList = () => {
 
     // Handle delete surgery
     const handleDelete = (surgeryId) => {
-        // ... existing handleDelete ...
         console.log('Delete surgery:', surgeryId);
     };
 
-    // ... existing filter handlers ...
+    // Filter handlers
+    const handleFilterChange = (startDate, endDate) => {
+        setFilters(prev => ({ ...prev, startDate, endDate }));
+    };
+
+    const handleClearFilter = () => {
+        setFilters(prev => ({ ...prev, startDate: null, endDate: null }));
+    };
+
+    const handleStatusFilterChange = (e) => {
+        const value = e.target.value;
+        setFilters(prev => ({ ...prev, status: value === 'all' ? null : value }));
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -152,11 +163,38 @@ const SurgeryList = () => {
                     </div>
                 </div>
 
-                <div className="mb-6">
-                    <p className="text-sm text-gray-600">
-                        {surgeries.length} {surgeries.length === 1 ? 'surgery' : 'surgeries'} found
-                    </p>
-                </div>
+                {/* Loading State */}
+                {loading && (
+                    <div className="flex justify-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    </div>
+                )}
+
+                {/* Error State */}
+                {!loading && error && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                        <h3 className="text-lg font-semibold text-red-600 mb-1">Error Loading Surgeries</h3>
+                        <div className="flex items-center gap-2 text-red-600">
+                            <AlertCircle className="w-5 h-5" />
+                            <span>{error}</span>
+                        </div>
+                        <button
+                            onClick={fetchSurgeries}
+                            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                )}
+
+                {/* Content */}
+                {!loading && !error && (
+                    <>
+                        <div className="mb-6">
+                            <p className="text-sm text-gray-600">
+                                {surgeries.length} {surgeries.length === 1 ? 'surgery' : 'surgeries'} found
+                            </p>
+                        </div>
 
                 {surgeries.length === 0 ? (
                     <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
@@ -188,6 +226,8 @@ const SurgeryList = () => {
                             />
                         ))}
                     </div>
+                )}
+                    </>
                 )}
             </div>
 

@@ -21,7 +21,7 @@ import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
 // Clock component for real-time display
-const LiveClock = memo(() => {
+const LiveClock = memo(function LiveClock() {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const LiveClock = memo(() => {
 
 // Live Theatre Card component
 const LiveTheatreCard = ({ theatre, surgery }) => {
-    const progress = surgery?.progress || Math.floor(Math.random() * 60 + 20); // Mock progress if not available
+    const progress = surgery?.progress || 50; // Default progress if not available
     const duration = surgery?.elapsed_minutes || 0;
 
     return (
