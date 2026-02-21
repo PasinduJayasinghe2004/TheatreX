@@ -163,6 +163,15 @@ router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
 router.patch('/:id/status', protect, authorize('coordinator', 'admin'), updateSurgeryStatus);
 
 // ============================================================================
+// ROUTE: PATCH /api/surgeries/:id/staff
+// ============================================================================
+// Unified staff assignment (surgeon, anaesthetist, and nurses)
+// Protected - only coordinators and admins can assign staff
+// Created by: M5 (User) - Day 9
+// ============================================================================
+router.patch('/:id/staff', protect, authorize('coordinator', 'admin'), assignStaff);
+
+// ============================================================================
 // ROUTE: DELETE /api/surgeries/:id
 // ============================================================================
 // Delete a surgery by ID
