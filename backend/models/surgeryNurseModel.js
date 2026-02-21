@@ -37,9 +37,9 @@ const createSurgeryNursesTable = async () => {
 };
 
 // Get nurses assigned to a surgery
-const getNursesBySurgeryId = async (surgeryId) => {
+const getNursesBySurgeryId = async (surgeryId, client = pool) => {
     try {
-        const { rows } = await pool.query(
+        const { rows } = await client.query(
             `SELECT n.id, n.name, n.email, n.specialization, n.phone
              FROM surgery_nurses sn
              JOIN nurses n ON sn.nurse_id = n.id
@@ -55,31 +55,33 @@ const getNursesBySurgeryId = async (surgeryId) => {
 };
 
 // Assign nurses to a surgery (replaces existing assignments)
-const assignNursesToSurgery = async (surgeryId, nurseIds) => {
-    const client = await pool.connect();
+const assignNursesToSurgery = async (surgeryId, nurseIds, client = null) => {
+    const useTransaction = !client;
+    const db = client || await pool.connect();
+
     try {
-        await client.query('BEGIN');
+        if (useTransaction) await db.query('BEGIN');
 
         // Remove existing nurse assignments for this surgery
-        await client.query('DELETE FROM surgery_nurses WHERE surgery_id = $1', [surgeryId]);
+        await db.query('DELETE FROM surgery_nurses WHERE surgery_id = $1', [surgeryId]);
 
         // Insert new nurse assignments (up to 3)
         const limitedIds = nurseIds.slice(0, 3);
         for (const nurseId of limitedIds) {
-            await client.query(
+            await db.query(
                 'INSERT INTO surgery_nurses (surgery_id, nurse_id) VALUES ($1, $2)',
                 [surgeryId, nurseId]
             );
         }
 
-        await client.query('COMMIT');
+        if (useTransaction) await db.query('COMMIT');
         return limitedIds;
     } catch (error) {
-        await client.query('ROLLBACK');
+        if (useTransaction) await db.query('ROLLBACK');
         console.error('❌ Error assigning nurses to surgery:', error.message);
         throw error;
     } finally {
-        client.release();
+        if (useTransaction) db.release();
     }
 };
 

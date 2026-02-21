@@ -286,6 +286,21 @@ const surgeryService = {
             const message = error.response?.data?.message || 'Error checking staff conflicts. Please try again.';
             throw new Error(message);
         }
+    },
+
+    // ========================================
+    // Unified staff assignment
+    // Created by: M5 (User) - Day 9
+    // Assigns surgeon, anaesthetist, and nurses in one call
+    // ========================================
+    assignStaff: async (id, staffData) => {
+        try {
+            const response = await api.patch(`/surgeries/${id}/staff`, staffData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error assigning staff. Please try again.';
+            throw new Error(message);
+        }
     }
 };
 

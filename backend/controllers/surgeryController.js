@@ -23,6 +23,7 @@
 // - getAvailableSurgeons: GET /api/surgeries/surgeons/available - Available surgeons (M1 Day 9)
 // - getAvailableNurses: GET /api/surgeries/nurses/available - Available nurses (M2 Day 9)
 // - getAvailableAnaesthetists: GET /api/surgeries/anaesthetists/available - Available anaesthetists (M3 Day 9)
+// - assignStaff: PATCH /api/surgeries/:id/staff - Unified staff assignment (M5 Day 9)
 // - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // - checkConflicts: POST /api/surgeries/check-conflicts - Conflict detection (M1 Day 8)
 // - checkStaffConflicts: POST /api/surgeries/check-staff-conflicts - Staff conflict warnings (M4 Day 9)
@@ -213,7 +214,7 @@ export const getAllSurgeries = async (req, res) => {
 
         // Build the complete query
         const query = `
-            SELECT 
+            SELECT
                 s.*,
                 u.name as surgeon_name,
                 u.email as surgeon_email
@@ -292,7 +293,7 @@ export const getSurgeryById = async (req, res) => {
         }
 
         const { rows } = await pool.query(
-            `SELECT 
+            `SELECT
                 s.*,
                 u.name   AS surgeon_name,
                 u.email  AS surgeon_email
@@ -422,8 +423,8 @@ export const deleteSurgery = async (req, res) => {
 export const getSurgeonsDropdown = async (req, res) => {
     try {
         const { rows } = await pool.query(`
-            SELECT id, name, email 
-            FROM users 
+            SELECT id, name, email
+            FROM users
             WHERE role = 'surgeon' AND is_active = true
             ORDER BY name ASC
         `);
@@ -899,7 +900,7 @@ export const updateSurgery = async (req, res) => {
         values.push(id);
 
         const updateQuery = `
-            UPDATE surgeries 
+            UPDATE surgeries
             SET ${updates.join(', ')}
             WHERE id = $${paramCounter}
             RETURNING *
@@ -989,6 +990,213 @@ export const updateSurgery = async (req, res) => {
             message: 'Error updating surgery',
             error: error.message
         });
+    }
+};
+
+// ============================================================================
+// UPDATE SURGERY STATUS
+// ============================================================================
+// @desc    Update only the status of a surgery (with transition validation)
+// @route   PATCH /api/surgeries/:id/status
+// @access  Protected (Coordinator, Admin)
+// Created by: M3 (Janani) - Day 6
+// ============================================================================
+
+// Valid status transitions map
+const VALID_STATUS_TRANSITIONS = {
+    scheduled: ['in_progress', 'cancelled'],
+    in_progress: ['completed', 'cancelled'],
+    completed: [],           // terminal state
+    cancelled: ['scheduled'] // allow rescheduling
+};
+
+export const updateSurgeryStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({ success: false, message: 'Invalid surgery ID' });
+        }
+        if (!status) {
+            return res.status(400).json({ success: false, message: 'New status is required' });
+        }
+
+        const { rows: existingSurgery } = await pool.query(
+            'SELECT id, status FROM surgeries WHERE id = $1',
+            [id]
+        );
+
+        if (existingSurgery.length === 0) {
+            return res.status(404).json({ success: false, message: 'Surgery not found' });
+        }
+
+        const currentStatus = existingSurgery[0].status;
+
+        // Validate status transition
+        const allowedTransitions = VALID_STATUS_TRANSITIONS[currentStatus];
+        if (!allowedTransitions || !allowedTransitions.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status transition from '${currentStatus}' to '${status}'. Allowed transitions: ${allowedTransitions.join(', ')}`
+            });
+        }
+
+        const { rows } = await pool.query(
+            'UPDATE surgeries SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+            [status, id]
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Surgery status updated from '${currentStatus}' to '${status}'`,
+            data: rows[0]
+        });
+
+    } catch (error) {
+        console.error('Error updating surgery status:', error);
+        if (error.code === '23514') { // Check constraint violation (e.g., invalid enum value)
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status value provided',
+                error: error.message
+            });
+        }
+        res.status(500).json({
+            success: false,
+            message: 'Error updating surgery status',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// ASSIGN STAFF (M5 - Day 9)
+// ============================================================================
+// @desc    Assign or reassign surgeon, anaesthetist, and nurses to a surgery
+// @route   PATCH /api/surgeries/:id/staff
+// @access  Protected (Coordinator, Admin)
+export const assignStaff = async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id } = req.params;
+        const { surgeon_id, anaesthetist_id, nurse_ids } = req.body;
+
+        // Validate ID
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({ success: false, message: 'Invalid surgery ID' });
+        }
+
+        // Check if surgery exists
+        const existingSurgeryResult = await client.query(
+            'SELECT id FROM surgeries WHERE id = $1',
+            [id]
+        );
+        if (existingSurgeryResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Surgery not found' });
+        }
+
+        await client.query('BEGIN');
+
+        const updates = [];
+        const values = [];
+        let paramCounter = 1;
+
+        if (surgeon_id !== undefined) {
+            updates.push(`surgeon_id = $${paramCounter++}`);
+            values.push(surgeon_id || null);
+        }
+        if (anaesthetist_id !== undefined) {
+            updates.push(`anaesthetist_id = $${paramCounter++}`);
+            values.push(anaesthetist_id || null);
+        }
+
+        // Only update if there are fields to update in the surgeries table
+        let updatedSurgery;
+        if (updates.length > 0) {
+            updates.push(`updated_at = NOW()`);
+            values.push(id); // Add surgery ID for WHERE clause
+
+            const updateQuery = `
+                UPDATE surgeries
+                SET ${updates.join(', ')}
+                WHERE id = $${paramCounter}
+                RETURNING *
+            `;
+            const { rows } = await client.query(updateQuery, values);
+            updatedSurgery = rows[0];
+        } else {
+            // If no direct surgery fields updated, fetch the existing one
+            const { rows } = await client.query('SELECT * FROM surgeries WHERE id = $1', [id]);
+            updatedSurgery = rows[0];
+        }
+
+        // Handle nurse assignments (M2 Day 9)
+        let assignedNurses = [];
+        if (nurse_ids !== undefined && Array.isArray(nurse_ids)) {
+            const validNurseIds = nurse_ids.filter(nid => nid && !isNaN(nid)).map(Number).slice(0, 3);
+            await assignNursesToSurgery(updatedSurgery.id, validNurseIds, client); // Pass client for transaction
+            assignedNurses = await getNursesBySurgeryId(updatedSurgery.id, client); // Pass client for transaction
+        } else {
+            // Fetch existing nurse assignments if not provided in the request
+            assignedNurses = await getNursesBySurgeryId(updatedSurgery.id, client);
+        }
+
+        await client.query('COMMIT');
+
+        // Fetch surgeon and anaesthetist details for the response
+        let surgeonDetails = null;
+        if (updatedSurgery.surgeon_id) {
+            const surgeonResult = await pool.query(
+                'SELECT id, name, email FROM users WHERE id = $1',
+                [updatedSurgery.surgeon_id]
+            );
+            if (surgeonResult.rows.length > 0) {
+                surgeonDetails = surgeonResult.rows[0];
+            }
+        }
+
+        let anaesthetistDetails = null;
+        if (updatedSurgery.anaesthetist_id) {
+            const anaesResult = await pool.query(
+                'SELECT id, name, email, specialization FROM anaesthetists WHERE id = $1',
+                [updatedSurgery.anaesthetist_id]
+            );
+            if (anaesResult.rows.length > 0) {
+                anaesthetistDetails = anaesResult.rows[0];
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Staff assigned successfully',
+            data: {
+                ...updatedSurgery,
+                surgeon: surgeonDetails,
+                anaesthetist: anaesthetistDetails,
+                nurses: assignedNurses
+            }
+        });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error assigning staff to surgery:', error);
+
+        if (error.code === '23503') { // Foreign key violation
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid staff ID provided (surgeon, anaesthetist, or nurse does not exist)',
+                error: error.message
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Error assigning staff to surgery',
+            error: error.message
+        });
+    } finally {
+        client.release();
     }
 };
 
@@ -1149,7 +1357,7 @@ const VALID_STATUS_TRANSITIONS = {
     cancelled: ['scheduled'] // allow rescheduling
 };
 
-// 
+//
 // CHECK CONFLICTS
 
 // @desc    Check for scheduling conflicts (theatre, surgeon, staff) for a
