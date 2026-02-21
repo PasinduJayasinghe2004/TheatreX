@@ -6,6 +6,7 @@
 // Updated by: M1 (Pasindu) - Day 9 - Surgeon availability filtering
 // Updated by: M2 (Chandeepa) - Day 9 - Multi-select nurses with availability
 // Updated by: M3 (Janani) - Day 9 - Anaesthetist dropdown with availability
+// Updated by: M4 (Oneli) - Day 9 - Staff conflict warning integration
 // 
 // Clean modal form for scheduling surgeries
 
@@ -15,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import surgeryService from '../services/surgeryService';
+import StaffConflictWarning from './StaffConflictWarning';
 
 // Mock data for dropdowns (replace with API calls when available)
 const MOCK_PATIENTS = [
@@ -52,6 +54,10 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     const [loadingAnaesthetists, setLoadingAnaesthetists] = useState(true);
     const [anaesthetistAvailability, setAnaesthetistAvailability] = useState(null);
     const [checkingAnaesAvail, setCheckingAnaesAvail] = useState(false);
+
+    // Staff conflict warnings - M4 (Oneli) Day 9
+    const [staffConflicts, setStaffConflicts] = useState(null);
+    const [checkingStaffConflicts, setCheckingStaffConflicts] = useState(false);
 
     // Theatre state - M2 (Chandeepa) Day 8
     const [theatres, setTheatres] = useState([]);
@@ -212,6 +218,52 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     useEffect(() => {
         checkAnaesthetistAvailability();
     }, [checkAnaesthetistAvailability]);
+
+    // Check staff conflicts when any staff selection changes - M4 (Oneli) Day 9
+    const checkStaffConflictsCallback = useCallback(async () => {
+        const { scheduled_date, scheduled_time, duration_minutes, surgeon_id, nurse_ids, anaesthetist_id } = formData;
+        
+        // Only check if we have date/time/duration and at least one staff member
+        if (!scheduled_date || !scheduled_time || !duration_minutes) {
+            setStaffConflicts(null);
+            return;
+        }
+        
+        const hasStaff = surgeon_id || anaesthetist_id || (nurse_ids && nurse_ids.length > 0);
+        if (!hasStaff) {
+            setStaffConflicts(null);
+            return;
+        }
+
+        try {
+            setCheckingStaffConflicts(true);
+            const result = await surgeryService.checkStaffConflicts({
+                scheduled_date,
+                scheduled_time,
+                duration_minutes: parseInt(duration_minutes),
+                surgeon_id: surgeon_id ? parseInt(surgeon_id) : null,
+                anaesthetist_id: anaesthetist_id ? parseInt(anaesthetist_id) : null,
+                nurse_ids: nurse_ids.map(Number).filter(id => !isNaN(id))
+            });
+            if (result.success) {
+                setStaffConflicts(result);
+            }
+        } catch (error) {
+            console.error('Error checking staff conflicts:', error);
+        } finally {
+            setCheckingStaffConflicts(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes, 
+        formData.surgeon_id, formData.nurse_ids, formData.anaesthetist_id]);
+
+    // Debounced staff conflict check
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            checkStaffConflictsCallback();
+        }, 500); // 500ms debounce to avoid excessive API calls
+
+        return () => clearTimeout(timer);
+    }, [checkStaffConflictsCallback]);
 
     // Fetch theatres for dropdown - M2 (Chandeepa) Day 8
     useEffect(() => {
@@ -723,6 +775,13 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     return null;
                 })}
             </div>
+
+            {/* Staff Conflict Warnings - M4 (Oneli) Day 9 */}
+            <StaffConflictWarning
+                warnings={staffConflicts?.warnings || []}
+                loading={checkingStaffConflicts}
+                className="mt-4"
+            />
 
             {/* Theatre - Updated by M2 (Chandeepa) Day 8: API-driven with availability */}
             <div>
