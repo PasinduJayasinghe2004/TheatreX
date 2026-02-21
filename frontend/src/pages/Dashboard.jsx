@@ -179,6 +179,13 @@ const Dashboard = () => {
                 }
             } catch (surgeryErr) {
                 console.error('Error fetching surgeries:', surgeryErr);
+                // Surface surgeries-specific error to the UI
+                setError(
+                    surgeryErr.response?.data?.message || 'Failed to load today\'s surgeries'
+                );
+                // Ensure we don't show stale surgery data on error
+                setSurgeries([]);
+                setLiveSurgeries([]);
             }
 
         } catch (err) {
