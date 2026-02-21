@@ -12,19 +12,20 @@
 // - Upcoming surgeries table
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import StatsCard from '../components/StatsCard';
+import StatusBadge from '../components/StatusBadge';
 import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
 // Clock component for real-time display
-const LiveClock = () => {
+const LiveClock = memo(() => {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
-        const timer = setInterval(() => setTime(new Date()), 1000);
+        const timer = setInterval(() => setTime(new Date()), 60000);
         return () => clearInterval(timer);
     }, []);
 
@@ -53,28 +54,7 @@ const LiveClock = () => {
             </svg>
         </div>
     );
-};
-
-// Status badge component
-const StatusBadge = ({ status }) => {
-    const statusConfig = {
-        'in_progress': { bg: 'bg-red-500', text: 'text-white', label: 'In-use' },
-        'in-use': { bg: 'bg-red-500', text: 'text-white', label: 'In-use' },
-        'scheduled': { bg: 'bg-blue-500', text: 'text-white', label: 'Scheduled' },
-        'completed': { bg: 'bg-green-500', text: 'text-white', label: 'Completed' },
-        'cancelled': { bg: 'bg-gray-500', text: 'text-white', label: 'Cancelled' },
-        'available': { bg: 'bg-green-500', text: 'text-white', label: 'Available' },
-        'maintenance': { bg: 'bg-yellow-500', text: 'text-white', label: 'Maintenance' },
-    };
-
-    const config = statusConfig[status?.toLowerCase()] || { bg: 'bg-gray-400', text: 'text-white', label: status || 'Unknown' };
-
-    return (
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
-            {config.label}
-        </span>
-    );
-};
+});
 
 // Live Theatre Card component
 const LiveTheatreCard = ({ theatre, surgery }) => {
@@ -196,17 +176,25 @@ const Dashboard = () => {
         }
     };
 
+    // Handle surgery deletion with confirmation
+    const handleDeleteSurgery = async (surgeryId) => {
+        if (!window.confirm('Are you sure you want to delete this surgery? This action cannot be undone.')) {
+            return;
+        }
+        try {
+            await surgeryService.deleteSurgery(surgeryId);
+            setSurgeries(prev => prev.filter(s => s.id !== surgeryId));
+        } catch (err) {
+            console.error('Error deleting surgery:', err);
+            alert(err.message || 'Failed to delete surgery. Please try again.');
+        }
+    };
+
     // Calculate today's stats
     const todaysSurgeries = surgeries.length;
-    const yesterdayComparison = stats?.yesterdayComparison || 2; // Mock comparison
-    const staffOnDuty = stats?.staffOnDuty || {
-        surgeons: stats?.surgeriesByStatus?.scheduled || 7,
-        nurses: 3,
-        anaesthetists: 1,
-        technicians: 2,
-        total: 13
-    };
-    const avgDuration = stats?.avgDuration || 125;
+    const yesterdayComparison = stats?.yesterdayComparison ?? null;
+    const staffOnDuty = stats?.staffOnDuty ?? null;
+    const avgDuration = stats?.avgDuration ?? null;
 
     // Get upcoming surgeries (scheduled, not in progress)
     const upcomingSurgeries = surgeries
@@ -271,13 +259,23 @@ const Dashboard = () => {
                         </div>
                         <div className="flex items-center gap-4">
                             {/* Search */}
-                            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <button
+                                aria-label="Search"
+                                title="Search"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                onClick={() => navigate('/surgeries')}
+                            >
                                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </button>
                             {/* Notifications */}
-                            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors relative">
+                            <button
+                                aria-label="Notifications"
+                                title="Notifications (coming soon)"
+                                className="p-2 rounded-full transition-colors opacity-50 cursor-not-allowed"
+                                disabled
+                            >
                                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
@@ -304,10 +302,16 @@ const Dashboard = () => {
                                     <p className="text-sm text-blue-600 font-medium mb-1">Today's Surgeries</p>
                                     <p className="text-4xl font-bold text-gray-900">{todaysSurgeries}</p>
                                     <p className="text-sm text-green-500 mt-2 flex items-center gap-1">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                        +{yesterdayComparison} from yesterday
+                                        {yesterdayComparison !== null ? (
+                                            <>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                </svg>
+                                                +{yesterdayComparison} from yesterday
+                                            </>
+                                        ) : (
+                                            <span className="text-gray-400">No comparison data</span>
+                                        )}
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
@@ -323,9 +327,11 @@ const Dashboard = () => {
                             <div className="flex items-start justify-between">
                                 <div>
                                     <p className="text-sm text-blue-600 font-medium mb-1">Staff on Duty</p>
-                                    <p className="text-4xl font-bold text-gray-900">{staffOnDuty.total || 13}</p>
+                                    <p className="text-4xl font-bold text-gray-900">{staffOnDuty?.total ?? '--'}</p>
                                     <p className="text-sm text-gray-500 mt-2">
-                                        {staffOnDuty.surgeons || 7} surgeons, {staffOnDuty.nurses || 3} nurses, {staffOnDuty.anaesthetists || 1} anaesthetists, {staffOnDuty.technicians || 2} techs
+                                        {staffOnDuty ? (
+                                            `${staffOnDuty.surgeons ?? '--'} surgeons, ${staffOnDuty.nurses ?? '--'} nurses, ${staffOnDuty.anaesthetists ?? '--'} anaesthetists, ${staffOnDuty.technicians ?? '--'} techs`
+                                        ) : 'No staff data available'}
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
@@ -341,7 +347,7 @@ const Dashboard = () => {
                             <div className="flex items-start justify-between">
                                 <div>
                                     <p className="text-sm text-blue-600 font-medium mb-1">Avg Duration</p>
-                                    <p className="text-4xl font-bold text-gray-900">{avgDuration}</p>
+                                    <p className="text-4xl font-bold text-gray-900">{avgDuration ?? '--'}</p>
                                     <p className="text-sm text-gray-500 mt-2">minutes per surgery</p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
@@ -468,6 +474,7 @@ const Dashboard = () => {
                                                             onClick={() => navigate(`/surgeries/${surgery.id}`)}
                                                             className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
                                                             title="View"
+                                                            aria-label="View surgery"
                                                         >
                                                             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -475,17 +482,20 @@ const Dashboard = () => {
                                                             </svg>
                                                         </button>
                                                         <button 
-                                                            onClick={() => navigate(`/surgeries/${surgery.id}/edit`)}
+                                                            onClick={() => navigate(`/surgeries/${surgery.id}`)}
                                                             className="p-1.5 hover:bg-blue-50 rounded-full transition-colors"
                                                             title="Edit"
+                                                            aria-label="Edit surgery"
                                                         >
                                                             <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                             </svg>
                                                         </button>
                                                         <button 
+                                                            onClick={() => handleDeleteSurgery(surgery.id)}
                                                             className="p-1.5 hover:bg-red-50 rounded-full transition-colors"
                                                             title="Delete"
+                                                            aria-label="Delete surgery"
                                                         >
                                                             <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
