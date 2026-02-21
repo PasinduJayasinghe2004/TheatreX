@@ -244,4 +244,22 @@ describe('Theatre API Tests - Day 10', () => {
             }
         });
     });
+
+    describe('GET /api/theatres/check-availability', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability');
+
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 400 when required query parameters are missing', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+    });
 });
