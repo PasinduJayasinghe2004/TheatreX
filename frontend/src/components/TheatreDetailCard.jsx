@@ -2,17 +2,22 @@
 // Theatre Detail Card Component
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 10
+// Updated by: M4 (Oneli)     - Day 10 (Status toggle buttons)
 //
 // Rich detail card for a single theatre that displays:
 // - Theatre metadata (name, location, type, capacity, equipment)
 // - Status badge with colour coding
+// - Status toggle buttons (coordinator / admin only)
 // - Current in-progress surgery info
 // - Upcoming scheduled surgeries (next 7 days)
 // - Recent surgery history (last 7 days)
 // - Quick stats (completed, cancelled this week, upcoming total)
 //
 // Props:
-//   theatre - Full theatre detail object from GET /api/theatres/:id
+//   theatre        - Full theatre detail object from GET /api/theatres/:id
+//   onStatusChange - Callback(theatreId, newStatus) for toggling status
+//   userRole       - Current user's role (for showing status toggle)
+//   isUpdating     - Whether this theatre's status is currently being updated
 // ============================================================================
 
 import { Link } from 'react-router-dom';
@@ -31,6 +36,7 @@ import {
     AlertTriangle
 } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
+import { getAllowedTransitions, getStatusLabel } from '../utils/theatreStatusColors';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -81,15 +87,28 @@ const STATUS_BG = {
     cleaning: 'from-purple-500 to-purple-600'
 };
 
+// ── Status action button styles (M4 - Oneli - Day 10) ──────────────────────
+
+const STATUS_ACTION_STYLES = {
+    available: 'bg-emerald-600 hover:bg-emerald-700 text-white',
+    in_use: 'bg-blue-600 hover:bg-blue-700 text-white',
+    maintenance: 'bg-amber-500 hover:bg-amber-600 text-white',
+    cleaning: 'bg-purple-500 hover:bg-purple-600 text-white'
+};
+
 // ── Component ───────────────────────────────────────────────────────────────
 
-const TheatreDetailCard = ({ theatre }) => {
+const TheatreDetailCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) => {
     if (!theatre) return null;
 
     const bgGradient = STATUS_BG[theatre.status] || 'from-gray-500 to-gray-600';
     const upcoming = theatre.upcoming_surgeries || [];
     const history = theatre.surgery_history || [];
     const stats = theatre.stats || {};
+
+    // Status toggle (M4 - Oneli - Day 10)
+    const canChangeStatus = userRole === 'coordinator' || userRole === 'admin';
+    const allowedTransitions = getAllowedTransitions(theatre.status);
 
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -108,6 +127,30 @@ const TheatreDetailCard = ({ theatre }) => {
                     <TheatreStatusBadge status={theatre.status} size="md" />
                 </div>
             </div>
+
+            {/* ── Status Toggle Buttons (M4 - Oneli - Day 10) ─────────── */}
+            {canChangeStatus && allowedTransitions.length > 0 && (
+                <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-3">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Change Status:</span>
+                    <div className="flex gap-2">
+                        {allowedTransitions.map(nextStatus => (
+                            <button
+                                key={nextStatus}
+                                onClick={() => onStatusChange(theatre.id, nextStatus)}
+                                disabled={isUpdating}
+                                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors
+                                    ${STATUS_ACTION_STYLES[nextStatus] || 'bg-gray-500 hover:bg-gray-600 text-white'}
+                                    ${isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {getStatusLabel(nextStatus)}
+                            </button>
+                        ))}
+                    </div>
+                    {isUpdating && (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 ml-2" />
+                    )}
+                </div>
+            )}
 
             <div className="p-6 space-y-6">
                 {/* ── Theatre Info Grid ─────────────────────────────────── */}

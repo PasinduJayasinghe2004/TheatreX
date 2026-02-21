@@ -2,9 +2,11 @@
 // Theatre Detail Page
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 10
+// Updated by: M4 (Oneli)     - Day 10 (Status toggle integration)
 //
 // Displays full details of a single theatre fetched by ID.
 // Uses theatreService.getTheatreById() for data retrieval.
+// Coordinators/admins can toggle theatre status via the detail card.
 // Shows current surgery, upcoming surgeries, and recent history
 // via the TheatreDetailCard component.
 // ============================================================================
@@ -14,14 +16,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 import TheatreDetailCard from '../components/TheatreDetailCard';
 import theatreService from '../services/theatreService';
+import { useAuth } from '../context/AuthContext'; // M4 - Day 10
 
 const TheatreDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth(); // M4 - Day 10
 
     const [theatre, setTheatre] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [statusUpdating, setStatusUpdating] = useState(false); // M4 - Day 10
 
     // Fetch theatre data on mount / id change
     useEffect(() => {
@@ -46,6 +51,24 @@ const TheatreDetail = () => {
 
         fetchTheatre();
     }, [id]);
+
+    // ── Status Change Handler (M4 - Oneli - Day 10) ─────────────────────────
+    const handleStatusChange = async (theatreId, newStatus) => {
+        try {
+            setStatusUpdating(true);
+            const response = await theatreService.updateTheatreStatus(theatreId, newStatus);
+
+            if (response.success) {
+                // Update local state for instant UI feedback
+                setTheatre(prev => prev ? { ...prev, status: newStatus } : prev);
+            }
+        } catch (err) {
+            console.error('Error updating theatre status:', err);
+            setError(err.message || 'Failed to update theatre status');
+        } finally {
+            setStatusUpdating(false);
+        }
+    };
 
     // ── Loading State ──────────────────────────────────────────────────────
     if (loading) {
@@ -103,8 +126,13 @@ const TheatreDetail = () => {
                     <span className="text-sm font-medium">Back to Theatres</span>
                 </button>
 
-                {/* Theatre Detail Card */}
-                <TheatreDetailCard theatre={theatre} />
+                {/* Theatre Detail Card with status toggle - M4 (Oneli) Day 10 */}
+                <TheatreDetailCard
+                    theatre={theatre}
+                    onStatusChange={handleStatusChange}
+                    userRole={user?.role}
+                    isUpdating={statusUpdating}
+                />
             </div>
         </div>
     );
