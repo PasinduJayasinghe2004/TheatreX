@@ -11,6 +11,8 @@
 //   onClick - optional click handler (e.g. to trigger status change)
 // ============================================================================
 
+import React from 'react';
+
 // ── Style maps ──────────────────────────────────────────────────────────────
 
 const THEATRE_STATUS_STYLES = {
