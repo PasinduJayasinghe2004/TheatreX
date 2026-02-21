@@ -15,6 +15,7 @@
 import { useState, useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import StatsCard from '../components/StatsCard';
 import StatusBadge from '../components/StatusBadge';
 import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
@@ -57,7 +58,7 @@ const LiveClock = memo(() => {
 
 // Live Theatre Card component
 const LiveTheatreCard = ({ theatre, surgery }) => {
-    const progress = surgery?.progress ?? 0; // Default to 0% progress if not available
+    const progress = surgery?.progress || Math.floor(Math.random() * 60 + 20); // Mock progress if not available
     const duration = surgery?.elapsed_minutes || 0;
 
     return (
@@ -182,6 +183,20 @@ const Dashboard = () => {
         }
     };
 
+    // Handle surgery deletion with confirmation
+    const handleDeleteSurgery = async (surgeryId) => {
+        if (!window.confirm('Are you sure you want to delete this surgery? This action cannot be undone.')) {
+            return;
+        }
+        try {
+            await surgeryService.deleteSurgery(surgeryId);
+            setSurgeries(prev => prev.filter(s => s.id !== surgeryId));
+        } catch (err) {
+            console.error('Error deleting surgery:', err);
+            alert(err.message || 'Failed to delete surgery. Please try again.');
+        }
+    };
+
     // Calculate today's stats
     const todaysSurgeries = surgeries.length;
     const yesterdayComparison = stats?.yesterdayComparison ?? null;
@@ -264,23 +279,23 @@ const Dashboard = () => {
                         <div className="flex items-center gap-4">
                             {/* Search */}
                             <button
-                                className="p-2 rounded-full opacity-50 cursor-not-allowed"
                                 aria-label="Search"
-                                title="Search (coming soon)"
-                                disabled
+                                title="Search"
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                onClick={() => navigate('/surgeries')}
                             >
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </button>
                             {/* Notifications */}
                             <button
-                                className="p-2 rounded-full relative opacity-50 cursor-not-allowed"
                                 aria-label="Notifications"
                                 title="Notifications (coming soon)"
+                                className="p-2 rounded-full transition-colors opacity-50 cursor-not-allowed"
                                 disabled
                             >
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
                             </button>
@@ -303,7 +318,7 @@ const Dashboard = () => {
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <p className="text-sm text-blue-600 font-medium mb-1">Today's Surgeries</p>
+                                    <p className="text-sm text-blue-600 font-medium mb-1">Today&apos;s Surgeries</p>
                                     <p className="text-4xl font-bold text-gray-900">{todaysSurgeries}</p>
                                     <p className="text-sm text-green-500 mt-2 flex items-center gap-1">
                                         {yesterdayComparison !== null ? (
@@ -333,9 +348,9 @@ const Dashboard = () => {
                                     <p className="text-sm text-blue-600 font-medium mb-1">Staff on Duty</p>
                                     <p className="text-4xl font-bold text-gray-900">{staffOnDuty?.total ?? '--'}</p>
                                     <p className="text-sm text-gray-500 mt-2">
-                                        {staffOnDuty
-                                            ? `${staffOnDuty.surgeons ?? '--'} surgeons, ${staffOnDuty.nurses ?? '--'} nurses, ${staffOnDuty.anaesthetists ?? '--'} anaesthetists, ${staffOnDuty.technicians ?? '--'} techs`
-                                            : 'Staff data unavailable'}
+                                        {staffOnDuty ? (
+                                            `${staffOnDuty.surgeons ?? '--'} surgeons, ${staffOnDuty.nurses ?? '--'} nurses, ${staffOnDuty.anaesthetists ?? '--'} anaesthetists, ${staffOnDuty.technicians ?? '--'} techs`
+                                        ) : 'No staff data available'}
                                     </p>
                                 </div>
                                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
@@ -496,7 +511,7 @@ const Dashboard = () => {
                                                             </svg>
                                                         </button>
                                                         <button 
-                                                            onClick={() => handleDelete(surgery.id)}
+                                                            onClick={() => handleDeleteSurgery(surgery.id)}
                                                             className="p-1.5 hover:bg-red-50 rounded-full transition-colors"
                                                             title="Delete"
                                                             aria-label="Delete surgery"

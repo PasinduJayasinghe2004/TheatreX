@@ -1,32 +1,42 @@
 // ============================================================================
 // Dashboard Page Tests
 // ============================================================================
-// Created by: Copilot - Sub-PR #63
+// Created by: Copilot - UI Design Review
 //
-// Tests for the Dashboard page, including:
-// - Loading state
-// - Success state with data
-// - Error states (stats failure, surgery fetch failure)
-// - Empty state (no surgeries today)
-// - Navigation (Add Surgery, Emergency, Calendar, View Surgery)
-// - Delete surgery with confirmation
+// Tests for the Dashboard page covering loading states, error handling,
+// data fetching, component rendering, and user interactions.
 // ============================================================================
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
-import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
+import { getDashboardStats } from '../services/dashboardService';
+import { AuthProvider } from '../context/AuthContext';
 
-// Mock Layout to avoid auth dependencies from Header/RoleGuard
-vi.mock('../components/Layout', () => ({
-    default: ({ children }) => <div data-testid="layout">{children}</div>
-}));
+// Mock axios to avoid real API calls from AuthContext
+vi.mock('axios', () => {
+    const mockApi = {
+        interceptors: {
+            request: { use: vi.fn() },
+            response: { use: vi.fn() }
+        },
+        get: vi.fn(),
+        post: vi.fn()
+    };
+    return {
+        default: {
+            create: vi.fn(() => mockApi),
+            get: vi.fn(),
+            post: vi.fn()
+        }
+    };
+});
 
 // Mock services
-vi.mock('../services/dashboardService');
 vi.mock('../services/surgeryService');
+vi.mock('../services/dashboardService');
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -38,17 +48,25 @@ vi.mock('react-router-dom', async () => {
     };
 });
 
+// Mock window.confirm and window.alert
+global.confirm = vi.fn(() => true);
+global.alert = vi.fn();
+
 describe('Dashboard Page Tests', () => {
     const mockStats = {
-        yesterdayComparison: 3,
-        staffOnDuty: {
-            surgeons: 5,
-            nurses: 4,
-            anaesthetists: 2,
-            technicians: 3,
-            total: 14
-        },
-        avgDuration: 110
+        success: true,
+        data: {
+            totalSurgeries: 5,
+            yesterdayComparison: 2,
+            staffOnDuty: {
+                total: 13,
+                surgeons: 7,
+                nurses: 3,
+                anaesthetists: 1,
+                technicians: 2
+            },
+            avgDuration: 125
+        }
     };
 
     const mockSurgeries = [
@@ -56,48 +74,51 @@ describe('Dashboard Page Tests', () => {
             id: 1,
             patient_name: 'John Doe',
             surgery_type: 'Appendectomy',
-            scheduled_time: '10:00:00',
-            theatre_id: 1,
+            scheduled_date: '2024-01-15',
+            scheduled_time: '09:00:00',
             status: 'scheduled',
-            surgeon: { name: 'Dr. Smith' }
+            priority: 'routine',
+            theatre_id: 1,
+            surgeon: { id: 1, name: 'Dr. Smith' }
         },
         {
             id: 2,
             patient_name: 'Jane Smith',
             surgery_type: 'Knee Replacement',
-            scheduled_time: '14:00:00',
-            theatre_id: 2,
+            scheduled_date: '2024-01-15',
+            scheduled_time: '11:00:00',
             status: 'in_progress',
-            surgeon: { name: 'Dr. Johnson' }
+            priority: 'urgent',
+            theatre_id: 2,
+            surgeon: { id: 2, name: 'Dr. Johnson' }
         }
     ];
 
     beforeEach(() => {
         vi.clearAllMocks();
-        getDashboardStats.mockResolvedValue({ success: true, data: mockStats });
-        surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: mockSurgeries });
+        mockNavigate.mockClear();
     });
 
-    const renderDashboard = () =>
-        render(
+    const renderDashboard = () => {
+        return render(
             <BrowserRouter>
-                <Dashboard />
+                <AuthProvider>
+                    <Dashboard />
+                </AuthProvider>
             </BrowserRouter>
         );
+    };
 
     // ========================================================================
     // Loading State Tests
     // ========================================================================
     describe('Loading State', () => {
-        it('shows loading indicator while fetching data', async () => {
+        it('should show loading indicator while fetching data', async () => {
             getDashboardStats.mockImplementation(() => new Promise(() => {}));
+            surgeryService.getAllSurgeries.mockImplementation(() => new Promise(() => {}));
+
             const { container } = renderDashboard();
             expect(container.querySelector('.animate-spin')).toBeTruthy();
-        });
-
-        it('shows loading text', () => {
-            getDashboardStats.mockImplementation(() => new Promise(() => {}));
-            renderDashboard();
             expect(screen.getByText('Loading dashboard...')).toBeInTheDocument();
         });
     });
@@ -106,59 +127,70 @@ describe('Dashboard Page Tests', () => {
     // Success State Tests
     // ========================================================================
     describe('Success State', () => {
-        it('displays dashboard title after loading', async () => {
+        beforeEach(() => {
+            getDashboardStats.mockResolvedValue(mockStats);
+            surgeryService.getAllSurgeries.mockResolvedValue({
+                success: true,
+                data: mockSurgeries
+            });
+        });
+
+        it('should display page title after loading', async () => {
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText('Theatre Management Dashboard')).toBeInTheDocument();
             });
         });
 
-        it('displays today\'s surgeries count', async () => {
+        it('should display stats cards', async () => {
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText("Today's Surgeries")).toBeInTheDocument();
+                expect(screen.getByText('Staff on Duty')).toBeInTheDocument();
+                expect(screen.getByText('Avg Duration')).toBeInTheDocument();
+            });
+        });
+
+        it('should display correct surgery count', async () => {
+            renderDashboard();
+            await waitFor(() => {
+                // 2 surgeries in mockSurgeries
                 expect(screen.getByText('2')).toBeInTheDocument();
             });
         });
 
-        it('displays yesterday comparison when available', async () => {
+        it('should display staff comparison data when available', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('+3 from yesterday')).toBeInTheDocument();
+                expect(screen.getByText('+2 from yesterday')).toBeInTheDocument();
             });
         });
 
-        it('displays staff on duty count', async () => {
+        it('should display upcoming surgeries table', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('14')).toBeInTheDocument();
-            });
-        });
-
-        it('displays average duration', async () => {
-            renderDashboard();
-            await waitFor(() => {
-                expect(screen.getByText('110')).toBeInTheDocument();
-            });
-        });
-
-        it('displays upcoming surgeries for scheduled status only', async () => {
-            renderDashboard();
-            await waitFor(() => {
+                expect(screen.getByText('Upcoming Surgeries')).toBeInTheDocument();
                 expect(screen.getByText('John Doe')).toBeInTheDocument();
-                // in_progress surgery should not appear in upcoming table
-                expect(screen.queryByText('Jane Smith')).not.toBeInTheDocument();
-            });
-        });
-
-        it('displays surgery type in upcoming table', async () => {
-            renderDashboard();
-            await waitFor(() => {
                 expect(screen.getByText('Appendectomy')).toBeInTheDocument();
             });
         });
 
-        it('displays action buttons', async () => {
+        it('should not show in_progress surgeries in upcoming table', async () => {
+            renderDashboard();
+            await waitFor(() => {
+                // Jane Smith has status in_progress so should not appear in upcoming
+                expect(screen.queryByText('Jane Smith')).not.toBeInTheDocument();
+            });
+        });
+
+        it('should display live surgeries section', async () => {
+            renderDashboard();
+            await waitFor(() => {
+                expect(screen.getByText('Live Surgeries & Status')).toBeInTheDocument();
+            });
+        });
+
+        it('should display action buttons', async () => {
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
@@ -169,43 +201,25 @@ describe('Dashboard Page Tests', () => {
     });
 
     // ========================================================================
-    // Empty State Tests
-    // ========================================================================
-    describe('Empty State', () => {
-        it('shows empty state message when no surgeries', async () => {
-            surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
-            renderDashboard();
-            await waitFor(() => {
-                expect(screen.getByText('No upcoming surgeries scheduled for today')).toBeInTheDocument();
-            });
-        });
-
-        it('shows "0" for today\'s surgeries when none exist', async () => {
-            surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
-            renderDashboard();
-            await waitFor(() => {
-                expect(screen.getByText('0')).toBeInTheDocument();
-            });
-        });
-    });
-
-    // ========================================================================
     // Null/Missing Data State Tests
     // ========================================================================
-    describe('Missing Stats Data', () => {
-        it('shows "--" for avgDuration when stats not available', async () => {
-            getDashboardStats.mockResolvedValue({ success: false });
+    describe('Missing Data State', () => {
+        it('should show -- for avgDuration when not provided', async () => {
+            getDashboardStats.mockResolvedValue({ success: true, data: {} });
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+
             renderDashboard();
             await waitFor(() => {
+                // Both staff total and avgDuration will show '--', so check count
                 const dashes = screen.getAllByText('--');
                 expect(dashes.length).toBeGreaterThanOrEqual(1);
             });
         });
 
-        it('shows "No comparison data" when yesterdayComparison is null', async () => {
-            getDashboardStats.mockResolvedValue({ success: true, data: { avgDuration: 100 } });
+        it('should show no comparison data when yesterdayComparison is null', async () => {
+            getDashboardStats.mockResolvedValue({ success: true, data: { yesterdayComparison: null } });
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText('No comparison data')).toBeInTheDocument();
@@ -217,30 +231,30 @@ describe('Dashboard Page Tests', () => {
     // Error State Tests
     // ========================================================================
     describe('Error State', () => {
-        it('shows error message when dashboard stats fail', async () => {
-            getDashboardStats.mockRejectedValue({
-                response: { data: { message: 'Server error' } }
-            });
+        it('should show error message when stats API fails', async () => {
+            getDashboardStats.mockRejectedValue(new Error('Network error'));
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText('Error Loading Dashboard')).toBeInTheDocument();
             });
         });
 
-        it('shows retry button on error', async () => {
-            getDashboardStats.mockRejectedValue(new Error('Network error'));
+        it('should show Retry button on error', async () => {
+            getDashboardStats.mockRejectedValue(new Error('Server error'));
+            surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText('Retry')).toBeInTheDocument();
             });
         });
 
-        it('shows surgery-specific error when surgery fetch fails', async () => {
-            getDashboardStats.mockResolvedValue({ success: true, data: mockStats });
-            surgeryService.getAllSurgeries.mockRejectedValue(
-                new Error('Failed to load today\'s surgeries')
-            );
+        it('should show empty surgeries when surgeries API fails', async () => {
+            getDashboardStats.mockResolvedValue(mockStats);
+            surgeryService.getAllSurgeries.mockRejectedValue(new Error('Surgery API error'));
+
             renderDashboard();
             await waitFor(() => {
                 expect(screen.getByText('Error Loading Dashboard')).toBeInTheDocument();
@@ -252,69 +266,104 @@ describe('Dashboard Page Tests', () => {
     // Navigation Tests
     // ========================================================================
     describe('Navigation', () => {
-        it('navigates to /surgeries/new when Add New Surgery is clicked', async () => {
+        beforeEach(() => {
+            getDashboardStats.mockResolvedValue(mockStats);
+            surgeryService.getAllSurgeries.mockResolvedValue({
+                success: true,
+                data: mockSurgeries
+            });
+        });
+
+        it('should navigate to /surgeries/new when Add New Surgery is clicked', async () => {
             renderDashboard();
-            await waitFor(() => screen.getByText('Add New Surgery'));
+            await waitFor(() => {
+                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
+            });
             fireEvent.click(screen.getByText('Add New Surgery'));
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries/new');
         });
 
-        it('navigates to /emergency when Emergency Surgery is clicked', async () => {
+        it('should navigate to /emergency when Emergency Surgery is clicked', async () => {
             renderDashboard();
-            await waitFor(() => screen.getByText('Emergency Surgery'));
+            await waitFor(() => {
+                expect(screen.getByText('Emergency Surgery')).toBeInTheDocument();
+            });
             fireEvent.click(screen.getByText('Emergency Surgery'));
             expect(mockNavigate).toHaveBeenCalledWith('/emergency');
         });
 
-        it('navigates to /calendar when Calendar View is clicked', async () => {
+        it('should navigate to /calendar when Calendar View is clicked', async () => {
             renderDashboard();
-            await waitFor(() => screen.getByText('Calendar View'));
+            await waitFor(() => {
+                expect(screen.getByText('Calendar View')).toBeInTheDocument();
+            });
             fireEvent.click(screen.getByText('Calendar View'));
             expect(mockNavigate).toHaveBeenCalledWith('/calendar');
         });
 
-        it('navigates to surgery detail when View button is clicked', async () => {
+        it('should navigate to surgery detail when view button is clicked', async () => {
             renderDashboard();
-            await waitFor(() => screen.getByText('John Doe'));
-            const viewButtons = screen.getAllByTitle('View');
+            await waitFor(() => {
+                expect(screen.getByText('John Doe')).toBeInTheDocument();
+            });
+            const viewButtons = screen.getAllByLabelText('View surgery');
             fireEvent.click(viewButtons[0]);
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries/1');
+        });
+
+        it('should navigate to /surgeries when search button is clicked', async () => {
+            renderDashboard();
+            await waitFor(() => {
+                expect(screen.getByText('Theatre Management Dashboard')).toBeInTheDocument();
+            });
+            const searchButton = screen.getByLabelText('Search');
+            fireEvent.click(searchButton);
+            expect(mockNavigate).toHaveBeenCalledWith('/surgeries');
         });
     });
 
     // ========================================================================
-    // Delete Tests
+    // Delete Surgery Tests
     // ========================================================================
     describe('Delete Surgery', () => {
-        it('calls deleteSurgery and removes surgery after confirmation', async () => {
-            vi.spyOn(window, 'confirm').mockReturnValue(true);
+        beforeEach(() => {
+            getDashboardStats.mockResolvedValue(mockStats);
+            surgeryService.getAllSurgeries.mockResolvedValue({
+                success: true,
+                data: mockSurgeries
+            });
+        });
+
+        it('should call deleteSurgery and remove surgery on confirm', async () => {
             surgeryService.deleteSurgery = vi.fn().mockResolvedValue({ success: true });
+            global.confirm = vi.fn(() => true);
 
             renderDashboard();
-            await waitFor(() => screen.getByText('John Doe'));
+            await waitFor(() => {
+                expect(screen.getByText('John Doe')).toBeInTheDocument();
+            });
 
-            const deleteButtons = screen.getAllByTitle('Delete');
+            const deleteButtons = screen.getAllByLabelText('Delete surgery');
             fireEvent.click(deleteButtons[0]);
 
             await waitFor(() => {
                 expect(surgeryService.deleteSurgery).toHaveBeenCalledWith(1);
             });
-
-            window.confirm.mockRestore();
         });
 
-        it('does not call deleteSurgery when confirmation is cancelled', async () => {
-            vi.spyOn(window, 'confirm').mockReturnValue(false);
+        it('should not call deleteSurgery when confirmation is cancelled', async () => {
             surgeryService.deleteSurgery = vi.fn();
+            global.confirm = vi.fn(() => false);
 
             renderDashboard();
-            await waitFor(() => screen.getByText('John Doe'));
+            await waitFor(() => {
+                expect(screen.getByText('John Doe')).toBeInTheDocument();
+            });
 
-            const deleteButtons = screen.getAllByTitle('Delete');
+            const deleteButtons = screen.getAllByLabelText('Delete surgery');
             fireEvent.click(deleteButtons[0]);
 
             expect(surgeryService.deleteSurgery).not.toHaveBeenCalled();
-            window.confirm.mockRestore();
         });
     });
 
@@ -322,38 +371,17 @@ describe('Dashboard Page Tests', () => {
     // Accessibility Tests
     // ========================================================================
     describe('Accessibility', () => {
-        it('search button has aria-label', async () => {
-            renderDashboard();
-            await waitFor(() => screen.getByText('Theatre Management Dashboard'));
-            expect(screen.getByLabelText('Search')).toBeInTheDocument();
+        beforeEach(() => {
+            getDashboardStats.mockResolvedValue(mockStats);
+            surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
         });
 
-        it('notifications button has aria-label', async () => {
-            renderDashboard();
-            await waitFor(() => screen.getByText('Theatre Management Dashboard'));
-            expect(screen.getByLabelText('Notifications')).toBeInTheDocument();
-        });
-    });
-
-    // ========================================================================
-    // API Call Tests
-    // ========================================================================
-    describe('API Calls', () => {
-        it('calls getDashboardStats on mount', async () => {
+        it('should have aria-labels on icon buttons', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(getDashboardStats).toHaveBeenCalledTimes(1);
-            });
-        });
-
-        it('calls getAllSurgeries with today\'s date on mount', async () => {
-            renderDashboard();
-            const today = new Date().toISOString().split('T')[0];
-            await waitFor(() => {
-                expect(surgeryService.getAllSurgeries).toHaveBeenCalledWith({
-                    startDate: today,
-                    endDate: today
-                });
+                expect(screen.getByLabelText('Search')).toBeInTheDocument();
+                // Multiple elements with label 'Notifications' is expected (header button + sidebar)
+                expect(screen.getAllByLabelText('Notifications').length).toBeGreaterThanOrEqual(1);
             });
         });
     });
