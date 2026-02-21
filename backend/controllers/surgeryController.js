@@ -1494,53 +1494,98 @@ export const checkConflicts = async (req, res) => {
         // Note: This checks surgeries table if it has anaesthetist_id column.
         //       Currently the schema may not have it, so we do a safe check.
         // -------------------------------------------------------------------
+        // -------------------------------------------------------------------
+        // 3. Anaesthetist Conflict Check
+        // -------------------------------------------------------------------
         if (anaesthetist_id) {
-            try {
-                const anaesConflictQuery = `
-                    SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
-                           s.patient_name
-                    FROM surgeries s
-                    WHERE s.anaesthetist_id = $1
-                      AND s.scheduled_date = $2
-                      AND s.status IN ('scheduled', 'in_progress')
-                      ${excludeClause}
-                      AND (
-                          s.scheduled_time < ($3::time + ($4 || ' minutes')::interval)
-                          AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $3::time
-                      )
-                `;
-                const { rows: anaesConflicts } = await pool.query(anaesConflictQuery, [
-                    anaesthetist_id,
-                    scheduled_date,
-                    scheduled_time,
-                    durationMins
-                ]);
+            const anaesConflictQuery = `
+                SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
+                       s.patient_name
+                FROM surgeries s
+                WHERE s.anaesthetist_id = $1
+                  AND s.scheduled_date = $2
+                  AND s.status IN ('scheduled', 'in_progress')
+                  ${excludeClause}
+                  AND (
+                      s.scheduled_time < ($3::time + ($4 || ' minutes')::interval)
+                      AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $3::time
+                  )
+            `;
+            const { rows: anaesConflicts } = await pool.query(anaesConflictQuery, [
+                anaesthetist_id,
+                scheduled_date,
+                scheduled_time,
+                durationMins
+            ]);
 
-                if (anaesConflicts.length > 0) {
-                    conflicts.push({
-                        type: 'anaesthetist',
-                        resource_id: anaesthetist_id,
-                        message: `Anaesthetist has ${anaesConflicts.length} conflicting surgery(ies)`,
-                        conflicting_surgeries: anaesConflicts.map(c => ({
-                            surgery_id: c.id,
-                            surgery_type: c.surgery_type,
-                            scheduled_time: c.scheduled_time,
-                            duration: c.duration_minutes,
-                            patient: c.patient_name
-                        }))
-                    });
-                }
-            } catch (err) {
-                // Column might not exist yet — skip silently
-                console.log('Anaesthetist conflict check skipped (column may not exist)');
+            if (anaesConflicts.length > 0) {
+                // Fetch anaesthetist name
+                const anaesResult = await pool.query('SELECT name FROM users WHERE id = $1', [anaesthetist_id]);
+                const anaesName = anaesResult.rows[0]?.name || 'Unknown Anaesthetist';
+
+                conflicts.push({
+                    type: 'anaesthetist',
+                    resource_id: anaesthetist_id,
+                    resource_name: anaesName,
+                    message: `Anaesthetist "${anaesName}" has ${anaesConflicts.length} conflicting surgery(ies)`,
+                    conflicting_surgeries: anaesConflicts.map(c => ({
+                        surgery_id: c.id,
+                        surgery_type: c.surgery_type,
+                        scheduled_time: c.scheduled_time,
+                        duration: c.duration_minutes,
+                        patient: c.patient_name
+                    }))
+                });
             }
         }
 
         // -------------------------------------------------------------------
-        // 4. Nurse Conflict Check (multiple nurses)
-        // Note: Assumes surgeries might have nurse assignment in a join table
-        //       or column. This is a placeholder for future implementation.
+        // 4. Nurse Conflict Check (single nurse column for now based on schema)
         // -------------------------------------------------------------------
+        if (req.body.nurse_id) {
+            const nurse_id = req.body.nurse_id;
+            const nurseConflictQuery = `
+                SELECT s.id, s.surgery_type, s.scheduled_time, s.duration_minutes,
+                       s.patient_name
+                FROM surgeries s
+                WHERE s.nurse_id = $1
+                  AND s.scheduled_date = $2
+                  AND s.status IN ('scheduled', 'in_progress')
+                  ${excludeClause}
+                  AND (
+                      s.scheduled_time < ($3::time + ($4 || ' minutes')::interval)
+                      AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $3::time
+                  )
+            `;
+            const { rows: nurseConflicts } = await pool.query(nurseConflictQuery, [
+                nurse_id,
+                scheduled_date,
+                scheduled_time,
+                durationMins
+            ]);
+
+            if (nurseConflicts.length > 0) {
+                // Fetch nurse name
+                const nurseResult = await pool.query('SELECT name FROM users WHERE id = $1', [nurse_id]);
+                const nurseName = nurseResult.rows[0]?.name || 'Unknown Nurse';
+
+                conflicts.push({
+                    type: 'nurse',
+                    resource_id: nurse_id,
+                    resource_name: nurseName,
+                    message: `Nurse "${nurseName}" has ${nurseConflicts.length} conflicting surgery(ies)`,
+                    conflicting_surgeries: nurseConflicts.map(c => ({
+                        surgery_id: c.id,
+                        surgery_type: c.surgery_type,
+                        scheduled_time: c.scheduled_time,
+                        duration: c.duration_minutes,
+                        patient: c.patient_name
+                    }))
+                });
+            }
+        }
+
+        // Multi-nurse support (placeholder for future array implementation)
         if (nurse_ids && Array.isArray(nurse_ids) && nurse_ids.length > 0) {
             // M2 Day 9: Check each nurse for scheduling conflicts via surgery_nurses table
             for (const nurseId of nurse_ids) {
@@ -1608,7 +1653,7 @@ export const checkConflicts = async (req, res) => {
                 theatre_id: theatre_id || null,
                 surgeon_id: surgeon_id || null,
                 anaesthetist_id: anaesthetist_id || null,
-                nurse_ids: nurse_ids || []
+                nurse_id: req.body.nurse_id || null
             }
         });
 

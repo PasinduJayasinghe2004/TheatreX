@@ -36,11 +36,11 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+
+    // Surgeon State
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
-
-    // Surgeon availability state - M1 (Pasindu) Day 9
-    const [surgeonAvailability, setSurgeonAvailability] = useState(null); // map of id -> { available, conflict_reason }
+    const [surgeonAvailability, setSurgeonAvailability] = useState(null);
     const [checkingSurgeonAvail, setCheckingSurgeonAvail] = useState(false);
 
     // Nurse state - M2 (Chandeepa) Day 9
@@ -82,65 +82,87 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         priority: 'routine',
     });
 
-    // Fetch surgeons for dropdown
+    // Fetch initial data (Surgeons, Nurses, Anaesthetists, Theatres)
     useEffect(() => {
-        const fetchSurgeons = async () => {
+        const fetchInitialData = async () => {
             try {
-                const response = await axios.get(
-                    'http://localhost:5000/api/surgeries/surgeons',
-                    {
-                        headers: { Authorization: `Bearer ${token}` }
-                    }
-                );
-                if (response.data.success) {
-                    setSurgeons(response.data.data);
+                const [surgeonsRes, nursesRes, anaesthetistsRes, theatresRes] = await Promise.all([
+                    surgeryService.getSurgeons(),
+                    axios.get('http://localhost:5000/api/users?role=nurse', { headers: { Authorization: `Bearer ${token}` } }).then(res => ({ success: true, data: res.data.data.filter(u => u.role === 'nurse') })).catch(() => ({ success: false, data: [] })),
+                    axios.get('http://localhost:5000/api/users?role=anaesthetist', { headers: { Authorization: `Bearer ${token}` } }).then(res => ({ success: true, data: res.data.data.filter(u => u.role === 'anaesthetist') })).catch(() => ({ success: false, data: [] })),
+                    surgeryService.getTheatres()
+                ]);
+
+                if (surgeonsRes.success) setSurgeons(surgeonsRes.data);
+                if (nursesRes.success) setNurses(nursesRes.data);
+                // Fallback for nurses/anaesthetists if the filtered user endpoint isn't perfectly set up yet
+                // But ideally surgeryService should have specific methods or we use generic user fetch. 
+                // For now, let's use the fetched data.
+                // Note: The previous axios.get calls above are a bit hacky if the endpoint doesn't support role filtering directly like that.
+                // Let's assume there's a generic way or we'll rely on the availability endpoints to populate the lists fully if needed.
+                // Actually, let's use the availability endpoints to get the lists initially (without params they might error or return empty).
+                // Better approach: Use the getAvailable... methods with dummy params or just wait for date selection.
+                // BUT we want to show the list even before date selection.
+                // So we will stick to fetching all users and filtering by role if the API supports it, or assume api/users returns all.
+
+                // Refined approach for Nurses/Anaesthetists:
+                // Since we don't have explicit `getNurses` in service yet, we can rely on `getAvailableNurses` when date is selected,
+                // OR we can fetch all users and filter.
+                // Let's try to fetch all users and filter for now as a fallback.
+                const usersRes = await axios.get('http://localhost:5000/api/users', { headers: { Authorization: `Bearer ${token}` } });
+                if (usersRes.data.success) {
+                    setNurses(usersRes.data.data.filter(u => u.role === 'nurse'));
+                    setAnaesthetists(usersRes.data.data.filter(u => u.role === 'anaesthetist'));
                 }
+
+                if (theatresRes.success) setTheatres(theatresRes.data);
+
             } catch (error) {
-                console.error('Error fetching surgeons:', error);
+                console.error('Error fetching initial data:', error);
             } finally {
                 setLoadingSurgeons(false);
+                setLoadingNurses(false);
+                setLoadingAnaesthetists(false);
+                setLoadingTheatres(false);
             }
         };
 
         if (token) {
-            fetchSurgeons();
+            fetchInitialData();
         }
     }, [token]);
 
-    // Check surgeon availability when date/time/duration change - M1 (Pasindu) Day 9
-    const checkSurgeonAvailability = useCallback(async () => {
+    // Check staff & theatre availability when date/time/duration change
+    const checkAllAvailability = useCallback(async () => {
         const { scheduled_date, scheduled_time, duration_minutes } = formData;
         if (!scheduled_date || !scheduled_time || !duration_minutes) {
             setSurgeonAvailability(null);
+            setNurseAvailability(null);
+            setAnaesthetistAvailability(null);
+            setTheatreAvailability(null);
             return;
         }
 
         try {
             setCheckingSurgeonAvail(true);
-            const result = await surgeryService.getAvailableSurgeons(
-                scheduled_date,
-                scheduled_time,
-                duration_minutes
-            );
-            if (result.success) {
-                // Update surgeons list with availability data
-                setSurgeons(result.data);
+            setCheckingNurseAvail(true);
+            setCheckingAnaesthetistAvail(true);
+            setCheckingAvailability(true); // Theatre
+
+            const [surgeonRes, nurseRes, anaesthetistRes, theatreRes] = await Promise.all([
+                surgeryService.getAvailableSurgeons(scheduled_date, scheduled_time, duration_minutes),
+                surgeryService.getAvailableNurses(scheduled_date, scheduled_time, duration_minutes),
+                surgeryService.getAvailableAnaesthetists(scheduled_date, scheduled_time, duration_minutes),
+                surgeryService.checkTheatreAvailability(scheduled_date, scheduled_time, duration_minutes)
+            ]);
+
+            // Process Surgeon Availability
+            if (surgeonRes.success) {
+                setSurgeons(surgeonRes.data);
                 const availMap = {};
-                result.data.forEach(s => {
-                    availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason };
-                });
+                surgeonRes.data.forEach(s => availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason });
                 setSurgeonAvailability(availMap);
             }
-        } catch (error) {
-            console.error('Error checking surgeon availability:', error);
-        } finally {
-            setCheckingSurgeonAvail(false);
-        }
-    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
-
-    useEffect(() => {
-        checkSurgeonAvailability();
-    }, [checkSurgeonAvailability]);
 
     // Check nurse availability when date/time/duration change - M2 (Chandeepa) Day 9
     const checkNurseAvailability = useCallback(async () => {
@@ -278,43 +300,35 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             } finally {
                 setLoadingTheatres(false);
             }
-        };
 
-        fetchTheatres();
-    }, []);
-
-    // Check theatre availability when date/time/duration change - M2 Day 8
-    const checkAvailability = useCallback(async () => {
-        const { scheduled_date, scheduled_time, duration_minutes } = formData;
-        if (!scheduled_date || !scheduled_time || !duration_minutes) {
-            setTheatreAvailability(null);
-            return;
-        }
-
-        try {
-            setCheckingAvailability(true);
-            const result = await surgeryService.checkTheatreAvailability(
-                scheduled_date,
-                scheduled_time,
-                duration_minutes
-            );
-            if (result.success) {
+            // Process Anaesthetist Availability
+            if (anaesthetistRes.success) {
+                setAnaesthetists(anaesthetistRes.data);
                 const availMap = {};
-                result.data.forEach(t => {
-                    availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason };
-                });
+                anaesthetistRes.data.forEach(a => availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason });
+                setAnaesthetistAvailability(availMap);
+            }
+
+            // Process Theatre Availability
+            if (theatreRes.success) {
+                const availMap = {};
+                theatreRes.data.forEach(t => availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason });
                 setTheatreAvailability(availMap);
             }
+
         } catch (error) {
             console.error('Error checking availability:', error);
         } finally {
+            setCheckingSurgeonAvail(false);
+            setCheckingNurseAvail(false);
+            setCheckingAnaesthetistAvail(false);
             setCheckingAvailability(false);
         }
     }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
 
     useEffect(() => {
-        checkAvailability();
-    }, [checkAvailability]);
+        checkAllAvailability();
+    }, [checkAllAvailability]);
 
     // Handle input change
     const handleChange = (e) => {
@@ -389,6 +403,25 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
 
         try {
             setLoading(true);
+
+            // Check for conflicts one last time before submitting (Server-side check)
+            const conflictCheck = await surgeryService.checkConflicts({
+                scheduled_date: formData.scheduled_date,
+                scheduled_time: formData.scheduled_time,
+                duration_minutes: formData.duration_minutes,
+                theatre_id: formData.theatre_id,
+                surgeon_id: formData.surgeon_id,
+                nurse_ids: formData.nurse_id ? [formData.nurse_id] : [], // passing as array for future proofing
+                nurse_id: formData.nurse_id, // passing as single ID for current logic
+                anaesthetist_id: formData.anaesthetist_id
+            });
+
+            if (conflictCheck.has_conflicts) {
+                const conflictMsg = conflictCheck.conflicts.map(c => c.message).join('. ');
+                setMessage({ type: 'error', text: `Schedule Conflict: ${conflictMsg}` });
+                setLoading(false);
+                return;
+            }
 
             const response = await axios.post(
                 'http://localhost:5000/api/surgeries',
@@ -468,8 +501,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             {/* Error/Success Message */}
             {message.text && (
                 <div className={`p-3 rounded-lg text-sm ${message.type === 'success'
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
                     {message.text}
                 </div>
@@ -496,8 +529,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, priority: 'routine' }))}
                         className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${formData.priority === 'routine'
-                                ? 'bg-green-100 text-green-700 border-2 border-green-500'
-                                : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
+                            ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                            : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
                             }`}
                     >
                         Routine
@@ -506,8 +539,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, priority: 'urgent' }))}
                         className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${formData.priority === 'urgent'
-                                ? 'bg-yellow-100 text-yellow-700 border-2 border-yellow-500'
-                                : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
+                            ? 'bg-yellow-100 text-yellow-700 border-2 border-yellow-500'
+                            : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
                             }`}
                     >
                         Urgent
@@ -516,8 +549,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, priority: 'emergency' }))}
                         className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${formData.priority === 'emergency'
-                                ? 'bg-red-100 text-red-700 border-2 border-red-500'
-                                : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
+                            ? 'bg-red-100 text-red-700 border-2 border-red-500'
+                            : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:border-gray-300'
                             }`}
                     >
                         🚨 Emergency
@@ -527,8 +560,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
 
             {/* Patient Details Section */}
             <div className={`rounded-lg p-4 border-2 ${formData.priority === 'emergency'
-                    ? 'bg-red-50 border-red-200'
-                    : 'bg-gray-50 border-gray-200'
+                ? 'bg-red-50 border-red-200'
+                : 'bg-gray-50 border-gray-200'
                 }`}>
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-semibold text-gray-700">Patient Details</h3>
@@ -652,6 +685,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         </p>
                     )}
                 </div>
+
+                {/* Nurse */}
                 <div>
                     <div className="flex items-center justify-between mb-1.5">
                         <label className={labelClass}>Anaesthetist</label>
