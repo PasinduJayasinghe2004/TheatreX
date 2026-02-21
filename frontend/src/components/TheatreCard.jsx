@@ -13,6 +13,7 @@
 //   theatre     - Theatre object from the API
 //   onStatusChange - Callback(theatreId, newStatus) for toggling status
 //   userRole    - Current user's role (for showing status toggle)
+//   isUpdating  - Whether this theatre's status is currently being updated
 // ============================================================================
 
 import { MapPin, Monitor, Users, Wrench, Activity } from 'lucide-react';
@@ -44,7 +45,7 @@ const STATUS_BORDER = {
     cleaning: 'border-l-purple-500'
 };
 
-const TheatreCard = ({ theatre, onStatusChange, userRole }) => {
+const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) => {
     const canChangeStatus = userRole === 'coordinator' || userRole === 'admin';
     const actions = STATUS_ACTIONS[theatre.status] || [];
     const borderColor = STATUS_BORDER[theatre.status] || 'border-l-gray-300';
@@ -110,7 +111,8 @@ const TheatreCard = ({ theatre, onStatusChange, userRole }) => {
                         <button
                             key={action.status}
                             onClick={() => onStatusChange(theatre.id, action.status)}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${action.color}`}
+                            disabled={isUpdating}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${action.color} ${isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             {action.label}
                         </button>
