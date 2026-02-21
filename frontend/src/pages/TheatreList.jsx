@@ -18,6 +18,7 @@ import TheatreStatusBadge, {
     ALL_THEATRE_TYPES,
     THEATRE_TYPE_LABELS
 } from '../components/TheatreStatusBadge';
+import TheatreStatusLegend from '../components/TheatreStatusLegend'; // M3 - Day 10
 import theatreService from '../services/theatreService';
 import { useAuth } from '../context/AuthContext';
 
@@ -125,6 +126,18 @@ const TheatreList = () => {
                             <TheatreStatusBadge status={status} size="sm" />
                         </div>
                     ))}
+                </div>
+
+                {/* Interactive Status Legend Filter - M3 (Janani) Day 10 */}
+                <div className="mb-4">
+                    <TheatreStatusLegend
+                        size="md"
+                        interactive
+                        activeStatus={filters.status}
+                        onStatusClick={(status) =>
+                            setFilters(prev => ({ ...prev, status: status || null }))
+                        }
+                    />
                 </div>
 
                 {/* Filters */}

@@ -18,6 +18,11 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import {
+    VALID_THEATRE_STATUSES,
+    THEATRE_STATUS,
+    getAllowedTransitions
+} from '../utils/theatreConstants.js';
 
 // ============================================================================
 // GET ALL THEATRES
@@ -208,17 +213,18 @@ export const getTheatreById = async (req, res) => {
 // @route   PUT /api/theatres/:id/status
 // @access  Protected (coordinator, admin)
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M3 (Janani)  - Day 10 (Use centralised enum + transition guard)
 // ============================================================================
 export const updateTheatreStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
 
-        const validStatuses = ['available', 'in_use', 'maintenance', 'cleaning'];
-        if (!status || !validStatuses.includes(status)) {
+        // Enum validation (belt-and-braces; middleware also validates)
+        if (!status || !VALID_THEATRE_STATUSES.includes(status)) {
             return res.status(400).json({
                 success: false,
-                message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+                message: `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
             });
         }
 
@@ -236,6 +242,15 @@ export const updateTheatreStatus = async (req, res) => {
         }
 
         const previousStatus = existing[0].status;
+
+        // Enforce valid status transitions (M3 - Day 10)
+        const allowed = getAllowedTransitions(previousStatus);
+        if (!allowed.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot transition from '${previousStatus}' to '${status}'. Allowed transitions: ${allowed.join(', ')}`
+            });
+        }
 
         const { rows } = await pool.query(`
             UPDATE theatres

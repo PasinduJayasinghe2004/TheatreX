@@ -21,6 +21,10 @@ import {
     checkTheatreAvailability
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
+import {
+    validateTheatreStatus,
+    validateTheatreFilters
+} from '../middleware/theatreValidation.js';
 
 const router = express.Router();
 
@@ -41,8 +45,9 @@ router.get('/availability', protect, checkTheatreAvailability);
 // Protected - any authenticated user can view
 // Created by: M2 (Chandeepa) - Day 8
 // Updated by: M1 (Pasindu) - Day 10 (Added filters & current surgery join)
+// Updated by: M3 (Janani)  - Day 10 (Added validateTheatreFilters middleware)
 // ============================================================================
-router.get('/', protect, getTheatres);
+router.get('/', protect, validateTheatreFilters, getTheatres);
 
 // ============================================================================
 // ROUTE: GET /api/theatres/:id
@@ -59,7 +64,8 @@ router.get('/:id', protect, getTheatreById);
 // Update a theatre's status (available, in_use, maintenance, cleaning)
 // Protected + (coordinator or admin only)
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M3 (Janani)  - Day 10 (Added validateTheatreStatus middleware)
 // ============================================================================
-router.put('/:id/status', protect, authorize('coordinator', 'admin'), updateTheatreStatus);
+router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, updateTheatreStatus);
 
 export default router;
