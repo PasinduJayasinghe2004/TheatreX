@@ -2,14 +2,19 @@
 // Theatre Controller
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 8
+// Updated by: M1 (Pasindu) - Day 10 (Theatre list page, detail, status toggle)
 //
 // Handles theatre-related HTTP requests including:
-// - Listing all active theatres
+// - Listing all active theatres (with optional status/type filters)
+// - Getting a single theatre by ID (with current surgery info)
+// - Updating theatre status
 // - Checking theatre availability for a given date/time/duration
 //
 // EXPORTS:
-// - getTheatres:             GET  /api/theatres           - List active theatres
-// - checkTheatreAvailability: GET /api/theatres/availability - Check availability
+// - getTheatres:              GET  /api/theatres              - List active theatres
+// - getTheatreById:           GET  /api/theatres/:id          - Get theatre detail
+// - updateTheatreStatus:      PUT  /api/theatres/:id/status   - Toggle status
+// - checkTheatreAvailability: GET  /api/theatres/availability - Check availability
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -17,19 +22,58 @@ import { pool } from '../config/database.js';
 // ============================================================================
 // GET ALL THEATRES
 // ============================================================================
-// @desc    Get all active theatres for dropdown selection
-// @route   GET /api/theatres
+// @desc    Get all active theatres with optional status / type filters
+//          and the currently-running surgery (if any)
+// @route   GET /api/theatres?status=available&type=cardiac
 // @access  Protected
 // Created by: M2 (Chandeepa) - Day 8
+// Updated by: M1 (Pasindu) - Day 10 (filters + current surgery subquery)
 // ============================================================================
 export const getTheatres = async (req, res) => {
     try {
+        const { status, type } = req.query;
+
+        // Build dynamic WHERE clauses
+        const conditions = ['t.is_active = TRUE'];
+        const params = [];
+
+        if (status) {
+            params.push(status);
+            conditions.push(`t.status = $${params.length}`);
+        }
+
+        if (type) {
+            params.push(type);
+            conditions.push(`t.theatre_type = $${params.length}`);
+        }
+
+        const whereClause = conditions.join(' AND ');
+
         const { rows } = await pool.query(`
-            SELECT id, name, location, status, capacity, equipment, theatre_type, is_active
-            FROM theatres
-            WHERE is_active = TRUE
-            ORDER BY name ASC
-        `);
+            SELECT
+                t.id,
+                t.name,
+                t.location,
+                t.status,
+                t.capacity,
+                t.equipment,
+                t.theatre_type,
+                t.is_active,
+                t.created_at,
+                t.updated_at,
+                -- Current surgery (status = in_progress) linked to this theatre
+                cs.id            AS current_surgery_id,
+                cs.surgery_type  AS current_surgery_type,
+                cs.patient_name  AS current_patient_name,
+                cs.scheduled_time AS current_surgery_time,
+                cs.duration_minutes AS current_surgery_duration
+            FROM theatres t
+            LEFT JOIN surgeries cs
+                ON cs.theatre_id = t.id
+               AND cs.status = 'in_progress'
+            WHERE ${whereClause}
+            ORDER BY t.name ASC
+        `, params);
 
         res.status(200).json({
             success: true,
@@ -41,6 +85,122 @@ export const getTheatres = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching theatres',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET THEATRE BY ID
+// ============================================================================
+// @desc    Get a single theatre with its current surgery (if any)
+// @route   GET /api/theatres/:id
+// @access  Protected
+// Created by: M1 (Pasindu) - Day 10
+// ============================================================================
+export const getTheatreById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { rows } = await pool.query(`
+            SELECT
+                t.id,
+                t.name,
+                t.location,
+                t.status,
+                t.capacity,
+                t.equipment,
+                t.theatre_type,
+                t.is_active,
+                t.created_at,
+                t.updated_at,
+                cs.id              AS current_surgery_id,
+                cs.surgery_type    AS current_surgery_type,
+                cs.patient_name    AS current_patient_name,
+                cs.scheduled_time  AS current_surgery_time,
+                cs.duration_minutes AS current_surgery_duration,
+                cs.status          AS current_surgery_status
+            FROM theatres t
+            LEFT JOIN surgeries cs
+                ON cs.theatre_id = t.id
+               AND cs.status = 'in_progress'
+            WHERE t.id = $1
+        `, [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: rows[0]
+        });
+    } catch (error) {
+        console.error('Error fetching theatre:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching theatre',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// UPDATE THEATRE STATUS
+// ============================================================================
+// @desc    Update a theatre's status (available, in_use, maintenance, cleaning)
+// @route   PUT /api/theatres/:id/status
+// @access  Protected (coordinator, admin)
+// Created by: M1 (Pasindu) - Day 10
+// ============================================================================
+export const updateTheatreStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        const validStatuses = ['available', 'in_use', 'maintenance', 'cleaning'];
+        if (!status || !validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+            });
+        }
+
+        // Verify theatre exists
+        const { rows: existing } = await pool.query(
+            'SELECT id, status FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        const previousStatus = existing[0].status;
+
+        const { rows } = await pool.query(`
+            UPDATE theatres
+            SET status = $1, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $2
+            RETURNING id, name, location, status, capacity, equipment, theatre_type, is_active, updated_at
+        `, [status, id]);
+
+        res.status(200).json({
+            success: true,
+            message: `Theatre status updated from '${previousStatus}' to '${status}'`,
+            data: rows[0]
+        });
+    } catch (error) {
+        console.error('Error updating theatre status:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating theatre status',
             error: error.message
         });
     }

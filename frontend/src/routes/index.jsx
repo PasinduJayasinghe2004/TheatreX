@@ -16,6 +16,7 @@ import SurgeryDetail from '../pages/SurgeryDetail';
 import Calendar from '../pages/Calendar';
 import Dashboard from '../pages/Dashboard'; // M4 - Day 7
 import EmergencyBooking from '../pages/EmergencyBooking'; // M1 - Day 8
+import TheatreList from '../pages/TheatreList'; // M1 - Day 10
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -99,6 +100,13 @@ const AppRoutes = () => {
             <Route path="/surgeries/:id" element={
                 <ProtectedRoute>
                     <SurgeryDetail />
+                </ProtectedRoute>
+            } />
+
+            {/* Theatre List - M1 (Pasindu) Day 10 */}
+            <Route path="/theatres" element={
+                <ProtectedRoute>
+                    <TheatreList />
                 </ProtectedRoute>
             } />
 
