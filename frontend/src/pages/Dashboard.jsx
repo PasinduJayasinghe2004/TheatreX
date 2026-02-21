@@ -201,9 +201,9 @@ const Dashboard = () => {
     const avgDuration = stats?.avgDuration || 125;
 
     // Get upcoming surgeries (scheduled, not in progress)
-    const upcomingSurgeries = surgeries.filter(s => 
-        s.status === 'scheduled' || s.status === 'completed'
-    ).slice(0, 5);
+    const upcomingSurgeries = surgeries
+        .filter(s => s.status === 'scheduled')
+        .slice(0, 5);
 
     // Format time for display
     const formatTime = (timeStr) => {
