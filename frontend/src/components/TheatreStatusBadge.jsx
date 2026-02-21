@@ -2,6 +2,7 @@
 // Theatre Status Badge Component
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M3 (Janani)  - Day 10 (Use centralised theatreStatusColors util)
 //
 // Reusable colour-coded theatre-status badge.
 //
@@ -12,31 +13,19 @@
 // ============================================================================
 
 import React from 'react';
+import {
+    VALID_THEATRE_STATUSES,
+    THEATRE_STATUS_COLORS,
+    getStatusColor,
+    getStatusLabel,
+    getStatusBadgeClasses,
+    getStatusDotClass,
+    VALID_THEATRE_TYPES,
+    THEATRE_TYPE_COLORS,
+    getTypeLabel
+} from '../utils/theatreStatusColors';
 
-// ── Style maps ──────────────────────────────────────────────────────────────
-
-const THEATRE_STATUS_STYLES = {
-    available: {
-        badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-        dot: 'bg-emerald-500',
-        label: 'Available'
-    },
-    in_use: {
-        badge: 'bg-blue-50 text-blue-700 border-blue-200',
-        dot: 'bg-blue-500',
-        label: 'In Use'
-    },
-    maintenance: {
-        badge: 'bg-amber-50 text-amber-700 border-amber-200',
-        dot: 'bg-amber-500',
-        label: 'Maintenance'
-    },
-    cleaning: {
-        badge: 'bg-purple-50 text-purple-700 border-purple-200',
-        dot: 'bg-purple-500',
-        label: 'Cleaning'
-    }
-};
+// ── Size classes ────────────────────────────────────────────────────────────
 
 const SIZE_CLASSES = {
     sm: 'px-2.5 py-0.5 text-xs',
@@ -46,8 +35,10 @@ const SIZE_CLASSES = {
 // ── Component ───────────────────────────────────────────────────────────────
 
 const TheatreStatusBadge = ({ status, size = 'sm', onClick }) => {
-    const style = THEATRE_STATUS_STYLES[status] || THEATRE_STATUS_STYLES.available;
-    const sizeClass = SIZE_CLASSES[size] || SIZE_CLASSES.sm;
+    const badgeClasses = getStatusBadgeClasses(status);
+    const dotClass     = getStatusDotClass(status);
+    const label        = getStatusLabel(status);
+    const sizeClass    = SIZE_CLASSES[size] || SIZE_CLASSES.sm;
 
     const Tag = onClick ? 'button' : 'span';
 
@@ -55,36 +46,31 @@ const TheatreStatusBadge = ({ status, size = 'sm', onClick }) => {
         <Tag
             className={`
                 inline-flex items-center gap-1.5 rounded-full border font-semibold
-                ${style.badge} ${sizeClass}
+                ${badgeClasses} ${sizeClass}
                 ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}
             `}
             onClick={onClick}
             {...(onClick ? { type: 'button' } : {})}
         >
             {/* Colour dot */}
-            <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-            {style.label}
+            <span className={`w-1.5 h-1.5 rounded-full ${dotClass}`} />
+            {label}
         </Tag>
     );
 };
 
-// ── Exported helpers ────────────────────────────────────────────────────────
+// ── Re-exported helpers (keeps existing import paths working) ───────────────
 
-export const ALL_THEATRE_STATUSES = Object.keys(THEATRE_STATUS_STYLES);
+export const ALL_THEATRE_STATUSES = VALID_THEATRE_STATUSES;
 
 export const THEATRE_STATUS_LABELS = Object.fromEntries(
-    Object.entries(THEATRE_STATUS_STYLES).map(([key, val]) => [key, val.label])
+    VALID_THEATRE_STATUSES.map(s => [s, getStatusLabel(s)])
 );
 
-export const THEATRE_TYPE_LABELS = {
-    general: 'General',
-    cardiac: 'Cardiac',
-    neuro: 'Neuro',
-    ortho: 'Ortho',
-    emergency: 'Emergency',
-    day_surgery: 'Day Surgery'
-};
+export const THEATRE_TYPE_LABELS = Object.fromEntries(
+    VALID_THEATRE_TYPES.map(t => [t, getTypeLabel(t)])
+);
 
-export const ALL_THEATRE_TYPES = Object.keys(THEATRE_TYPE_LABELS);
+export const ALL_THEATRE_TYPES = VALID_THEATRE_TYPES;
 
 export default TheatreStatusBadge;
