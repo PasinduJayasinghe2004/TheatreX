@@ -146,7 +146,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         try {
             setCheckingSurgeonAvail(true);
             setCheckingNurseAvail(true);
-            setCheckingAnaesthetistAvail(true);
+            setCheckingAnaesAvail(true);
             setCheckingAvailability(true); // Theatre
 
             const [surgeonRes, nurseRes, anaesthetistRes, theatreRes] = await Promise.all([
@@ -163,6 +163,47 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 surgeonRes.data.forEach(s => availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason });
                 setSurgeonAvailability(availMap);
             }
+
+            // Process Nurse Availability
+            if (nurseRes.success) {
+                setNurses(nurseRes.data);
+                setLoadingNurses(false);
+                const availMap = {};
+                nurseRes.data.forEach(n => availMap[n.id] = { available: n.available, conflict_reason: n.conflict_reason });
+                setNurseAvailability(availMap);
+            }
+
+            // Process Anaesthetist Availability
+            if (anaesthetistRes.success) {
+                setAnaesthetists(anaesthetistRes.data);
+                setLoadingAnaesthetists(false);
+                const availMap = {};
+                anaesthetistRes.data.forEach(a => availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason });
+                setAnaesthetistAvailability(availMap);
+            }
+
+            // Process Theatre Availability
+            if (theatreRes.success) {
+                setTheatres(theatreRes.data);
+                setLoadingTheatres(false);
+                const availMap = {};
+                theatreRes.data.forEach(t => availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason });
+                setTheatreAvailability(availMap);
+            }
+
+        } catch (error) {
+            console.error('Error checking availability:', error);
+        } finally {
+            setCheckingSurgeonAvail(false);
+            setCheckingNurseAvail(false);
+            setCheckingAnaesAvail(false);
+            setCheckingAvailability(false);
+        }
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
+
+    useEffect(() => {
+        checkAllAvailability();
+    }, [checkAllAvailability]);
 
     // Check nurse availability when date/time/duration change - M2 (Chandeepa) Day 9
     const checkNurseAvailability = useCallback(async () => {
@@ -300,35 +341,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             } finally {
                 setLoadingTheatres(false);
             }
-
-            // Process Anaesthetist Availability
-            if (anaesthetistRes.success) {
-                setAnaesthetists(anaesthetistRes.data);
-                const availMap = {};
-                anaesthetistRes.data.forEach(a => availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason });
-                setAnaesthetistAvailability(availMap);
-            }
-
-            // Process Theatre Availability
-            if (theatreRes.success) {
-                const availMap = {};
-                theatreRes.data.forEach(t => availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason });
-                setTheatreAvailability(availMap);
-            }
-
-        } catch (error) {
-            console.error('Error checking availability:', error);
-        } finally {
-            setCheckingSurgeonAvail(false);
-            setCheckingNurseAvail(false);
-            setCheckingAnaesthetistAvail(false);
-            setCheckingAvailability(false);
-        }
-    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
-
-    useEffect(() => {
-        checkAllAvailability();
-    }, [checkAllAvailability]);
+        };
+        fetchTheatres();
+    }, []);
 
     // Handle input change
     const handleChange = (e) => {
