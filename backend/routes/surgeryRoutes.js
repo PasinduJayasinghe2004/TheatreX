@@ -43,7 +43,8 @@ import {
     deleteSurgery,
     getCalendarEvents,
     checkConflicts,
-    checkStaffConflicts
+    checkStaffConflicts,
+    assignStaff
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';

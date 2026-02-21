@@ -1349,14 +1349,6 @@ export const getCalendarEvents = async (req, res) => {
 // Created by: M3 (Janani) - Day 6
 // ============================================================================
 
-// Valid status transitions map
-const VALID_STATUS_TRANSITIONS = {
-    scheduled: ['in_progress', 'cancelled'],
-    in_progress: ['completed', 'cancelled'],
-    completed: [],           // terminal state
-    cancelled: ['scheduled'] // allow rescheduling
-};
-
 //
 // CHECK CONFLICTS
 
@@ -1904,113 +1896,6 @@ export const checkStaffConflicts = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error checking staff scheduling conflicts',
-            error: error.message
-        });
-    }
-};
-
-export const updateSurgeryStatus = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
-
-        // Validate ID
-        if (!id || isNaN(id) || Number(id) <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid surgery ID'
-            });
-        }
-
-        // Validate status is provided
-        if (!status) {
-            return res.status(400).json({
-                success: false,
-                message: 'Status is required'
-            });
-        }
-
-        // Validate status is a valid enum value
-        const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
-        if (!validStatuses.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
-            });
-        }
-
-        // Fetch current surgery
-        const existingResult = await pool.query(
-            'SELECT id, status, surgery_type FROM surgeries WHERE id = $1',
-            [id]
-        );
-
-        if (existingResult.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Surgery not found'
-            });
-        }
-
-        const currentStatus = existingResult.rows[0].status;
-
-        // Same status — no-op
-        if (currentStatus === status) {
-            return res.status(200).json({
-                success: true,
-                message: 'Status is already set to ' + status,
-                data: existingResult.rows[0]
-            });
-        }
-
-        // Validate status transition
-        const allowedTransitions = VALID_STATUS_TRANSITIONS[currentStatus] || [];
-        if (!allowedTransitions.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Cannot transition from '${currentStatus}' to '${status}'. Allowed transitions: ${allowedTransitions.length > 0 ? allowedTransitions.join(', ') : 'none (terminal state)'}`,
-                currentStatus,
-                allowedTransitions
-            });
-        }
-
-        // Perform the status update
-        const { rows } = await pool.query(
-            `UPDATE surgeries
-             SET status = $1, updated_at = NOW()
-             WHERE id = $2
-             RETURNING *`,
-            [status, id]
-        );
-
-        const updatedSurgery = rows[0];
-
-        // Fetch surgeon details for response
-        let surgeonDetails = null;
-        if (updatedSurgery.surgeon_id) {
-            const surgeonResult = await pool.query(
-                'SELECT id, name, email FROM users WHERE id = $1',
-                [updatedSurgery.surgeon_id]
-            );
-            if (surgeonResult.rows.length > 0) {
-                surgeonDetails = surgeonResult.rows[0];
-            }
-        }
-
-        res.status(200).json({
-            success: true,
-            message: `Surgery status updated from '${currentStatus}' to '${status}'`,
-            data: {
-                ...updatedSurgery,
-                surgeon: surgeonDetails
-            }
-        });
-
-    } catch (error) {
-        console.error('Error updating surgery status:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating surgery status',
             error: error.message
         });
     }
