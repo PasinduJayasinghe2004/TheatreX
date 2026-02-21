@@ -16,7 +16,8 @@
 //   isUpdating  - Whether this theatre's status is currently being updated
 // ============================================================================
 
-import { MapPin, Monitor, Users, Wrench, Activity } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MapPin, Monitor, Users, Wrench, Activity, ChevronRight } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 
 // Status action buttons config
@@ -56,7 +57,9 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
             <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{theatre.name}</h3>
+                        <Link to={`/theatres/${theatre.id}`} className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                            {theatre.name}
+                        </Link>
                         {theatre.location && (
                             <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
                                 <MapPin className="w-3.5 h-3.5" />
@@ -102,6 +105,14 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
                         )}
                     </div>
                 )}
+
+                {/* View Details Link - M2 Day 10 */}
+                <Link
+                    to={`/theatres/${theatre.id}`}
+                    className="mt-4 flex items-center justify-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                >
+                    View Details <ChevronRight className="w-4 h-4" />
+                </Link>
             </div>
 
             {/* Status Toggle Actions */}

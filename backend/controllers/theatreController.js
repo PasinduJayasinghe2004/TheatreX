@@ -93,15 +93,20 @@ export const getTheatres = async (req, res) => {
 // ============================================================================
 // GET THEATRE BY ID
 // ============================================================================
-// @desc    Get a single theatre with its current surgery (if any)
+// @desc    Get a single theatre with:
+//          - current in-progress surgery
+//          - upcoming scheduled surgeries (next 7 days)
+//          - recent completed/cancelled surgeries (last 7 days)
 // @route   GET /api/theatres/:id
 // @access  Protected
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M2 (Chandeepa) - Day 10 (Added upcoming + history queries)
 // ============================================================================
 export const getTheatreById = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // 1. Theatre info + current surgery
         const { rows } = await pool.query(`
             SELECT
                 t.id,
@@ -134,9 +139,57 @@ export const getTheatreById = async (req, res) => {
             });
         }
 
+        const theatre = rows[0];
+
+        // 2. Upcoming scheduled surgeries (next 7 days) - M2 Day 10
+        const { rows: upcoming } = await pool.query(`
+            SELECT id, surgery_type, patient_name, scheduled_date, scheduled_time,
+                   duration_minutes, status, priority, surgeon_id
+            FROM surgeries
+            WHERE theatre_id = $1
+              AND status = 'scheduled'
+              AND scheduled_date >= CURRENT_DATE
+              AND scheduled_date <= CURRENT_DATE + INTERVAL '7 days'
+            ORDER BY scheduled_date ASC, scheduled_time ASC
+            LIMIT 10
+        `, [id]);
+
+        // 3. Recent surgery history (last 7 days, completed/cancelled) - M2 Day 10
+        const { rows: history } = await pool.query(`
+            SELECT id, surgery_type, patient_name, scheduled_date, scheduled_time,
+                   duration_minutes, status, priority
+            FROM surgeries
+            WHERE theatre_id = $1
+              AND status IN ('completed', 'cancelled')
+              AND scheduled_date >= CURRENT_DATE - INTERVAL '7 days'
+            ORDER BY scheduled_date DESC, scheduled_time DESC
+            LIMIT 10
+        `, [id]);
+
+        // 4. Quick stats - M2 Day 10
+        const { rows: statsRows } = await pool.query(`
+            SELECT
+                COUNT(*) FILTER (WHERE status = 'completed' AND scheduled_date >= CURRENT_DATE - INTERVAL '7 days') AS completed_week,
+                COUNT(*) FILTER (WHERE status = 'cancelled' AND scheduled_date >= CURRENT_DATE - INTERVAL '7 days') AS cancelled_week,
+                COUNT(*) FILTER (WHERE status = 'scheduled' AND scheduled_date >= CURRENT_DATE) AS upcoming_total
+            FROM surgeries
+            WHERE theatre_id = $1
+        `, [id]);
+
+        const stats = statsRows[0] || { completed_week: 0, cancelled_week: 0, upcoming_total: 0 };
+
         res.status(200).json({
             success: true,
-            data: rows[0]
+            data: {
+                ...theatre,
+                upcoming_surgeries: upcoming,
+                surgery_history: history,
+                stats: {
+                    completed_this_week: parseInt(stats.completed_week) || 0,
+                    cancelled_this_week: parseInt(stats.cancelled_week) || 0,
+                    upcoming_total: parseInt(stats.upcoming_total) || 0
+                }
+            }
         });
     } catch (error) {
         console.error('Error fetching theatre:', error);
