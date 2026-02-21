@@ -211,6 +211,7 @@ const TheatreList = () => {
                                         theatre={theatre}
                                         onStatusChange={handleStatusChange}
                                         userRole={user?.role}
+                                        isUpdating={statusUpdating === theatre.id}
                                     />
                                 ))}
                             </div>
