@@ -598,7 +598,7 @@ export const getAvailableNurses = async (req, res) => {
         //    A nurse is "busy" if they are assigned (via surgery_nurses table)
         //    to a surgery that overlaps the requested time slot.
         const conflictQuery = `
-            SELECT DISTINCT sn.nurse_id,
+            SELECT sn.nurse_id,
                    json_agg(json_build_object(
                        'surgery_id', s.id,
                        'surgery_type', s.surgery_type,
@@ -708,7 +708,7 @@ export const getAvailableAnaesthetists = async (req, res) => {
         //    An anaesthetist is "busy" if they are assigned (via surgeries.anaesthetist_id)
         //    to a surgery that overlaps the requested time slot.
         const conflictQuery = `
-            SELECT DISTINCT s.anaesthetist_id,
+            SELECT s.anaesthetist_id,
                    json_agg(json_build_object(
                        'surgery_id', s.id,
                        'surgery_type', s.surgery_type,
