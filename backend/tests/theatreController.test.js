@@ -7,6 +7,7 @@
 // - GET  /api/theatres             (List theatres)
 // - GET  /api/theatres/:id         (Get theatre detail)
 // - PUT  /api/theatres/:id/status  (Update theatre status)
+// - GET  /api/theatres/check-availability (Check theatre availability)
 //
 // Run with: npm test -- --testPathPattern=theatreController
 // ============================================================================
@@ -242,6 +243,64 @@ describe('Theatre API Tests - Day 10', () => {
                 expect(res.statusCode).toBe(200);
                 expect(res.body.data.status).toBe(newStatus);
             }
+        });
+    });
+
+    // ========================================================================
+    // GET /api/theatres/check-availability - Check Theatre Availability
+    // ========================================================================
+    describe('GET /api/theatres/check-availability', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability');
+
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 400 when required query parameters are missing', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 400 when date is missing', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability?time=10:00&duration=60')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 400 when duration is invalid', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability?date=2025-06-01&time=10:00&duration=-1')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return availability data with valid parameters', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability?date=2025-06-01&time=10:00&duration=60')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(Array.isArray(res.body.data)).toBe(true);
+        });
+
+        it('should allow staff users to check availability', async () => {
+            const res = await request(app)
+                .get('/api/theatres/check-availability?date=2025-06-01&time=10:00&duration=60')
+                .set('Authorization', `Bearer ${staffToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
         });
     });
 });
