@@ -15,6 +15,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import StatsCard from '../components/StatsCard';
 import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
