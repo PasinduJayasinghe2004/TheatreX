@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import StatsCard from '../components/StatsCard';
+import StatusBadge from '../components/StatusBadge';
 import { getDashboardStats } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
@@ -52,27 +53,6 @@ const LiveClock = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
         </div>
-    );
-};
-
-// Status badge component
-const StatusBadge = ({ status }) => {
-    const statusConfig = {
-        'in_progress': { bg: 'bg-red-500', text: 'text-white', label: 'In-use' },
-        'in-use': { bg: 'bg-red-500', text: 'text-white', label: 'In-use' },
-        'scheduled': { bg: 'bg-blue-500', text: 'text-white', label: 'Scheduled' },
-        'completed': { bg: 'bg-green-500', text: 'text-white', label: 'Completed' },
-        'cancelled': { bg: 'bg-gray-500', text: 'text-white', label: 'Cancelled' },
-        'available': { bg: 'bg-green-500', text: 'text-white', label: 'Available' },
-        'maintenance': { bg: 'bg-yellow-500', text: 'text-white', label: 'Maintenance' },
-    };
-
-    const config = statusConfig[status?.toLowerCase()] || { bg: 'bg-gray-400', text: 'text-white', label: status || 'Unknown' };
-
-    return (
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
-            {config.label}
-        </span>
     );
 };
 
