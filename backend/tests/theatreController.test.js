@@ -7,6 +7,7 @@
 // - GET  /api/theatres             (List theatres)
 // - GET  /api/theatres/:id         (Get theatre detail)
 // - PUT  /api/theatres/:id/status  (Update theatre status)
+// - GET  /api/theatres/check-availability (Check theatre availability)
 //
 // Run with: npm test -- --testPathPattern=theatreController
 // ============================================================================
