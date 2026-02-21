@@ -13,6 +13,7 @@
 //   theatre     - Theatre object from the API
 //   onStatusChange - Callback(theatreId, newStatus) for toggling status
 //   userRole    - Current user's role (for showing status toggle)
+//   isUpdating  - Whether this theatre's status is currently being updated
 // ============================================================================
 
 import { MapPin, Monitor, Users, Wrench, Activity } from 'lucide-react';
