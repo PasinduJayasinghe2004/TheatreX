@@ -81,7 +81,14 @@ const LiveTheatreCard = ({ theatre, surgery }) => {
                             </span>
                         </h3>
                     </div>
-                    <StatusBadge status={surgery ? 'in_progress' : theatre?.status} />
+                    {surgery ? (
+                        <StatusBadge status="in_progress" />
+                    ) : (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border font-semibold bg-emerald-50 text-emerald-700 border-emerald-200 px-2.5 py-0.5 text-xs">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            Available
+                        </span>
+                    )}
 
                     {/* Surgery Info */}
                     <div className="mt-3">
@@ -200,6 +207,18 @@ const Dashboard = () => {
     const upcomingSurgeries = surgeries
         .filter(s => s.status === 'scheduled')
         .slice(0, 5);
+
+    // Delete surgery with confirmation
+    const handleDelete = async (surgeryId) => {
+        if (!window.confirm('Are you sure you want to delete this surgery?')) return;
+        try {
+            await surgeryService.deleteSurgery(surgeryId);
+            setSurgeries(prev => prev.filter(s => s.id !== surgeryId));
+        } catch (err) {
+            console.error('Error deleting surgery:', err);
+            alert(err.message || 'Failed to delete surgery');
+        }
+    };
 
     // Format time for display
     const formatTime = (timeStr) => {
