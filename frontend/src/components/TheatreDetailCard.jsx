@@ -4,6 +4,7 @@
 // Created by: M2 (Chandeepa) - Day 10
 // Updated by: M4 (Oneli)     - Day 10 (Status toggle buttons)
 // Updated by: M1 (Pasindu)   - Day 11 (Progress slider integration)
+// Updated by: M4 (Oneli)     - Day 11 (Duration display integration)
 //
 // Rich detail card for a single theatre that displays:
 // - Theatre metadata (name, location, type, capacity, equipment)
@@ -41,6 +42,7 @@ import {
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 import { getAllowedTransitions, getStatusLabel } from '../utils/theatreStatusColors';
 import CurrentSurgeryDisplay from './CurrentSurgeryDisplay';
+import DurationDisplay from './DurationDisplay';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -227,6 +229,15 @@ const TheatreDetailCard = ({ theatre, onStatusChange, onProgressChange, userRole
                         canEditProgress={canChangeStatus}
                         onProgressChange={onProgressChange}
                         isUpdating={isProgressUpdating}
+                    />
+                )}
+
+                {/* Duration Display - M4 (Oneli) Day 11 */}
+                {theatre.current_surgery_id && (
+                    <DurationDisplay
+                        scheduledTime={theatre.current_surgery_time}
+                        durationMinutes={theatre.current_surgery_duration}
+                        variant="full"
                     />
                 )}
 

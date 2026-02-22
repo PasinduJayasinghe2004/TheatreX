@@ -3,6 +3,7 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 10
 // Updated by: M1 (Pasindu) - Day 11 (Added surgery progress display)
+// Updated by: M4 (Oneli)   - Day 11 (Added duration display)
 //
 // Displays a single theatre in a card format with:
 // - Theatre name, location, type
@@ -21,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Monitor, Users, Wrench, Activity, ChevronRight } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 import CurrentSurgeryDisplay from './CurrentSurgeryDisplay';
+import DurationDisplay from './DurationDisplay';
 
 // Status action buttons config
 const STATUS_ACTIONS = {
@@ -94,17 +96,25 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
                 {/* Updated by M1 - Day 11: Added progress tracking */}
                 {/* Updated by M2 - Day 11: Added scheduled_time for auto-progress */}
                 {theatre.current_surgery_id && (
-                    <CurrentSurgeryDisplay
-                        surgery={{
-                            id: theatre.current_surgery_id,
-                            surgery_type: theatre.current_surgery_type,
-                            patient_name: theatre.current_patient_name,
-                            duration_minutes: theatre.current_surgery_duration,
-                            progress_percent: theatre.current_surgery_progress,
-                            scheduled_time: theatre.current_surgery_time
-                        }}
-                        variant="compact"
-                    />
+                    <>
+                        <CurrentSurgeryDisplay
+                            surgery={{
+                                id: theatre.current_surgery_id,
+                                surgery_type: theatre.current_surgery_type,
+                                patient_name: theatre.current_patient_name,
+                                duration_minutes: theatre.current_surgery_duration,
+                                progress_percent: theatre.current_surgery_progress,
+                                scheduled_time: theatre.current_surgery_time
+                            }}
+                            variant="compact"
+                        />
+                        {/* Duration Display - M4 (Oneli) Day 11 */}
+                        <DurationDisplay
+                            scheduledTime={theatre.current_surgery_time}
+                            durationMinutes={theatre.current_surgery_duration}
+                            variant="compact"
+                        />
+                    </>
                 )}
 
                 {/* View Details Link - M2 Day 10 */}
