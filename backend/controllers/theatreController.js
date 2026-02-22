@@ -464,6 +464,7 @@ export const updateSurgeryProgress = async (req, res) => {
             SELECT id, surgery_type, patient_name, progress_percent
             FROM surgeries
             WHERE theatre_id = $1 AND status = 'in_progress'
+            ORDER BY updated_at DESC, id DESC
             LIMIT 1
         `, [id]);
 
