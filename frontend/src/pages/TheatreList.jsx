@@ -27,7 +27,6 @@ const TheatreList = () => {
     const [theatres, setTheatres] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [statusUpdating, setStatusUpdating] = useState(null); // theatre ID being updated
     const [filters, setFilters] = useState({
         status: null,
         type: null
@@ -60,7 +59,6 @@ const TheatreList = () => {
     // Handle status change
     const handleStatusChange = async (theatreId, newStatus) => {
         try {
-            setStatusUpdating(theatreId);
             const response = await theatreService.updateTheatreStatus(theatreId, newStatus);
 
             if (response.success) {
@@ -74,8 +72,6 @@ const TheatreList = () => {
         } catch (err) {
             console.error('Error updating theatre status:', err);
             setError(err.message || 'Failed to update theatre status');
-        } finally {
-            setStatusUpdating(null);
         }
     };
 
