@@ -20,7 +20,7 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback } from 'react';
-import { Clock, Timer, Hourglass, AlertTriangle, Play } from 'lucide-react';
+import { Clock, Timer, AlertTriangle, PlayCircle } from 'lucide-react';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -96,10 +96,10 @@ const calculateDuration = (scheduledTime, durationMinutes) => {
 // ── Colour helpers ──────────────────────────────────────────────────────────
 
 const getDurationColor = (elapsed, total) => {
-    if (elapsed > total) return { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', badge: 'bg-red-100 text-red-700' };
+    if (elapsed > total) return { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700' };
     const pct = (elapsed / total) * 100;
-    if (pct >= 75) return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-700' };
-    return { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', badge: 'bg-indigo-100 text-indigo-700' };
+    if (pct >= 75) return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' };
+    return { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700' };
 };
 
 // ── Component ───────────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ const DurationDisplay = ({
             {/* Duration Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div className="flex items-center gap-2 p-2.5 bg-white/70 rounded-lg">
-                    <Play className="w-4 h-4 text-gray-400" />
+                    <PlayCircle className="w-4 h-4 text-gray-400" />
                     <div>
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide">Started</p>
                         <p className="text-sm font-semibold text-gray-700">
@@ -199,7 +199,7 @@ const DurationDisplay = ({
                     </div>
                 </div>
                 <div className="flex items-center gap-2 p-2.5 bg-white/70 rounded-lg">
-                    <Hourglass className="w-4 h-4 text-gray-400" />
+                    <Clock className="w-4 h-4 text-gray-400" />
                     <div>
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide">Remaining</p>
                         <p className="text-sm font-semibold text-gray-700">
