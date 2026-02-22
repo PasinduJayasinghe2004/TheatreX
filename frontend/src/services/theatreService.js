@@ -84,6 +84,20 @@ const theatreService = {
             const message = error.response?.data?.message || 'Error checking availability. Please try again.';
             throw new Error(message);
         }
+    },
+
+    // ========================================
+    // Get current in-progress surgery for a theatre
+    // Created by: M5 (Inthusha) - Day 10
+    // ========================================
+    getCurrentSurgery: async (id) => {
+        try {
+            const response = await api.get(`/theatres/${id}/current-surgery`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching current surgery. Please try again.';
+            throw new Error(message);
+        }
     }
 };
 

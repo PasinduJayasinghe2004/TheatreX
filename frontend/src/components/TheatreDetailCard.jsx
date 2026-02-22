@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 import { getAllowedTransitions, getStatusLabel } from '../utils/theatreStatusColors';
+import CurrentSurgeryDisplay from './CurrentSurgeryDisplay';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -206,34 +207,17 @@ const TheatreDetailCard = ({ theatre, onStatusChange, userRole, isUpdating = fal
                     </div>
                 </div>
 
-                {/* ── Current Surgery ───────────────────────────────────── */}
+                {/* Current Surgery Info component - M5 Day 10 */}
                 {theatre.current_surgery_id && (
-                    <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2 text-sm font-semibold text-blue-700">
-                                <Activity className="w-4 h-4" />
-                                Surgery In Progress
-                            </div>
-                            <Link
-                                to={`/surgeries/${theatre.current_surgery_id}`}
-                                className="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
-                            >
-                                View Details <ChevronRight className="w-3 h-3" />
-                            </Link>
-                        </div>
-                        <p className="text-sm text-blue-700 font-medium">
-                            {theatre.current_surgery_type}
-                        </p>
-                        <p className="text-sm text-blue-600">
-                            Patient: {theatre.current_patient_name || 'N/A'}
-                        </p>
-                        {theatre.current_surgery_duration && (
-                            <p className="text-xs text-blue-500 mt-1 flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                Estimated: {theatre.current_surgery_duration} min
-                            </p>
-                        )}
-                    </div>
+                    <CurrentSurgeryDisplay
+                        surgery={{
+                            id: theatre.current_surgery_id,
+                            surgery_type: theatre.current_surgery_type,
+                            patient_name: theatre.current_patient_name || 'N/A',
+                            duration_minutes: theatre.current_surgery_duration
+                        }}
+                        variant="full"
+                    />
                 )}
 
                 {/* ── Upcoming Surgeries ────────────────────────────────── */}

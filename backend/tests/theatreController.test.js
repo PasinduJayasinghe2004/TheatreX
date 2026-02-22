@@ -263,4 +263,27 @@ describe('Theatre API Tests - Day 10', () => {
             expect(res.body.success).toBe(false);
         });
     });
+
+    // ========================================================================
+    // GET /api/theatres/:id/current-surgery - Current Surgery info
+    // ========================================================================
+    describe('GET /api/theatres/:id/current-surgery', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app).get(`/api/theatres/1/current-surgery`);
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return success and null data if no surgery is in progress', async () => {
+            if (!testTheatreId) return;
+
+            const res = await request(app)
+                .get(`/api/theatres/${testTheatreId}/current-surgery`)
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            // Since we haven't created an in-progress surgery for this theatre in this test setup
+            expect(res.body.data).toBe(null);
+        });
+    });
 });

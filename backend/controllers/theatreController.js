@@ -363,3 +363,51 @@ export const checkTheatreAvailability = async (req, res) => {
         });
     }
 };
+// ============================================================================
+// GET CURRENT SURGERY BY THEATRE ID
+// ============================================================================
+// @desc    Get the currently in-progress surgery for a specific theatre
+// @route   GET /api/theatres/:id/current-surgery
+// @access  Protected
+// Created by: M5 (Inthusha) - Day 10
+// ============================================================================
+export const getCurrentSurgeryByTheatreId = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Fetch the surgery that is currently 'in_progress' for this theatre
+        const { rows } = await pool.query(`
+            SELECT 
+                id, 
+                surgery_type, 
+                patient_name, 
+                scheduled_time, 
+                duration_minutes,
+                status
+            FROM surgeries
+            WHERE theatre_id = $1 
+              AND status = 'in_progress'
+            LIMIT 1
+        `, [id]);
+
+        if (rows.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: 'No surgery currently in progress for this theatre',
+                data: null
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: rows[0]
+        });
+    } catch (error) {
+        console.error('Error fetching current surgery:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching current surgery',
+            error: error.message
+        });
+    }
+};
