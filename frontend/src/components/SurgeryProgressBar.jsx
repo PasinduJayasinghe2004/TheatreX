@@ -139,9 +139,6 @@ const SurgeryProgressBar = ({
 
     // Auto-refresh timer
     useEffect(() => {
-        // Initial calculation
-        setProgressState(computeProgress());
-
         // Set up interval for auto-refresh
         const timer = setInterval(() => {
             setProgressState(computeProgress());
@@ -166,7 +163,7 @@ const SurgeryProgressBar = ({
 
     if (variant === 'compact') {
         return (
-            <div className={`w-full ${className}`}>
+            <div className={`w-full ${className}`}> 
                 {/* Progress header row */}
                 <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
@@ -180,16 +177,16 @@ const SurgeryProgressBar = ({
                                 Overdue
                             </span>
                         )}
-                        <span className={`text-xs font-bold ${textColor}`}>
+                        <span className={`text-xs font-bold ${textColor}`}> 
                             {displayProgress}%
                         </span>
                     </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className={`relative w-full h-1.5 ${bgColor} rounded-full overflow-hidden`}>
+                <div className={`relative w-full h-1.5 ${bgColor} rounded-full overflow-hidden`}> 
                     <div
-                        className={`absolute left-0 top-0 h-full ${barColor} rounded-full transition-all duration-500 ease-out`}
+                        className={`absolute left-0 top-0 h-full ${barColor} rounded-full transition-all duration-500 ease-out`} 
                         style={{ width: `${displayProgress}%` }}
                     />
                 </div>
@@ -208,16 +205,16 @@ const SurgeryProgressBar = ({
     // ── Full Variant (for TheatreDetail / standalone) ────────────────────
 
     return (
-        <div className={`w-full ${className}`}>
+        <div className={`w-full ${className}`}> 
             {/* Header */}
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between mb-2"> 
+                <div className="flex items-center gap-2"> 
                     <Activity className="w-4 h-4 text-blue-600" />
                     <span className="text-sm font-semibold text-gray-700">
                         Auto-Calculated Progress
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2"> 
                     {progressState.isOverdue && (
                         <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
                             <AlertTriangle className="w-3 h-3" />
@@ -230,37 +227,37 @@ const SurgeryProgressBar = ({
                             Complete
                         </span>
                     )}
-                    <span className={`text-lg font-bold ${textColor}`}>
+                    <span className={`text-lg font-bold ${textColor}`}> 
                         {displayProgress}%
                     </span>
                 </div>
             </div>
 
             {/* Progress bar */}
-            <div className={`relative w-full h-3 ${bgColor} rounded-full overflow-hidden mb-3`}>
+            <div className={`relative w-full h-3 ${bgColor} rounded-full overflow-hidden mb-3`}> 
                 <div
-                    className={`absolute left-0 top-0 h-full ${barColor} rounded-full transition-all duration-500 ease-out`}
+                    className={`absolute left-0 top-0 h-full ${barColor} rounded-full transition-all duration-500 ease-out`} 
                     style={{ width: `${displayProgress}%` }}
                 />
             </div>
 
             {/* Time details grid */}
             {showTimer && (
-                <div className="grid grid-cols-3 gap-3">
-                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-3 gap-3"> 
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"> 
                         <Timer className="w-4 h-4 text-gray-400" />
-                        <div>
+                        <div> 
                             <p className="text-[10px] text-gray-400 uppercase tracking-wide">Elapsed</p>
-                            <p className="text-sm font-semibold text-gray-700">
+                            <p className="text-sm font-semibold text-gray-700"> 
                                 {formatMinutes(progressState.elapsed)}
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"> 
                         <Clock className="w-4 h-4 text-gray-400" />
-                        <div>
+                        <div> 
                             <p className="text-[10px] text-gray-400 uppercase tracking-wide">Remaining</p>
-                            <p className="text-sm font-semibold text-gray-700">
+                            <p className="text-sm font-semibold text-gray-700"> 
                                 {progressState.isOverdue
                                     ? `+${formatMinutes(progressState.elapsed - durationMinutes)} over`
                                     : formatMinutes(progressState.remaining)
@@ -268,11 +265,11 @@ const SurgeryProgressBar = ({
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"> 
                         <Clock className="w-4 h-4 text-gray-400" />
-                        <div>
+                        <div> 
                             <p className="text-[10px] text-gray-400 uppercase tracking-wide">Est. End</p>
-                            <p className="text-sm font-semibold text-gray-700">
+                            <p className="text-sm font-semibold text-gray-700"> 
                                 {progressState.estimatedEnd || 'N/A'}
                             </p>
                         </div>
