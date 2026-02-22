@@ -19,7 +19,7 @@
 // ============================================================================
 
 import { Link } from 'react-router-dom';
-import { MapPin, Monitor, Users, Wrench, Activity, ChevronRight } from 'lucide-react';
+import { MapPin, Monitor, Users, Wrench, ChevronRight } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 import CurrentSurgeryDisplay from './CurrentSurgeryDisplay';
 import DurationDisplay from './DurationDisplay';

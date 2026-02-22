@@ -12,7 +12,7 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AlertCircle, Building2, Filter, RefreshCw } from 'lucide-react';
+import { AlertCircle, Building2, Filter } from 'lucide-react';
 import TheatreCard from '../components/TheatreCard';
 import TheatreStatusBadge, {
     ALL_THEATRE_STATUSES,
