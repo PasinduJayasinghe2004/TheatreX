@@ -71,7 +71,8 @@ export const getTheatres = async (req, res) => {
                 cs.surgery_type  AS current_surgery_type,
                 cs.patient_name  AS current_patient_name,
                 cs.scheduled_time AS current_surgery_time,
-                cs.duration_minutes AS current_surgery_duration
+                cs.duration_minutes AS current_surgery_duration,
+                cs.progress_percent AS current_surgery_progress
             FROM theatres t
             LEFT JOIN surgeries cs
                 ON cs.theatre_id = t.id
@@ -129,7 +130,8 @@ export const getTheatreById = async (req, res) => {
                 cs.patient_name    AS current_patient_name,
                 cs.scheduled_time  AS current_surgery_time,
                 cs.duration_minutes AS current_surgery_duration,
-                cs.status          AS current_surgery_status
+                cs.status          AS current_surgery_status,
+                cs.progress_percent AS current_surgery_progress
             FROM theatres t
             LEFT JOIN surgeries cs
                 ON cs.theatre_id = t.id
@@ -383,7 +385,8 @@ export const getCurrentSurgeryByTheatreId = async (req, res) => {
                 patient_name, 
                 scheduled_time, 
                 duration_minutes,
-                status
+                status,
+                progress_percent
             FROM surgeries
             WHERE theatre_id = $1 
               AND status = 'in_progress'
@@ -407,6 +410,96 @@ export const getCurrentSurgeryByTheatreId = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching current surgery',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// UPDATE SURGERY PROGRESS
+// ============================================================================
+// @desc    Update the progress percentage of the current in-progress surgery
+//          for a specific theatre
+// @route   PUT /api/theatres/:id/progress
+// @access  Protected (coordinator, admin)
+// Created by: M1 (Pasindu) - Day 11
+// ============================================================================
+export const updateSurgeryProgress = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { progress } = req.body;
+
+        // Validate progress value
+        if (progress === undefined || progress === null) {
+            return res.status(400).json({
+                success: false,
+                message: 'Progress value is required'
+            });
+        }
+
+        const progressValue = Number(progress);
+
+        if (!Number.isInteger(progressValue) || progressValue < 0 || progressValue > 100) {
+            return res.status(400).json({
+                success: false,
+                message: 'Progress must be an integer between 0 and 100'
+            });
+        }
+
+        // Verify theatre exists
+        const { rows: theatreRows } = await pool.query(
+            'SELECT id, name, status FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (theatreRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        // Find the current in-progress surgery for this theatre
+        const { rows: surgeryRows } = await pool.query(`
+            SELECT id, surgery_type, patient_name, progress_percent
+            FROM surgeries
+            WHERE theatre_id = $1 AND status = 'in_progress'
+            ORDER BY updated_at DESC, id DESC
+            LIMIT 1
+        `, [id]);
+
+        if (surgeryRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No in-progress surgery found for this theatre'
+            });
+        }
+
+        const surgery = surgeryRows[0];
+        const previousProgress = surgery.progress_percent || 0;
+
+        // Update the surgery progress
+        const { rows: updatedRows } = await pool.query(`
+            UPDATE surgeries
+            SET progress_percent = $1, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $2
+            RETURNING id, surgery_type, patient_name, progress_percent, status, duration_minutes
+        `, [progressValue, surgery.id]);
+
+        res.status(200).json({
+            success: true,
+            message: `Surgery progress updated from ${previousProgress}% to ${progressValue}%`,
+            data: {
+                theatre_id: parseInt(id),
+                theatre_name: theatreRows[0].name,
+                surgery: updatedRows[0]
+            }
+        });
+    } catch (error) {
+        console.error('Error updating surgery progress:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating surgery progress',
             error: error.message
         });
     }

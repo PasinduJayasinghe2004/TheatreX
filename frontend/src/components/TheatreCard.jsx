@@ -2,11 +2,12 @@
 // Theatre Card Component
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M1 (Pasindu) - Day 11 (Added surgery progress display)
 //
 // Displays a single theatre in a card format with:
 // - Theatre name, location, type
 // - Status badge with colour coding
-// - Current surgery info (if in_use)
+// - Current surgery info with progress (if in_use)
 // - Status toggle buttons (for coordinators/admins)
 //
 // Props:
@@ -90,13 +91,15 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
                 </div>
 
                 {/* Current Surgery Info component - M5 Day 10 */}
+                {/* Updated by M1 - Day 11: Added progress tracking */}
                 {theatre.current_surgery_id && (
                     <CurrentSurgeryDisplay
                         surgery={{
                             id: theatre.current_surgery_id,
                             surgery_type: theatre.current_surgery_type,
                             patient_name: theatre.current_patient_name,
-                            duration_minutes: theatre.current_surgery_duration
+                            duration_minutes: theatre.current_surgery_duration,
+                            progress_percent: theatre.current_surgery_progress
                         }}
                         variant="compact"
                     />

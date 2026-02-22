@@ -3,6 +3,7 @@
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 8
 // Updated by: M1 (Pasindu) - Day 10 (Theatre detail, status toggle)
+// Updated by: M1 (Pasindu) - Day 11 (Surgery progress endpoint)
 //
 // Defines all theatre-related API routes
 //
@@ -11,6 +12,7 @@
 // - GET  /api/theatres/availability - Check theatre availability (Protected)
 // - GET  /api/theatres/:id          - Get single theatre detail (Protected)
 // - PUT  /api/theatres/:id/status   - Update theatre status (Coordinator/Admin)
+// - PUT  /api/theatres/:id/progress - Update surgery progress (Coordinator/Admin)
 // ============================================================================
 
 import express from 'express';
@@ -19,7 +21,8 @@ import {
     getTheatreById,
     updateTheatreStatus,
     checkTheatreAvailability,
-    getCurrentSurgeryByTheatreId
+    getCurrentSurgeryByTheatreId,
+    updateSurgeryProgress
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -77,5 +80,14 @@ router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTh
 // Created by: M5 (Inthusha) - Day 10
 // ============================================================================
 router.get('/:id/current-surgery', protect, getCurrentSurgeryByTheatreId);
+
+// ============================================================================
+// ROUTE: PUT /api/theatres/:id/progress
+// ============================================================================
+// Update the progress percentage of the current in-progress surgery
+// Protected + (coordinator or admin only)
+// Created by: M1 (Pasindu) - Day 11
+// ============================================================================
+router.put('/:id/progress', protect, authorize('coordinator', 'admin'), updateSurgeryProgress);
 
 export default router;

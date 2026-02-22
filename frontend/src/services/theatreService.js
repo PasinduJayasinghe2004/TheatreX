@@ -3,11 +3,13 @@
 // ============================================================================
 // Handles all theatre-related API calls
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M1 (Pasindu) - Day 11 (Surgery progress update)
 //
 // FEATURES:
 // - Get all theatres (with optional status / type filters)
 // - Get theatre by ID (includes current surgery info)
 // - Update theatre status
+// - Update surgery progress (Day 11)
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -96,6 +98,20 @@ const theatreService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching current surgery. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update surgery progress for a theatre
+    // Created by: M1 (Pasindu) - Day 11
+    // ========================================
+    updateProgress: async (id, progress) => {
+        try {
+            const response = await api.put(`/theatres/${id}/progress`, { progress });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating surgery progress. Please try again.';
             throw new Error(message);
         }
     }

@@ -77,6 +77,20 @@ const createSurgeriesTable = async () => {
     $$;
   `;
 
+  // Add progress_percent column if it doesn't exist (M1 - Day 11)
+  const addProgressColumn = `
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'surgeries' AND column_name = 'progress_percent'
+        ) THEN
+            ALTER TABLE surgeries ADD COLUMN progress_percent INT DEFAULT 0 CHECK (progress_percent >= 0 AND progress_percent <= 100);
+        END IF;
+    END
+    $$;
+  `;
+
   // Anaesthetist index - runs AFTER column migration
   const createAnaesthetistIndex = `
     CREATE INDEX IF NOT EXISTS idx_surgeries_anaesthetist_id ON surgeries (anaesthetist_id);
@@ -100,6 +114,7 @@ const createSurgeriesTable = async () => {
     await pool.query(createIndexes);
     await pool.query(addAnaesthetistColumn); // M3 - Day 9 migration
     await pool.query(createAnaesthetistIndex); // M3 - Day 9 index
+    await pool.query(addProgressColumn); // M1 - Day 11 migration
     await pool.query(createTrigger);
     console.log('✅ Surgeries table created/verified successfully');
   } catch (error) {
