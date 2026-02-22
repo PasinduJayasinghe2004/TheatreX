@@ -92,6 +92,7 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
 
                 {/* Current Surgery Info component - M5 Day 10 */}
                 {/* Updated by M1 - Day 11: Added progress tracking */}
+                {/* Updated by M2 - Day 11: Added scheduled_time for auto-progress */}
                 {theatre.current_surgery_id && (
                     <CurrentSurgeryDisplay
                         surgery={{
@@ -99,7 +100,8 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
                             surgery_type: theatre.current_surgery_type,
                             patient_name: theatre.current_patient_name,
                             duration_minutes: theatre.current_surgery_duration,
-                            progress_percent: theatre.current_surgery_progress
+                            progress_percent: theatre.current_surgery_progress,
+                            scheduled_time: theatre.current_surgery_time
                         }}
                         variant="compact"
                     />

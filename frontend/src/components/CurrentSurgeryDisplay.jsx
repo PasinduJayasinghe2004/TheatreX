@@ -3,13 +3,15 @@
 // ============================================================================
 // Created by: M5 (Inthusha) - Day 10
 // Updated by: M1 (Pasindu) - Day 11 (Added progress slider integration)
+// Updated by: M2 (Chandeepa) - Day 11 (Added auto-calculated progress bar)
 //
 // A reusable component to display details of a surgery currently in progress.
 // Used in TheatreCard and TheatreDetailCard.
 //
 // Props:
 //   surgery         - Object containing current surgery details:
-//                     { id, surgery_type, patient_name, duration_minutes, progress_percent }
+//                     { id, surgery_type, patient_name, duration_minutes,
+//                       progress_percent, scheduled_time }
 //   variant         - 'compact' (for cards) or 'full' (for detail views)
 //   onProgressChange - Callback(progress) fired when progress slider value is committed
 //   canEditProgress - Whether the user can edit progress (coordinator/admin)
@@ -19,6 +21,7 @@
 import { Link } from 'react-router-dom';
 import { Activity, Clock, ChevronRight } from 'lucide-react';
 import ProgressSlider from './ProgressSlider';
+import SurgeryProgressBar from './SurgeryProgressBar';
 
 const CurrentSurgeryDisplay = ({
     surgery,
@@ -67,25 +70,40 @@ const CurrentSurgeryDisplay = ({
                 </p>
             )}
 
-            {/* Progress Slider - M1 (Pasindu) Day 11 */}
+            {/* Progress Display - M2 (Chandeepa) Day 11: Auto-calculated progress bar */}
             <div className="mt-3">
                 {isCompact ? (
-                    // Compact view: show progress bar only
-                    <ProgressSlider
-                        value={progress}
+                    // Compact view: show auto-progress bar (read-only, auto-updating)
+                    <SurgeryProgressBar
+                        scheduledTime={surgery.scheduled_time}
+                        durationMinutes={surgery.duration_minutes}
+                        manualProgress={progress}
                         variant="compact"
-                        size="sm"
-                        disabled={true}
+                        showTimer={true}
                     />
                 ) : (
-                    // Full view: show interactive slider if allowed
-                    <ProgressSlider
-                        value={progress}
-                        variant="default"
-                        size="md"
-                        disabled={!canEditProgress || isUpdating}
-                        onCommit={onProgressChange}
-                    />
+                    // Full view: show auto-progress bar + interactive slider if allowed
+                    <>
+                        <SurgeryProgressBar
+                            scheduledTime={surgery.scheduled_time}
+                            durationMinutes={surgery.duration_minutes}
+                            manualProgress={progress}
+                            variant="full"
+                            showTimer={true}
+                            className="mb-4"
+                        />
+                        {canEditProgress && (
+                            <div className="border-t border-blue-100 pt-3">
+                                <ProgressSlider
+                                    value={progress}
+                                    variant="default"
+                                    size="md"
+                                    disabled={!canEditProgress || isUpdating}
+                                    onCommit={onProgressChange}
+                                />
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>
