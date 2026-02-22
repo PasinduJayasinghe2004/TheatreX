@@ -13,11 +13,13 @@
 // - Auto-calculating surgery progress from elapsed time
 //
 // EXPORTS:
-// - getTheatres:              GET  /api/theatres              - List active theatres
-// - getTheatreById:           GET  /api/theatres/:id          - Get theatre detail
-// - updateTheatreStatus:      PUT  /api/theatres/:id/status   - Toggle status
-// - checkTheatreAvailability: GET  /api/theatres/availability - Check availability
-// - getAutoProgress:          GET  /api/theatres/:id/auto-progress - Auto-calculated progress
+// - getTheatres:                   GET  /api/theatres                         - List active theatres
+// - getTheatreById:                GET  /api/theatres/:id                     - Get theatre detail
+// - updateTheatreStatus:           PUT  /api/theatres/:id/status              - Toggle status
+// - checkTheatreAvailability:      GET  /api/theatres/availability            - Check availability
+// - getAutoProgress:               GET  /api/theatres/:id/auto-progress       - Auto-calculated progress
+// - getCurrentSurgeryByTheatreId:  (see route definition below)               - Get current surgery for a theatre
+// - updateSurgeryProgress:         (see route definition below)               - Update surgery progress
 // ============================================================================
 
 import { pool } from '../config/database.js';
