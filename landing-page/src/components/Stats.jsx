@@ -1,4 +1,5 @@
 import { CheckCircle2, Clock, Eye, TrendingUp, Infinity as InfIcon } from 'lucide-react'
+import ScrollReveal from './ScrollReveal'
 
 export default function Stats() {
     return (
@@ -7,6 +8,7 @@ export default function Stats() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 0.8fr) 1.2fr', gap: '4rem', alignItems: 'center' }}>
 
                     {/* Text Content */}
+                    <ScrollReveal animation="fade-right">
                     <div>
                         <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1.5rem' }}>Why Choose TheatreX?</h2>
                         <p style={{ color: '#6B7280', fontSize: '1.1rem', marginBottom: '2.5rem', lineHeight: '1.6' }}>
@@ -28,6 +30,7 @@ export default function Stats() {
                             ))}
                         </ul>
                     </div>
+                    </ScrollReveal>
 
                     {/* Stats Grid */}
                     <div style={{
@@ -41,7 +44,8 @@ export default function Stats() {
                             { icon: <TrendingUp size={32} />, value: "50%", label: "Improved Efficiency" },
                             { icon: <InfIcon size={32} />, value: "100%", label: "Data Security" }
                         ].map((stat, i) => (
-                            <div key={i} style={{
+                            <ScrollReveal key={i} animation="zoom-in" delay={i * 150} duration={600}>
+                            <div style={{
                                 backgroundColor: '#3B82F6',
                                 color: 'white',
                                 padding: '2.5rem 1.5rem',
@@ -57,6 +61,7 @@ export default function Stats() {
                                 <div style={{ fontSize: '2.5rem', fontWeight: '700', lineHeight: 1, marginBottom: '0.5rem' }}>{stat.value}</div>
                                 <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>{stat.label}</div>
                             </div>
+                            </ScrollReveal>
                         ))}
                     </div>
 

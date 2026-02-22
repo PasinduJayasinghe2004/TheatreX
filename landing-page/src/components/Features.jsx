@@ -1,4 +1,5 @@
 import { Clock, Calendar, Users, BarChart2, Activity, ClipboardList } from 'lucide-react'
+import ScrollReveal from './ScrollReveal'
 
 const features = [
     {
@@ -35,12 +36,14 @@ const features = [
 
 export default function Features() {
     return (
-        <section style={{ padding: '6rem 0', backgroundColor: '#F9FAFB' }}>
+        <section id="features" style={{ padding: '6rem 0' }}>
             <div className="container">
-                <h2 className="section-title">Powerful Features for Modern Healthcare</h2>
-                <p className="section-subtitle">
-                    Everything you need to manage theatre operations efficiently and effectively.
-                </p>
+                <ScrollReveal animation="fade-up">
+                    <h2 className="section-title">Powerful Features for Modern Healthcare</h2>
+                    <p className="section-subtitle">
+                        Everything you need to manage theatre operations efficiently and effectively.
+                    </p>
+                </ScrollReveal>
 
                 <div style={{
                     display: 'grid',
@@ -48,36 +51,38 @@ export default function Features() {
                     gap: '2rem'
                 }}>
                     {features.map((feature, idx) => (
-                        <div key={idx} style={{
-                            backgroundColor: '#fff',
-                            padding: '2rem',
-                            borderRadius: '1rem',
-                            border: '1px solid #F3F4F6',
-                            transition: 'transform 0.2s',
-                            cursor: 'default'
-                        }}
-                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                        >
+                        <ScrollReveal key={idx} animation="fade-up" delay={idx * 120} duration={600}>
                             <div style={{
-                                width: '3rem',
-                                height: '3rem',
-                                backgroundColor: '#EFF6FF',
-                                borderRadius: '0.75rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginBottom: '1.5rem'
-                            }}>
-                                {feature.icon}
+                                backgroundColor: '#fff',
+                                padding: '2rem',
+                                borderRadius: '1rem',
+                                border: '1px solid #F3F4F6',
+                                transition: 'transform 0.2s',
+                                cursor: 'default'
+                            }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                            >
+                                <div style={{
+                                    width: '3rem',
+                                    height: '3rem',
+                                    backgroundColor: '#EFF6FF',
+                                    borderRadius: '0.75rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: '1.5rem'
+                                }}>
+                                    {feature.icon}
+                                </div>
+                                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.75rem', color: '#111827' }}>
+                                    {feature.title}
+                                </h3>
+                                <p style={{ color: '#6B7280', lineHeight: '1.6' }}>
+                                    {feature.desc}
+                                </p>
                             </div>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '0.75rem', color: '#111827' }}>
-                                {feature.title}
-                            </h3>
-                            <p style={{ color: '#6B7280', lineHeight: '1.6' }}>
-                                {feature.desc}
-                            </p>
-                        </div>
+                        </ScrollReveal>
                     ))}
                 </div>
             </div>

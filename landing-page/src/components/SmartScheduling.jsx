@@ -1,27 +1,31 @@
 import { Calendar as CalendarIcon, Clock, Users, ShieldCheck, ArrowRight } from 'lucide-react'
+import ScrollReveal from './ScrollReveal'
 
 export default function SmartScheduling() {
     return (
-        <section style={{ padding: '0 0 5rem 0' }}>
+        <section id="scheduling" style={{ padding: '0 0 5rem 0' }}>
             <div className="container">
-                <div style={{
-                    backgroundColor: '#3B82F6',
-                    borderRadius: '1rem',
-                    padding: '1.5rem',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    marginBottom: '2rem',
-                    boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)'
-                }}>
-                    <CalendarIcon fill="currentColor" size={24} />
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Smart Calendar Scheduling</h2>
-                </div>
+                <ScrollReveal animation="fade-down" duration={600}>
+                    <div style={{
+                        backgroundColor: '#3B82F6',
+                        borderRadius: '1rem',
+                        padding: '1.5rem',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        marginBottom: '2rem',
+                        boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)'
+                    }}>
+                        <CalendarIcon fill="currentColor" size={24} />
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Smart Calendar Scheduling</h2>
+                    </div>
+                </ScrollReveal>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                     {/* Detailed Features */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        <ScrollReveal animation="fade-right" delay={100}>
                         <div style={{
                             padding: '1.5rem',
                             backgroundColor: '#fff',
@@ -41,7 +45,9 @@ export default function SmartScheduling() {
                                 </div>
                             </div>
                         </div>
+                        </ScrollReveal>
 
+                        <ScrollReveal animation="fade-right" delay={200}>
                         <div style={{
                             padding: '1.5rem',
                             backgroundColor: '#fff',
@@ -61,7 +67,9 @@ export default function SmartScheduling() {
                                 </div>
                             </div>
                         </div>
+                        </ScrollReveal>
 
+                        <ScrollReveal animation="fade-right" delay={300}>
                         <div style={{
                             padding: '1.5rem',
                             backgroundColor: '#fff',
@@ -81,9 +89,11 @@ export default function SmartScheduling() {
                                 </div>
                             </div>
                         </div>
+                        </ScrollReveal>
                     </div>
 
                     {/* Feature List */}
+                    <ScrollReveal animation="fade-left" delay={150}>
                     <div style={{
                         backgroundColor: '#F9FAFB',
                         padding: '2rem',
@@ -105,6 +115,7 @@ export default function SmartScheduling() {
                             ))}
                         </ul>
                     </div>
+                    </ScrollReveal>
                 </div>
             </div>
             <style>{`

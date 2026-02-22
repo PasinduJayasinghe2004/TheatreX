@@ -8,12 +8,14 @@ import Stats from './components/Stats'
 import Team from './components/Team'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import OxygenBubbles from './components/OxygenBubbles'
 
 function App() {
   return (
     <div className="app">
+      <OxygenBubbles />
       <Navbar />
-      <main>
+      <main style={{ position: 'relative', zIndex: 1 }}>
         <Hero />
         <Features />
         <LiveStatus />

@@ -36,14 +36,18 @@ const team = [
     }
 ]
 
+import ScrollReveal from './ScrollReveal'
+
 const Team = () => {
     return (
-        <section id="team" style={{ padding: '6rem 0', backgroundColor: 'var(--bg-white)' }}>
+        <section id="team" style={{ padding: '6rem 0' }}>
             <div className="container">
-                <h2 className="section-title">Meet Our Team</h2>
-                <p className="section-subtitle">
-                    Our dedicated team of healthcare professionals, engineers, and innovators working together to revolutionize theatre management for hospitals worldwide.
-                </p>
+                <ScrollReveal animation="fade-up">
+                    <h2 className="section-title">Meet Our Team</h2>
+                    <p className="section-subtitle">
+                        Our dedicated team of healthcare professionals, engineers, and innovators working together to revolutionize theatre management for hospitals worldwide.
+                    </p>
+                </ScrollReveal>
 
                 <div style={{
                     display: 'grid',
@@ -52,7 +56,8 @@ const Team = () => {
                     marginTop: '4rem'
                 }}>
                     {team.map((member, index) => (
-                        <div key={index} style={{
+                        <ScrollReveal key={index} animation="fade-up" delay={index * 120} duration={600}>
+                        <div style={{
                             backgroundColor: 'var(--bg-white)',
                             borderRadius: 'var(--radius-lg)',
                             padding: '2rem',
@@ -132,6 +137,7 @@ const Team = () => {
                                 </a>
                             </div>
                         </div>
+                        </ScrollReveal>
                     ))}
                 </div>
             </div>
