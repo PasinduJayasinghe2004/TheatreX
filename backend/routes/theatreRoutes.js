@@ -4,6 +4,7 @@
 // Created by: M2 (Chandeepa) - Day 8
 // Updated by: M1 (Pasindu) - Day 10 (Theatre detail, status toggle)
 // Updated by: M1 (Pasindu) - Day 11 (Surgery progress endpoint)
+// Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation endpoint)
 //
 // Defines all theatre-related API routes
 //
@@ -12,6 +13,8 @@
 // - GET  /api/theatres/availability - Check theatre availability (Protected)
 // - GET  /api/theatres/:id          - Get single theatre detail (Protected)
 // - PUT  /api/theatres/:id/status   - Update theatre status (Coordinator/Admin)
+// - GET  /api/theatres/:id/current-surgery - Get current surgery (Protected)
+// - GET  /api/theatres/:id/auto-progress   - Auto-calculated progress (Protected)
 // - PUT  /api/theatres/:id/progress - Update surgery progress (Coordinator/Admin)
 // ============================================================================
 
@@ -22,7 +25,8 @@ import {
     updateTheatreStatus,
     checkTheatreAvailability,
     getCurrentSurgeryByTheatreId,
-    updateSurgeryProgress
+    updateSurgeryProgress,
+    getAutoProgress
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -89,5 +93,15 @@ router.get('/:id/current-surgery', protect, getCurrentSurgeryByTheatreId);
 // Created by: M1 (Pasindu) - Day 11
 // ============================================================================
 router.put('/:id/progress', protect, authorize('coordinator', 'admin'), updateSurgeryProgress);
+
+// ============================================================================
+// ROUTE: GET /api/theatres/:id/auto-progress
+// ============================================================================
+// Get auto-calculated progress for the current in-progress surgery
+// based on elapsed time vs. estimated duration
+// Protected - any authenticated user can view
+// Created by: M2 (Chandeepa) - Day 11
+// ============================================================================
+router.get('/:id/auto-progress', protect, getAutoProgress);
 
 export default router;

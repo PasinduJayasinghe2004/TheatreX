@@ -4,12 +4,14 @@
 // Handles all theatre-related API calls
 // Created by: M1 (Pasindu) - Day 10
 // Updated by: M1 (Pasindu) - Day 11 (Surgery progress update)
+// Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
 //
 // FEATURES:
 // - Get all theatres (with optional status / type filters)
 // - Get theatre by ID (includes current surgery info)
 // - Update theatre status
 // - Update surgery progress (Day 11)
+// - Get auto-calculated progress (M2 Day 11)
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -112,6 +114,20 @@ const theatreService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error updating surgery progress. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get auto-calculated progress for a theatre's current surgery
+    // Created by: M2 (Chandeepa) - Day 11
+    // ========================================
+    getAutoProgress: async (id) => {
+        try {
+            const response = await api.get(`/theatres/${id}/auto-progress`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching auto-progress. Please try again.';
             throw new Error(message);
         }
     }

@@ -3,18 +3,21 @@
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 8
 // Updated by: M1 (Pasindu) - Day 10 (Theatre list page, detail, status toggle)
+// Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
 //
 // Handles theatre-related HTTP requests including:
 // - Listing all active theatres (with optional status/type filters)
 // - Getting a single theatre by ID (with current surgery info)
 // - Updating theatre status
 // - Checking theatre availability for a given date/time/duration
+// - Auto-calculating surgery progress from elapsed time
 //
 // EXPORTS:
 // - getTheatres:              GET  /api/theatres              - List active theatres
 // - getTheatreById:           GET  /api/theatres/:id          - Get theatre detail
 // - updateTheatreStatus:      PUT  /api/theatres/:id/status   - Toggle status
 // - checkTheatreAvailability: GET  /api/theatres/availability - Check availability
+// - getAutoProgress:          GET  /api/theatres/:id/auto-progress - Auto-calculated progress
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -23,6 +26,7 @@ import {
     THEATRE_STATUS,
     getAllowedTransitions
 } from '../utils/theatreConstants.js';
+import { calculateAutoProgress, enrichSurgeryWithProgress } from '../utils/progressCalculator.js';
 
 // ============================================================================
 // GET ALL THEATRES
@@ -81,10 +85,29 @@ export const getTheatres = async (req, res) => {
             ORDER BY t.name ASC
         `, params);
 
+        // Enrich theatres that have an in-progress surgery with auto-progress - M2 Day 11
+        const enrichedRows = rows.map(row => {
+            if (row.current_surgery_id && row.current_surgery_time && row.current_surgery_duration) {
+                const progressData = calculateAutoProgress(
+                    row.current_surgery_time,
+                    row.current_surgery_duration
+                );
+                return {
+                    ...row,
+                    auto_progress: progressData.auto_progress,
+                    elapsed_minutes: progressData.elapsed_minutes,
+                    remaining_minutes: progressData.remaining_minutes,
+                    is_overdue: progressData.is_overdue,
+                    estimated_end_time: progressData.estimated_end_time
+                };
+            }
+            return row;
+        });
+
         res.status(200).json({
             success: true,
-            count: rows.length,
-            data: rows
+            count: enrichedRows.length,
+            data: enrichedRows
         });
     } catch (error) {
         console.error('Error fetching theatres:', error);
@@ -185,10 +208,25 @@ export const getTheatreById = async (req, res) => {
 
         const stats = statsRows[0] || { completed_week: 0, cancelled_week: 0, upcoming_total: 0 };
 
+        // Enrich with auto-progress if there's a current surgery - M2 Day 11
+        let autoProgressData = null;
+        if (theatre.current_surgery_id && theatre.current_surgery_time && theatre.current_surgery_duration) {
+            autoProgressData = calculateAutoProgress(
+                theatre.current_surgery_time,
+                theatre.current_surgery_duration
+            );
+        }
+
         res.status(200).json({
             success: true,
             data: {
                 ...theatre,
+                // Auto-progress fields - M2 Day 11
+                auto_progress: autoProgressData?.auto_progress ?? null,
+                elapsed_minutes: autoProgressData?.elapsed_minutes ?? null,
+                remaining_minutes: autoProgressData?.remaining_minutes ?? null,
+                is_overdue: autoProgressData?.is_overdue ?? false,
+                estimated_end_time: autoProgressData?.estimated_end_time ?? null,
                 upcoming_surgeries: upcoming,
                 surgery_history: history,
                 stats: {
@@ -401,9 +439,13 @@ export const getCurrentSurgeryByTheatreId = async (req, res) => {
             });
         }
 
+        // Enrich with auto-progress - M2 Day 11
+        const surgery = rows[0];
+        const enriched = enrichSurgeryWithProgress(surgery);
+
         res.status(200).json({
             success: true,
-            data: rows[0]
+            data: enriched
         });
     } catch (error) {
         console.error('Error fetching current surgery:', error);
@@ -500,6 +542,84 @@ export const updateSurgeryProgress = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error updating surgery progress',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET AUTO-CALCULATED PROGRESS
+// ============================================================================
+// @desc    Calculate real-time progress for the current in-progress surgery
+//          in a specific theatre based on elapsed time vs. estimated duration.
+//          Returns auto_progress (%), elapsed/remaining minutes, overdue flag,
+//          and estimated end time.
+// @route   GET /api/theatres/:id/auto-progress
+// @access  Protected
+// Created by: M2 (Chandeepa) - Day 11
+// ============================================================================
+export const getAutoProgress = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // 1. Verify theatre exists
+        const { rows: theatreRows } = await pool.query(
+            'SELECT id, name, status FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (theatreRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        // 2. Find the current in-progress surgery for this theatre
+        const { rows: surgeryRows } = await pool.query(`
+            SELECT id, surgery_type, patient_name, scheduled_time,
+                   duration_minutes, progress_percent, status
+            FROM surgeries
+            WHERE theatre_id = $1 AND status = 'in_progress'
+            ORDER BY updated_at DESC, id DESC
+            LIMIT 1
+        `, [id]);
+
+        if (surgeryRows.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: 'No in-progress surgery found for this theatre',
+                data: null
+            });
+        }
+
+        const surgery = surgeryRows[0];
+
+        // 3. Calculate auto-progress
+        const progressData = calculateAutoProgress(
+            surgery.scheduled_time,
+            surgery.duration_minutes
+        );
+
+        res.status(200).json({
+            success: true,
+            data: {
+                theatre_id: parseInt(id),
+                theatre_name: theatreRows[0].name,
+                surgery_id: surgery.id,
+                surgery_type: surgery.surgery_type,
+                patient_name: surgery.patient_name,
+                scheduled_time: surgery.scheduled_time,
+                duration_minutes: surgery.duration_minutes,
+                manual_progress: surgery.progress_percent || 0,
+                ...progressData
+            }
+        });
+    } catch (error) {
+        console.error('Error calculating auto-progress:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error calculating auto-progress',
             error: error.message
         });
     }
