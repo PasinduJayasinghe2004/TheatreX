@@ -162,6 +162,14 @@ const ProgressSlider = ({
                     onMouseUp={handleMouseUp}
                     onTouchStart={handleMouseDown}
                     onTouchEnd={handleMouseUp}
+                    onPointerDown={(e) => {
+                        e.currentTarget.setPointerCapture(e.pointerId);
+                        handleMouseDown(e);
+                    }}
+                    onPointerUp={(e) => {
+                        e.currentTarget.releasePointerCapture(e.pointerId);
+                        handleMouseUp(e);
+                    }}
                     disabled={disabled}
                     className={`
                         w-full h-2 appearance-none cursor-pointer rounded-full

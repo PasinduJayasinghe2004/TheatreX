@@ -437,9 +437,9 @@ export const updateSurgeryProgress = async (req, res) => {
             });
         }
 
-        const progressValue = parseInt(progress, 10);
+        const progressValue = Number(progress);
 
-        if (isNaN(progressValue) || progressValue < 0 || progressValue > 100) {
+        if (!Number.isInteger(progressValue) || progressValue < 0 || progressValue > 100) {
             return res.status(400).json({
                 success: false,
                 message: 'Progress must be an integer between 0 and 100'
@@ -464,6 +464,7 @@ export const updateSurgeryProgress = async (req, res) => {
             SELECT id, surgery_type, patient_name, progress_percent
             FROM surgeries
             WHERE theatre_id = $1 AND status = 'in_progress'
+            ORDER BY updated_at DESC, id DESC
             LIMIT 1
         `, [id]);
 
