@@ -5,12 +5,14 @@
 // Updated by: M1 (Pasindu) - Day 10 (Theatre detail, status toggle)
 // Updated by: M1 (Pasindu) - Day 11 (Surgery progress endpoint)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation endpoint)
+// Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
 //
 // Defines all theatre-related API routes
 //
 // ROUTES:
 // - GET  /api/theatres              - List all active theatres (Protected)
 // - GET  /api/theatres/availability - Check theatre availability (Protected)
+// - GET  /api/theatres/live-status  - Live status polling endpoint (Protected)
 // - GET  /api/theatres/:id          - Get single theatre detail (Protected)
 // - PUT  /api/theatres/:id/status   - Update theatre status (Coordinator/Admin)
 // - GET  /api/theatres/:id/current-surgery - Get current surgery (Protected)
@@ -26,7 +28,8 @@ import {
     checkTheatreAvailability,
     getCurrentSurgeryByTheatreId,
     updateSurgeryProgress,
-    getAutoProgress
+    getAutoProgress,
+    getLiveStatus
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -45,6 +48,18 @@ const router = express.Router();
 // Created by: M2 (Chandeepa) - Day 8
 // ============================================================================
 router.get('/availability', protect, checkTheatreAvailability);
+
+// ============================================================================
+// ROUTE: GET /api/theatres/live-status
+// ============================================================================
+// Lightweight polling endpoint for real-time theatre status dashboard.
+// Returns all active theatres with current surgery + auto-progress.
+// Optimised for frequent (30s) polling — minimal payload.
+// Must be before /:id to avoid path conflicts.
+// Protected - any authenticated user can view
+// Created by: M3 (Janani) - Day 11
+// ============================================================================
+router.get('/live-status', protect, getLiveStatus);
 
 // ============================================================================
 // ROUTE: GET /api/theatres

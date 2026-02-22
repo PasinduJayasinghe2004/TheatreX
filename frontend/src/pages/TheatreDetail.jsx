@@ -4,6 +4,7 @@
 // Created by: M2 (Chandeepa) - Day 10
 // Updated by: M4 (Oneli)     - Day 10 (Status toggle integration)
 // Updated by: M1 (Pasindu)   - Day 11 (Progress slider integration)
+// Updated by: M3 (Janani)    - Day 11 (Auto-refresh polling every 30s)
 //
 // Displays full details of a single theatre fetched by ID.
 // Uses theatreService.getTheatreById() for data retrieval.
@@ -13,7 +14,7 @@
 // via the TheatreDetailCard component.
 // ============================================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 import TheatreDetailCard from '../components/TheatreDetailCard';
@@ -53,6 +54,28 @@ const TheatreDetail = () => {
         };
 
         fetchTheatre();
+    }, [id]);
+
+    // ── Auto-refresh every 30 s (M3 - Janani - Day 11) ───────────────────
+    const autoRefreshRef = useRef(null);
+
+    useEffect(() => {
+        const silentRefresh = async () => {
+            try {
+                const response = await theatreService.getTheatreById(id);
+                if (response.success) {
+                    setTheatre(response.data);
+                }
+            } catch {
+                // Swallow errors on background refresh
+            }
+        };
+
+        autoRefreshRef.current = setInterval(silentRefresh, 30_000);
+
+        return () => {
+            if (autoRefreshRef.current) clearInterval(autoRefreshRef.current);
+        };
     }, [id]);
 
     // ── Status Change Handler (M4 - Oneli - Day 10) ─────────────────────────
