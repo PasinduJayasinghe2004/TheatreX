@@ -40,10 +40,19 @@ export default function Navbar() {
                 </div>
 
                 {/* CTA */}
-                <div className="quick-nav__cta desktop-menu">
+                <div className="quick-nav__cta desktop-menu" style={{ display: 'flex', gap: '0.5rem' }}>
                     <button className="btn btn-primary" style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem' }}>
                         Request Demo
                     </button>
+                    <a
+                        href="/login" // Change to your main site's login URL if needed
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline-primary"
+                        style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem', border: '1px solid #00b4ff', color: '#00b4ff', background: 'transparent' }}
+                    >
+                        Login
+                    </a>
                 </div>
 
                 {/* Mobile toggle */}
@@ -64,6 +73,15 @@ export default function Navbar() {
                     <button className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem 1rem', fontSize: '0.9rem' }}>
                         Request Demo
                     </button>
+                    <a
+                        href="/login" // Change to your main site's login URL if needed
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline-primary"
+                        style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem 1rem', fontSize: '0.9rem', border: '1px solid #00b4ff', color: '#00b4ff', background: 'transparent', textAlign: 'center', display: 'block' }}
+                    >
+                        Login
+                    </a>
                 </div>
             )}
 
