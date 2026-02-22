@@ -18,6 +18,7 @@ import Dashboard from '../pages/Dashboard'; // M4 - Day 7
 import EmergencyBooking from '../pages/EmergencyBooking'; // M1 - Day 8
 import TheatreList from '../pages/TheatreList'; // M1 - Day 10
 import TheatreDetail from '../pages/TheatreDetail'; // M2 - Day 10
+import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -115,6 +116,13 @@ const AppRoutes = () => {
             <Route path="/theatres/:id" element={
                 <ProtectedRoute>
                     <TheatreDetail />
+                </ProtectedRoute>
+            } />
+
+            {/* Live Status - M3 (Janani) Day 11 */}
+            <Route path="/live-status" element={
+                <ProtectedRoute>
+                    <LiveStatusPage />
                 </ProtectedRoute>
             } />
 

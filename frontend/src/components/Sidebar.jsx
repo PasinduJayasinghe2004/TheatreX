@@ -7,6 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
  * Navigation sidebar for the main application layout
  * Created by: M5 - Day 2
  * Updated by: M1 (Pasindu) - Day 8 (Added Emergency Booking link)
+ * Updated by: M3 (Janani)  - Day 11 (Added Live Status link)
  * 
  * @param {Object} props - Component props
  * @param {boolean} props.isCollapsed - Whether the sidebar is collapsed (default: false)
@@ -42,6 +43,16 @@ const navigationItems = [
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+        ),
+    },
+    {
+        name: 'Live Status',
+        path: '/live-status',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
         ),
     },

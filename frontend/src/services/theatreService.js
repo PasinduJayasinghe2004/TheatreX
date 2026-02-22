@@ -5,6 +5,7 @@
 // Created by: M1 (Pasindu) - Day 10
 // Updated by: M1 (Pasindu) - Day 11 (Surgery progress update)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
+// Updated by: M3 (Janani)   - Day 11 (Live status polling)
 //
 // FEATURES:
 // - Get all theatres (with optional status / type filters)
@@ -12,6 +13,7 @@
 // - Update theatre status
 // - Update surgery progress (Day 11)
 // - Get auto-calculated progress (M2 Day 11)
+// - Live status polling (M3 Day 11)
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -128,6 +130,21 @@ const theatreService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching auto-progress. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get live status for all theatres (polling endpoint)
+    // Lightweight payload optimised for 30s polling
+    // Created by: M3 (Janani) - Day 11
+    // ========================================
+    getLiveStatus: async () => {
+        try {
+            const response = await api.get('/theatres/live-status');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching live status. Please try again.';
             throw new Error(message);
         }
     }

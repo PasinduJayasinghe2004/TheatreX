@@ -2,15 +2,17 @@
 // Theatre List Page
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 10
+// Updated by: M3 (Janani)  - Day 11 (Auto-refresh polling every 30s)
 //
 // Displays a list of all theatres in a responsive grid layout.
 // Supports filtering by status and theatre type.
 // Allows coordinators/admins to toggle theatre status.
 // Shows current surgery information for theatres that are in use.
+// Auto-refreshes every 30 seconds for live data (M3 - Day 11).
 // ============================================================================
 
-import { useState, useEffect, useCallback } from 'react';
-import { AlertCircle, Building2, Filter } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { AlertCircle, Building2, Filter, RefreshCw } from 'lucide-react';
 import TheatreCard from '../components/TheatreCard';
 import TheatreStatusBadge, {
     ALL_THEATRE_STATUSES,
@@ -56,6 +58,29 @@ const TheatreList = () => {
     useEffect(() => {
         fetchTheatres();
     }, [fetchTheatres]);
+
+    // ── Auto-refresh every 30 s (M3 - Janani - Day 11) ──────────────────
+    const autoRefreshRef = useRef(null);
+
+    useEffect(() => {
+        // Silent re-fetch that doesn't trigger the loading spinner
+        const silentRefresh = async () => {
+            try {
+                const response = await theatreService.getAllTheatres(filters);
+                if (response.success) {
+                    setTheatres(response.data);
+                }
+            } catch {
+                // Swallow errors on background refresh – user already has data
+            }
+        };
+
+        autoRefreshRef.current = setInterval(silentRefresh, 30_000);
+
+        return () => {
+            if (autoRefreshRef.current) clearInterval(autoRefreshRef.current);
+        };
+    }, [filters]);
 
     // Handle status change
     const handleStatusChange = async (theatreId, newStatus) => {

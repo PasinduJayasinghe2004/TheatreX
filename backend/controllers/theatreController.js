@@ -4,6 +4,7 @@
 // Created by: M2 (Chandeepa) - Day 8
 // Updated by: M1 (Pasindu) - Day 10 (Theatre list page, detail, status toggle)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
+// Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
 //
 // Handles theatre-related HTTP requests including:
 // - Listing all active theatres (with optional status/type filters)
@@ -11,6 +12,7 @@
 // - Updating theatre status
 // - Checking theatre availability for a given date/time/duration
 // - Auto-calculating surgery progress from elapsed time
+// - Live status polling for real-time dashboard (lightweight)
 //
 // EXPORTS:
 // - getTheatres:                   GET  /api/theatres                         - List active theatres
@@ -18,6 +20,7 @@
 // - updateTheatreStatus:           PUT  /api/theatres/:id/status              - Toggle status
 // - checkTheatreAvailability:      GET  /api/theatres/availability            - Check availability
 // - getAutoProgress:               GET  /api/theatres/:id/auto-progress       - Auto-calculated progress
+// - getLiveStatus:                 GET  /api/theatres/live-status             - Live status polling
 // - getCurrentSurgeryByTheatreId:  (see route definition below)               - Get current surgery for a theatre
 // - updateSurgeryProgress:         (see route definition below)               - Update surgery progress
 // ============================================================================
@@ -622,6 +625,104 @@ export const getAutoProgress = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error calculating auto-progress',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET LIVE STATUS (Polling Endpoint)
+// ============================================================================
+// @desc    Lightweight endpoint optimised for frequent polling (every 30s).
+//          Returns every active theatre with its current status, current
+//          in-progress surgery (if any), auto-calculated progress, and
+//          summary stats — all in a single, minimal payload.
+// @route   GET /api/theatres/live-status
+// @access  Protected
+// Created by: M3 (Janani) - Day 11
+// ============================================================================
+export const getLiveStatus = async (req, res) => {
+    try {
+        // Single query: theatres + current in-progress surgery (if any)
+        const { rows } = await pool.query(`
+            SELECT
+                t.id,
+                t.name,
+                t.location,
+                t.status,
+                t.theatre_type,
+                cs.id              AS current_surgery_id,
+                cs.surgery_type    AS current_surgery_type,
+                cs.patient_name    AS current_patient_name,
+                cs.scheduled_time  AS current_surgery_time,
+                cs.duration_minutes AS current_surgery_duration,
+                cs.progress_percent AS current_surgery_progress,
+                cs.priority        AS current_surgery_priority
+            FROM theatres t
+            LEFT JOIN surgeries cs
+                ON cs.theatre_id = t.id
+               AND cs.status = 'in_progress'
+            WHERE t.is_active = TRUE
+            ORDER BY t.name ASC
+        `);
+
+        // Enrich with auto-progress for theatres that have a running surgery
+        const theatres = rows.map(row => {
+            const base = {
+                id: row.id,
+                name: row.name,
+                location: row.location,
+                status: row.status,
+                theatre_type: row.theatre_type,
+                current_surgery: null
+            };
+
+            if (row.current_surgery_id && row.current_surgery_time && row.current_surgery_duration) {
+                const progressData = calculateAutoProgress(
+                    row.current_surgery_time,
+                    row.current_surgery_duration
+                );
+
+                base.current_surgery = {
+                    id: row.current_surgery_id,
+                    surgery_type: row.current_surgery_type,
+                    patient_name: row.current_patient_name,
+                    scheduled_time: row.current_surgery_time,
+                    duration_minutes: row.current_surgery_duration,
+                    manual_progress: row.current_surgery_progress || 0,
+                    priority: row.current_surgery_priority,
+                    auto_progress: progressData.auto_progress,
+                    elapsed_minutes: progressData.elapsed_minutes,
+                    remaining_minutes: progressData.remaining_minutes,
+                    is_overdue: progressData.is_overdue,
+                    estimated_end_time: progressData.estimated_end_time
+                };
+            }
+
+            return base;
+        });
+
+        // Summary counts
+        const summary = {
+            total: theatres.length,
+            available: theatres.filter(t => t.status === 'available').length,
+            in_use: theatres.filter(t => t.status === 'in_use').length,
+            maintenance: theatres.filter(t => t.status === 'maintenance').length,
+            cleaning: theatres.filter(t => t.status === 'cleaning').length,
+            overdue: theatres.filter(t => t.current_surgery?.is_overdue).length
+        };
+
+        res.status(200).json({
+            success: true,
+            polled_at: new Date().toISOString(),
+            summary,
+            data: theatres
+        });
+    } catch (error) {
+        console.error('Error fetching live status:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching live status',
             error: error.message
         });
     }
