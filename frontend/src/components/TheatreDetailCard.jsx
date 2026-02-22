@@ -3,21 +3,24 @@
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 10
 // Updated by: M4 (Oneli)     - Day 10 (Status toggle buttons)
+// Updated by: M1 (Pasindu)   - Day 11 (Progress slider integration)
 //
 // Rich detail card for a single theatre that displays:
 // - Theatre metadata (name, location, type, capacity, equipment)
 // - Status badge with colour coding
 // - Status toggle buttons (coordinator / admin only)
-// - Current in-progress surgery info
+// - Current in-progress surgery info with progress slider
 // - Upcoming scheduled surgeries (next 7 days)
 // - Recent surgery history (last 7 days)
 // - Quick stats (completed, cancelled this week, upcoming total)
 //
 // Props:
-//   theatre        - Full theatre detail object from GET /api/theatres/:id
-//   onStatusChange - Callback(theatreId, newStatus) for toggling status
-//   userRole       - Current user's role (for showing status toggle)
-//   isUpdating     - Whether this theatre's status is currently being updated
+//   theatre          - Full theatre detail object from GET /api/theatres/:id
+//   onStatusChange   - Callback(theatreId, newStatus) for toggling status
+//   onProgressChange - Callback(progress) for updating surgery progress (Day 11)
+//   userRole         - Current user's role (for showing status toggle)
+//   isUpdating       - Whether this theatre's status is currently being updated
+//   isProgressUpdating - Whether progress is currently being updated (Day 11)
 // ============================================================================
 
 import { Link } from 'react-router-dom';
@@ -99,7 +102,7 @@ const STATUS_ACTION_STYLES = {
 
 // ── Component ───────────────────────────────────────────────────────────────
 
-const TheatreDetailCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) => {
+const TheatreDetailCard = ({ theatre, onStatusChange, onProgressChange, userRole, isUpdating = false, isProgressUpdating = false }) => {
     if (!theatre) return null;
 
     const bgGradient = STATUS_BG[theatre.status] || 'from-gray-500 to-gray-600';
@@ -208,15 +211,20 @@ const TheatreDetailCard = ({ theatre, onStatusChange, userRole, isUpdating = fal
                 </div>
 
                 {/* Current Surgery Info component - M5 Day 10 */}
+                {/* Updated by M1 - Day 11: Added interactive progress slider */}
                 {theatre.current_surgery_id && (
                     <CurrentSurgeryDisplay
                         surgery={{
                             id: theatre.current_surgery_id,
                             surgery_type: theatre.current_surgery_type,
                             patient_name: theatre.current_patient_name || 'N/A',
-                            duration_minutes: theatre.current_surgery_duration
+                            duration_minutes: theatre.current_surgery_duration,
+                            progress_percent: theatre.current_surgery_progress
                         }}
                         variant="full"
+                        canEditProgress={canChangeStatus}
+                        onProgressChange={onProgressChange}
+                        isUpdating={isProgressUpdating}
                     />
                 )}
 

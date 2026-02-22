@@ -3,10 +3,12 @@
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 10
 // Updated by: M4 (Oneli)     - Day 10 (Status toggle integration)
+// Updated by: M1 (Pasindu)   - Day 11 (Progress slider integration)
 //
 // Displays full details of a single theatre fetched by ID.
 // Uses theatreService.getTheatreById() for data retrieval.
 // Coordinators/admins can toggle theatre status via the detail card.
+// Coordinators/admins can update surgery progress via the detail card (Day 11).
 // Shows current surgery, upcoming surgeries, and recent history
 // via the TheatreDetailCard component.
 // ============================================================================
@@ -27,6 +29,7 @@ const TheatreDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [statusUpdating, setStatusUpdating] = useState(false); // M4 - Day 10
+    const [progressUpdating, setProgressUpdating] = useState(false); // M1 - Day 11
 
     // Fetch theatre data on mount / id change
     useEffect(() => {
@@ -67,6 +70,27 @@ const TheatreDetail = () => {
             setError(err.message || 'Failed to update theatre status');
         } finally {
             setStatusUpdating(false);
+        }
+    };
+
+    // ── Progress Change Handler (M1 - Pasindu - Day 11) ─────────────────────
+    const handleProgressChange = async (progress) => {
+        try {
+            setProgressUpdating(true);
+            const response = await theatreService.updateProgress(id, progress);
+
+            if (response.success) {
+                // Update local state for instant UI feedback
+                setTheatre(prev => prev ? {
+                    ...prev,
+                    current_surgery_progress: progress
+                } : prev);
+            }
+        } catch (err) {
+            console.error('Error updating surgery progress:', err);
+            setError(err.message || 'Failed to update surgery progress');
+        } finally {
+            setProgressUpdating(false);
         }
     };
 
@@ -127,11 +151,14 @@ const TheatreDetail = () => {
                 </button>
 
                 {/* Theatre Detail Card with status toggle - M4 (Oneli) Day 10 */}
+                {/* Updated by M1 - Day 11: Added progress slider integration */}
                 <TheatreDetailCard
                     theatre={theatre}
                     onStatusChange={handleStatusChange}
+                    onProgressChange={handleProgressChange}
                     userRole={user?.role}
                     isUpdating={statusUpdating}
+                    isProgressUpdating={progressUpdating}
                 />
             </div>
         </div>
