@@ -19,6 +19,7 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Monitor, Users, Wrench, Activity, ChevronRight } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
+import CurrentSurgeryDisplay from './CurrentSurgeryDisplay';
 
 // Status action buttons config
 const STATUS_ACTIONS = {
@@ -88,22 +89,17 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
                     )}
                 </div>
 
-                {/* Current Surgery Info */}
+                {/* Current Surgery Info component - M5 Day 10 */}
                 {theatre.current_surgery_id && (
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                        <div className="flex items-center gap-2 text-sm font-medium text-blue-700 mb-1">
-                            <Activity className="w-4 h-4" />
-                            Surgery In Progress
-                        </div>
-                        <p className="text-sm text-blue-600">
-                            {theatre.current_surgery_type} — {theatre.current_patient_name}
-                        </p>
-                        {theatre.current_surgery_duration && (
-                            <p className="text-xs text-blue-500 mt-1">
-                                Duration: {theatre.current_surgery_duration} min
-                            </p>
-                        )}
-                    </div>
+                    <CurrentSurgeryDisplay
+                        surgery={{
+                            id: theatre.current_surgery_id,
+                            surgery_type: theatre.current_surgery_type,
+                            patient_name: theatre.current_patient_name,
+                            duration_minutes: theatre.current_surgery_duration
+                        }}
+                        variant="compact"
+                    />
                 )}
 
                 {/* View Details Link - M2 Day 10 */}

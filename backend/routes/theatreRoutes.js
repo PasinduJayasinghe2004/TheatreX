@@ -18,7 +18,8 @@ import {
     getTheatres,
     getTheatreById,
     updateTheatreStatus,
-    checkTheatreAvailability
+    checkTheatreAvailability,
+    getCurrentSurgeryByTheatreId
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -67,5 +68,14 @@ router.get('/:id', protect, getTheatreById);
 // Updated by: M3 (Janani)  - Day 10 (Added validateTheatreStatus middleware)
 // ============================================================================
 router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, updateTheatreStatus);
+
+// ============================================================================
+// ROUTE: GET /api/theatres/:id/current-surgery
+// ============================================================================
+// Get the currently in-progress surgery for a specific theatre
+// Protected - any authenticated user can view
+// Created by: M5 (Inthusha) - Day 10
+// ============================================================================
+router.get('/:id/current-surgery', protect, getCurrentSurgeryByTheatreId);
 
 export default router;
