@@ -6,6 +6,7 @@
 // Updated by: M1 (Pasindu) - Day 11 (Surgery progress endpoint)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation endpoint)
 // Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
+// Updated by: M4 (Oneli)    - Day 11 (Theatre duration calculation endpoint)
 //
 // Defines all theatre-related API routes
 //
@@ -18,6 +19,7 @@
 // - GET  /api/theatres/:id/current-surgery - Get current surgery (Protected)
 // - GET  /api/theatres/:id/auto-progress   - Auto-calculated progress (Protected)
 // - PUT  /api/theatres/:id/progress - Update surgery progress (Coordinator/Admin)
+// - GET  /api/theatres/:id/duration - Theatre duration calculation (Protected)
 // ============================================================================
 
 import express from 'express';
@@ -29,7 +31,8 @@ import {
     getCurrentSurgeryByTheatreId,
     updateSurgeryProgress,
     getAutoProgress,
-    getLiveStatus
+    getLiveStatus,
+    getTheatreDuration
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -118,5 +121,15 @@ router.put('/:id/progress', protect, authorize('coordinator', 'admin'), updateSu
 // Created by: M2 (Chandeepa) - Day 11
 // ============================================================================
 router.get('/:id/auto-progress', protect, getAutoProgress);
+
+// ============================================================================
+// ROUTE: GET /api/theatres/:id/duration
+// ============================================================================
+// Calculate elapsed, remaining, and total duration for the current surgery
+// Returns both raw minutes and formatted human-readable strings
+// Protected - any authenticated user can view
+// Created by: M4 (Oneli) - Day 11
+// ============================================================================
+router.get('/:id/duration', protect, getTheatreDuration);
 
 export default router;

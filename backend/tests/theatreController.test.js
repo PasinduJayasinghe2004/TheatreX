@@ -286,4 +286,49 @@ describe('Theatre API Tests - Day 10', () => {
             expect(res.body.data).toBe(null);
         });
     });
+
+    // ========================================================================
+    // GET /api/theatres/:id/duration - Theatre Duration Calculation
+    // ========================================================================
+    // Created by: M4 (Oneli) - Day 11
+    // ========================================================================
+    describe('GET /api/theatres/:id/duration', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app).get('/api/theatres/1/duration');
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 404 for non-existent theatre', async () => {
+            const res = await request(app)
+                .get('/api/theatres/99999/duration')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(404);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return success with null data if no surgery is in progress', async () => {
+            if (!testTheatreId) return;
+
+            const res = await request(app)
+                .get(`/api/theatres/${testTheatreId}/duration`)
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            // No in-progress surgery set up in this test, so data should be null
+            expect(res.body.data).toBe(null);
+        });
+
+        it('should allow staff users to view duration', async () => {
+            if (!testTheatreId) return;
+
+            const res = await request(app)
+                .get(`/api/theatres/${testTheatreId}/duration`)
+                .set('Authorization', `Bearer ${staffToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+        });
+    });
 });

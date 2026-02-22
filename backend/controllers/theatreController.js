@@ -5,6 +5,7 @@
 // Updated by: M1 (Pasindu) - Day 10 (Theatre list page, detail, status toggle)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
 // Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
+// Updated by: M4 (Oneli)    - Day 11 (Theatre duration calculation)
 //
 // Handles theatre-related HTTP requests including:
 // - Listing all active theatres (with optional status/type filters)
@@ -23,6 +24,7 @@
 // - getLiveStatus:                 GET  /api/theatres/live-status             - Live status polling
 // - getCurrentSurgeryByTheatreId:  (see route definition below)               - Get current surgery for a theatre
 // - updateSurgeryProgress:         (see route definition below)               - Update surgery progress
+// - getTheatreDuration:            GET  /api/theatres/:id/duration            - Theatre duration calculation
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -723,6 +725,111 @@ export const getLiveStatus = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching live status',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET THEATRE DURATION
+// ============================================================================
+// @desc    Calculate elapsed, remaining, and total duration for the current
+//          in-progress surgery in a specific theatre. Returns both raw minute
+//          values and human-readable formatted strings (e.g. "1h 23m").
+// @route   GET /api/theatres/:id/duration
+// @access  Protected
+// Created by: M4 (Oneli) - Day 11
+// ============================================================================
+export const getTheatreDuration = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // 1. Verify theatre exists
+        const { rows: theatreRows } = await pool.query(
+            'SELECT id, name, status FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (theatreRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        // 2. Find the current in-progress surgery for this theatre
+        const { rows: surgeryRows } = await pool.query(`
+            SELECT id, surgery_type, patient_name, scheduled_time,
+                   duration_minutes, progress_percent, status
+            FROM surgeries
+            WHERE theatre_id = $1 AND status = 'in_progress'
+            ORDER BY updated_at DESC, id DESC
+            LIMIT 1
+        `, [id]);
+
+        if (surgeryRows.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: 'No in-progress surgery found for this theatre',
+                data: null
+            });
+        }
+
+        const surgery = surgeryRows[0];
+
+        // 3. Calculate duration using the existing progress calculator
+        const progressData = calculateAutoProgress(
+            surgery.scheduled_time,
+            surgery.duration_minutes
+        );
+
+        // 4. Format minutes into human-readable strings
+        const formatMinutes = (mins) => {
+            if (mins <= 0) return '0m';
+            const hours = Math.floor(mins / 60);
+            const minutes = mins % 60;
+            if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
+            if (hours > 0) return `${hours}h`;
+            return `${minutes}m`;
+        };
+
+        // 5. Calculate overdue amount if applicable
+        const overdueMinutes = progressData.is_overdue
+            ? progressData.elapsed_minutes - surgery.duration_minutes
+            : 0;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                theatre_id: parseInt(id),
+                theatre_name: theatreRows[0].name,
+                theatre_status: theatreRows[0].status,
+                surgery_id: surgery.id,
+                surgery_type: surgery.surgery_type,
+                patient_name: surgery.patient_name,
+                // Raw values (minutes)
+                elapsed_minutes: progressData.elapsed_minutes,
+                remaining_minutes: progressData.remaining_minutes,
+                total_duration_minutes: surgery.duration_minutes,
+                overdue_minutes: overdueMinutes,
+                // Formatted strings
+                elapsed_formatted: formatMinutes(progressData.elapsed_minutes),
+                remaining_formatted: progressData.is_overdue
+                    ? `+${formatMinutes(overdueMinutes)} over`
+                    : formatMinutes(progressData.remaining_minutes),
+                total_formatted: formatMinutes(surgery.duration_minutes),
+                // Time info
+                start_time: surgery.scheduled_time,
+                estimated_end_time: progressData.estimated_end_time,
+                is_overdue: progressData.is_overdue,
+                progress_percent: progressData.auto_progress
+            }
+        });
+    } catch (error) {
+        console.error('Error calculating theatre duration:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error calculating theatre duration',
             error: error.message
         });
     }
