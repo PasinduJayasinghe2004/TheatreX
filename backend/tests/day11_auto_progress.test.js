@@ -243,16 +243,18 @@ describe('Auto-Progress API - Integration Tests', () => {
                 .get('/api/theatres')
                 .set('Authorization', `Bearer ${staffToken}`);
 
-            if (theatresRes.body.data && theatresRes.body.data.length > 0) {
-                const theatreId = theatresRes.body.data[0].id;
+            expect(theatresRes.status).toBe(200);
+            expect(Array.isArray(theatresRes.body.data)).toBe(true);
+            expect(theatresRes.body.data.length).toBeGreaterThan(0);
 
-                const res = await request(app)
-                    .get(`/api/theatres/${theatreId}/auto-progress`)
-                    .set('Authorization', `Bearer ${staffToken}`);
+            const theatreId = theatresRes.body.data[0].id;
 
-                expect(res.status).toBe(200);
-                expect(res.body.success).toBe(true);
-            }
+            const res = await request(app)
+                .get(`/api/theatres/${theatreId}/auto-progress`)
+                .set('Authorization', `Bearer ${staffToken}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.success).toBe(true);
         });
     });
 
