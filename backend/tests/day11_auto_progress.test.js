@@ -296,21 +296,24 @@ describe('Auto-Progress API - Integration Tests', () => {
                 .get('/api/theatres')
                 .set('Authorization', `Bearer ${coordinatorToken}`);
 
-            if (theatresRes.body.data && theatresRes.body.data.length > 0) {
-                const theatreId = theatresRes.body.data[0].id;
+            expect(theatresRes.status).toBe(200);
+            expect(theatresRes.body.success).toBe(true);
+            expect(Array.isArray(theatresRes.body.data)).toBe(true);
+            expect(theatresRes.body.data.length).toBeGreaterThan(0);
 
-                const res = await request(app)
-                    .get(`/api/theatres/${theatreId}`)
-                    .set('Authorization', `Bearer ${coordinatorToken}`);
+            const theatreId = theatresRes.body.data[0].id;
 
-                expect(res.status).toBe(200);
-                expect(res.body.success).toBe(true);
-                expect(res.body.data).toHaveProperty('auto_progress');
-                expect(res.body.data).toHaveProperty('elapsed_minutes');
-                expect(res.body.data).toHaveProperty('remaining_minutes');
-                expect(res.body.data).toHaveProperty('is_overdue');
-                expect(res.body.data).toHaveProperty('estimated_end_time');
-            }
+            const res = await request(app)
+                .get(`/api/theatres/${theatreId}`)
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.data).toHaveProperty('auto_progress');
+            expect(res.body.data).toHaveProperty('elapsed_minutes');
+            expect(res.body.data).toHaveProperty('remaining_minutes');
+            expect(res.body.data).toHaveProperty('is_overdue');
+            expect(res.body.data).toHaveProperty('estimated_end_time');
         });
     });
 });
