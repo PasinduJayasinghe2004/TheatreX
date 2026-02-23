@@ -232,7 +232,7 @@ const Login = () => {
 
                 {/* Logo */}
                 <div className="relative z-10 flex items-center gap-2">
-                    <img src="/logo.png" alt="TheatreX Logo" className="w-8 h-8 bg-white rounded-lg p-1" />
+                    <img src={theatrexLogo} alt="TheatreX Logo" className="w-10 h-10" />
                     <span className="text-2xl font-bold">TheatreX</span>
                 </div>
 
