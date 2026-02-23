@@ -231,14 +231,9 @@ const Login = () => {
                 </div>
 
                 {/* Logo */}
-                <div className="relative z-10 flex items-center gap-2">
-<<<<<<< HEAD
-                    <img src="/logo.png" alt="TheatreX Logo" className="w-8 h-8 bg-white rounded-lg p-1" />
-=======
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
                         <img src={theatrexLogo} alt="TheatreX Logo" className="w-6 h-6" />
                     </div>
->>>>>>> bc5c8b08c68ff75cffadcd252bcd23d74d8bf16c
                     <span className="text-2xl font-bold">TheatreX</span>
                 </div>
 
