@@ -8,7 +8,7 @@ export default function Navbar() {
         <nav style={{ backgroundColor: '#fff', borderBottom: '1px solid #f3f4f6', padding: '1rem 0' }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Activity color="var(--primary)" size={24} />
+                    <img src="/logo.png" alt="TheatreX Logo" style={{ height: 32, width: 32, objectFit: 'contain', display: 'block' }} />
                     <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>TheatreX</span>
                 </div>
 
