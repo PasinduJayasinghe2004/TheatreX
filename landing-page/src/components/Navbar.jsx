@@ -1,5 +1,6 @@
-import { Menu, X, Activity, Home, Zap, Calendar, BarChart2, Users, Mail } from 'lucide-react'
+import { Menu, X, Home, Zap, Calendar, BarChart2, Users, Mail } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import theatrexLogo from '../assets/theatrex-logo.svg'
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
@@ -25,7 +26,7 @@ export default function Navbar() {
             <div className="quick-nav__inner">
                 {/* Logo */}
                 <a href="#" className="quick-nav__logo">
-                    <Activity color="#00b4ff" size={22} />
+                    <img src={theatrexLogo} alt="TheatreX Logo" style={{ width: '24px', height: '24px' }} />
                     <span>TheatreX</span>
                 </a>
 

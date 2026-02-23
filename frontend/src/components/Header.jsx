@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import RoleGuard from './RoleGuard';
 import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
+import theatrexLogo from '../assets/theatrex-logo.svg';
 
 /**
  * Header Component
@@ -40,7 +41,7 @@ const Header = ({ user, onLogout }) => {
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2">
-                                <span className="text-3xl">🎭</span>
+                                <img src={theatrexLogo} alt="TheatreX Logo" className="w-8 h-8" />
                                 TheatreX
                             </h1>
                         </div>
