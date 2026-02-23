@@ -2,6 +2,7 @@
 // Theatre Controller
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 8
+// Updated by: M1 (Pasindu)   - Day 12 (Coordinator overview endpoint)
 // Updated by: M1 (Pasindu) - Day 10 (Theatre list page, detail, status toggle)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
 // Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
@@ -908,6 +909,118 @@ export const getTheatreStats = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching theatre stats',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET COORDINATOR OVERVIEW
+// ============================================================================
+// @desc    Coordinator-specific overview of ALL active theatres.
+//          Returns every theatre with its current surgery (if any) enriched
+//          with auto-progress, plus a summary object with status counts,
+//          utilization rate, and overdue count — all in one query.
+// @route   GET /api/theatres/coordinator-overview
+// @access  Protected (coordinator, admin)
+// Created by: M1 (Pasindu) - Day 12
+// ============================================================================
+export const getCoordinatorOverview = async (req, res) => {
+    try {
+        // Single query: all active theatres + current in-progress surgery (if any)
+        const { rows } = await pool.query(`
+            SELECT
+                t.id,
+                t.name,
+                t.location,
+                t.status,
+                t.capacity,
+                t.theatre_type,
+                t.is_active,
+                cs.id               AS current_surgery_id,
+                cs.surgery_type     AS current_surgery_type,
+                cs.patient_name     AS current_patient_name,
+                cs.scheduled_time   AS current_surgery_time,
+                cs.duration_minutes AS current_surgery_duration,
+                cs.progress_percent AS current_surgery_progress,
+                cs.priority         AS current_surgery_priority
+            FROM theatres t
+            LEFT JOIN surgeries cs
+                ON cs.theatre_id = t.id
+               AND cs.status = 'in_progress'
+            WHERE t.is_active = TRUE
+            ORDER BY t.name ASC
+        `);
+
+        // Enrich each row with auto-progress if a surgery is running
+        const theatres = rows.map(row => {
+            const theatre = {
+                id: row.id,
+                name: row.name,
+                location: row.location,
+                status: row.status,
+                capacity: row.capacity,
+                theatre_type: row.theatre_type,
+                current_surgery: null
+            };
+
+            if (row.current_surgery_id && row.current_surgery_time && row.current_surgery_duration) {
+                const progressData = calculateAutoProgress(
+                    row.current_surgery_time,
+                    row.current_surgery_duration
+                );
+
+                theatre.current_surgery = {
+                    id: row.current_surgery_id,
+                    surgery_type: row.current_surgery_type,
+                    patient_name: row.current_patient_name,
+                    scheduled_time: row.current_surgery_time,
+                    duration_minutes: row.current_surgery_duration,
+                    manual_progress: row.current_surgery_progress || 0,
+                    priority: row.current_surgery_priority,
+                    auto_progress: progressData.auto_progress,
+                    elapsed_minutes: progressData.elapsed_minutes,
+                    remaining_minutes: progressData.remaining_minutes,
+                    is_overdue: progressData.is_overdue,
+                    estimated_end_time: progressData.estimated_end_time
+                };
+            }
+
+            return theatre;
+        });
+
+        // Build summary object
+        const total = theatres.length;
+        const available = theatres.filter(t => t.status === 'available').length;
+        const in_use = theatres.filter(t => t.status === 'in_use').length;
+        const maintenance = theatres.filter(t => t.status === 'maintenance').length;
+        const cleaning = theatres.filter(t => t.status === 'cleaning').length;
+        const overdue_count = theatres.filter(t => t.current_surgery?.is_overdue).length;
+        const utilization_rate = total > 0
+            ? parseFloat(((in_use / total) * 100).toFixed(1))
+            : 0;
+
+        const summary = {
+            total,
+            available,
+            in_use,
+            maintenance,
+            cleaning,
+            utilization_rate,
+            overdue_count
+        };
+
+        res.status(200).json({
+            success: true,
+            generated_at: new Date().toISOString(),
+            summary,
+            data: theatres
+        });
+    } catch (error) {
+        console.error('Error fetching coordinator overview:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching coordinator overview',
             error: error.message
         });
     }

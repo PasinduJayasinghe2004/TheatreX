@@ -19,6 +19,7 @@ import EmergencyBooking from '../pages/EmergencyBooking'; // M1 - Day 8
 import TheatreList from '../pages/TheatreList'; // M1 - Day 10
 import TheatreDetail from '../pages/TheatreDetail'; // M2 - Day 10
 import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
+import CoordinatorDashboard from '../pages/CoordinatorDashboard'; // M1 - Day 12
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -124,6 +125,13 @@ const AppRoutes = () => {
                 <ProtectedRoute>
                     <LiveStatusPage />
                 </ProtectedRoute>
+            } />
+
+            {/* Coordinator Dashboard - M1 (Pasindu) Day 12 */}
+            <Route path="/coordinator" element={
+                <RoleBasedRoute allowedRoles={['coordinator', 'admin']}>
+                    <CoordinatorDashboard />
+                </RoleBasedRoute>
             } />
 
             {/* Calendar View - M1 (Pasindu) Day 7 */}
