@@ -76,8 +76,8 @@ const SummaryCard = ({ label, value, colour, icon }) => (
 // Theatre Card
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TheatreCard = ({ theatre, onViewDetail, onViewLive }) => {
-    const { name, location, status, theatre_type, capacity, current_surgery } = theatre;
+const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus }) => {
+    const { id, name, location, status, theatre_type, capacity, current_surgery } = theatre;
     const cardBorderClass = STATUS_CONFIG[status]?.card || 'border-l-gray-200';
 
     const progressPercent = current_surgery?.auto_progress ?? current_surgery?.manual_progress ?? 0;
@@ -88,6 +88,16 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive }) => {
         : progressPercent >= 75
             ? 'bg-amber-500'
             : 'bg-blue-500';
+
+    // Logically relevant quick actions based on status
+    const quickActions = [];
+    if (status === 'available') {
+        quickActions.push({ label: 'Maintenance', target: 'maintenance', color: 'bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200' });
+    } else if (status === 'maintenance' || status === 'cleaning') {
+        quickActions.push({ label: 'Set Available', target: 'available', color: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' });
+    } else if (status === 'in_use') {
+        quickActions.push({ label: 'Complete & Clean', target: 'cleaning', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200' });
+    }
 
     return (
         <div
@@ -165,10 +175,28 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive }) => {
                 )}
             </div>
 
+            {/* Quick Actions (Dashboard Enhancement) */}
+            {quickActions.length > 0 && (
+                <div className="px-5 py-3 border-t border-gray-50 bg-gray-50/30">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Quick Toggle</p>
+                    <div className="flex flex-wrap gap-2">
+                        {quickActions.map(action => (
+                            <button
+                                key={action.target}
+                                onClick={() => onQuickStatus(id, action.target)}
+                                className={`flex-1 text-[11px] font-bold px-2 py-1.5 rounded-lg border transition-all hover:scale-[1.02] active:scale-[0.98] ${action.color}`}
+                            >
+                                {action.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Card Footer Actions */}
             <div className="px-5 pb-4 flex gap-2 border-t border-gray-50 pt-3">
                 <button
-                    onClick={() => onViewDetail(theatre.id)}
+                    onClick={() => onViewDetail(id)}
                     className="flex-1 text-xs font-medium px-3 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
                 >
                     View Detail
@@ -219,6 +247,18 @@ const CoordinatorDashboard = () => {
     useEffect(() => {
         fetchOverview();
     }, [fetchOverview]);
+
+    const handleQuickStatusUpdate = async (id, status) => {
+        try {
+            setRefreshing(true);
+            await theatreService.quickUpdateStatus(id, status);
+            await fetchOverview(true);
+        } catch (err) {
+            alert(err.message || 'Failed to update theatre status');
+        } finally {
+            setRefreshing(false);
+        }
+    };
 
     // ── Derived data ──────────────────────────────────────────────────────────
     const summary = overview?.summary ?? {};
@@ -395,8 +435,8 @@ const CoordinatorDashboard = () => {
                                     key={s ?? 'all'}
                                     onClick={() => setStatusFilter(s)}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${active
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        ? 'bg-blue-600 text-white border-blue-600'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
                                     {label}
@@ -424,6 +464,7 @@ const CoordinatorDashboard = () => {
                                     theatre={theatre}
                                     onViewDetail={(id) => navigate(`/theatres/${id}`)}
                                     onViewLive={() => navigate('/live-status')}
+                                    onQuickStatus={handleQuickStatusUpdate}
                                 />
                             ))}
                         </div>
