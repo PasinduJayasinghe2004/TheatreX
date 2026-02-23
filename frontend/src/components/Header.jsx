@@ -39,6 +39,10 @@ const Header = ({ user, onLogout }) => {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo Section */}
                     <div className="flex items-center">
+<<<<<<< HEAD
+=======
+                        <div className="flex-shrink-0">
+>>>>>>> 3ef49f8c3118fe1077794c221ea3452c6310bd0b
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2">
                                 <img src={theatrexLogo} alt="TheatreX Logo" className="w-8 h-8" />
                                 TheatreX

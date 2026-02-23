@@ -8,7 +8,12 @@ export default function Navbar() {
     return (
         <nav style={{ backgroundColor: '#fff', borderBottom: '1px solid #f3f4f6', padding: '1rem 0' }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+<<<<<<< HEAD
                     <img src={theatrexLogo} alt="TheatreX Logo" style={{ width: '28px', height: '28px' }} />
+=======
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <img src={theatrexLogo} alt="TheatreX Logo" style={{ width: '32px', height: '32px' }} />
+>>>>>>> 3ef49f8c3118fe1077794c221ea3452c6310bd0b
                     <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>TheatreX</span>
                 </div>
 

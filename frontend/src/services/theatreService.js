@@ -163,6 +163,20 @@ const theatreService = {
             const message = error.response?.data?.message || 'Error fetching theatre duration. Please try again.';
             throw new Error(message);
         }
+    },
+
+    // ========================================
+    // Get theatre summary statistics
+    // Created by: M5 (Inthusha) - Day 11
+    // ========================================
+    getTheatreStats: async () => {
+        try {
+            const response = await api.get('/theatres/stats');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching theatre stats. Please try again.';
+            throw new Error(message);
+        }
     }
 };
 

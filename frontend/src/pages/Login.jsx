@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import theatrexLogo from '../assets/theatrex-logo.svg';
 
@@ -159,6 +159,7 @@ const slides = [
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -209,7 +210,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await authService.login(formData.email, formData.password);
+            const response = await login(formData.email, formData.password);
             if (response.success) {
                 navigate('/dashboard');
             }
@@ -231,9 +232,14 @@ const Login = () => {
                 </div>
 
                 {/* Logo */}
+<<<<<<< HEAD
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
                         <img src={theatrexLogo} alt="TheatreX Logo" className="w-6 h-6" />
                     </div>
+=======
+                <div className="relative z-10 flex items-center gap-2">
+                    <img src={theatrexLogo} alt="TheatreX Logo" className="w-10 h-10" />
+>>>>>>> 3ef49f8c3118fe1077794c221ea3452c6310bd0b
                     <span className="text-2xl font-bold">TheatreX</span>
                 </div>
 
