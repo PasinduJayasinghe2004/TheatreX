@@ -32,7 +32,8 @@ import {
     updateSurgeryProgress,
     getAutoProgress,
     getLiveStatus,
-    getTheatreDuration
+    getTheatreDuration,
+    getTheatreStats
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -63,6 +64,16 @@ router.get('/availability', protect, checkTheatreAvailability);
 // Created by: M3 (Janani) - Day 11
 // ============================================================================
 router.get('/live-status', protect, getLiveStatus);
+
+// ============================================================================
+// ROUTE: GET /api/theatres/stats
+// ============================================================================
+// Get summary statistics for all theatres.
+// Returns counts by status, type, and utilization stats.
+// Protected - any authenticated user can view
+// Created by: M5 (Inthusha) - Day 11
+// ============================================================================
+router.get('/stats', protect, getTheatreStats);
 
 // ============================================================================
 // ROUTE: GET /api/theatres

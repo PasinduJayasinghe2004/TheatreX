@@ -803,26 +803,21 @@ export const getTheatreDuration = async (req, res) => {
             data: {
                 theatre_id: parseInt(id),
                 theatre_name: theatreRows[0].name,
-                theatre_status: theatreRows[0].status,
                 surgery_id: surgery.id,
-                surgery_type: surgery.surgery_type,
-                patient_name: surgery.patient_name,
-                // Raw values (minutes)
-                elapsed_minutes: progressData.elapsed_minutes,
-                remaining_minutes: progressData.remaining_minutes,
-                total_duration_minutes: surgery.duration_minutes,
-                overdue_minutes: overdueMinutes,
-                // Formatted strings
-                elapsed_formatted: formatMinutes(progressData.elapsed_minutes),
-                remaining_formatted: progressData.is_overdue
-                    ? `+${formatMinutes(overdueMinutes)} over`
-                    : formatMinutes(progressData.remaining_minutes),
-                total_formatted: formatMinutes(surgery.duration_minutes),
-                // Time info
-                start_time: surgery.scheduled_time,
-                estimated_end_time: progressData.estimated_end_time,
+                duration: {
+                    total: surgery.duration_minutes,
+                    elapsed: progressData.elapsed_minutes,
+                    remaining: progressData.remaining_minutes,
+                    overdue: overdueMinutes,
+                    formatted: {
+                        total: formatMinutes(surgery.duration_minutes),
+                        elapsed: formatMinutes(progressData.elapsed_minutes),
+                        remaining: progressData.is_overdue ? '0m' : formatMinutes(progressData.remaining_minutes),
+                        overdue: overdueMinutes > 0 ? formatMinutes(overdueMinutes) : '0m'
+                    }
+                },
                 is_overdue: progressData.is_overdue,
-                progress_percent: progressData.auto_progress
+                estimated_end_time: progressData.estimated_end_time
             }
         });
     } catch (error) {
@@ -830,6 +825,89 @@ export const getTheatreDuration = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error calculating theatre duration',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET THEATRE STATS
+// ============================================================================
+// @desc    Get summary statistics for all active theatres.
+// @route   GET /api/theatres/stats
+// @access  Protected
+// Created by: M5 (Inthusha) - Day 11
+// ============================================================================
+export const getTheatreStats = async (req, res) => {
+    try {
+        // 1. Get status-based counts
+        const { rows: statusRows } = await pool.query(`
+            SELECT status, COUNT(*) as count
+            FROM theatres
+            WHERE is_active = TRUE
+            GROUP BY status
+        `);
+
+        // 2. Get type-based counts
+        const { rows: typeRows } = await pool.query(`
+            SELECT theatre_type, COUNT(*) as count
+            FROM theatres
+            WHERE is_active = TRUE
+            GROUP BY theatre_type
+        `);
+
+        // 3. Get utilization stats (in_use vs total)
+        const { rows: utilizationRows } = await pool.query(`
+            SELECT 
+                COUNT(*) as total_active,
+                COUNT(*) FILTER (WHERE status = 'in_use') as currently_in_use,
+                SUM(capacity) as total_capacity
+            FROM theatres
+            WHERE is_active = TRUE
+        `);
+
+        // 4. Get average surgery progress for in-progress surgeries
+        const { rows: progressRows } = await pool.query(`
+            SELECT COALESCE(AVG(progress_percent), 0) as avg_progress
+            FROM surgeries
+            WHERE status = 'in_progress'
+        `);
+
+        // Format status counts into a cleaner object
+        const statusCounts = {};
+        VALID_THEATRE_STATUSES.forEach(status => {
+            statusCounts[status] = 0;
+        });
+        statusRows.forEach(row => {
+            statusCounts[row.status] = parseInt(row.count);
+        });
+
+        const stats = {
+            total_theatres: parseInt(utilizationRows[0].total_active) || 0,
+            status_summary: statusCounts,
+            type_summary: typeRows.reduce((acc, row) => {
+                acc[row.theatre_type] = parseInt(row.count);
+                return acc;
+            }, {}),
+            utilization: {
+                in_use_count: parseInt(utilizationRows[0].currently_in_use) || 0,
+                utilization_rate: utilizationRows[0].total_active > 0
+                    ? ((utilizationRows[0].currently_in_use / utilizationRows[0].total_active) * 100).toFixed(1)
+                    : 0,
+                total_capacity: parseInt(utilizationRows[0].total_capacity) || 0
+            },
+            average_surgery_progress: parseFloat(progressRows[0].avg_progress).toFixed(1)
+        };
+
+        res.status(200).json({
+            success: true,
+            data: stats
+        });
+    } catch (error) {
+        console.error('Error fetching theatre stats:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching theatre stats',
             error: error.message
         });
     }
