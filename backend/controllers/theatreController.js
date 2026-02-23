@@ -1025,3 +1025,71 @@ export const getCoordinatorOverview = async (req, res) => {
         });
     }
 };
+// ============================================================================
+// QUICK UPDATE THEATRE STATUS
+// ============================================================================
+// @desc    One-click status update for the Coordinator Dashboard.
+//          Validates current status and allowed transitions.
+// @route   PATCH /api/theatres/:id/quick-status
+// @access  Protected (coordinator, admin)
+// Created by: M2 (Chandeepa) - Day 12
+// ============================================================================
+export const quickUpdateStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!status || !VALID_THEATRE_STATUSES.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
+            });
+        }
+
+        // 1. Get current status
+        const { rows: existing } = await pool.query(
+            'SELECT id, status, name FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        const currentStatus = existing[0].status;
+        const name = existing[0].name;
+
+        // 2. Validate transition
+        const allowed = getAllowedTransitions(currentStatus);
+        if (!allowed.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot transition from '${currentStatus}' to '${status}'. Allowed: ${allowed.join(', ')}`
+            });
+        }
+
+        // 3. Update status
+        const { rows } = await pool.query(`
+            UPDATE theatres
+            SET status = $1, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $2
+            RETURNING id, name, status, updated_at
+        `, [status, id]);
+
+        res.status(200).json({
+            success: true,
+            message: `Theatre '${name}' updated to ${status}`,
+            data: rows[0]
+        });
+    } catch (error) {
+        console.error('Error in quickUpdateStatus:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating theatre status',
+            error: error.message
+        });
+    }
+};

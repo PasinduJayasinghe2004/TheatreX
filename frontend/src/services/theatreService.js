@@ -195,6 +195,20 @@ const theatreService = {
             const message = error.response?.data?.message || 'Error fetching coordinator overview. Please try again.';
             throw new Error(message);
         }
+    },
+
+    // ========================================
+    // Quick update theatre status (One-click)
+    // Created by: M2 (Chandeepa) - Day 12
+    // ========================================
+    quickUpdateStatus: async (id, status) => {
+        try {
+            const response = await api.patch(`/theatres/${id}/quick-status`, { status });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating theatre status. Please try again.';
+            throw new Error(message);
+        }
     }
 };
 

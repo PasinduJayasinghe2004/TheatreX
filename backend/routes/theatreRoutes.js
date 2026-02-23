@@ -37,7 +37,8 @@ import {
     getLiveStatus,
     getTheatreDuration,
     getTheatreStats,
-    getCoordinatorOverview
+    getCoordinatorOverview,
+    quickUpdateStatus
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -119,6 +120,15 @@ router.get('/:id', protect, getTheatreById);
 // Updated by: M3 (Janani)  - Day 10 (Added validateTheatreStatus middleware)
 // ============================================================================
 router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, updateTheatreStatus);
+
+// ============================================================================
+// ROUTE: PATCH /api/theatres/:id/quick-status
+// ============================================================================
+// One-click status update for the Coordinator Dashboard.
+// Protected + (coordinator or admin only)
+// Created by: M2 (Chandeepa) - Day 12
+// ============================================================================
+router.patch('/:id/quick-status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, quickUpdateStatus);
 
 // ============================================================================
 // ROUTE: GET /api/theatres/:id/current-surgery
