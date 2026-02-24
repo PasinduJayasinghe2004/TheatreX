@@ -14,6 +14,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import SummaryCard from '../components/SummaryCard';
 import theatreService from '../services/theatreService';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -56,21 +57,7 @@ const formatMinutes = (mins) => {
     return `${m}m`;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Summary Card
-// ─────────────────────────────────────────────────────────────────────────────
-
-const SummaryCard = ({ label, value, colour, icon }) => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-start gap-4">
-        <div className={`w-12 h-12 ${colour} rounded-xl flex items-center justify-center flex-shrink-0`}>
-            {icon}
-        </div>
-        <div>
-            <p className="text-sm text-gray-500 font-medium">{label}</p>
-            <p className="text-3xl font-bold text-gray-900 mt-0.5">{value}</p>
-        </div>
-    </div>
-);
+// Summary Card is now imported from ../components/SummaryCard
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Theatre Card
