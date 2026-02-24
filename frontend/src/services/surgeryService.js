@@ -11,6 +11,7 @@
 // Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses for multi-select)
 // Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists for dropdown)
 // Updated by: M4 (Oneli) - Day 9 (Added checkStaffConflicts for warning UI)
+// Updated by: M3 (Janani) - Day 12 (Added assignSurgeryToTheatre, getUnassignedSurgeries)
 //
 // FEATURES:
 // - Get all surgeries (with date + status filters)
@@ -299,6 +300,44 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error assigning staff. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Assign surgery to theatre
+    // Created by: M3 (Janani) - Day 12
+    // Assigns (or reassigns) a surgery to a specific theatre with conflict check
+    // ========================================
+    assignSurgeryToTheatre: async (id, theatreId) => {
+        try {
+            const response = await api.patch(`/surgeries/${id}/assign-theatre`, { theatre_id: theatreId });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error assigning surgery to theatre. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get unassigned surgeries (no theatre)
+    // Created by: M3 (Janani) - Day 12
+    // Returns surgeries that don't have a theatre assigned yet
+    // ========================================
+    getUnassignedSurgeries: async (filters = {}) => {
+        try {
+            const params = new URLSearchParams();
+            if (filters.startDate) params.append('startDate', filters.startDate);
+            if (filters.endDate) params.append('endDate', filters.endDate);
+            if (filters.status) params.append('status', filters.status);
+
+            const queryString = params.toString();
+            const url = queryString ? `/surgeries/unassigned?${queryString}` : '/surgeries/unassigned';
+
+            const response = await api.get(url);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching unassigned surgeries. Please try again.';
             throw new Error(message);
         }
     }
