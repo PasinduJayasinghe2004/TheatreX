@@ -32,6 +32,9 @@ const createTheatresTable = async () => {
       -- Availability
       is_active BOOLEAN DEFAULT TRUE,
       
+      -- Maintenance
+      maintenance_reason TEXT,
+      
       -- Timestamps
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

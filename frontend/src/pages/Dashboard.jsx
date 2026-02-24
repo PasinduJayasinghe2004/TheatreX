@@ -218,17 +218,7 @@ const Dashboard = () => {
         .filter(s => s.status === 'scheduled')
         .slice(0, 5);
 
-    // Delete surgery with confirmation
-    const handleDelete = async (surgeryId) => {
-        if (!window.confirm('Are you sure you want to delete this surgery?')) return;
-        try {
-            await surgeryService.deleteSurgery(surgeryId);
-            setSurgeries(prev => prev.filter(s => s.id !== surgeryId));
-        } catch (err) {
-            console.error('Error deleting surgery:', err);
-            alert(err.message || 'Failed to delete surgery');
-        }
-    };
+
 
     // Format time for display
     const formatTime = (timeStr) => {

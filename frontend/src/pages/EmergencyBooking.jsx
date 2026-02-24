@@ -136,6 +136,7 @@ const EmergencyBooking = () => {
         } catch (error) {
             console.error('Error checking availability:', error);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
 
     useEffect(() => {
@@ -174,6 +175,7 @@ const EmergencyBooking = () => {
         } finally {
             setCheckingConflicts(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes,
     formData.theatre_id, formData.surgeon_id, formData.anaesthetist_id, token]);
 
@@ -189,12 +191,12 @@ const EmergencyBooking = () => {
     // Check staff conflicts when staff selections change - M4 (Oneli) Day 9
     const checkStaffConflictsCallback = useCallback(async () => {
         const { scheduled_date, scheduled_time, duration_minutes, surgeon_id, anaesthetist_id } = formData;
-        
+
         if (!scheduled_date || !scheduled_time || !duration_minutes) {
             setStaffConflicts(null);
             return;
         }
-        
+
         const hasStaff = surgeon_id || anaesthetist_id;
         if (!hasStaff) {
             setStaffConflicts(null);
@@ -219,8 +221,9 @@ const EmergencyBooking = () => {
         } finally {
             setCheckingStaffConflicts(false);
         }
-    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes, 
-        formData.surgeon_id, formData.anaesthetist_id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes,
+    formData.surgeon_id, formData.anaesthetist_id]);
 
     // Debounced staff conflict check
     useEffect(() => {
@@ -327,8 +330,8 @@ const EmergencyBooking = () => {
                             {/* Alert Messages */}
                             {message.text && (
                                 <div className={`p-4 rounded-lg text-sm ${message.type === 'success'
-                                        ? 'bg-green-50 text-green-700 border border-green-200'
-                                        : 'bg-red-50 text-red-700 border border-red-200'
+                                    ? 'bg-green-50 text-green-700 border border-green-200'
+                                    : 'bg-red-50 text-red-700 border border-red-200'
                                     }`}>
                                     {message.text}
                                 </div>

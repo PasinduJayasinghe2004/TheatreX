@@ -4,6 +4,7 @@
 // Created by: M1 (Pasindu) - Day 10
 // Updated by: M1 (Pasindu) - Day 11 (Added surgery progress display)
 // Updated by: M4 (Oneli)   - Day 11 (Added duration display)
+// Updated by: M4 (Oneli)   - Day 12 (Added maintenance toggle)
 //
 // Displays a single theatre in a card format with:
 // - Theatre name, location, type
@@ -23,6 +24,7 @@ import { MapPin, Monitor, Users, Wrench, ChevronRight } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 import CurrentSurgeryDisplay from './CurrentSurgeryDisplay';
 import DurationDisplay from './DurationDisplay';
+import MaintenanceToggle from './MaintenanceToggle';
 
 // Status action buttons config
 const STATUS_ACTIONS = {
@@ -50,7 +52,7 @@ const STATUS_BORDER = {
     cleaning: 'border-l-purple-500'
 };
 
-const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) => {
+const TheatreCard = ({ theatre, onStatusChange, onMaintenanceToggle, userRole, isUpdating = false }) => {
     const canChangeStatus = userRole === 'coordinator' || userRole === 'admin';
     const actions = STATUS_ACTIONS[theatre.status] || [];
     const borderColor = STATUS_BORDER[theatre.status] || 'border-l-gray-300';
@@ -124,6 +126,14 @@ const TheatreCard = ({ theatre, onStatusChange, userRole, isUpdating = false }) 
                 >
                     View Details <ChevronRight className="w-4 h-4" />
                 </Link>
+
+                {/* Maintenance Toggle - M4 (Oneli) Day 12 */}
+                <MaintenanceToggle
+                    theatre={theatre}
+                    onMaintenanceToggle={onMaintenanceToggle}
+                    userRole={userRole}
+                    isUpdating={isUpdating}
+                />
             </div>
 
             {/* Status Toggle Actions */}

@@ -12,16 +12,13 @@
 //   onClick - optional click handler (e.g. to trigger status change)
 // ============================================================================
 
-import React from 'react';
+
 import {
     VALID_THEATRE_STATUSES,
-    THEATRE_STATUS_COLORS,
-    getStatusColor,
     getStatusLabel,
     getStatusBadgeClasses,
     getStatusDotClass,
     VALID_THEATRE_TYPES,
-    THEATRE_TYPE_COLORS,
     getTypeLabel
 } from '../utils/theatreStatusColors';
 
@@ -36,9 +33,9 @@ const SIZE_CLASSES = {
 
 const TheatreStatusBadge = ({ status, size = 'sm', onClick }) => {
     const badgeClasses = getStatusBadgeClasses(status);
-    const dotClass     = getStatusDotClass(status);
-    const label        = getStatusLabel(status);
-    const sizeClass    = SIZE_CLASSES[size] || SIZE_CLASSES.sm;
+    const dotClass = getStatusDotClass(status);
+    const label = getStatusLabel(status);
+    const sizeClass = SIZE_CLASSES[size] || SIZE_CLASSES.sm;
 
     const Tag = onClick ? 'button' : 'span';
 

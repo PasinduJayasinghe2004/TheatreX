@@ -12,14 +12,14 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, AlertCircle, Filter, Users } from 'lucide-react';
+import { Plus, AlertCircle, Filter } from 'lucide-react';
 import SurgeryCard from '../components/SurgeryCard';
 import DateFilter from '../components/DateFilter';
 import EditSurgeryModal from '../components/EditSurgeryModal';
 import AssignStaffModal from '../components/AssignStaffModal';
 import { ALL_STATUSES, STATUS_LABELS } from '../components/StatusBadge';
 import surgeryService from '../services/surgeryService';
-import Loading from '../components/ui/Loading';
+
 
 const SurgeryList = () => {
     const navigate = useNavigate();
@@ -42,6 +42,7 @@ const SurgeryList = () => {
     // Fetch surgeries on component mount and when filters change
     useEffect(() => {
         fetchSurgeries();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     const fetchSurgeries = async () => {
@@ -196,37 +197,37 @@ const SurgeryList = () => {
                             </p>
                         </div>
 
-                {surgeries.length === 0 ? (
-                    <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-                        <div className="max-w-md mx-auto">
-                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Plus className="w-8 h-8 text-gray-400" />
+                        {surgeries.length === 0 ? (
+                            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                                <div className="max-w-md mx-auto">
+                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Plus className="w-8 h-8 text-gray-400" />
+                                    </div>
+                                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No Surgeries Found</h3>
+                                    <p className="text-gray-600 mb-6">
+                                        Get started by creating your first surgery. Click the &quot;Create Surgery&quot; button above.
+                                    </p>
+                                    <button
+                                        onClick={() => navigate('/surgeries/new')}
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        <Plus className="w-5 h-5" />
+                                        Create First Surgery
+                                    </button>
+                                </div>
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Surgeries Found</h3>
-                            <p className="text-gray-600 mb-6">
-                                Get started by creating your first surgery. Click the &quot;Create Surgery&quot; button above.
-                            </p>
-                            <button
-                                onClick={() => navigate('/surgeries/new')}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                            >
-                                <Plus className="w-5 h-5" />
-                                Create First Surgery
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {surgeries.map((surgery) => (
-                            <SurgeryCard
-                                key={surgery.id}
-                                surgery={surgery}
-                                onEdit={handleAction}
-                                onDelete={handleDelete}
-                            />
-                        ))}
-                    </div>
-                )}
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {surgeries.map((surgery) => (
+                                    <SurgeryCard
+                                        key={surgery.id}
+                                        surgery={surgery}
+                                        onEdit={handleAction}
+                                        onDelete={handleDelete}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </>
                 )}
             </div>

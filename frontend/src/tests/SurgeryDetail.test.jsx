@@ -8,7 +8,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import SurgeryDetail from '../pages/SurgeryDetail';
 import surgeryService from '../services/surgeryService';
 
@@ -69,7 +69,7 @@ describe('SurgeryDetail Page Tests', () => {
     describe('Loading State', () => {
         it('should show loading indicator while fetching data', () => {
             surgeryService.getSurgeryById.mockImplementation(
-                () => new Promise(() => {}) // Never resolves
+                () => new Promise(() => { }) // Never resolves
             );
             const { container } = renderDetail();
             // Loading component should be present (check for animate-spin class)

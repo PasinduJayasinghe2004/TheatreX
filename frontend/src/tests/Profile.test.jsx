@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 // import Profile from '../pages/Profile'; // Component to be implemented
 // Mock the Profile component since it doesn't exist yet

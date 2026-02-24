@@ -323,6 +323,136 @@ export const updateTheatreStatus = async (req, res) => {
 };
 
 // ============================================================================
+// TOGGLE MAINTENANCE MODE
+// ============================================================================
+// @desc    Dedicated endpoint to put a theatre into or out of maintenance mode.
+//          When enabling, an optional reason can be stored.
+//          When disabling, the theatre returns to 'available' and the reason
+//          is cleared.
+// @route   PUT /api/theatres/:id/maintenance
+// @access  Protected (coordinator, admin)
+// Created by: M4 (Oneli) - Day 12
+// ============================================================================
+export const toggleMaintenanceMode = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { enable, reason } = req.body;
+
+        // 1. Validate 'enable' flag is provided
+        if (enable === undefined || enable === null) {
+            return res.status(400).json({
+                success: false,
+                message: "'enable' field is required (true to enter maintenance, false to exit)"
+            });
+        }
+
+        const enableBool = Boolean(enable);
+
+        // 2. Verify theatre exists
+        const { rows: existing } = await pool.query(
+            'SELECT id, status, name FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        const theatre = existing[0];
+        const previousStatus = theatre.status;
+
+        if (enableBool) {
+            // --- ENTER MAINTENANCE ---
+            // Validate transition is allowed
+            const allowed = getAllowedTransitions(previousStatus);
+            if (!allowed.includes(THEATRE_STATUS.MAINTENANCE)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Cannot enter maintenance from '${previousStatus}'. Allowed transitions: ${allowed.join(', ')}`
+                });
+            }
+
+            // Trim & cap reason
+            const trimmedReason = reason ? String(reason).trim().slice(0, 500) : null;
+
+            // Try to update with maintenance_reason column; fall back gracefully
+            let updatedTheatre;
+            try {
+                const { rows } = await pool.query(`
+                    UPDATE theatres
+                    SET status = $1, maintenance_reason = $2, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $3
+                    RETURNING id, name, location, status, capacity, equipment,
+                              theatre_type, is_active, maintenance_reason, updated_at
+                `, [THEATRE_STATUS.MAINTENANCE, trimmedReason, id]);
+                updatedTheatre = rows[0];
+            } catch (colErr) {
+                // Column may not exist yet on older DBs — fall back to status-only update
+                const { rows } = await pool.query(`
+                    UPDATE theatres
+                    SET status = $1, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $2
+                    RETURNING id, name, location, status, capacity, equipment,
+                              theatre_type, is_active, updated_at
+                `, [THEATRE_STATUS.MAINTENANCE, id]);
+                updatedTheatre = { ...rows[0], maintenance_reason: trimmedReason };
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: `Theatre '${theatre.name}' is now in maintenance mode`,
+                data: updatedTheatre
+            });
+        } else {
+            // --- EXIT MAINTENANCE ---
+            if (previousStatus !== THEATRE_STATUS.MAINTENANCE) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Theatre is not in maintenance mode (current status: '${previousStatus}')`
+                });
+            }
+
+            let updatedTheatre;
+            try {
+                const { rows } = await pool.query(`
+                    UPDATE theatres
+                    SET status = $1, maintenance_reason = NULL, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $2
+                    RETURNING id, name, location, status, capacity, equipment,
+                              theatre_type, is_active, maintenance_reason, updated_at
+                `, [THEATRE_STATUS.AVAILABLE, id]);
+                updatedTheatre = rows[0];
+            } catch (colErr) {
+                const { rows } = await pool.query(`
+                    UPDATE theatres
+                    SET status = $1, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $2
+                    RETURNING id, name, location, status, capacity, equipment,
+                              theatre_type, is_active, updated_at
+                `, [THEATRE_STATUS.AVAILABLE, id]);
+                updatedTheatre = { ...rows[0], maintenance_reason: null };
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: `Theatre '${theatre.name}' exited maintenance mode and is now available`,
+                data: updatedTheatre
+            });
+        }
+    } catch (error) {
+        console.error('Error toggling maintenance mode:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error toggling maintenance mode',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
 // CHECK THEATRE AVAILABILITY
 // ============================================================================
 // @desc    Check which theatres are available for a given date, time & duration.

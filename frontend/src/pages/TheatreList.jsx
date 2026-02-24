@@ -3,6 +3,7 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 10
 // Updated by: M3 (Janani)  - Day 11 (Auto-refresh polling every 30s)
+// Updated by: M4 (Oneli)   - Day 12 (Maintenance mode toggle handler)
 //
 // Displays a list of all theatres in a responsive grid layout.
 // Supports filtering by status and theatre type.
@@ -99,6 +100,34 @@ const TheatreList = () => {
         } catch (err) {
             console.error('Error updating theatre status:', err);
             setError(err.message || 'Failed to update theatre status');
+        } finally {
+            setStatusUpdating(null);
+        }
+    };
+
+    // Handle maintenance mode toggle - M4 (Oneli) - Day 12
+    const handleMaintenanceToggle = async (theatreId, enable, reason) => {
+        try {
+            setStatusUpdating(theatreId);
+            const response = await theatreService.toggleMaintenanceMode(theatreId, enable, reason);
+
+            if (response.success) {
+                // Update local state for instant feedback
+                setTheatres(prev =>
+                    prev.map(t =>
+                        t.id === theatreId
+                            ? {
+                                ...t,
+                                status: response.data.status,
+                                maintenance_reason: response.data.maintenance_reason || null
+                            }
+                            : t
+                    )
+                );
+            }
+        } catch (err) {
+            console.error('Error toggling maintenance mode:', err);
+            setError(err.message || 'Failed to toggle maintenance mode');
         } finally {
             setStatusUpdating(null);
         }
@@ -248,6 +277,7 @@ const TheatreList = () => {
                                         key={theatre.id}
                                         theatre={theatre}
                                         onStatusChange={handleStatusChange}
+                                        onMaintenanceToggle={handleMaintenanceToggle}
                                         userRole={user?.role}
                                         isUpdating={statusUpdating === theatre.id}
                                     />

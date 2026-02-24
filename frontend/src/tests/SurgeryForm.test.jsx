@@ -9,7 +9,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import React, { createContext } from 'react';
+import React from 'react';
 import axios from 'axios';
 
 // Mock the AuthContext module
@@ -32,7 +32,7 @@ vi.mock('axios', () => {
         post: vi.fn(),
         put: vi.fn(),
         delete: vi.fn(),
-        create: vi.fn(function() { return this; }),
+        create: vi.fn(function () { return this; }),
         interceptors: {
             request: { use: vi.fn(), eject: vi.fn() },
             response: { use: vi.fn(), eject: vi.fn() }
@@ -63,8 +63,8 @@ vi.mock('react-router-dom', async () => {
 });
 
 describe('SurgeryForm Modal Component Tests', () => {
-    const mockToken = 'mock-jwt-token';
-    const mockOnSuccess = vi.fn();
+    const _mockToken = 'mock-jwt-token';
+    const _mockOnSuccess = vi.fn();
     const mockOnCancel = vi.fn();
 
     const mockSurgeons = [
@@ -265,8 +265,8 @@ describe('SurgeryForm Modal Component Tests', () => {
 
             await waitFor(async () => {
                 // Fill procedure name only
-                fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
-                    target: { value: 'Appendectomy' } 
+                fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), {
+                    target: { value: 'Appendectomy' }
                 });
 
                 const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
@@ -282,16 +282,16 @@ describe('SurgeryForm Modal Component Tests', () => {
             renderForm();
 
             // Fill procedure name and patient name but not date/time
-            fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
-                target: { value: 'Appendectomy' } 
+            fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), {
+                target: { value: 'Appendectomy' }
             });
-            
+
             // Need to fill patient details for manual entry
-            fireEvent.change(screen.getByPlaceholderText('Full Name'), { 
-                target: { value: 'Test Patient' } 
+            fireEvent.change(screen.getByPlaceholderText('Full Name'), {
+                target: { value: 'Test Patient' }
             });
-            fireEvent.change(screen.getByPlaceholderText('Age'), { 
-                target: { value: '45' } 
+            fireEvent.change(screen.getByPlaceholderText('Age'), {
+                target: { value: '45' }
             });
             // Select gender
             const genderSelects = screen.getAllByRole('combobox');
@@ -313,24 +313,24 @@ describe('SurgeryForm Modal Component Tests', () => {
     // Form Submission Tests
     // ========================================================================
     describe('Form Submission', () => {
-        const fillValidForm = async () => {
+        const _fillValidForm = async () => {
             // Fill procedure name
-            fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
-                target: { value: 'Appendectomy' } 
+            fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), {
+                target: { value: 'Appendectomy' }
             });
-            
+
             // Fill patient name and required fields
-            fireEvent.change(screen.getByPlaceholderText('Full Name'), { 
-                target: { value: 'Test Patient' } 
+            fireEvent.change(screen.getByPlaceholderText('Full Name'), {
+                target: { value: 'Test Patient' }
             });
-            fireEvent.change(screen.getByPlaceholderText('Age'), { 
-                target: { value: '45' } 
+            fireEvent.change(screen.getByPlaceholderText('Age'), {
+                target: { value: '45' }
             });
-            
+
             // Fill date and time using label
             const dateInput = screen.getByLabelText(/Date/i);
             fireEvent.change(dateInput, { target: { value: '2026-03-15' } });
-            
+
             const timeInput = screen.getByLabelText(/Start Time/i);
             fireEvent.change(timeInput, { target: { value: '10:00' } });
         };
@@ -347,22 +347,22 @@ describe('SurgeryForm Modal Component Tests', () => {
             // triggers form validation. Due to async complexity, we verify the 
             // submit button is clickable and form is interactive.
             renderForm();
-            
+
             await waitFor(() => {
                 expect(screen.getByPlaceholderText('e.g. Appendectomy')).toBeInTheDocument();
             });
-            
+
             // Fill procedure name
-            fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), { 
-                target: { value: 'Appendectomy' } 
+            fireEvent.change(screen.getByPlaceholderText('e.g. Appendectomy'), {
+                target: { value: 'Appendectomy' }
             });
 
             const submitButton = screen.getByRole('button', { name: /Confirm Schedule/i });
             expect(submitButton).toBeInTheDocument();
-            
+
             // Click should trigger validation (even if it shows error for missing fields)
             fireEvent.click(submitButton);
-            
+
             // Form should remain interactive
             await waitFor(() => {
                 expect(screen.getByPlaceholderText('e.g. Appendectomy')).toBeInTheDocument();
@@ -414,7 +414,7 @@ describe('SurgeryForm Modal Component Tests', () => {
     describe('Full Page Mode', () => {
         it('should render as full page when isModal is false', async () => {
             renderForm({ isModal: false });
-            
+
             await waitFor(() => {
                 expect(screen.getByText('Schedule Surgery')).toBeInTheDocument();
             });

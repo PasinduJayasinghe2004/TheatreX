@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const EditSurgeryModal = () => {
     // Existing state declarations
-    const [theatres, setTheatres] = useState([]);
-    const [loadingTheatres, setLoadingTheatres] = useState(true);
-    const [theatreAvailability, setTheatreAvailability] = useState(null);
-    const [checkingAvailability, setCheckingAvailability] = useState(false);
+    const [_theatres, _setTheatres] = useState([]);
+    const [_loadingTheatres, _setLoadingTheatres] = useState(true);
+    const [_theatreAvailability, _setTheatreAvailability] = useState(null);
+    const [_checkingAvailability, _setCheckingAvailability] = useState(false);
 
     // Existing code... 
 
