@@ -7,21 +7,22 @@
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation endpoint)
 // Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
 // Updated by: M4 (Oneli)    - Day 11 (Theatre duration calculation endpoint)
-// Updated by: M4 (Oneli)    - Day 12 (Maintenance mode toggle endpoint)
+// Updated by: M1 (Pasindu) - Day 12 (Coordinator overview endpoint)
 //
 // Defines all theatre-related API routes
 //
 // ROUTES:
-// - GET  /api/theatres              - List all active theatres (Protected)
-// - GET  /api/theatres/availability - Check theatre availability (Protected)
-// - GET  /api/theatres/live-status  - Live status polling endpoint (Protected)
-// - GET  /api/theatres/:id          - Get single theatre detail (Protected)
-// - PUT  /api/theatres/:id/status   - Update theatre status (Coordinator/Admin)
-// - PUT  /api/theatres/:id/maintenance - Toggle maintenance mode (Coordinator/Admin)
-// - GET  /api/theatres/:id/current-surgery - Get current surgery (Protected)
-// - GET  /api/theatres/:id/auto-progress   - Auto-calculated progress (Protected)
-// - PUT  /api/theatres/:id/progress - Update surgery progress (Coordinator/Admin)
-// - GET  /api/theatres/:id/duration - Theatre duration calculation (Protected)
+// - GET  /api/theatres                       - List all active theatres (Protected)
+// - GET  /api/theatres/availability          - Check theatre availability (Protected)
+// - GET  /api/theatres/live-status           - Live status polling endpoint (Protected)
+// - GET  /api/theatres/stats                 - Theatre statistics (Protected)
+// - GET  /api/theatres/coordinator-overview  - Coordinator overview (Coordinator/Admin)
+// - GET  /api/theatres/:id                   - Get single theatre detail (Protected)
+// - PUT  /api/theatres/:id/status            - Update theatre status (Coordinator/Admin)
+// - GET  /api/theatres/:id/current-surgery   - Get current surgery (Protected)
+// - GET  /api/theatres/:id/auto-progress     - Auto-calculated progress (Protected)
+// - PUT  /api/theatres/:id/progress          - Update surgery progress (Coordinator/Admin)
+// - GET  /api/theatres/:id/duration          - Theatre duration calculation (Protected)
 // ============================================================================
 
 import express from 'express';
@@ -35,7 +36,9 @@ import {
     getAutoProgress,
     getLiveStatus,
     getTheatreDuration,
-    toggleMaintenanceMode
+    getTheatreStats,
+    getCoordinatorOverview,
+    quickUpdateStatus
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -68,6 +71,27 @@ router.get('/availability', protect, checkTheatreAvailability);
 router.get('/live-status', protect, getLiveStatus);
 
 // ============================================================================
+// ROUTE: GET /api/theatres/stats
+// ============================================================================
+// Get summary statistics for all theatres.
+// Returns counts by status, type, and utilization stats.
+// Protected - any authenticated user can view
+// Created by: M5 (Inthusha) - Day 11
+// ============================================================================
+router.get('/stats', protect, getTheatreStats);
+
+// ============================================================================
+// ROUTE: GET /api/theatres/coordinator-overview
+// ============================================================================
+// Coordinator-specific overview of ALL active theatres + current surgeries.
+// Returns richer payload than /live-status: includes capacity, upcoming count.
+// Must be before /:id to avoid path conflict.
+// Protected + (coordinator or admin only)
+// Created by: M1 (Pasindu) - Day 12
+// ============================================================================
+router.get('/coordinator-overview', protect, authorize('coordinator', 'admin'), getCoordinatorOverview);
+
+// ============================================================================
 // ROUTE: GET /api/theatres
 // ============================================================================
 // Get all active theatres (supports ?status=&type= filters)
@@ -98,13 +122,13 @@ router.get('/:id', protect, getTheatreById);
 router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, updateTheatreStatus);
 
 // ============================================================================
-// ROUTE: PUT /api/theatres/:id/maintenance
+// ROUTE: PATCH /api/theatres/:id/quick-status
 // ============================================================================
-// Toggle maintenance mode (enter with optional reason, or exit)
+// One-click status update for the Coordinator Dashboard.
 // Protected + (coordinator or admin only)
-// Created by: M4 (Oneli) - Day 12
+// Created by: M2 (Chandeepa) - Day 12
 // ============================================================================
-router.put('/:id/maintenance', protect, authorize('coordinator', 'admin'), toggleMaintenanceMode);
+router.patch('/:id/quick-status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, quickUpdateStatus);
 
 // ============================================================================
 // ROUTE: GET /api/theatres/:id/current-surgery

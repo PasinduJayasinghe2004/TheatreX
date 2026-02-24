@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
+import theatrexLogo from '../assets/theatrex-logo.svg';
 
 /**
  * Sidebar Component
@@ -8,6 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
  * Created by: M5 - Day 2
  * Updated by: M1 (Pasindu) - Day 8 (Added Emergency Booking link)
  * Updated by: M3 (Janani)  - Day 11 (Added Live Status link)
+ * Updated by: M1 (Pasindu) - Day 12 (Added Coordinator Dashboard link)
  * 
  * @param {Object} props - Component props
  * @param {boolean} props.isCollapsed - Whether the sidebar is collapsed (default: false)
@@ -53,6 +55,16 @@ const navigationItems = [
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+        ),
+    },
+    {
+        name: 'Coordinator',
+        path: '/coordinator',
+        icon: (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
         ),
     },
@@ -262,10 +274,7 @@ const Sidebar = ({ isCollapsed = false, onToggle }) => {
             {!isCollapsed && (
                 <div className="p-4 border-t border-gray-200">
                     <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <img src={theatrexLogo} alt="TheatreX Logo" className="w-5 h-5" />
                         <span>TheatreX v1.0</span>
                     </div>
                 </div>

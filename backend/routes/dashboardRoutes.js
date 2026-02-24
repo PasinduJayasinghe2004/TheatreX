@@ -8,7 +8,7 @@
 // ============================================================================
 
 import express from 'express';
-import { getDashboardStats } from '../controllers/dashboardController.js';
+import { getDashboardStats, getDashboardSummary } from '../controllers/dashboardController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -21,5 +21,14 @@ const router = express.Router();
 // @access  Protected (all authenticated users)
 // ============================================================================
 router.get('/stats', protect, getDashboardStats);
+
+// ============================================================================
+// Dashboard Summary Route
+// ============================================================================
+// @route   GET /api/dashboard/summary
+// @desc    Get high-level dashboard summary
+// @access  Protected (coordinator, admin)
+// ============================================================================
+router.get('/summary', protect, getDashboardSummary);
 
 export default router;

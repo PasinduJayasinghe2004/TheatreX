@@ -13,7 +13,7 @@
 // Run with: npm test -- --testPathPattern=day11_auto_progress
 // ============================================================================
 
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 import {

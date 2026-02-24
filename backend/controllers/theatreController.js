@@ -2,6 +2,7 @@
 // Theatre Controller
 // ============================================================================
 // Created by: M2 (Chandeepa) - Day 8
+// Updated by: M1 (Pasindu)   - Day 12 (Coordinator overview endpoint)
 // Updated by: M1 (Pasindu) - Day 10 (Theatre list page, detail, status toggle)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
 // Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
@@ -933,26 +934,21 @@ export const getTheatreDuration = async (req, res) => {
             data: {
                 theatre_id: parseInt(id),
                 theatre_name: theatreRows[0].name,
-                theatre_status: theatreRows[0].status,
                 surgery_id: surgery.id,
-                surgery_type: surgery.surgery_type,
-                patient_name: surgery.patient_name,
-                // Raw values (minutes)
-                elapsed_minutes: progressData.elapsed_minutes,
-                remaining_minutes: progressData.remaining_minutes,
-                total_duration_minutes: surgery.duration_minutes,
-                overdue_minutes: overdueMinutes,
-                // Formatted strings
-                elapsed_formatted: formatMinutes(progressData.elapsed_minutes),
-                remaining_formatted: progressData.is_overdue
-                    ? `+${formatMinutes(overdueMinutes)} over`
-                    : formatMinutes(progressData.remaining_minutes),
-                total_formatted: formatMinutes(surgery.duration_minutes),
-                // Time info
-                start_time: surgery.scheduled_time,
-                estimated_end_time: progressData.estimated_end_time,
+                duration: {
+                    total: surgery.duration_minutes,
+                    elapsed: progressData.elapsed_minutes,
+                    remaining: progressData.remaining_minutes,
+                    overdue: overdueMinutes,
+                    formatted: {
+                        total: formatMinutes(surgery.duration_minutes),
+                        elapsed: formatMinutes(progressData.elapsed_minutes),
+                        remaining: progressData.is_overdue ? '0m' : formatMinutes(progressData.remaining_minutes),
+                        overdue: overdueMinutes > 0 ? formatMinutes(overdueMinutes) : '0m'
+                    }
+                },
                 is_overdue: progressData.is_overdue,
-                progress_percent: progressData.auto_progress
+                estimated_end_time: progressData.estimated_end_time
             }
         });
     } catch (error) {
@@ -960,6 +956,269 @@ export const getTheatreDuration = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error calculating theatre duration',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET THEATRE STATS
+// ============================================================================
+// @desc    Get summary statistics for all active theatres.
+// @route   GET /api/theatres/stats
+// @access  Protected
+// Created by: M5 (Inthusha) - Day 11
+// ============================================================================
+export const getTheatreStats = async (req, res) => {
+    try {
+        // 1. Get status-based counts
+        const { rows: statusRows } = await pool.query(`
+            SELECT status, COUNT(*) as count
+            FROM theatres
+            WHERE is_active = TRUE
+            GROUP BY status
+        `);
+
+        // 2. Get type-based counts
+        const { rows: typeRows } = await pool.query(`
+            SELECT theatre_type, COUNT(*) as count
+            FROM theatres
+            WHERE is_active = TRUE
+            GROUP BY theatre_type
+        `);
+
+        // 3. Get utilization stats (in_use vs total)
+        const { rows: utilizationRows } = await pool.query(`
+            SELECT 
+                COUNT(*) as total_active,
+                COUNT(*) FILTER (WHERE status = 'in_use') as currently_in_use,
+                SUM(capacity) as total_capacity
+            FROM theatres
+            WHERE is_active = TRUE
+        `);
+
+        // 4. Get average surgery progress for in-progress surgeries
+        const { rows: progressRows } = await pool.query(`
+            SELECT COALESCE(AVG(progress_percent), 0) as avg_progress
+            FROM surgeries
+            WHERE status = 'in_progress'
+        `);
+
+        // Format status counts into a cleaner object
+        const statusCounts = {};
+        VALID_THEATRE_STATUSES.forEach(status => {
+            statusCounts[status] = 0;
+        });
+        statusRows.forEach(row => {
+            statusCounts[row.status] = parseInt(row.count);
+        });
+
+        const stats = {
+            total_theatres: parseInt(utilizationRows[0].total_active) || 0,
+            status_summary: statusCounts,
+            type_summary: typeRows.reduce((acc, row) => {
+                acc[row.theatre_type] = parseInt(row.count);
+                return acc;
+            }, {}),
+            utilization: {
+                in_use_count: parseInt(utilizationRows[0].currently_in_use) || 0,
+                utilization_rate: utilizationRows[0].total_active > 0
+                    ? ((utilizationRows[0].currently_in_use / utilizationRows[0].total_active) * 100).toFixed(1)
+                    : 0,
+                total_capacity: parseInt(utilizationRows[0].total_capacity) || 0
+            },
+            average_surgery_progress: parseFloat(progressRows[0].avg_progress).toFixed(1)
+        };
+
+        res.status(200).json({
+            success: true,
+            data: stats
+        });
+    } catch (error) {
+        console.error('Error fetching theatre stats:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching theatre stats',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET COORDINATOR OVERVIEW
+// ============================================================================
+// @desc    Coordinator-specific overview of ALL active theatres.
+//          Returns every theatre with its current surgery (if any) enriched
+//          with auto-progress, plus a summary object with status counts,
+//          utilization rate, and overdue count — all in one query.
+// @route   GET /api/theatres/coordinator-overview
+// @access  Protected (coordinator, admin)
+// Created by: M1 (Pasindu) - Day 12
+// ============================================================================
+export const getCoordinatorOverview = async (req, res) => {
+    try {
+        // Single query: all active theatres + current in-progress surgery (if any)
+        const { rows } = await pool.query(`
+            SELECT
+                t.id,
+                t.name,
+                t.location,
+                t.status,
+                t.capacity,
+                t.theatre_type,
+                t.is_active,
+                cs.id               AS current_surgery_id,
+                cs.surgery_type     AS current_surgery_type,
+                cs.patient_name     AS current_patient_name,
+                cs.scheduled_time   AS current_surgery_time,
+                cs.duration_minutes AS current_surgery_duration,
+                cs.progress_percent AS current_surgery_progress,
+                cs.priority         AS current_surgery_priority
+            FROM theatres t
+            LEFT JOIN surgeries cs
+                ON cs.theatre_id = t.id
+               AND cs.status = 'in_progress'
+            WHERE t.is_active = TRUE
+            ORDER BY t.name ASC
+        `);
+
+        // Enrich each row with auto-progress if a surgery is running
+        const theatres = rows.map(row => {
+            const theatre = {
+                id: row.id,
+                name: row.name,
+                location: row.location,
+                status: row.status,
+                capacity: row.capacity,
+                theatre_type: row.theatre_type,
+                current_surgery: null
+            };
+
+            if (row.current_surgery_id && row.current_surgery_time && row.current_surgery_duration) {
+                const progressData = calculateAutoProgress(
+                    row.current_surgery_time,
+                    row.current_surgery_duration
+                );
+
+                theatre.current_surgery = {
+                    id: row.current_surgery_id,
+                    surgery_type: row.current_surgery_type,
+                    patient_name: row.current_patient_name,
+                    scheduled_time: row.current_surgery_time,
+                    duration_minutes: row.current_surgery_duration,
+                    manual_progress: row.current_surgery_progress || 0,
+                    priority: row.current_surgery_priority,
+                    auto_progress: progressData.auto_progress,
+                    elapsed_minutes: progressData.elapsed_minutes,
+                    remaining_minutes: progressData.remaining_minutes,
+                    is_overdue: progressData.is_overdue,
+                    estimated_end_time: progressData.estimated_end_time
+                };
+            }
+
+            return theatre;
+        });
+
+        // Build summary object
+        const total = theatres.length;
+        const available = theatres.filter(t => t.status === 'available').length;
+        const in_use = theatres.filter(t => t.status === 'in_use').length;
+        const maintenance = theatres.filter(t => t.status === 'maintenance').length;
+        const cleaning = theatres.filter(t => t.status === 'cleaning').length;
+        const overdue_count = theatres.filter(t => t.current_surgery?.is_overdue).length;
+        const utilization_rate = total > 0
+            ? parseFloat(((in_use / total) * 100).toFixed(1))
+            : 0;
+
+        const summary = {
+            total,
+            available,
+            in_use,
+            maintenance,
+            cleaning,
+            utilization_rate,
+            overdue_count
+        };
+
+        res.status(200).json({
+            success: true,
+            generated_at: new Date().toISOString(),
+            summary,
+            data: theatres
+        });
+    } catch (error) {
+        console.error('Error fetching coordinator overview:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching coordinator overview',
+            error: error.message
+        });
+    }
+};
+// ============================================================================
+// QUICK UPDATE THEATRE STATUS
+// ============================================================================
+// @desc    One-click status update for the Coordinator Dashboard.
+//          Validates current status and allowed transitions.
+// @route   PATCH /api/theatres/:id/quick-status
+// @access  Protected (coordinator, admin)
+// Created by: M2 (Chandeepa) - Day 12
+// ============================================================================
+export const quickUpdateStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!status || !VALID_THEATRE_STATUSES.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
+            });
+        }
+
+        // 1. Get current status
+        const { rows: existing } = await pool.query(
+            'SELECT id, status, name FROM theatres WHERE id = $1',
+            [id]
+        );
+
+        if (existing.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        const currentStatus = existing[0].status;
+        const name = existing[0].name;
+
+        // 2. Validate transition
+        const allowed = getAllowedTransitions(currentStatus);
+        if (!allowed.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot transition from '${currentStatus}' to '${status}'. Allowed: ${allowed.join(', ')}`
+            });
+        }
+
+        // 3. Update status
+        const { rows } = await pool.query(`
+            UPDATE theatres
+            SET status = $1, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $2
+            RETURNING id, name, status, updated_at
+        `, [status, id]);
+
+        res.status(200).json({
+            success: true,
+            message: `Theatre '${name}' updated to ${status}`,
+            data: rows[0]
+        });
+    } catch (error) {
+        console.error('Error in quickUpdateStatus:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating theatre status',
             error: error.message
         });
     }
