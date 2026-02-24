@@ -10,6 +10,7 @@
 // Updated by: M2 (Chandeepa) - Day 9 (Added available nurses route)
 // Updated by: M3 (Janani) - Day 9 (Added available anaesthetists route)
 // Updated by: M4 (Oneli) - Day 9 (Added staff conflict check route)
+// Updated by: M3 (Janani) - Day 12 (Added assign-theatre and unassigned surgeries routes)
 // 
 // Defines all surgery-related API routes
 //
@@ -18,9 +19,11 @@
 // - POST   /api/surgeries/check-conflicts            - Check scheduling conflicts (Protected) - M1 Day 8
 // - POST   /api/surgeries/check-staff-conflicts      - Check staff conflicts (Protected) - M4 Day 9
 // - GET    /api/surgeries                           - Get all surgeries (Protected)
+// - GET    /api/surgeries/unassigned                 - Get surgeries without theatre (Protected) - M3 Day 12
 // - GET    /api/surgeries/:id                       - Get surgery by ID (Protected)
 // - PUT    /api/surgeries/:id                       - Update surgery (Coordinator, Admin)
 // - PATCH  /api/surgeries/:id/status                - Update surgery status (Coordinator, Admin)
+// - PATCH  /api/surgeries/:id/assign-theatre        - Assign surgery to theatre (Coordinator, Admin) - M3 Day 12
 // - GET    /api/surgeries/surgeons                  - Get surgeons for dropdown (Protected)
 // - GET    /api/surgeries/surgeons/available         - Get available surgeons (Protected) - M1 Day 9
 // - GET    /api/surgeries/nurses/available           - Get available nurses (Protected) - M2 Day 9
@@ -44,7 +47,9 @@ import {
     getCalendarEvents,
     checkConflicts,
     checkStaffConflicts,
-    assignStaff
+    assignStaff,
+    assignSurgeryToTheatre,
+    getUnassignedSurgeries
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -121,6 +126,16 @@ router.post('/check-conflicts', protect, checkConflicts);
 router.post('/check-staff-conflicts', protect, checkStaffConflicts);
 
 // ============================================================================
+// ROUTE: GET /api/surgeries/unassigned
+// ============================================================================
+// Get surgeries that do not have a theatre assigned yet.
+// Supports optional date range + status filters via query params.
+// Protected - any authenticated user can view
+// Created by: M3 (Janani) - Day 12
+// ============================================================================
+router.get('/unassigned', protect, getUnassignedSurgeries);
+
+// ============================================================================
 // ROUTE: POST /api/surgeries
 // ============================================================================
 // Create a new surgery
@@ -162,6 +177,17 @@ router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
 // Created by: M3 (Janani) - Day 6
 // ============================================================================
 router.patch('/:id/status', protect, authorize('coordinator', 'admin'), updateSurgeryStatus);
+
+// ============================================================================
+// ROUTE: PATCH /api/surgeries/:id/assign-theatre
+// ============================================================================
+// Assign (or reassign) a surgery to a specific theatre.
+// Validates theatre exists, is active, not in maintenance, and checks
+// for time-slot conflicts in the target theatre.
+// Protected + (coordinator or admin only)
+// Created by: M3 (Janani) - Day 12
+// ============================================================================
+router.patch('/:id/assign-theatre', protect, authorize('coordinator', 'admin'), assignSurgeryToTheatre);
 
 // ============================================================================
 // ROUTE: PATCH /api/surgeries/:id/staff

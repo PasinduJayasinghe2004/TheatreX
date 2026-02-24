@@ -2,6 +2,7 @@
 // Coordinator Dashboard Page
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 12
+// Updated by: M3 (Janani) - Day 12 (Added theatre assignment dropdown)
 //
 // Coordinator-specific mission-control view of all theatres.
 // Fetches from GET /api/theatres/coordinator-overview and renders:
@@ -15,6 +16,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import SummaryCard from '../components/SummaryCard';
+import TheatreAssignmentDropdown from '../components/TheatreAssignmentDropdown';
 import theatreService from '../services/theatreService';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -63,7 +65,7 @@ const formatMinutes = (mins) => {
 // Theatre Card
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus }) => {
+const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssignSurgery, showAssignment, onCloseAssignment, onAssigned }) => {
     const { id, name, location, status, theatre_type, capacity, current_surgery } = theatre;
     const cardBorderClass = STATUS_CONFIG[status]?.card || 'border-l-gray-200';
 
@@ -85,6 +87,9 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus }) => {
     } else if (status === 'in_use') {
         quickActions.push({ label: 'Complete & Clean', target: 'cleaning', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200' });
     }
+
+    // Show "Assign Surgery" button for available theatres without a current surgery
+    const canAssign = (status === 'available' || (status !== 'maintenance' && !current_surgery));
 
     return (
         <div
@@ -163,7 +168,7 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus }) => {
             </div>
 
             {/* Quick Actions (Dashboard Enhancement) */}
-            {quickActions.length > 0 && (
+            {(quickActions.length > 0 || canAssign) && (
                 <div className="px-5 py-3 border-t border-gray-50 bg-gray-50/30">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Quick Toggle</p>
                     <div className="flex flex-wrap gap-2">
@@ -176,7 +181,26 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus }) => {
                                 {action.label}
                             </button>
                         ))}
+                        {canAssign && (
+                            <button
+                                onClick={() => onAssignSurgery(id)}
+                                className="flex-1 text-[11px] font-bold px-2 py-1.5 rounded-lg border transition-all hover:scale-[1.02] active:scale-[0.98] bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                            >
+                                Assign Surgery
+                            </button>
+                        )}
                     </div>
+                </div>
+            )}
+
+            {/* Theatre Assignment Dropdown (M3 - Day 12) */}
+            {showAssignment && (
+                <div className="px-4 pb-4">
+                    <TheatreAssignmentDropdown
+                        theatre={theatre}
+                        onAssigned={onAssigned}
+                        onClose={onCloseAssignment}
+                    />
                 </div>
             )}
 
@@ -213,6 +237,9 @@ const CoordinatorDashboard = () => {
 
     // Status filter: null = show all
     const [statusFilter, setStatusFilter] = useState(null);
+
+    // Assignment dropdown state - M3 Day 12
+    const [assignmentTheatreId, setAssignmentTheatreId] = useState(null);
 
     const fetchOverview = useCallback(async (isManual = false) => {
         if (isManual) setRefreshing(true);
@@ -452,6 +479,10 @@ const CoordinatorDashboard = () => {
                                     onViewDetail={(id) => navigate(`/theatres/${id}`)}
                                     onViewLive={() => navigate('/live-status')}
                                     onQuickStatus={handleQuickStatusUpdate}
+                                    onAssignSurgery={(id) => setAssignmentTheatreId(prev => prev === id ? null : id)}
+                                    showAssignment={assignmentTheatreId === theatre.id}
+                                    onCloseAssignment={() => setAssignmentTheatreId(null)}
+                                    onAssigned={() => { setAssignmentTheatreId(null); fetchOverview(true); }}
                                 />
                             ))}
                         </div>

@@ -8,6 +8,7 @@
 // Updated by: M2 (Chandeepa) - Day 9 (Added getAvailableNurses, nurse assignment)
 // Updated by: M3 (Janani) - Day 9 (Added getAvailableAnaesthetists, anaesthetist dropdown)
 // Updated by: M4 (Oneli) - Day 9 (Added checkStaffConflicts for warning UI)
+// Updated by: M3 (Janani) - Day 12 (Added assignSurgeryToTheatre, getUnassignedSurgeries)
 // 
 // Handles all surgery-related HTTP requests and business logic.
 // Contains CRUD operations for surgery management.
@@ -24,6 +25,8 @@
 // - getAvailableNurses: GET /api/surgeries/nurses/available - Available nurses (M2 Day 9)
 // - getAvailableAnaesthetists: GET /api/surgeries/anaesthetists/available - Available anaesthetists (M3 Day 9)
 // - assignStaff: PATCH /api/surgeries/:id/staff - Unified staff assignment (M5 Day 9)
+// - assignSurgeryToTheatre: PATCH /api/surgeries/:id/assign-theatre - Assign surgery to theatre (M3 Day 12)
+// - getUnassignedSurgeries: GET /api/surgeries/unassigned - Surgeries without theatre (M3 Day 12)
 // - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // - checkConflicts: POST /api/surgeries/check-conflicts - Conflict detection (M1 Day 8)
 // - checkStaffConflicts: POST /api/surgeries/check-staff-conflicts - Staff conflict warnings (M4 Day 9)
@@ -1197,6 +1200,234 @@ export const assignStaff = async (req, res) => {
         });
     } finally {
         client.release();
+    }
+};
+
+// ============================================================================
+// ASSIGN SURGERY TO THEATRE (M3 - Day 12)
+// ============================================================================
+// @desc    Assign (or reassign) a surgery to a specific theatre.
+//          Validates that both surgery and theatre exist, the theatre is
+//          active and not under maintenance, and checks for time-slot
+//          conflicts with other surgeries already in that theatre.
+// @route   PATCH /api/surgeries/:id/assign-theatre
+// @access  Protected (coordinator, admin)
+// Created by: M3 (Janani) - Day 12
+// ============================================================================
+export const assignSurgeryToTheatre = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { theatre_id } = req.body;
+
+        // ── Validate inputs ───────────────────────────────────────────────
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgery ID'
+            });
+        }
+
+        if (!theatre_id || isNaN(theatre_id) || Number(theatre_id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'theatre_id is required and must be a positive integer'
+            });
+        }
+
+        const theatreIdNum = Number(theatre_id);
+        const surgeryIdNum = Number(id);
+
+        // ── Verify surgery exists and fetch scheduling details ────────────
+        const { rows: surgeryRows } = await pool.query(
+            `SELECT id, surgery_type, patient_name, scheduled_date, scheduled_time,
+                    duration_minutes, theatre_id, status
+             FROM surgeries WHERE id = $1`,
+            [surgeryIdNum]
+        );
+
+        if (surgeryRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Surgery not found'
+            });
+        }
+
+        const surgery = surgeryRows[0];
+
+        // Cannot reassign a completed or cancelled surgery
+        if (surgery.status === 'completed' || surgery.status === 'cancelled') {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot assign a theatre to a surgery with status '${surgery.status}'`
+            });
+        }
+
+        // ── Verify theatre exists and is active ───────────────────────────
+        const { rows: theatreRows } = await pool.query(
+            `SELECT id, name, status, is_active, theatre_type
+             FROM theatres WHERE id = $1`,
+            [theatreIdNum]
+        );
+
+        if (theatreRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Theatre not found'
+            });
+        }
+
+        const theatre = theatreRows[0];
+
+        if (!theatre.is_active) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot assign surgery to an inactive theatre'
+            });
+        }
+
+        if (theatre.status === 'maintenance') {
+            return res.status(400).json({
+                success: false,
+                message: `Theatre '${theatre.name}' is currently under maintenance`
+            });
+        }
+
+        // ── Already assigned to this theatre? (no-op guard) ───────────────
+        if (surgery.theatre_id === theatreIdNum) {
+            return res.status(200).json({
+                success: true,
+                message: 'Surgery is already assigned to this theatre',
+                data: { surgery_id: surgeryIdNum, theatre_id: theatreIdNum, theatre_name: theatre.name }
+            });
+        }
+
+        // ── Conflict detection: overlapping surgeries in target theatre ───
+        if (surgery.scheduled_date && surgery.scheduled_time && surgery.duration_minutes) {
+            const { rows: conflicts } = await pool.query(`
+                SELECT id, surgery_type, patient_name, scheduled_time, duration_minutes
+                FROM surgeries
+                WHERE theatre_id = $1
+                  AND scheduled_date = $2
+                  AND status IN ('scheduled', 'in_progress')
+                  AND id <> $3
+                  AND (
+                      scheduled_time < ($4::time + ($5 || ' minutes')::interval)
+                      AND (scheduled_time + (duration_minutes || ' minutes')::interval) > $4::time
+                  )
+            `, [theatreIdNum, surgery.scheduled_date, surgeryIdNum, surgery.scheduled_time, surgery.duration_minutes]);
+
+            if (conflicts.length > 0) {
+                return res.status(409).json({
+                    success: false,
+                    message: `Theatre '${theatre.name}' has a conflicting surgery at this time`,
+                    conflicts: conflicts.map(c => ({
+                        surgery_id: c.id,
+                        surgery_type: c.surgery_type,
+                        patient_name: c.patient_name,
+                        scheduled_time: c.scheduled_time,
+                        duration_minutes: c.duration_minutes
+                    }))
+                });
+            }
+        }
+
+        // ── Perform the assignment ────────────────────────────────────────
+        const { rows: updated } = await pool.query(`
+            UPDATE surgeries
+            SET theatre_id = $1, updated_at = NOW()
+            WHERE id = $2
+            RETURNING *
+        `, [theatreIdNum, surgeryIdNum]);
+
+        res.status(200).json({
+            success: true,
+            message: `Surgery assigned to theatre '${theatre.name}' successfully`,
+            data: {
+                ...updated[0],
+                theatre_name: theatre.name,
+                theatre_type: theatre.theatre_type
+            }
+        });
+    } catch (error) {
+        console.error('Error assigning surgery to theatre:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error assigning surgery to theatre',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET UNASSIGNED SURGERIES (M3 - Day 12)
+// ============================================================================
+// @desc    Get surgeries that do not have a theatre assigned yet.
+//          Supports optional date range + status filters.
+//          Useful for the coordinator assignment dropdown.
+// @route   GET /api/surgeries/unassigned
+// @access  Protected
+// Created by: M3 (Janani) - Day 12
+// ============================================================================
+export const getUnassignedSurgeries = async (req, res) => {
+    try {
+        const { startDate, endDate, status } = req.query;
+
+        const conditions = ['s.theatre_id IS NULL'];
+        const params = [];
+        let p = 1;
+
+        // By default, only show scheduled / in_progress (not completed/cancelled)
+        const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
+        if (status && validStatuses.includes(status)) {
+            conditions.push(`s.status = $${p++}`);
+            params.push(status);
+        } else {
+            conditions.push(`s.status IN ('scheduled', 'in_progress')`);
+        }
+
+        if (startDate) {
+            conditions.push(`s.scheduled_date >= $${p++}`);
+            params.push(startDate);
+        }
+        if (endDate) {
+            conditions.push(`s.scheduled_date <= $${p++}`);
+            params.push(endDate);
+        }
+
+        const whereClause = conditions.join(' AND ');
+
+        const { rows } = await pool.query(`
+            SELECT
+                s.id,
+                s.patient_name,
+                s.surgery_type,
+                s.scheduled_date,
+                s.scheduled_time,
+                s.duration_minutes,
+                s.status,
+                s.priority,
+                u.name AS surgeon_name
+            FROM surgeries s
+            LEFT JOIN users u ON s.surgeon_id = u.id
+            WHERE ${whereClause}
+            ORDER BY s.priority = 'emergency' DESC,
+                     s.priority = 'urgent' DESC,
+                     s.scheduled_date ASC,
+                     s.scheduled_time ASC
+        `, params);
+
+        res.status(200).json({
+            success: true,
+            count: rows.length,
+            data: rows
+        });
+    } catch (error) {
+        console.error('Error fetching unassigned surgeries:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching unassigned surgeries',
+            error: error.message
+        });
     }
 };
 
