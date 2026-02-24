@@ -7,7 +7,7 @@
 // Displays a summary of a single surgery
 // Used in the Surgery List view
 
-import React from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { Clock, Calendar, User, Activity, Eye, Users } from 'lucide-react';
 import StatusBadge from './StatusBadge';

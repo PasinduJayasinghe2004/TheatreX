@@ -86,7 +86,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const [surgeonsRes, nursesRes, anaesthetistsRes, theatresRes] = await Promise.all([
+                const [surgeonsRes, nursesRes, _anaesthetistsRes, theatresRes] = await Promise.all([
                     surgeryService.getSurgeons(),
                     axios.get('http://localhost:5000/api/users?role=nurse', { headers: { Authorization: `Bearer ${token}` } }).then(res => ({ success: true, data: res.data.data.filter(u => u.role === 'nurse') })).catch(() => ({ success: false, data: [] })),
                     axios.get('http://localhost:5000/api/users?role=anaesthetist', { headers: { Authorization: `Bearer ${token}` } }).then(res => ({ success: true, data: res.data.data.filter(u => u.role === 'anaesthetist') })).catch(() => ({ success: false, data: [] })),
@@ -199,6 +199,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             setCheckingAnaesAvail(false);
             setCheckingAvailability(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
 
     useEffect(() => {
@@ -238,6 +239,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         } finally {
             setCheckingNurseAvail(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
 
     useEffect(() => {
@@ -276,6 +278,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         } finally {
             setCheckingAnaesAvail(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes]);
 
     useEffect(() => {
@@ -285,13 +288,13 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     // Check staff conflicts when any staff selection changes - M4 (Oneli) Day 9
     const checkStaffConflictsCallback = useCallback(async () => {
         const { scheduled_date, scheduled_time, duration_minutes, surgeon_id, nurse_ids, anaesthetist_id } = formData;
-        
+
         // Only check if we have date/time/duration and at least one staff member
         if (!scheduled_date || !scheduled_time || !duration_minutes) {
             setStaffConflicts(null);
             return;
         }
-        
+
         const hasStaff = surgeon_id || anaesthetist_id || (nurse_ids && nurse_ids.length > 0);
         if (!hasStaff) {
             setStaffConflicts(null);
@@ -316,8 +319,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
         } finally {
             setCheckingStaffConflicts(false);
         }
-    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes, 
-        formData.surgeon_id, formData.nurse_ids, formData.anaesthetist_id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData.scheduled_date, formData.scheduled_time, formData.duration_minutes,
+    formData.surgeon_id, formData.nurse_ids, formData.anaesthetist_id]);
 
     // Debounced staff conflict check
     useEffect(() => {

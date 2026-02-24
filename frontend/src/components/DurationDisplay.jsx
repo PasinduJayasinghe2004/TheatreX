@@ -115,11 +115,10 @@ const DurationDisplay = ({
         [scheduledTime, durationMinutes]
     );
 
-    const [dur, setDur] = useState(compute);
+    const [dur, setDur] = useState(() => compute());
 
     // Auto-refresh every 30 seconds
     useEffect(() => {
-        setDur(compute());
         const timer = setInterval(() => setDur(compute()), 30000);
         return () => clearInterval(timer);
     }, [compute]);

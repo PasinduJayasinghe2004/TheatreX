@@ -163,6 +163,22 @@ const theatreService = {
             const message = error.response?.data?.message || 'Error fetching theatre duration. Please try again.';
             throw new Error(message);
         }
+    },
+
+    // ========================================
+    // Toggle maintenance mode for a theatre
+    // Created by: M4 (Oneli) - Day 12
+    // ========================================
+    toggleMaintenanceMode: async (id, enable, reason = null) => {
+        try {
+            const body = { enable };
+            if (reason) body.reason = reason;
+            const response = await api.put(`/theatres/${id}/maintenance`, body);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error toggling maintenance mode. Please try again.';
+            throw new Error(message);
+        }
     }
 };
 

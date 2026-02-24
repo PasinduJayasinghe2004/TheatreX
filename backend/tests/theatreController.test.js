@@ -331,4 +331,98 @@ describe('Theatre API Tests - Day 10', () => {
             expect(res.body.success).toBe(true);
         });
     });
+
+    // ========================================================================
+    // PUT /api/theatres/:id/maintenance - Toggle Maintenance Mode
+    // ========================================================================
+    // Created by: M4 (Oneli) - Day 12
+    // ========================================================================
+    describe('PUT /api/theatres/:id/maintenance', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .put('/api/theatres/1/maintenance')
+                .send({ enable: true });
+
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 403 for staff users (RBAC)', async () => {
+            if (!testTheatreId) return;
+
+            const res = await request(app)
+                .put(`/api/theatres/${testTheatreId}/maintenance`)
+                .set('Authorization', `Bearer ${staffToken}`)
+                .send({ enable: true });
+
+            expect(res.statusCode).toBe(403);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 404 for non-existent theatre', async () => {
+            const res = await request(app)
+                .put('/api/theatres/99999/maintenance')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ enable: true });
+
+            expect(res.statusCode).toBe(404);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 400 when enable field is missing', async () => {
+            if (!testTheatreId) return;
+
+            const res = await request(app)
+                .put(`/api/theatres/${testTheatreId}/maintenance`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({});
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should enable maintenance mode with a reason', async () => {
+            if (!testTheatreId) return;
+
+            // Ensure theatre is 'available' first
+            await request(app)
+                .put(`/api/theatres/${testTheatreId}/status`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ status: 'available' });
+
+            const res = await request(app)
+                .put(`/api/theatres/${testTheatreId}/maintenance`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ enable: true, reason: 'Equipment calibration' });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.status).toBe('maintenance');
+        });
+
+        it('should disable maintenance mode and return to available', async () => {
+            if (!testTheatreId) return;
+
+            const res = await request(app)
+                .put(`/api/theatres/${testTheatreId}/maintenance`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ enable: false });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.status).toBe('available');
+        });
+
+        it('should return 400 when disabling maintenance on a non-maintenance theatre', async () => {
+            if (!testTheatreId) return;
+
+            // Theatre should now be 'available'
+            const res = await request(app)
+                .put(`/api/theatres/${testTheatreId}/maintenance`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ enable: false });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+    });
 });

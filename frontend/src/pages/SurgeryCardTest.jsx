@@ -6,7 +6,7 @@
 // Temporary page to verify the SurgeryCard component
 // ============================================================================
 
-import React from 'react';
+
 import SurgeryCard from '../components/SurgeryCard';
 
 const SurgeryCardTest = () => {

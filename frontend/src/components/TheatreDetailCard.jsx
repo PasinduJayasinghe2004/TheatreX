@@ -30,14 +30,11 @@ import {
     Monitor,
     Users,
     Wrench,
-    Activity,
     Calendar,
-    Clock,
     CheckCircle2,
     XCircle,
     ChevronRight,
-    BarChart3,
-    AlertTriangle
+    BarChart3
 } from 'lucide-react';
 import TheatreStatusBadge, { THEATRE_TYPE_LABELS } from './TheatreStatusBadge';
 import { getAllowedTransitions, getStatusLabel } from '../utils/theatreStatusColors';

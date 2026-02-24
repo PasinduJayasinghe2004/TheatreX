@@ -15,7 +15,7 @@
 //   onStatusClick – callback(status) fired when an item is clicked
 // ============================================================================
 
-import React from 'react';
+
 import {
     VALID_THEATRE_STATUSES,
     getStatusColor,
@@ -32,7 +32,7 @@ const TheatreStatusLegend = ({
     className = '',
     interactive = false,
     activeStatus = null,
-    onStatusClick = () => {}
+    onStatusClick = () => { }
 }) => {
     const s = SIZE_MAP[size] || SIZE_MAP.sm;
 

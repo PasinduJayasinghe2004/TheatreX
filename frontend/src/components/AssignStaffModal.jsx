@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, User, Check, AlertTriangle, Users, Save, Loader2 } from 'lucide-react';
 import surgeryService from '../services/surgeryService';
 import StaffConflictWarning from './StaffConflictWarning';
@@ -18,24 +18,7 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
     const [conflicts, setConflicts] = useState(null);
     const [error, setError] = useState(null);
 
-    // Sync state with surgery prop when it changes or modal opens
-    useEffect(() => {
-        if (isOpen && surgery) {
-            setSelectedSurgeon(surgery.surgeon_id || '');
-            setSelectedAnaesthetist(surgery.anaesthetist_id || '');
-
-            // Extract nurse IDs if available in surgery.nurses
-            if (surgery.nurses && Array.isArray(surgery.nurses)) {
-                setSelectedNurses(surgery.nurses.map(n => n.id));
-            } else {
-                setSelectedNurses([]);
-            }
-
-            fetchAvailableStaff();
-        }
-    }, [isOpen, surgery]);
-
-    const fetchAvailableStaff = async () => {
+    const fetchAvailableStaff = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -57,7 +40,24 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [surgery]);
+
+    // Sync state with surgery prop when it changes or modal opens
+    useEffect(() => {
+        if (isOpen && surgery) {
+            setSelectedSurgeon(surgery.surgeon_id || '');
+            setSelectedAnaesthetist(surgery.anaesthetist_id || '');
+
+            // Extract nurse IDs if available in surgery.nurses
+            if (surgery.nurses && Array.isArray(surgery.nurses)) {
+                setSelectedNurses(surgery.nurses.map(n => n.id));
+            } else {
+                setSelectedNurses([]);
+            }
+
+            fetchAvailableStaff();
+        }
+    }, [isOpen, surgery, fetchAvailableStaff]);
 
     // Check for conflicts whenever staff selection changes
     useEffect(() => {
@@ -217,10 +217,10 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
                                                 onClick={() => handleNurseToggle(n.id)}
                                                 disabled={!isSelected && (selectedNurses.length >= 3 || isBusy)}
                                                 className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${isSelected
-                                                        ? 'bg-emerald-50 border-emerald-500 ring-4 ring-emerald-500/10'
-                                                        : isBusy
-                                                            ? 'bg-gray-50 border-gray-100 opacity-50 cursor-not-allowed'
-                                                            : 'bg-white border-gray-200 hover:border-emerald-500/50 hover:bg-emerald-50/30'
+                                                    ? 'bg-emerald-50 border-emerald-500 ring-4 ring-emerald-500/10'
+                                                    : isBusy
+                                                        ? 'bg-gray-50 border-gray-100 opacity-50 cursor-not-allowed'
+                                                        : 'bg-white border-gray-200 hover:border-emerald-500/50 hover:bg-emerald-50/30'
                                                     }`}
                                             >
                                                 <div className="min-w-0 pr-2">

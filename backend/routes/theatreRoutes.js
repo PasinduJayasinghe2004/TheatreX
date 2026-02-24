@@ -7,6 +7,7 @@
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation endpoint)
 // Updated by: M3 (Janani)   - Day 11 (Live status polling endpoint)
 // Updated by: M4 (Oneli)    - Day 11 (Theatre duration calculation endpoint)
+// Updated by: M4 (Oneli)    - Day 12 (Maintenance mode toggle endpoint)
 //
 // Defines all theatre-related API routes
 //
@@ -16,6 +17,7 @@
 // - GET  /api/theatres/live-status  - Live status polling endpoint (Protected)
 // - GET  /api/theatres/:id          - Get single theatre detail (Protected)
 // - PUT  /api/theatres/:id/status   - Update theatre status (Coordinator/Admin)
+// - PUT  /api/theatres/:id/maintenance - Toggle maintenance mode (Coordinator/Admin)
 // - GET  /api/theatres/:id/current-surgery - Get current surgery (Protected)
 // - GET  /api/theatres/:id/auto-progress   - Auto-calculated progress (Protected)
 // - PUT  /api/theatres/:id/progress - Update surgery progress (Coordinator/Admin)
@@ -32,7 +34,8 @@ import {
     updateSurgeryProgress,
     getAutoProgress,
     getLiveStatus,
-    getTheatreDuration
+    getTheatreDuration,
+    toggleMaintenanceMode
 } from '../controllers/theatreController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import {
@@ -93,6 +96,15 @@ router.get('/:id', protect, getTheatreById);
 // Updated by: M3 (Janani)  - Day 10 (Added validateTheatreStatus middleware)
 // ============================================================================
 router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, updateTheatreStatus);
+
+// ============================================================================
+// ROUTE: PUT /api/theatres/:id/maintenance
+// ============================================================================
+// Toggle maintenance mode (enter with optional reason, or exit)
+// Protected + (coordinator or admin only)
+// Created by: M4 (Oneli) - Day 12
+// ============================================================================
+router.put('/:id/maintenance', protect, authorize('coordinator', 'admin'), toggleMaintenanceMode);
 
 // ============================================================================
 // ROUTE: GET /api/theatres/:id/current-surgery
