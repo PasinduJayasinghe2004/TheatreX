@@ -20,6 +20,7 @@ import TheatreList from '../pages/TheatreList'; // M1 - Day 10
 import TheatreDetail from '../pages/TheatreDetail'; // M2 - Day 10
 import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
 import CoordinatorDashboard from '../pages/CoordinatorDashboard'; // M1 - Day 12
+import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -132,6 +133,13 @@ const AppRoutes = () => {
                 <RoleBasedRoute allowedRoles={['coordinator', 'admin']}>
                     <CoordinatorDashboard />
                 </RoleBasedRoute>
+            } />
+
+            {/* Surgeons Page - M1 (Pasindu) Day 13 */}
+            <Route path="/staff/surgeons" element={
+                <ProtectedRoute>
+                    <SurgeonsPage />
+                </ProtectedRoute>
             } />
 
             {/* Calendar View - M1 (Pasindu) Day 7 */}

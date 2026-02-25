@@ -10,6 +10,7 @@ import theatrexLogo from '../assets/theatrex-logo.svg';
  * Updated by: M1 (Pasindu) - Day 8 (Added Emergency Booking link)
  * Updated by: M3 (Janani)  - Day 11 (Added Live Status link)
  * Updated by: M1 (Pasindu) - Day 12 (Added Coordinator Dashboard link)
+ * Updated by: M1 (Pasindu) - Day 13 (Surgeons sub-link wired to /staff/surgeons)
  * 
  * @param {Object} props - Component props
  * @param {boolean} props.isCollapsed - Whether the sidebar is collapsed (default: false)
