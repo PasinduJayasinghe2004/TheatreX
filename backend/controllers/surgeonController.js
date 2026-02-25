@@ -209,3 +209,60 @@ export const getAllSurgeons = async (req, res) => {
         });
     }
 };
+
+// ============================================================================
+// GET SURGEON BY ID
+// ============================================================================
+// @desc    Get a single surgeon by ID (active only)
+// @route   GET /api/surgeons/:id
+// @access  Protected
+// Created by: M2 (Chandeepa) - Day 13
+// ============================================================================
+export const getSurgeonById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validate ID is a positive integer
+        const surgeonId = parseInt(id, 10);
+        if (isNaN(surgeonId) || surgeonId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgeon ID. Must be a positive integer.',
+            });
+        }
+
+        const query = `
+            SELECT
+                s.*,
+                COUNT(DISTINCT sg.id) FILTER (
+                    WHERE sg.status IN ('scheduled', 'in_progress')
+                ) AS active_surgery_count
+            FROM surgeons s
+            LEFT JOIN surgeries sg ON sg.surgeon_id = s.id
+            WHERE s.id = $1 AND s.is_active = TRUE
+            GROUP BY s.id
+        `;
+
+        const { rows } = await pool.query(query, [surgeonId]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Surgeon not found',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: rows[0],
+        });
+
+    } catch (error) {
+        console.error('Error fetching surgeon by ID:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching surgeon',
+            error: error.message,
+        });
+    }
+};

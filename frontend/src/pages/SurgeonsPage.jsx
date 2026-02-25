@@ -127,8 +127,8 @@ const SurgeonCard = ({ surgeon }) => {
             <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
                 <span className="text-xs text-gray-400">Active surgeries</span>
                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${Number(surgeon.active_surgery_count) > 0
-                        ? 'bg-amber-100 text-amber-700'
-                        : 'bg-gray-100 text-gray-500'
+                    ? 'bg-amber-100 text-amber-700'
+                    : 'bg-gray-100 text-gray-500'
                     }`}>
                     {surgeon.active_surgery_count ?? 0}
                 </span>
@@ -140,6 +140,8 @@ const SurgeonCard = ({ surgeon }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Create Surgeon Modal
 // ─────────────────────────────────────────────────────────────────────────────
+// Enhanced by: M2 (Chandeepa) - Day 13 (client-side validation + success toast)
+// ─────────────────────────────────────────────────────────────────────────────
 const EMPTY_FORM = {
     name: '',
     specialization: '',
@@ -150,31 +152,113 @@ const EMPTY_FORM = {
     is_available: true,
 };
 
+const EMPTY_FIELD_ERRORS = {
+    name: '',
+    specialization: '',
+    license_number: '',
+    phone: '',
+    email: '',
+    years_of_experience: '',
+};
+
 const CreateSurgeonModal = ({ onClose, onCreated }) => {
     const [form, setForm] = useState(EMPTY_FORM);
-    const [errors, setErrors] = useState([]);
+    const [fieldErrors, setFieldErrors] = useState(EMPTY_FIELD_ERRORS);
+    const [serverErrors, setServerErrors] = useState([]);
     const [submitting, setSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+        // Clear field error on change
+        if (fieldErrors[name]) {
+            setFieldErrors(prev => ({ ...prev, [name]: '' }));
+        }
+    };
+
+    // ── Client-side validation (M2 - Day 13) ──────────────────────────────
+    const validateForm = () => {
+        const errs = { ...EMPTY_FIELD_ERRORS };
+        let valid = true;
+
+        // Name
+        if (!form.name.trim()) {
+            errs.name = 'Full name is required';
+            valid = false;
+        } else if (form.name.trim().length < 2) {
+            errs.name = 'Name must be at least 2 characters';
+            valid = false;
+        }
+
+        // Specialization
+        if (!form.specialization.trim()) {
+            errs.specialization = 'Specialization is required';
+            valid = false;
+        }
+
+        // License number
+        if (!form.license_number.trim()) {
+            errs.license_number = 'Licence number is required';
+            valid = false;
+        }
+
+        // Phone
+        if (!form.phone.trim()) {
+            errs.phone = 'Phone number is required';
+            valid = false;
+        } else if (!/[\d]{7,}/.test(form.phone.replace(/[\s\-+()]/g, ''))) {
+            errs.phone = 'Enter a valid phone number (at least 7 digits)';
+            valid = false;
+        }
+
+        // Email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!form.email.trim()) {
+            errs.email = 'Email is required';
+            valid = false;
+        } else if (!emailRegex.test(form.email)) {
+            errs.email = 'Enter a valid email address';
+            valid = false;
+        }
+
+        // Years of experience (optional but must be valid if provided)
+        if (form.years_of_experience !== '' && form.years_of_experience !== null) {
+            const yoe = Number(form.years_of_experience);
+            if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
+                errs.years_of_experience = 'Must be a non-negative whole number';
+                valid = false;
+            }
+        }
+
+        setFieldErrors(errs);
+        return valid;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors([]);
+        setServerErrors([]);
+
+        if (!validateForm()) return;
+
         setSubmitting(true);
         try {
             const result = await surgeonService.createSurgeon(form);
             onCreated(result.data);
         } catch (err) {
-            setErrors([err.message]);
+            setServerErrors([err.message]);
         } finally {
             setSubmitting(false);
         }
     };
 
-    const fieldCls = "w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition";
+    const fieldCls = (fieldName) =>
+        `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
+        }`;
+
+    const FieldError = ({ field }) =>
+        fieldErrors[field] ? (
+            <p className="text-xs text-red-500 mt-1">{fieldErrors[field]}</p>
+        ) : null;
 
     return (
         /* Backdrop */
@@ -205,10 +289,10 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
 
                 {/* Body */}
                 <form id="create-surgeon-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-                    {/* Error messages */}
-                    {errors.length > 0 && (
+                    {/* Server error messages */}
+                    {serverErrors.length > 0 && (
                         <div className="rounded-lg bg-red-50 border border-red-200 p-3">
-                            {errors.map((e, i) => (
+                            {serverErrors.map((e, i) => (
                                 <p key={i} className="text-xs text-red-600">{e}</p>
                             ))}
                         </div>
@@ -226,9 +310,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                             value={form.name}
                             onChange={handleChange}
                             placeholder="Dr. Sarah Connor"
-                            required
-                            className={fieldCls}
+                            className={fieldCls('name')}
                         />
+                        <FieldError field="name" />
                     </div>
 
                     {/* Specialization */}
@@ -243,9 +327,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                             value={form.specialization}
                             onChange={handleChange}
                             placeholder="Cardiothoracic Surgery"
-                            required
-                            className={fieldCls}
+                            className={fieldCls('specialization')}
                         />
+                        <FieldError field="specialization" />
                     </div>
 
                     {/* Licence Number */}
@@ -260,9 +344,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                             value={form.license_number}
                             onChange={handleChange}
                             placeholder="LK-MED-2024-0001"
-                            required
-                            className={fieldCls}
+                            className={fieldCls('license_number')}
                         />
+                        <FieldError field="license_number" />
                     </div>
 
                     {/* Row: YOE + Phone */}
@@ -278,8 +362,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                                 placeholder="10"
                                 min="0"
                                 max="60"
-                                className={fieldCls}
+                                className={fieldCls('years_of_experience')}
                             />
+                            <FieldError field="years_of_experience" />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -292,9 +377,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                                 value={form.phone}
                                 onChange={handleChange}
                                 placeholder="+94 77 123 4567"
-                                required
-                                className={fieldCls}
+                                className={fieldCls('phone')}
                             />
+                            <FieldError field="phone" />
                         </div>
                     </div>
 
@@ -310,9 +395,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                             value={form.email}
                             onChange={handleChange}
                             placeholder="surgeon@hospital.com"
-                            required
-                            className={fieldCls}
+                            className={fieldCls('email')}
                         />
+                        <FieldError field="email" />
                     </div>
 
                     {/* Availability toggle */}
