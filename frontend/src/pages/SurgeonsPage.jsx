@@ -206,7 +206,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
         if (!form.phone.trim()) {
             errs.phone = 'Phone number is required';
             valid = false;
-        } else if (!/[\d]{7,}/.test(form.phone.replace(/[\s\-\+\(\)]/g, ''))) {
+        } else if (!/[\d]{7,}/.test(form.phone.replace(/[\s\-+()]/g, ''))) {
             errs.phone = 'Enter a valid phone number (at least 7 digits)';
             valid = false;
         }
