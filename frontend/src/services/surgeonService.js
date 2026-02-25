@@ -3,9 +3,11 @@
 // ============================================================================
 // Handles all surgeon-related API calls
 // Created by: M1 (Pasindu) - Day 13
+// Updated by: M2 (Chandeepa) - Day 13 (added getSurgeonById)
 //
 // FEATURES:
 // - Get all surgeons (with optional search / available filters)
+// - Get a single surgeon by ID
 // - Create a new surgeon
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
@@ -41,6 +43,21 @@ const surgeonService = {
     },
 
     // ========================================
+    // Get a single surgeon by ID
+    // Created by: M2 (Chandeepa) - Day 13
+    // ========================================
+    getSurgeonById: async (id) => {
+        try {
+            const response = await api.get(`/surgeons/${id}`);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error fetching surgeon details. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
     // Create a new surgeon
     // Created by: M1 (Pasindu) - Day 13
     // ========================================
@@ -57,3 +74,4 @@ const surgeonService = {
 };
 
 export default surgeonService;
+
