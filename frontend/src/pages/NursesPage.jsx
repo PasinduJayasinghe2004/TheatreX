@@ -1,21 +1,20 @@
 // ============================================================================
-// Surgeons Page
+// Nurses Page
 // ============================================================================
-// Created by: M1 (Pasindu) - Day 13
+// Created by: M3 (Janani) - Day 13
 //
-// Full-featured surgeons management page.
+// Full-featured nurses management page.
 //
 // FEATURES:
-// - Lists all active surgeons with search and availability filters
-// - Create New Surgeon modal form (coordinator/admin only)
-// - Surgeon cards with specialization, contact, availability, active surgery count
+// - Lists all active nurses with search, availability, and shift filters
+// - Create New Nurse modal form (coordinator/admin only)
+// - Nurse cards with specialization, contact, availability, shift, active surgery count
 // - Loading skeleton, empty state, and error handling
 // ============================================================================
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import surgeonService from '../services/surgeonService';
+import nurseService from '../services/nurseService';
 import { useAuth } from '../context/AuthContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -36,6 +35,22 @@ const AvailBadge = ({ available }) =>
         </span>
     );
 
+/** Shift preference badge */
+const ShiftBadge = ({ shift }) => {
+    const config = {
+        morning: { bg: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Morning' },
+        afternoon: { bg: 'bg-blue-100 text-blue-700 border-blue-200', label: 'Afternoon' },
+        night: { bg: 'bg-purple-100 text-purple-700 border-purple-200', label: 'Night' },
+        flexible: { bg: 'bg-gray-100 text-gray-600 border-gray-200', label: 'Flexible' },
+    };
+    const c = config[shift] || config.flexible;
+    return (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${c.bg}`}>
+            {c.label}
+        </span>
+    );
+};
+
 /** Loading skeleton card */
 const SkeletonCard = () => (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 animate-pulse">
@@ -54,10 +69,10 @@ const SkeletonCard = () => (
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Surgeon Card
+// Nurse Card
 // ─────────────────────────────────────────────────────────────────────────────
-const SurgeonCard = ({ surgeon }) => {
-    const initials = surgeon.name
+const NurseCard = ({ nurse }) => {
+    const initials = nurse.name
         .split(' ')
         .map(w => w[0])
         .join('')
@@ -70,15 +85,15 @@ const SurgeonCard = ({ surgeon }) => {
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                     {/* Avatar circle */}
-                    <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-indigo-700">{initials}</span>
+                    <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-teal-700">{initials}</span>
                     </div>
                     <div>
-                        <h3 className="text-sm font-semibold text-gray-900 leading-tight">{surgeon.name}</h3>
-                        <p className="text-xs text-indigo-600 font-medium mt-0.5">{surgeon.specialization}</p>
+                        <h3 className="text-sm font-semibold text-gray-900 leading-tight">{nurse.name}</h3>
+                        <p className="text-xs text-teal-600 font-medium mt-0.5">{nurse.specialization}</p>
                     </div>
                 </div>
-                <AvailBadge available={surgeon.is_available} />
+                <AvailBadge available={nurse.is_available} />
             </div>
 
             {/* Details */}
@@ -90,7 +105,7 @@ const SurgeonCard = ({ surgeon }) => {
                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                     <span className="text-gray-500">Licence:</span>
-                    <span className="font-medium text-gray-900">{surgeon.license_number}</span>
+                    <span className="font-medium text-gray-900">{nurse.license_number}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -99,7 +114,7 @@ const SurgeonCard = ({ surgeon }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                             d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <span className="truncate">{surgeon.email}</span>
+                    <span className="truncate">{nurse.email}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -108,29 +123,39 @@ const SurgeonCard = ({ surgeon }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    <span>{surgeon.phone}</span>
+                    <span>{nurse.phone}</span>
                 </div>
 
-                {surgeon.years_of_experience != null && (
+                {nurse.years_of_experience != null && (
                     <div className="flex items-center gap-2">
                         {/* Experience icon */}
                         <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>{surgeon.years_of_experience} yr{surgeon.years_of_experience !== 1 ? 's' : ''} experience</span>
+                        <span>{nurse.years_of_experience} yr{nurse.years_of_experience !== 1 ? 's' : ''} experience</span>
                     </div>
                 )}
+
+                {/* Shift preference */}
+                <div className="flex items-center gap-2 pt-1">
+                    <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+                    </svg>
+                    <span className="text-gray-500">Shift:</span>
+                    <ShiftBadge shift={nurse.shift_preference} />
+                </div>
             </div>
 
             {/* Footer: active surgery count */}
             <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
                 <span className="text-xs text-gray-400">Active surgeries</span>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${Number(surgeon.active_surgery_count) > 0
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${Number(nurse.active_surgery_count) > 0
                     ? 'bg-amber-100 text-amber-700'
                     : 'bg-gray-100 text-gray-500'
                     }`}>
-                    {surgeon.active_surgery_count ?? 0}
+                    {nurse.active_surgery_count ?? 0}
                 </span>
             </div>
         </div>
@@ -138,9 +163,7 @@ const SurgeonCard = ({ surgeon }) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Create Surgeon Modal
-// ─────────────────────────────────────────────────────────────────────────────
-// Enhanced by: M2 (Chandeepa) - Day 13 (client-side validation + success toast)
+// Create Nurse Modal
 // ─────────────────────────────────────────────────────────────────────────────
 const EMPTY_FORM = {
     name: '',
@@ -150,6 +173,7 @@ const EMPTY_FORM = {
     phone: '',
     email: '',
     is_available: true,
+    shift_preference: 'flexible',
 };
 
 const EMPTY_FIELD_ERRORS = {
@@ -159,9 +183,10 @@ const EMPTY_FIELD_ERRORS = {
     phone: '',
     email: '',
     years_of_experience: '',
+    shift_preference: '',
 };
 
-const CreateSurgeonModal = ({ onClose, onCreated }) => {
+const CreateNurseModal = ({ onClose, onCreated }) => {
     const [form, setForm] = useState(EMPTY_FORM);
     const [fieldErrors, setFieldErrors] = useState(EMPTY_FIELD_ERRORS);
     const [serverErrors, setServerErrors] = useState([]);
@@ -170,63 +195,36 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-        // Clear field error on change
         if (fieldErrors[name]) {
             setFieldErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
-    // ── Client-side validation (M2 - Day 13) ──────────────────────────────
+    // ── Client-side validation ────────────────────────────────────────────
     const validateForm = () => {
         const errs = { ...EMPTY_FIELD_ERRORS };
         let valid = true;
 
-        // Name
-        if (!form.name.trim()) {
-            errs.name = 'Full name is required';
-            valid = false;
-        } else if (form.name.trim().length < 2) {
-            errs.name = 'Name must be at least 2 characters';
-            valid = false;
+        if (!form.name.trim()) { errs.name = 'Full name is required'; valid = false; }
+        else if (form.name.trim().length < 2) { errs.name = 'Name must be at least 2 characters'; valid = false; }
+
+        if (!form.specialization.trim()) { errs.specialization = 'Specialization is required'; valid = false; }
+
+        if (!form.license_number.trim()) { errs.license_number = 'Licence number is required'; valid = false; }
+
+        if (!form.phone.trim()) { errs.phone = 'Phone number is required'; valid = false; }
+        else if (!/[\d]{7,}/.test(form.phone.replace(/[\s\-+()]/g, ''))) {
+            errs.phone = 'Enter a valid phone number (at least 7 digits)'; valid = false;
         }
 
-        // Specialization
-        if (!form.specialization.trim()) {
-            errs.specialization = 'Specialization is required';
-            valid = false;
-        }
-
-        // License number
-        if (!form.license_number.trim()) {
-            errs.license_number = 'Licence number is required';
-            valid = false;
-        }
-
-        // Phone
-        if (!form.phone.trim()) {
-            errs.phone = 'Phone number is required';
-            valid = false;
-        } else if (!/[\d]{7,}/.test(form.phone.replace(/[\s\-+()]/g, ''))) {
-            errs.phone = 'Enter a valid phone number (at least 7 digits)';
-            valid = false;
-        }
-
-        // Email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!form.email.trim()) {
-            errs.email = 'Email is required';
-            valid = false;
-        } else if (!emailRegex.test(form.email)) {
-            errs.email = 'Enter a valid email address';
-            valid = false;
-        }
+        if (!form.email.trim()) { errs.email = 'Email is required'; valid = false; }
+        else if (!emailRegex.test(form.email)) { errs.email = 'Enter a valid email address'; valid = false; }
 
-        // Years of experience (optional but must be valid if provided)
         if (form.years_of_experience !== '' && form.years_of_experience !== null) {
             const yoe = Number(form.years_of_experience);
             if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
-                errs.years_of_experience = 'Must be a non-negative whole number';
-                valid = false;
+                errs.years_of_experience = 'Must be a non-negative whole number'; valid = false;
             }
         }
 
@@ -242,7 +240,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
 
         setSubmitting(true);
         try {
-            const result = await surgeonService.createSurgeon(form);
+            const result = await nurseService.createNurse(form);
             onCreated(result.data);
         } catch (err) {
             setServerErrors([err.message]);
@@ -252,8 +250,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
     };
 
     const fieldCls = (fieldName) =>
-        `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
-        }`;
+        `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'}`;
 
     const FieldError = ({ field }) =>
         fieldErrors[field] ? (
@@ -261,24 +258,23 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
         ) : null;
 
     return (
-        /* Backdrop */
         <div
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
                 {/* Header */}
-                <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between">
+                <div className="bg-teal-600 px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <svg className="w-5 h-5 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
-                        <h2 className="text-white font-semibold text-base">Add New Surgeon</h2>
+                        <h2 className="text-white font-semibold text-base">Add New Nurse</h2>
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-indigo-200 hover:text-white transition-colors"
+                        className="text-teal-200 hover:text-white transition-colors"
                         aria-label="Close"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,8 +284,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                 </div>
 
                 {/* Body */}
-                <form id="create-surgeon-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-                    {/* Server error messages */}
+                <form id="create-nurse-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                     {serverErrors.length > 0 && (
                         <div className="rounded-lg bg-red-50 border border-red-200 p-3">
                             {serverErrors.map((e, i) => (
@@ -303,15 +298,8 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                             Full Name <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            id="surgeon-name"
-                            type="text"
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            placeholder="Dr. Sarah Connor"
-                            className={fieldCls('name')}
-                        />
+                        <input id="nurse-name" type="text" name="name" value={form.name} onChange={handleChange}
+                            placeholder="Jane Doe" className={fieldCls('name')} />
                         <FieldError field="name" />
                     </div>
 
@@ -320,15 +308,8 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                             Specialization <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            id="surgeon-specialization"
-                            type="text"
-                            name="specialization"
-                            value={form.specialization}
-                            onChange={handleChange}
-                            placeholder="Cardiothoracic Surgery"
-                            className={fieldCls('specialization')}
-                        />
+                        <input id="nurse-specialization" type="text" name="specialization" value={form.specialization}
+                            onChange={handleChange} placeholder="Surgical Nursing" className={fieldCls('specialization')} />
                         <FieldError field="specialization" />
                     </div>
 
@@ -337,15 +318,8 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                             Licence Number <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            id="surgeon-license"
-                            type="text"
-                            name="license_number"
-                            value={form.license_number}
-                            onChange={handleChange}
-                            placeholder="LK-MED-2024-0001"
-                            className={fieldCls('license_number')}
-                        />
+                        <input id="nurse-license" type="text" name="license_number" value={form.license_number}
+                            onChange={handleChange} placeholder="NRS-2024-0001" className={fieldCls('license_number')} />
                         <FieldError field="license_number" />
                     </div>
 
@@ -353,32 +327,16 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Years of Experience</label>
-                            <input
-                                id="surgeon-yoe"
-                                type="number"
-                                name="years_of_experience"
-                                value={form.years_of_experience}
-                                onChange={handleChange}
-                                placeholder="10"
-                                min="0"
-                                max="60"
-                                className={fieldCls('years_of_experience')}
-                            />
+                            <input id="nurse-yoe" type="number" name="years_of_experience" value={form.years_of_experience}
+                                onChange={handleChange} placeholder="5" min="0" max="60" className={fieldCls('years_of_experience')} />
                             <FieldError field="years_of_experience" />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">
                                 Phone <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                id="surgeon-phone"
-                                type="tel"
-                                name="phone"
-                                value={form.phone}
-                                onChange={handleChange}
-                                placeholder="+94 77 123 4567"
-                                className={fieldCls('phone')}
-                            />
+                            <input id="nurse-phone" type="tel" name="phone" value={form.phone} onChange={handleChange}
+                                placeholder="+94 77 123 4567" className={fieldCls('phone')} />
                             <FieldError field="phone" />
                         </div>
                     </div>
@@ -388,29 +346,29 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                             Email <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            id="surgeon-email"
-                            type="email"
-                            name="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            placeholder="surgeon@hospital.com"
-                            className={fieldCls('email')}
-                        />
+                        <input id="nurse-email" type="email" name="email" value={form.email} onChange={handleChange}
+                            placeholder="nurse@hospital.com" className={fieldCls('email')} />
                         <FieldError field="email" />
+                    </div>
+
+                    {/* Shift Preference */}
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Shift Preference</label>
+                        <select id="nurse-shift" name="shift_preference" value={form.shift_preference} onChange={handleChange}
+                            className={fieldCls('shift_preference')}>
+                            <option value="flexible">Flexible</option>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="night">Night</option>
+                        </select>
+                        <FieldError field="shift_preference" />
                     </div>
 
                     {/* Availability toggle */}
                     <div className="flex items-center gap-3">
-                        <input
-                            id="surgeon-available"
-                            type="checkbox"
-                            name="is_available"
-                            checked={form.is_available}
-                            onChange={handleChange}
-                            className="w-4 h-4 accent-indigo-600 cursor-pointer"
-                        />
-                        <label htmlFor="surgeon-available" className="text-xs font-medium text-gray-700 cursor-pointer">
+                        <input id="nurse-available" type="checkbox" name="is_available" checked={form.is_available}
+                            onChange={handleChange} className="w-4 h-4 accent-teal-600 cursor-pointer" />
+                        <label htmlFor="nurse-available" className="text-xs font-medium text-gray-700 cursor-pointer">
                             Mark as available immediately
                         </label>
                     </div>
@@ -418,19 +376,12 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
 
                 {/* Footer */}
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors"
-                    >
+                    <button type="button" onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
                         Cancel
                     </button>
-                    <button
-                        type="submit"
-                        form="create-surgeon-form"
-                        disabled={submitting}
-                        className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
+                    <button type="submit" form="create-nurse-form" disabled={submitting}
+                        className="px-5 py-2 text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                         {submitting ? (
                             <>
                                 <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -439,7 +390,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                                 </svg>
                                 Saving…
                             </>
-                        ) : 'Add Surgeon'}
+                        ) : 'Add Nurse'}
                     </button>
                 </div>
             </div>
@@ -450,11 +401,10 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Page
 // ─────────────────────────────────────────────────────────────────────────────
-const SurgeonsPage = () => {
+const NursesPage = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
 
-    const [surgeons, setSurgeons] = useState([]);
+    const [nurses, setNurses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -462,36 +412,37 @@ const SurgeonsPage = () => {
     // Filter state
     const [search, setSearch] = useState('');
     const [available, setAvailable] = useState('');
+    const [shift, setShift] = useState('');
 
     const canCreate = user?.role === 'coordinator' || user?.role === 'admin';
 
-    // ── Fetch surgeons ────────────────────────────────────────────────────────
-    const fetchSurgeons = useCallback(async () => {
+    // ── Fetch nurses ──────────────────────────────────────────────────────────
+    const fetchNurses = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await surgeonService.getAllSurgeons({ search, available });
-            setSurgeons(res.data);
+            const res = await nurseService.getAllNurses({ search, available, shift });
+            setNurses(res.data);
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
-    }, [search, available]);
+    }, [search, available, shift]);
 
     useEffect(() => {
-        fetchSurgeons();
-    }, [fetchSurgeons]);
+        fetchNurses();
+    }, [fetchNurses]);
 
-    // ── Handle surgeon created ────────────────────────────────────────────────
-    const handleCreated = (newSurgeon) => {
+    // ── Handle nurse created ──────────────────────────────────────────────────
+    const handleCreated = (newNurse) => {
         setShowModal(false);
-        setSurgeons(prev => [newSurgeon, ...prev]);
+        setNurses(prev => [newNurse, ...prev]);
     };
 
     // ── Stats strip ───────────────────────────────────────────────────────────
-    const totalAvailable = surgeons.filter(s => s.is_available).length;
-    const totalUnavailable = surgeons.length - totalAvailable;
+    const totalAvailable = nurses.filter(n => n.is_available).length;
+    const totalUnavailable = nurses.length - totalAvailable;
 
     return (
         <Layout>
@@ -500,21 +451,21 @@ const SurgeonsPage = () => {
                 {/* ── Page Header ─────────────────────────────────────────── */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Surgeons</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">Nurses</h1>
                         <p className="text-sm text-gray-500 mt-1">
-                            Manage and view all surgeon records
+                            Manage and view all nurse records
                         </p>
                     </div>
                     {canCreate && (
                         <button
-                            id="add-surgeon-btn"
+                            id="add-nurse-btn"
                             onClick={() => setShowModal(true)}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow transition-colors"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl shadow transition-colors"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Surgeon
+                            Add Nurse
                         </button>
                     )}
                 </div>
@@ -523,7 +474,7 @@ const SurgeonsPage = () => {
                 {!loading && !error && (
                     <div className="grid grid-cols-3 gap-4 mb-6">
                         {[
-                            { label: 'Total Surgeons', value: surgeons.length, colour: 'bg-indigo-100 text-indigo-700' },
+                            { label: 'Total Nurses', value: nurses.length, colour: 'bg-teal-100 text-teal-700' },
                             { label: 'Available', value: totalAvailable, colour: 'bg-emerald-100 text-emerald-700' },
                             { label: 'Unavailable', value: totalUnavailable, colour: 'bg-red-100 text-red-600' },
                         ].map(stat => (
@@ -546,27 +497,39 @@ const SurgeonsPage = () => {
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input
-                            id="surgeon-search"
+                            id="nurse-search"
                             type="text"
                             placeholder="Search by name, specialization or email…"
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
                         />
                     </div>
                     <select
-                        id="surgeon-availability-filter"
+                        id="nurse-availability-filter"
                         value={available}
                         onChange={e => setAvailable(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                        className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white"
                     >
                         <option value="">All Availability</option>
                         <option value="true">Available</option>
                         <option value="false">Unavailable</option>
                     </select>
+                    <select
+                        id="nurse-shift-filter"
+                        value={shift}
+                        onChange={e => setShift(e.target.value)}
+                        className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white"
+                    >
+                        <option value="">All Shifts</option>
+                        <option value="morning">Morning</option>
+                        <option value="afternoon">Afternoon</option>
+                        <option value="night">Night</option>
+                        <option value="flexible">Flexible</option>
+                    </select>
                     <button
-                        id="surgeon-refresh-btn"
-                        onClick={fetchSurgeons}
+                        id="nurse-refresh-btn"
+                        onClick={fetchNurses}
                         className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
                         title="Refresh"
                     >
@@ -591,42 +554,42 @@ const SurgeonsPage = () => {
                         </svg>
                         <p className="text-gray-600 font-medium">{error}</p>
                         <button
-                            onClick={fetchSurgeons}
-                            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                            onClick={fetchNurses}
+                            className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors"
                         >
                             Try again
                         </button>
                     </div>
-                ) : surgeons.length === 0 ? (
+                ) : nurses.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <p className="text-gray-500 font-medium">No surgeons found</p>
-                        {search || available ? (
+                        <p className="text-gray-500 font-medium">No nurses found</p>
+                        {search || available || shift ? (
                             <p className="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
                         ) : canCreate ? (
                             <button
                                 onClick={() => setShowModal(true)}
-                                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                                className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors"
                             >
-                                Add the first surgeon
+                                Add the first nurse
                             </button>
                         ) : null}
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {surgeons.map(surgeon => (
-                            <SurgeonCard key={surgeon.id} surgeon={surgeon} />
+                        {nurses.map(nurse => (
+                            <NurseCard key={nurse.id} nurse={nurse} />
                         ))}
                     </div>
                 )}
             </div>
 
-            {/* ── Create Surgeon Modal ─────────────────────────────────────── */}
+            {/* ── Create Nurse Modal ───────────────────────────────────────── */}
             {showModal && (
-                <CreateSurgeonModal
+                <CreateNurseModal
                     onClose={() => setShowModal(false)}
                     onCreated={handleCreated}
                 />
@@ -635,4 +598,4 @@ const SurgeonsPage = () => {
     );
 };
 
-export default SurgeonsPage;
+export default NursesPage;
