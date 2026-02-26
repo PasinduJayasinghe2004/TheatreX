@@ -20,7 +20,7 @@ const Header = ({ user, onLogout }) => {
     const navigationLinks = [
         { name: 'Dashboard', href: '/dashboard', icon: '📊', roles: [] },
         { name: 'Surgeries', href: '/surgeries', icon: '🏥', roles: [] },
-        { name: 'Theatres', href: '/theatres', icon: '🎭', roles: [] },
+        { name: 'Theatres', href: '/theatres', icon: '🏨', roles: [] },
         { name: 'Staff', href: '/staff', icon: '👥', roles: ['admin', 'coordinator'] },
         { name: 'Patients', href: '/patients', icon: '🧑‍⚕️', roles: [] },
         { name: 'Admin Panel', href: '/admin', icon: '⚙️', roles: ['admin'] },
