@@ -19,7 +19,9 @@ import EmergencyBooking from '../pages/EmergencyBooking'; // M1 - Day 8
 import TheatreList from '../pages/TheatreList'; // M1 - Day 10
 import TheatreDetail from '../pages/TheatreDetail'; // M2 - Day 10
 import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
-import NursesPage from '../pages/NursesPage'; // M4 - Day 13
+import CoordinatorDashboard from '../pages/CoordinatorDashboard'; // M1 - Day 12
+import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
+import NursesPage from '../pages/NursesPage'; // M3 - Day 13
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -127,7 +129,21 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Nurses Page - M4 (Oneli) Day 13 */}
+            {/* Coordinator Dashboard - M1 (Pasindu) Day 12 */}
+            <Route path="/coordinator" element={
+                <RoleBasedRoute allowedRoles={['coordinator', 'admin']}>
+                    <CoordinatorDashboard />
+                </RoleBasedRoute>
+            } />
+
+            {/* Surgeons Page - M1 (Pasindu) Day 13 */}
+            <Route path="/staff/surgeons" element={
+                <ProtectedRoute>
+                    <SurgeonsPage />
+                </ProtectedRoute>
+            } />
+
+            {/* Nurses Page - M3 (Janani) Day 13 */}
             <Route path="/staff/nurses" element={
                 <ProtectedRoute>
                     <NursesPage />

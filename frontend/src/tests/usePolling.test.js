@@ -2,15 +2,20 @@
 // usePolling Hook Tests
 // ============================================================================
 // Created by: M3 (Janani) - Day 11
+// Fixed by:   M6 (Dinil) - Day 11 Bug Fix
 //
 // Tests for the reusable usePolling custom hook that drives 30s auto-refresh
 // across the TheatreList, TheatreDetail, and LiveStatusPage views.
+//
+// Bug fixed: `waitFor` internally uses real setTimeout which hangs when
+// vi.useFakeTimers() is active. Replaced with `act(async () => {})` to
+// flush microtasks / promise chains without relying on real timers.
 //
 // Run with: npx vitest run src/tests/usePolling.test.js
 // ============================================================================
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import usePolling from '../hooks/usePolling';
 
 describe('usePolling hook', () => {
@@ -38,11 +43,12 @@ describe('usePolling hook', () => {
 
         const { result } = renderHook(() => usePolling(fetchFn, { interval: 30000 }));
 
-        // After the initial fetch resolves
-        await waitFor(() => {
-            expect(result.current.loading).toBe(false);
+        // Flush all pending promises / microtasks
+        await act(async () => {
+            await Promise.resolve();
         });
 
+        expect(result.current.loading).toBe(false);
         expect(result.current.data).toEqual({ theatres: [] });
         expect(result.current.error).toBeNull();
     });
@@ -55,9 +61,11 @@ describe('usePolling hook', () => {
 
         const { result } = renderHook(() => usePolling(fetchFn, { interval: 5000 }));
 
-        await waitFor(() => {
-            expect(result.current.data).toEqual(payload);
+        await act(async () => {
+            await Promise.resolve();
         });
+
+        expect(result.current.data).toEqual(payload);
     });
 
     it('should set error when fetchFn rejects', async () => {
@@ -65,9 +73,11 @@ describe('usePolling hook', () => {
 
         const { result } = renderHook(() => usePolling(fetchFn, { interval: 5000 }));
 
-        await waitFor(() => {
-            expect(result.current.error).toBe('Network error');
+        await act(async () => {
+            await Promise.resolve();
         });
+
+        expect(result.current.error).toBe('Network error');
     });
 
     it('should keep stale data when fetchFn later fails', async () => {
@@ -81,20 +91,21 @@ describe('usePolling hook', () => {
         const { result } = renderHook(() => usePolling(fetchFn, { interval: 1000 }));
 
         // Wait for initial successful fetch
-        await waitFor(() => {
-            expect(result.current.data).toEqual({ ok: true });
+        await act(async () => {
+            await Promise.resolve();
         });
+
+        expect(result.current.data).toEqual({ ok: true });
 
         // Advance timer to trigger next poll
         await act(async () => {
             vi.advanceTimersByTime(1000);
+            await Promise.resolve();
         });
 
         // Error should be set but data should be preserved
-        await waitFor(() => {
-            expect(result.current.error).toBe('fail');
-            expect(result.current.data).toEqual({ ok: true });
-        });
+        expect(result.current.error).toBe('fail');
+        expect(result.current.data).toEqual({ ok: true });
     });
 
     // ── Polling interval ─────────────────────────────────────────────────
@@ -104,18 +115,22 @@ describe('usePolling hook', () => {
 
         renderHook(() => usePolling(fetchFn, { interval: 5000 }));
 
-        // Initial call
+        // Wait for the initial fetch to complete so inFlightRef is cleared
+        await act(async () => {
+            await Promise.resolve();
+        });
+
+        // Initial call completed
         expect(fetchFn).toHaveBeenCalledTimes(1);
 
-        // Advance by 5 seconds
+        // Advance by 5 seconds and flush the triggered interval callback
         await act(async () => {
             vi.advanceTimersByTime(5000);
+            await Promise.resolve();
         });
 
         // Should have been called a second time
-        await waitFor(() => {
-            expect(fetchFn).toHaveBeenCalledTimes(2);
-        });
+        expect(fetchFn).toHaveBeenCalledTimes(2);
     });
 
     // ── lastPolledAt ─────────────────────────────────────────────────────
@@ -125,9 +140,11 @@ describe('usePolling hook', () => {
 
         const { result } = renderHook(() => usePolling(fetchFn, { interval: 3000 }));
 
-        await waitFor(() => {
-            expect(result.current.lastPolledAt).toBeInstanceOf(Date);
+        await act(async () => {
+            await Promise.resolve();
         });
+
+        expect(result.current.lastPolledAt).toBeInstanceOf(Date);
     });
 
     // ── Manual refresh ───────────────────────────────────────────────────
@@ -137,19 +154,20 @@ describe('usePolling hook', () => {
 
         const { result } = renderHook(() => usePolling(fetchFn, { interval: 60000 }));
 
-        await waitFor(() => {
-            expect(result.current.data).toBe('v1');
+        await act(async () => {
+            await Promise.resolve();
         });
+
+        expect(result.current.data).toBe('v1');
 
         fetchFn.mockResolvedValue('v2');
 
         await act(async () => {
             result.current.refresh();
+            await Promise.resolve();
         });
 
-        await waitFor(() => {
-            expect(result.current.data).toBe('v2');
-        });
+        expect(result.current.data).toBe('v2');
     });
 
     // ── Enabled flag ─────────────────────────────────────────────────────
@@ -175,6 +193,7 @@ describe('usePolling hook', () => {
 
         await act(async () => {
             vi.advanceTimersByTime(6000);
+            await Promise.resolve();
         });
 
         // No additional calls after unmount

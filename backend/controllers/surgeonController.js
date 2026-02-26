@@ -1,27 +1,26 @@
 // ============================================================================
-// Nurse Controller
+// Surgeon Controller
 // ============================================================================
-// Created by: M3 (Janani) - Day 13
+// Created by: M1 (Pasindu) - Day 13
 //
-// Handles all nurse-related HTTP requests and business logic.
+// Handles all surgeon-related HTTP requests and business logic.
 //
 // EXPORTS:
-// - createNurse:   POST /api/nurses        - Create a new nurse (Coordinator/Admin)
-// - getAllNurses:   GET  /api/nurses        - List all active nurses (Protected)
-// - getNurseById:  GET  /api/nurses/:id    - Get a single nurse by ID (Protected)
+// - createSurgeon:  POST /api/surgeons        - Create a new surgeon (Coordinator/Admin)
+// - getAllSurgeons:  GET  /api/surgeons        - List all active surgeons (Protected)
 // ============================================================================
 
 import { pool } from '../config/database.js';
 
 // ============================================================================
-// CREATE NURSE
+// CREATE SURGEON
 // ============================================================================
-// @desc    Create a new nurse record
-// @route   POST /api/nurses
+// @desc    Create a new surgeon record
+// @route   POST /api/surgeons
 // @access  Protected (coordinator, admin)
-// Created by: M3 (Janani) - Day 13
+// Created by: M1 (Pasindu) - Day 13
 // ============================================================================
-export const createNurse = async (req, res) => {
+export const createSurgeon = async (req, res) => {
     try {
         const {
             name,
@@ -31,7 +30,6 @@ export const createNurse = async (req, res) => {
             phone,
             email,
             is_available = true,
-            shift_preference = 'flexible',
         } = req.body;
 
         // ── 1. Required field check ──────────────────────────────────────────
@@ -72,19 +70,9 @@ export const createNurse = async (req, res) => {
             }
         }
 
-        // ── 4. shift_preference check ─────────────────────────────────────────
-        const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
-        if (shift_preference && !validShifts.includes(shift_preference)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: [`shift_preference must be one of: ${validShifts.join(', ')}`],
-            });
-        }
-
-        // ── 5. Insert into nurses table ───────────────────────────────────────
+        // ── 4. Insert into surgeons table ─────────────────────────────────────
         const insertQuery = `
-            INSERT INTO nurses (
+            INSERT INTO surgeons (
                 name,
                 specialization,
                 license_number,
@@ -92,9 +80,8 @@ export const createNurse = async (req, res) => {
                 phone,
                 email,
                 is_available,
-                shift_preference,
                 is_active
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)
             RETURNING *
         `;
 
@@ -106,26 +93,25 @@ export const createNurse = async (req, res) => {
             phone.trim(),
             email.trim().toLowerCase(),
             is_available,
-            shift_preference || 'flexible',
         ];
 
         const { rows } = await pool.query(insertQuery, values);
-        const newNurse = rows[0];
+        const newSurgeon = rows[0];
 
         return res.status(201).json({
             success: true,
-            message: 'Nurse created successfully',
-            data: newNurse,
+            message: 'Surgeon created successfully',
+            data: newSurgeon,
         });
 
     } catch (error) {
-        console.error('Error creating nurse:', error);
+        console.error('Error creating surgeon:', error);
 
         // Duplicate email
         if (error.code === '23505' && error.constraint?.includes('email')) {
             return res.status(409).json({
                 success: false,
-                message: 'A nurse with this email already exists',
+                message: 'A surgeon with this email already exists',
             });
         }
 
@@ -133,7 +119,7 @@ export const createNurse = async (req, res) => {
         if (error.code === '23505' && error.constraint?.includes('license_number')) {
             return res.status(409).json({
                 success: false,
-                message: 'A nurse with this licence number already exists',
+                message: 'A surgeon with this licence number already exists',
             });
         }
 
@@ -147,33 +133,33 @@ export const createNurse = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: 'Error creating nurse',
+            message: 'Error creating surgeon',
             error: error.message,
         });
     }
 };
 
 // ============================================================================
-// GET ALL NURSES
+// GET ALL SURGEONS
 // ============================================================================
-// @desc    Get all active nurses, with optional ?search= and ?available= filters
-// @route   GET /api/nurses
+// @desc    Get all active surgeons, with optional ?search= and ?available= filters
+// @route   GET /api/surgeons
 // @access  Protected
-// Created by: M3 (Janani) - Day 13
+// Created by: M1 (Pasindu) - Day 13
 // ============================================================================
-export const getAllNurses = async (req, res) => {
+export const getAllSurgeons = async (req, res) => {
     try {
-        const { search, available, shift } = req.query;
+        const { search, available } = req.query;
 
         // Build dynamic WHERE clause
-        const conditions = ['n.is_active = TRUE'];
+        const conditions = ['s.is_active = TRUE'];
         const params = [];
         let paramIdx = 1;
 
         // Full-text search on name, specialization, or email
         if (search && search.trim()) {
             conditions.push(
-                `(n.name ILIKE $${paramIdx} OR n.specialization ILIKE $${paramIdx} OR n.email ILIKE $${paramIdx})`
+                `(s.name ILIKE $${paramIdx} OR s.specialization ILIKE $${paramIdx} OR s.email ILIKE $${paramIdx})`
             );
             params.push(`%${search.trim()}%`);
             paramIdx++;
@@ -181,33 +167,25 @@ export const getAllNurses = async (req, res) => {
 
         // Filter by availability flag
         if (available === 'true') {
-            conditions.push(`n.is_available = TRUE`);
+            conditions.push(`s.is_available = TRUE`);
         } else if (available === 'false') {
-            conditions.push(`n.is_available = FALSE`);
-        }
-
-        // Filter by shift preference
-        if (shift && ['morning', 'afternoon', 'night', 'flexible'].includes(shift)) {
-            conditions.push(`n.shift_preference = $${paramIdx}`);
-            params.push(shift);
-            paramIdx++;
+            conditions.push(`s.is_available = FALSE`);
         }
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        // Count of surgeries each nurse is currently assigned to (scheduled/in_progress)
+        // Count of surgeries each surgeon is currently assigned to (scheduled/in_progress)
         const query = `
             SELECT
-                n.*,
-                COUNT(DISTINCT sn.surgery_id) FILTER (
+                s.*,
+                COUNT(DISTINCT sg.id) FILTER (
                     WHERE sg.status IN ('scheduled', 'in_progress')
                 ) AS active_surgery_count
-            FROM nurses n
-            LEFT JOIN surgery_nurses sn ON sn.nurse_id = n.id
-            LEFT JOIN surgeries sg ON sg.id = sn.surgery_id
+            FROM surgeons s
+            LEFT JOIN surgeries sg ON sg.surgeon_id = s.id
             ${whereClause}
-            GROUP BY n.id
-            ORDER BY n.name ASC
+            GROUP BY s.id
+            ORDER BY s.name ASC
         `;
 
         const { rows } = await pool.query(query, params);
@@ -219,60 +197,58 @@ export const getAllNurses = async (req, res) => {
             filters: {
                 search: search || null,
                 available: available || null,
-                shift: shift || null,
             },
         });
 
     } catch (error) {
-        console.error('Error fetching nurses:', error);
+        console.error('Error fetching surgeons:', error);
         return res.status(500).json({
             success: false,
-            message: 'Error fetching nurses',
+            message: 'Error fetching surgeons',
             error: error.message,
         });
     }
 };
 
 // ============================================================================
-// GET NURSE BY ID
+// GET SURGEON BY ID
 // ============================================================================
-// @desc    Get a single nurse by ID (active only)
-// @route   GET /api/nurses/:id
+// @desc    Get a single surgeon by ID (active only)
+// @route   GET /api/surgeons/:id
 // @access  Protected
-// Created by: M3 (Janani) - Day 13
+// Created by: M2 (Chandeepa) - Day 13
 // ============================================================================
-export const getNurseById = async (req, res) => {
+export const getSurgeonById = async (req, res) => {
     try {
         const { id } = req.params;
 
         // Validate ID is a positive integer
-        const nurseId = parseInt(id, 10);
-        if (isNaN(nurseId) || nurseId <= 0) {
+        const surgeonId = parseInt(id, 10);
+        if (isNaN(surgeonId) || surgeonId <= 0) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid nurse ID. Must be a positive integer.',
+                message: 'Invalid surgeon ID. Must be a positive integer.',
             });
         }
 
         const query = `
             SELECT
-                n.*,
-                COUNT(DISTINCT sn.surgery_id) FILTER (
+                s.*,
+                COUNT(DISTINCT sg.id) FILTER (
                     WHERE sg.status IN ('scheduled', 'in_progress')
                 ) AS active_surgery_count
-            FROM nurses n
-            LEFT JOIN surgery_nurses sn ON sn.nurse_id = n.id
-            LEFT JOIN surgeries sg ON sg.id = sn.surgery_id
-            WHERE n.id = $1 AND n.is_active = TRUE
-            GROUP BY n.id
+            FROM surgeons s
+            LEFT JOIN surgeries sg ON sg.surgeon_id = s.id
+            WHERE s.id = $1 AND s.is_active = TRUE
+            GROUP BY s.id
         `;
 
-        const { rows } = await pool.query(query, [nurseId]);
+        const { rows } = await pool.query(query, [surgeonId]);
 
         if (rows.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'Nurse not found',
+                message: 'Surgeon not found',
             });
         }
 
@@ -282,10 +258,10 @@ export const getNurseById = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error fetching nurse by ID:', error);
+        console.error('Error fetching surgeon by ID:', error);
         return res.status(500).json({
             success: false,
-            message: 'Error fetching nurse',
+            message: 'Error fetching surgeon',
             error: error.message,
         });
     }

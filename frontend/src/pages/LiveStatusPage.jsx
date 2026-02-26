@@ -94,7 +94,16 @@ const summaryCards = (s) => [
 
 const LiveStatusPage = () => {
     // Fetch function for the polling hook
-    const fetchLiveStatus = useCallback(() => theatreService.getLiveStatus(), []);
+    const fetchLiveStatus = useCallback(async () => {
+        const [liveResponse, statsResponse] = await Promise.all([
+            theatreService.getLiveStatus(),
+            theatreService.getTheatreStats()
+        ]);
+        return {
+            ...liveResponse,
+            stats: statsResponse.data
+        };
+    }, []);
 
     const {
         data: response,
@@ -109,6 +118,7 @@ const LiveStatusPage = () => {
 
     const theatres = response?.data ?? [];
     const summary = response?.summary ?? { total: 0, available: 0, in_use: 0, maintenance: 0, cleaning: 0, overdue: 0 };
+    const extendedStats = response?.stats;
 
     // ── Render ──────────────────────────────────────────────────────────────
 
@@ -148,11 +158,10 @@ const LiveStatusPage = () => {
 
                         <button
                             onClick={paused ? resume : pause}
-                            className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                                paused
-                                    ? 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                                    : 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                            }`}
+                            className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${paused
+                                ? 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                : 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                }`}
                         >
                             {paused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
                             {paused ? 'Resume' : 'Pause'}
@@ -176,6 +185,40 @@ const LiveStatusPage = () => {
                         </div>
                     ))}
                 </div>
+
+                {/* ── Extended Stats (M5 Day 11) ─────────────────────────── */}
+                {extendedStats && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                                    <Timer className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-gray-900">Current Utilization Rate</p>
+                                    <p className="text-xs text-gray-500">Based on {extendedStats.total_theatres} active theatres</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-2xl font-bold text-blue-600">{extendedStats.utilization.utilization_rate}%</p>
+                            </div>
+                        </div>
+                        <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                    <Activity className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-gray-900">Avg. Surgery Progress</p>
+                                    <p className="text-xs text-gray-500">Across all in-progress procedures</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-2xl font-bold text-emerald-600">{extendedStats.average_surgery_progress}%</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* ── Loading State ───────────────────────────────────────── */}
                 {loading && !response && (

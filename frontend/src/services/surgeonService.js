@@ -1,76 +1,77 @@
 // ============================================================================
-// Nurse Service
+// Surgeon Service
 // ============================================================================
-// Handles all nurse-related API calls
-// Created by: M3 (Janani) - Day 13
+// Handles all surgeon-related API calls
+// Created by: M1 (Pasindu) - Day 13
+// Updated by: M2 (Chandeepa) - Day 13 (added getSurgeonById)
 //
 // FEATURES:
-// - Get all nurses (with optional search / available / shift filters)
-// - Get a single nurse by ID
-// - Create a new nurse
+// - Get all surgeons (with optional search / available filters)
+// - Get a single surgeon by ID
+// - Create a new surgeon
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
 import { api } from './authService.js';
 
 // ============================================================================
-// Nurse Service Object
+// Surgeon Service Object
 // ============================================================================
-const nurseService = {
+const surgeonService = {
     // ========================================
-    // Get all nurses
-    // Supports { search, available, shift } filters
-    // Created by: M3 (Janani) - Day 13
+    // Get all surgeons
+    // Supports { search, available } filters
+    // Created by: M1 (Pasindu) - Day 13
     // ========================================
-    getAllNurses: async (filters = {}) => {
+    getAllSurgeons: async (filters = {}) => {
         try {
             const params = new URLSearchParams();
             if (filters.search) params.append('search', filters.search);
             if (filters.available !== undefined && filters.available !== '')
                 params.append('available', filters.available);
-            if (filters.shift) params.append('shift', filters.shift);
 
             const queryString = params.toString();
-            const url = queryString ? `/nurses?${queryString}` : '/nurses';
+            const url = queryString ? `/surgeons?${queryString}` : '/surgeons';
 
             const response = await api.get(url);
             return response.data;
         } catch (error) {
             const message =
-                error.response?.data?.message || 'Error fetching nurses. Please try again.';
+                error.response?.data?.message || 'Error fetching surgeons. Please try again.';
             throw new Error(message);
         }
     },
 
     // ========================================
-    // Get a single nurse by ID
-    // Created by: M3 (Janani) - Day 13
+    // Get a single surgeon by ID
+    // Created by: M2 (Chandeepa) - Day 13
     // ========================================
-    getNurseById: async (id) => {
+    getSurgeonById: async (id) => {
         try {
-            const response = await api.get(`/nurses/${id}`);
+            const response = await api.get(`/surgeons/${id}`);
             return response.data;
         } catch (error) {
             const message =
-                error.response?.data?.message || 'Error fetching nurse details. Please try again.';
+                error.response?.data?.message || 'Error fetching surgeon details. Please try again.';
             throw new Error(message);
         }
     },
 
     // ========================================
-    // Create a new nurse
-    // Created by: M3 (Janani) - Day 13
+    // Create a new surgeon
+    // Created by: M1 (Pasindu) - Day 13
     // ========================================
-    createNurse: async (nurseData) => {
+    createSurgeon: async (surgeonData) => {
         try {
-            const response = await api.post('/nurses', nurseData);
+            const response = await api.post('/surgeons', surgeonData);
             return response.data;
         } catch (error) {
             const message =
-                error.response?.data?.message || 'Error creating nurse. Please try again.';
+                error.response?.data?.message || 'Error creating surgeon. Please try again.';
             throw new Error(message);
         }
     },
 };
 
-export default nurseService;
+export default surgeonService;
+

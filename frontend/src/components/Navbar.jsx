@@ -1,5 +1,6 @@
-import { Menu, X, Activity } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import theatrexLogo from '../assets/theatrex-logo.svg'
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
@@ -8,7 +9,7 @@ export default function Navbar() {
         <nav style={{ backgroundColor: '#fff', borderBottom: '1px solid #f3f4f6', padding: '1rem 0' }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Activity color="var(--primary)" size={24} />
+                    <img src={theatrexLogo} alt="TheatreX Logo" style={{ width: '32px', height: '32px' }} />
                     <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>TheatreX</span>
                 </div>
 

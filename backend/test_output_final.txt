@@ -2,9 +2,9 @@
 > theatrex-backend@1.0.0 test
 > node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=theatreController.test.js --no-cache --verbose
 
-(node:1404) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(node:19880) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:1404) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+(node:19880) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
 In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
 
 To prepare for this change:
@@ -93,26 +93,26 @@ See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode de
 FAIL tests/theatreController.test.js
   Theatre API Tests
     GET /api/theatres
-      ΓêÜ should return 401 without auth token (4 ms)
-      ΓêÜ should return theatre list with auth token (141 ms)
-      ΓêÜ should support status filter (167 ms)
+      ΓêÜ should return 401 without auth token (5 ms)
+      ΓêÜ should return theatre list with auth token (144 ms)
+      ΓêÜ should support status filter (137 ms)
     GET /api/theatres/:id
-      ΓêÜ should return 404 for non-existent theatre (161 ms)
-      ΓêÜ should return theatre detail (333 ms)
+      ΓêÜ should return 404 for non-existent theatre (147 ms)
+      ΓêÜ should return theatre detail (346 ms)
     PUT /api/theatres/:id/status
-      ├ù should return 403 for staff users (RBAC) (18 ms)
-      ΓêÜ should update theatre status for coordinator (385 ms)
+      ├ù should return 403 for staff users (RBAC) (19 ms)
+      ΓêÜ should update theatre status for coordinator (439 ms)
     GET /api/theatres/availability
-      ΓêÜ should return 400 when required params are missing (69 ms)
+      ΓêÜ should return 400 when required params are missing (74 ms)
     GET /api/theatres/:id/current-surgery
-      ΓêÜ should return 200 even if no surgery is in progress (142 ms)
+      ΓêÜ should return 200 even if no surgery is in progress (139 ms)
     GET /api/theatres/:id/duration
-      ΓêÜ should return 404 for non-existent theatre (129 ms)
+      ΓêÜ should return 404 for non-existent theatre (121 ms)
     PATCH /api/theatres/:id/quick-status
-      ΓêÜ should return 401 without auth token (2 ms)
-      ├ù should return 403 for staff users (RBAC) (5 ms)
-      ΓêÜ should update status for coordinator (478 ms)
-      ΓêÜ should return 400 for invalid transition (248 ms)
+      ΓêÜ should return 401 without auth token (4 ms)
+      ├ù should return 403 for staff users (RBAC) (11 ms)
+      ΓêÜ should update status for coordinator (536 ms)
+      ΓêÜ should return 400 for invalid transition (271 ms)
 
   ΓùÅ Theatre API Tests ΓÇ║ PUT /api/theatres/:id/status ΓÇ║ should return 403 for staff users (RBAC)
 
@@ -151,7 +151,7 @@ FAIL tests/theatreController.test.js
 Test Suites: 1 failed, 1 total
 Tests:       2 failed, 12 passed, 14 total
 Snapshots:   0 total
-Time:        3.963 s
+Time:        4.091 s
 Ran all test suites matching /theatreController.test.js/i.
 Jest did not exit one second after the test run has completed.
 

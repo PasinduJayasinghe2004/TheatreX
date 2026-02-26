@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Eye, EyeOff, ChevronDown } from 'lucide-react';
+import theatrexLogo from '../assets/theatrex-logo.svg';
 
 /* ========================================
    Slide Data — 3 slides with SVG content
@@ -158,6 +159,7 @@ const slides = [
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -208,7 +210,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await authService.login(formData.email, formData.password);
+            const response = await login(formData.email, formData.password);
             if (response.success) {
                 navigate('/dashboard');
             }
@@ -231,11 +233,7 @@ const Login = () => {
 
                 {/* Logo */}
                 <div className="relative z-10 flex items-center gap-2">
-                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
+                    <img src={theatrexLogo} alt="TheatreX Logo" className="w-10 h-10" />
                     <span className="text-2xl font-bold">TheatreX</span>
                 </div>
 
