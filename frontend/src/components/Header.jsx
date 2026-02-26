@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RoleGuard from './RoleGuard';
+import { useAuth } from '../context/AuthContext';
 import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 import theatrexLogo from '../assets/theatrex-logo.svg';
 
@@ -13,7 +15,9 @@ import theatrexLogo from '../assets/theatrex-logo.svg';
  * @param {Object} props.user - User object with name, email, role
  * @param {Function} props.onLogout - Logout handler function
  */
-const Header = ({ user, onLogout }) => {
+const Header = () => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
@@ -27,10 +31,9 @@ const Header = ({ user, onLogout }) => {
     ];
 
     const handleLogout = () => {
-        if (onLogout) {
-            onLogout();
-        }
         setIsUserMenuOpen(false);
+        logout();
+        navigate('/login', { state: { loggedOut: true } });
     };
 
     return (
@@ -211,16 +214,6 @@ Header.propTypes = {
         email: PropTypes.string,
         role: PropTypes.string,
     }),
-    onLogout: PropTypes.func,
-};
-
-Header.defaultProps = {
-    user: {
-        name: 'User',
-        email: 'user@theatrex.com',
-        role: 'coordinator',
-    },
-    onLogout: () => console.log('Logout clicked'),
 };
 
 export default Header;
