@@ -13,6 +13,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, AlertCircle, Filter } from 'lucide-react';
+import Layout from '../components/Layout';
 import SurgeryCard from '../components/SurgeryCard';
 import DateFilter from '../components/DateFilter';
 import EditSurgeryModal from '../components/EditSurgeryModal';
@@ -124,6 +125,7 @@ const SurgeryList = () => {
     };
 
     return (
+        <Layout>
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* ... Header and Filters ... */}
@@ -251,6 +253,7 @@ const SurgeryList = () => {
                 />
             )}
         </div>
+        </Layout>
     );
 };
 
