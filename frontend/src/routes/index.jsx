@@ -19,6 +19,7 @@ import EmergencyBooking from '../pages/EmergencyBooking'; // M1 - Day 8
 import TheatreList from '../pages/TheatreList'; // M1 - Day 10
 import TheatreDetail from '../pages/TheatreDetail'; // M2 - Day 10
 import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
+import NursesPage from '../pages/NursesPage'; // M4 - Day 13
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -123,6 +124,13 @@ const AppRoutes = () => {
             <Route path="/live-status" element={
                 <ProtectedRoute>
                     <LiveStatusPage />
+                </ProtectedRoute>
+            } />
+
+            {/* Nurses Page - M4 (Oneli) Day 13 */}
+            <Route path="/staff/nurses" element={
+                <ProtectedRoute>
+                    <NursesPage />
                 </ProtectedRoute>
             } />
 

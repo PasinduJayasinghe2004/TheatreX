@@ -30,6 +30,7 @@ import testRoutes from './routes/testRoutes.js';
 import surgeryRoutes from './routes/surgeryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js'; // M4 - Day 7
 import theatreRoutes from './routes/theatreRoutes.js'; // M2 - Day 8
+import nurseRoutes from './routes/nurseRoutes.js'; // M4 - Day 13
 
 // Load environment variables
 dotenv.config();
@@ -55,6 +56,7 @@ app.use('/api/test', testRoutes); // RBAC test routes - M4 Day 4
 app.use('/api/surgeries', surgeryRoutes); // Surgery routes - M1 Day 5
 app.use('/api/dashboard', dashboardRoutes); // Dashboard routes - M4 Day 7
 app.use('/api/theatres', theatreRoutes); // Theatre routes - M2 Day 8
+app.use('/api/nurses', nurseRoutes); // Nurse routes - M4 Day 13
 
 // Health check route
 app.get('/api/health', (req, res) => {
