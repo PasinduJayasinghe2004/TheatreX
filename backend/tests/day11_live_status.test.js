@@ -14,7 +14,7 @@
 // Run with: npm test -- --testPathPattern=day11_live_status
 // ============================================================================
 
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 
@@ -42,7 +42,7 @@ describe('Live Status Polling API - Integration Tests', () => {
         name: 'LivePoll Test Staff',
         email: `livepoll.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771234571'
     };
 

@@ -15,8 +15,6 @@ import { describe, it, expect, beforeAll } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 
-jest.setTimeout(30000);
-
 describe('Nurse API Tests - Day 13', () => {
     let coordinatorToken;
     let staffToken;
@@ -36,7 +34,7 @@ describe('Nurse API Tests - Day 13', () => {
         name: 'Nurse Test Staff',
         email: `nurse.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771234568'
     };
 
@@ -67,7 +65,7 @@ describe('Nurse API Tests - Day 13', () => {
             password: staffUser.password
         });
         staffToken = staffLogin.body.token;
-    });
+    }, 30000);
 
     // ========================================================================
     // GET /api/nurses - List Nurses
@@ -143,7 +141,8 @@ describe('Nurse API Tests - Day 13', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.success).toBe(false);
-            expect(res.body.message).toMatch(/name/i);
+            // Validation middleware puts field messages in the 'errors' array
+            expect(JSON.stringify(res.body.errors)).toMatch(/name/i);
         });
 
         it('should return 400 when email is missing', async () => {
@@ -154,7 +153,8 @@ describe('Nurse API Tests - Day 13', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.success).toBe(false);
-            expect(res.body.message).toMatch(/email/i);
+            // Validation middleware puts field messages in the 'errors' array
+            expect(JSON.stringify(res.body.errors)).toMatch(/email/i);
         });
 
         it('should return 400 for invalid email format', async () => {

@@ -1,0 +1,3028 @@
+﻿
+> frontend@0.0.0 test
+> vitest --run
+
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mC:/Users/Dinil Dilmith/Desktop/SDGP-Project/frontend[39m
+
+ [32mΓ£ô[39m src/tests/TheatreService.test.js [2m ([22m[2m43 tests[22m[2m)[22m[90m 25[2mms[22m[39m
+node.exe : [90mstderr[2m | 
+src/tests/Profile.test.jsx[2m > [22m[2mProfile 
+Component[2m > [22m[2mrenders profile page 
+correctly[22m[39m
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([90ms 
+   tderr[2m...ectly[22m[39m:String) [], RemoteE  
+  xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstderr[2m | src/tests/Profile.test.jsx[2m > 
+[22m[2mProfile Component[2m > [22m[2mhandles 
+profile update submission[22m[39m
+Error: Not implemented: 
+HTMLFormElement.prototype.requestSubmit
+    at module.exports (C:\Users\Dinil Dilmith\Deskto
+p\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom
+\browser\not-implemented.js:9:17)
+    at HTMLFormElementImpl.requestSubmit 
+(C:\Users\Dinil Dilmith\Desktop\SDGP-Project\fronten
+d\node_modules\jsdom\lib\jsdom\living\nodes\HTMLForm
+Element-impl.js:122:5)
+    at HTMLFormElementImpl._doRequestSubmit 
+(C:\Users\Dinil Dilmith\Desktop\SDGP-Project\fronten
+d\node_modules\jsdom\lib\jsdom\living\nodes\HTMLForm
+Element-impl.js:92:10)
+    at HTMLButtonElementImpl._activationBehavior 
+(C:\Users\Dinil Dilmith\Desktop\SDGP-Project\fronten
+d\node_modules\jsdom\lib\jsdom\living\nodes\HTMLButt
+onElement-impl.js:23:14)
+    at HTMLButtonElementImpl._dispatch 
+(C:\Users\Dinil Dilmith\Desktop\SDGP-Project\fronten
+d\node_modules\jsdom\lib\jsdom\living\events\EventTa
+rget-impl.js:252:26)
+    at HTMLButtonElementImpl.dispatchEvent 
+(C:\Users\Dinil Dilmith\Desktop\SDGP-Project\fronten
+d\node_modules\jsdom\lib\jsdom\living\events\EventTa
+rget-impl.js:104:17)
+    at HTMLButtonElement.dispatchEvent 
+(C:\Users\Dinil Dilmith\Desktop\SDGP-Project\fronten
+d\node_modules\jsdom\lib\jsdom\living\generated\Even
+tTarget.js:241:34)
+    at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\f
+rontend\node_modules\@testing-library\dom\dist\event
+s.js:19:20
+    at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\f
+rontend\node_modules\@testing-library\react\dist\pur
+e.js:108:16
+    at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\f
+rontend\node_modules\@testing-library\react\dist\act
+-compat.js:48:24 [90mundefined[39m
+
+ [32mΓ£ô[39m src/tests/Profile.test.jsx [2m ([22m[2m3 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/TheatreStatusBadge.test.jsx [2m ([22m[2m34 tests[22m[2m)[22m[90m 66[2mms[22m[39m
+[90mstderr[2m | src/tests/usePolling.test.js[2m 
+> [22m[2musePolling hook[2m > [22m[2mshould 
+call fetchFn immediately on mount when 
+immediate=true (default)[22m[39m
+An update to TestComponent inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | 
+src/tests/CoordinatorDashboard.test.jsx[2m > 
+[22m[2mCoordinatorDashboard Page Tests - M6 Day 
+12[2m > [22m[2mLoading State[2m > 
+[22m[2mshould show loading spinner while fetching 
+overview[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+ [32mΓ£ô[39m src/tests/usePolling.test.js [2m ([22m[2m10 tests[22m[2m)[22m[90m 60[2mms[22m[39m
+[90mstderr[2m | 
+src/tests/SurgeryForm.test.jsx[2m > 
+[22m[2mSurgeryForm Modal Component Tests[2m > 
+[22m[2mModal Rendering[2m > [22m[2mshould 
+render modal with title[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstderr[2m | 
+src/tests/TheatreAssignmentDropdown.test.jsx[2m > 
+[22m[2mTheatreAssignmentDropdown Component Tests 
+- M6 Day 12[2m > [22m[2mHeader[2m > 
+[22m[2mshould display "Assign Surgery" 
+title[22m[39m
+An update to TheatreAssignmentDropdown inside a 
+test was not wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to TheatreAssignmentDropdown inside a 
+test was not wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | 
+src/tests/TheatreAssignmentDropdown.test.jsx[2m > 
+[22m[2mTheatreAssignmentDropdown Component Tests 
+- M6 Day 12[2m > [22m[2mHeader[2m > 
+[22m[2mshould display the target theatre 
+name[22m[39m
+An update to TheatreAssignmentDropdown inside a 
+test was not wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to TheatreAssignmentDropdown inside a 
+test was not wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | 
+src/tests/TheatreList.test.jsx[2m > 
+[22m[2mTheatreList Page ΓÇô M6 Day 10[2m > 
+[22m[2mLoading State[2m > [22m[2mshould show a 
+loading spinner while data is being 
+fetched[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+ [32mΓ£ô[39m src/tests/SurgeryProgressBar.test.jsx [2m ([22m[2m12 tests[22m[2m)[22m[90m 129[2mms[22m[39m
+[90mstderr[2m | 
+src/tests/SurgeryDetail.test.jsx[2m > 
+[22m[2mSurgeryDetail Page Tests[2m > 
+[22m[2mLoading State[2m > [22m[2mshould show 
+loading indicator while fetching data[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstderr[2m | 
+src/tests/LiveStatusPage.test.jsx[2m > 
+[22m[2mLiveStatusPage[2m > [22m[2mshould show 
+a loading spinner before data arrives[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mLoading State[2m > [22m[2mshould show loading indicator while fetching data[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display page title after loading[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m 
+> [22m[2mDashboard Page Tests[2m > 
+[22m[2mLoading State[2m > [22m[2mshould show 
+loading indicator while fetching data[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstderr[2m | src/tests/Register.test.jsx[2m > 
+[22m[2mRegister Component Tests[2m > 
+[22m[2mComponent Rendering[2m > [22m[2mshould 
+render register form with all fields[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display stats cards[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ [32mΓ£ô[39m src/tests/TheatreAssignmentDropdown.test.jsx [2m ([22m[2m15 tests[22m[2m)[22m[33m 359[2mms[22m[39m
+[90mstderr[2m | 
+src/tests/SurgeryList.test.jsx[2m > 
+[22m[2mSurgeryList Page Tests[2m > 
+[22m[2mLoading State[2m > [22m[2mshould show 
+loading indicator while fetching data[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstdout[2m | src/tests/EmergencyBooking.test.jsx[2m > [22m[2mEmergencyBooking Component[2m > [22m[2mrenders the emergency booking form correctly[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | 
+src/tests/EmergencyBooking.test.jsx[2m > 
+[22m[2mEmergencyBooking Component[2m > 
+[22m[2mrenders the emergency booking form 
+correctly[22m[39m
+[90mstdout[2m | src/tests/EmergencyBooking.test.jsx[2m > [22m[2mEmergencyBooking Component[2m > [22m[2mdefaults priority to EMERGENCY[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+An update to EmergencyBooking inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to EmergencyBooking inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | 
+src/tests/EmergencyBooking.test.jsx[2m > 
+[22m[2mEmergencyBooking Component[2m > 
+[22m[2mdefaults priority to EMERGENCY[22m[39m
+An update to EmergencyBooking inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to EmergencyBooking inside a test was not 
+wrapped in act(...).
+
+When testing, code that causes React state updates 
+should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the 
+user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | src/tests/EmergencyBooking.test.jsx[2m > [22m[2mEmergencyBooking Component[2m > [22m[2mvalidates required fields on submit[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display correct surgery count[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | 
+src/tests/TheatreList.test.jsx[2m > 
+[22m[2mTheatreList Page ΓÇô M6 Day 10[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+error heading when API throws[22m[39m
+Error fetching theatres: Error: Network timeout
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\TheatreList.test.jsx:235
+:61
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+ [32mΓ£ô[39m src/tests/SurgeryCard.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 317[2mms[22m[39m
+[90mstderr[2m | 
+src/tests/SurgeryCard.test.jsx[2m > 
+[22m[2mSurgeryCard Component Tests[2m > 
+[22m[2mComponent Rendering[2m > [22m[2mshould 
+render surgery type as title[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+ [32mΓ£ô[39m src/tests/Register.test.jsx [2m ([22m[2m5 tests[22m[2m)[22m[90m 266[2mms[22m[39m
+[90mstderr[2m | 
+src/tests/TheatreList.test.jsx[2m > 
+[22m[2mTheatreList Page ΓÇô M6 Day 10[2m > 
+[22m[2mError State[2m > [22m[2mshould display 
+the error message text[22m[39m
+Error fetching theatres: Error: Network timeout
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\TheatreList.test.jsx:244
+:61
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display staff comparison data when available[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | 
+src/tests/TheatreList.test.jsx[2m > 
+[22m[2mTheatreList Page ΓÇô M6 Day 10[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+"Try Again" button on error[22m[39m
+Error fetching theatres: Error: Server error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\TheatreList.test.jsx:253
+:61
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstderr[2m | 
+src/tests/TheatreList.test.jsx[2m > 
+[22m[2mTheatreList Page ΓÇô M6 Day 10[2m > 
+[22m[2mError State[2m > [22m[2m"Try Again" 
+button should re-trigger the API call[22m[39m
+Error fetching theatres: Error: First failure
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\TheatreList.test.jsx:263
+:40
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstdout[2m | src/tests/EmergencyBooking.test.jsx[2m > [22m[2mEmergencyBooking Component[2m > [22m[2mpopulates theatre and surgeon dropdowns[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render login form with email and password fields[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | src/tests/Login.test.jsx[2m > 
+[22m[2mLogin Component Tests[2m > 
+[22m[2mComponent Rendering[2m > [22m[2mshould 
+render login form with email and password 
+fields[22m[39m
+ΓÜá∩╕Å React Router Future Flag Warning: React 
+Router will begin wrapping state updates in 
+`React.startTransition` in v7. You can use the 
+`v7_startTransition` future flag to opt-in early. 
+For more information, see https://reactrouter.com/v6
+/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative 
+route resolution within Splat routes is changing in 
+v7. You can use the `v7_relativeSplatPath` future 
+flag to opt-in early. For more information, see http
+s://reactrouter.com/v6/upgrading/future#v7_relatives
+platpath.
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render link to register page[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Validation[2m > [22m[2mshould show validation errors for empty fields[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ [32mΓ£ô[39m src/tests/EmergencyBooking.test.jsx [2m ([22m[2m4 tests[22m[2m)[22m[33m 456[2mms[22m[39m
+ [33mΓ¥»[39m src/tests/LiveStatusPage.test.jsx [2m ([22m[2m9 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[33m 411[2mms[22m[39m
+[31m   [33mΓ¥»[31m src/tests/LiveStatusPage.test.jsx[2m > [22mLiveStatusPage[2m > [22mshould show surgery info for theatres with a current surgery[39m
+[31m     ΓåÆ Found multiple elements with the text: 55%
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<p[31m
+  [33mclass[31m=[32m"text-2xl font-bold text-emerald-600"[31m
+[36m>[31m
+  [0m55[0m
+  [0m%[0m
+[36m</p>[31m
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"text-xs font-bold text-blue-600"[31m
+[36m>[31m
+  [0m55[0m
+  [0m%[0m
+[36m</span>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"min-h-screen bg-gray-50 py-8 px-4"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"max-w-7xl mx-auto"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center gap-3"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"p-2 bg-blue-600 rounded-lg text-white"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-zap w-6 h-6"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"24"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</div>[31m
+            [36m<div>[31m
+              [36m<h1[31m
+                [33mclass[31m=[32m"text-2xl font-bold text-gray-900"[31m
+              [36m>[31m
+                [0mLive Theatre Status[0m
+              [36m</h1>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-sm text-gray-500"[31m
+              [36m>[31m
+                [0mAuto-refreshes every [0m
+                [0m30[0m
+                [0ms[0m
+                [36m<span[31m
+                  [33mclass[31m=[32m"ml-2 text-gray-400"[31m
+                [36m>[31m
+                  [0m┬╖ Last updated [0m
+                  [0m12:05:33 AM[0m
+                [36m</span>[31m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center gap-2"[31m
+          [36m>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-refresh-cw w-4 h-4"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"24"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M21 3v5h-5"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M8 16H3v5"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+              [0mRefresh[0m
+            [36m</button>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border transition-colors border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-pause w-4 h-4"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"24"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<rect[31m
+                  [33mheight[31m=[32m"18"[31m
+                  [33mrx[31m=[32m"1"[31m
+                  [33mwidth[31m=[32m"5"[31m
+                  [33mx[31m=[32m"14"[31m
+                  [33my[31m=[32m"3"[31m
+                [36m/>[31m
+                [36m<rect[31m
+                  [33mheight[31m=[32m"18"[31m
+                  [33mrx[31m=[32m"1"[31m
+                  [33mwidth[31m=[32m"5"[31m
+                  [33mx[31m=[32m"5"[31m
+                  [33my[31m=[32m"3"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+              [0mPause[0m
+            [36m</button>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center"[31m
+          [36m>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-2xl font-bold text-emerald-600"[31m
+            [36m>[31m
+              [0m2[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-xs text-gray-500 mt-1"[31m
+            [36m>[31m
+              [0mAvailable[0m
+            [36m</p>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"bg-blue-50 border border-blue-200 rounded-xl p-4 text-center"[31m
+          [36m>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-2xl font-bold text-blue-600"[31m
+            [36m>[31m
+              [0m1[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-xs text-gray-500 mt-1"[31m
+            [36m>[31m
+              [0mIn Use[0m
+            [36m</p>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[3...[39m
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Validation[2m > [22m[2mshould validate email format[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | 
+src/tests/SurgeryList.test.jsx[2m > 
+[22m[2mSurgeryList Page Tests[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+error message when API fails[22m[39m
+Error fetching surgeries: Error: Network error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\SurgeryList.test.jsx:180
+:17
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstderr[2m | 
+src/tests/SurgeryList.test.jsx[2m > 
+[22m[2mSurgeryList Page Tests[2m > 
+[22m[2mError State[2m > [22m[2mshould show Try 
+Again button on error[22m[39m
+Error fetching surgeries: Error: Server error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\SurgeryList.test.jsx:193
+:17
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstderr[2m | 
+src/tests/SurgeryDetail.test.jsx[2m > 
+[22m[2mSurgeryDetail Page Tests[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+error message when API fails[22m[39m
+Error fetching surgery: Error: Failed to fetch 
+surgery
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\SurgeryDetail.test.jsx:2
+58:17
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+ [32mΓ£ô[39m src/tests/SurgeryList.test.jsx [2m ([22m[2m13 tests[22m[2m)[22m[33m 436[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/TheatreList.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 586[2mms[22m[39m
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould submit form with valid credentials[22m[39m
+Γä╣∩╕Å No existing user session found
+Γ£à Login successful: test@example.com
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould show loading state during submission[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle API errors gracefully[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | src/tests/Login.test.jsx[2m > 
+[22m[2mLogin Component Tests[2m > [22m[2mForm 
+Submission[2m > [22m[2mshould handle API errors 
+gracefully[22m[39m
+Γ¥î Login error: Invalid credentials
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle network errors gracefully[22m[39m
+[90mstderr[2m | src/tests/Login.test.jsx[2m > 
+[22m[2mLogin Component Tests[2m > [22m[2mForm 
+Submission[2m > [22m[2mshould handle network 
+errors gracefully[22m[39m
+Γ¥î Login error: Network connection failed
+
+Γä╣∩╕Å No existing user session found
+
+ [32mΓ£ô[39m src/tests/Login.test.jsx [2m ([22m[2m9 tests[22m[2m)[22m[33m 570[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryDetail.test.jsx [2m ([22m[2m26 tests[22m[2m)[22m[33m 629[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryForm.test.jsx [2m ([22m[2m26 tests[22m[2m)[22m[33m 819[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/CoordinatorDashboard.test.jsx [2m ([22m[2m33 tests[22m[2m)[22m[33m 1041[2mms[22m[39m
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display upcoming surgeries table[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould not show in_progress surgeries in upcoming table[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display live surgeries section[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display action buttons[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mMissing Data State[2m > [22m[2mshould show -- for avgDuration when not provided[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mMissing Data State[2m > [22m[2mshould show no comparison data when yesterdayComparison is null[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show error message when stats API fails[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m 
+> [22m[2mDashboard Page Tests[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+error message when stats API fails[22m[39m
+Error fetching dashboard data: Error: Network error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\Dashboard.test.jsx:244:4
+9
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show Retry button on error[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m 
+> [22m[2mDashboard Page Tests[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+Retry button on error[22m[39m
+Error fetching dashboard data: Error: Server error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\Dashboard.test.jsx:254:4
+9
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show empty surgeries when surgeries API fails[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m 
+> [22m[2mDashboard Page Tests[2m > 
+[22m[2mError State[2m > [22m[2mshould show 
+empty surgeries when surgeries API fails[22m[39m
+Error fetching surgeries: Error: Surgery API error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Proj
+ect\frontend\[39msrc\tests\Dashboard.test.jsx:265:6
+2
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4m@vitest
+/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmit
+h/Desktop/SDGP-Project/frontend/[39mnode_modules/[
+4m@vitest/runner[24m/dist/index.js:781:17[90m)[39
+m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:909:15[90m)[3
+9m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmi
+th/Desktop/SDGP-Project/frontend/[39mnode_modules/
+[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39
+m
+    at startTests [90m(file:///C:/Users/Dinil%20Dil
+mith/Desktop/SDGP-Project/frontend/[39mnode_modules
+/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[
+39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop
+/SDGP-Project/frontend/[39mnode_modules/[4mvitest
+[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:11
+6:7
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to /surgeries/new when Add New Surgery is clicked[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to /emergency when Emergency Surgery is clicked[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to /calendar when Calendar View is clicked[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to surgery detail when view button is clicked[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to /surgeries when search button is clicked[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mDelete Surgery[2m > [22m[2mshould call deleteSurgery and remove surgery on confirm[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mDelete Surgery[2m > [22m[2mshould not call deleteSurgery when confirmation is cancelled[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mAccessibility[2m > [22m[2mshould have aria-labels on icon buttons[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ [33mΓ¥»[39m src/tests/Dashboard.test.jsx [2m ([22m[2m22 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[33m 2709[2mms[22m[39m
+[31m   [33mΓ¥»[31m src/tests/Dashboard.test.jsx[2m > [22mDashboard Page Tests[2m > [22mSuccess State[2m > [22mshould display staff comparison data when available[39m
+[31m     ΓåÆ Unable to find an element with the text: +2 from yesterday. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"min-h-screen bg-gray-50"[31m
+    [36m>[31m
+      [36m<header[31m
+        [33mclass[31m=[32m"bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center justify-between h-16"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex-shrink-0"[31m
+              [36m>[31m
+                [36m<h1[31m
+                  [33mclass[31m=[32m"text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2"[31m
+                [36m>[31m
+                  [36m<img[31m
+                    [33malt[31m=[32m"TheatreX Logo"[31m
+                    [33mclass[31m=[32m"w-8 h-8"[31m
+                    [33msrc[31m=[32m"/src/assets/theatrex-logo.svg"[31m
+                  [36m/>[31m
+                  [0mTheatreX[0m
+                [36m</h1>[31m
+              [36m</div>[31m
+              [36m<nav[31m
+                [33mclass[31m=[32m"hidden md:ml-10 md:flex md:space-x-1"[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center gap-4"[31m
+            [36m>[31m
+              [36m<button[31m
+                [33maria-label[31m=[32m"Notifications"[31m
+                [33mclass[31m=[32m"relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-xl"[31m
+                [36m>[31m
+                  [0m≡ƒöö[0m
+                [36m</span>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[31m
+                [36m/>[31m
+              [36m</button>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative"[31m
+              [36m>[31m
+                [36m<button[31m
+                  [33maria-label[31m=[32m"User menu"[31m
+                  [33mclass[31m=[32m"flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200"[31m
+                [36m>[31m
+                  [36m<div[31m
+                    [33mclass[31m=[32m"w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm"[31m
+                  [36m>[31m
+                    [0mU[0m
+                  [36m</div>[31m
+                  [36m<div[31m
+                    [33mclass[31m=[32m"hidden md:block text-left"[31m
+                  [36m>[31m
+                    [36m<p[31m
+                      [33mclass[31m=[32m"text-sm font-medium text-gray-900"[31m
+                    [36m>[31m
+                      [0mUser[0m
+                    [36m</p>[31m
+                    [36m<span[31m
+                      [33mclass[31m=[32m"text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"[31m
+                    [36m>[31m
+                      [0mCoordinator[0m
+                    [36m</span>[31m
+                  [36m</div>[31m
+                  [36m<svg[31m
+                    [33mclass[31m=[32m"w-4 h-4 text-gray-500 transition-transform duration-200 "[31m
+                    [33mfill[31m=[32m"none"[31m
+                    [33mstroke[31m=[32m"currentColor"[31m
+                    [33mviewBox[31m=[32m"0 0 24 24"[31m
+                  [36m>[31m
+                    [36m<path[31m
+                      [33md[31m=[32m"M19 9l-7 7-7-7"[31m
+                      [33mstroke-linecap[31m=[32m"round"[31m
+                      [33mstroke-linejoin[31m=[32m"round"[31m
+                      [33mstroke-width[31m=[32m"2"[31m
+                    [36m/>[31m
+                  [36m</svg>[31m
+                [36m</button>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33maria-label[31m=[32m"Toggle mobile menu"[31m
+                [33mclass[31m=[32m"md:hidden p-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"[31m
+              [36m>[31m
+                [36m<svg[31m
+                  [33mclass[31m=[32m"w-6 h-6"[31m
+                  [33mfill[31m=[32m"none"[31m
+                  [33mstroke[31m=[32m"currentColor"[31m
+                  [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [36m>[31m
+                  [36m<path[31m
+                    [33md[31m=[32m"M4 6h16M4 12h16M4 18h16"[31m
+                    [33mstroke-linecap[31m=[32m"round"[31m
+                    [33mstroke-linejoin[31m=[32m"round"[31m
+                    [33mstroke-width[31m=[32m"2"[31m
+                  [36m/>[31m
+                [36m</svg>[31m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</header>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 ease-in-out
+                flex flex-col
+            "[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"p-2 flex justify-end"[31m
+          [36m>[31m
+            [36m<button[31m
+              [33maria-label[31m=[32m"Collapse sidebar"[31m
+              [33mclass[31m=[32m"p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33mclass[31m=[32m"w-5 h-5 transition-transform duration-300 "[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M11 19l-7-7 7-7m8 14l-7-7 7-7"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"px-2 mb-4"[31m
+          [36m>[31m
+            [36m<a[31m
+              [33mclass[31m=[32m"
+                        flex ite...
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"min-h-screen bg-gray-50"[31m
+      [36m>[31m
+        [36m<header[31m
+          [33mclass[31m=[32m"bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between h-16"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex-shrink-0"[31m
+                [36m>[31m
+                  [36m<h1[31m
+                    [33mclass[31m=[32m"text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2"[31m
+                  [36m>[31m
+                    [36m<img[31m
+                      [33malt[31m=[32m"TheatreX Logo"[31m
+                      [33mclass[31m=[32m"w-8 h-8"[31m
+                      [33msrc[31m=[32m"/src/assets/theatrex-logo.svg"[31m
+                    [36m/>[31m
+                    [0mTheatreX[0m
+                  [36m</h1>[31m
+                [36m</div>[31m
+                [36m<nav[31m
+                  [33mclass[31m=[32m"hidden md:ml-10 md:flex md:space-x-1"[31m
+                [36m/>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center gap-4"[31m
+              [36m>[31m
+                [36m<button[31m
+                  [33maria-label[31m=[32m"Notifications"[31m
+                  [33mclass[31m=[32m"relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m≡ƒöö[0m
+                  [36m</span>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[31m
+                  [36m/>[31m
+                [36m</button>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"relative"[31m
+                [36m>[31m
+                  [36m<button[31m
+                    [33maria-label[31m=[32m"User menu"[31m
+                    [33mclass[31m=[32m"flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200"[31m
+                  [36m>[31m
+                    [36m<div[31m
+                      [33mclass[31m=[32m"w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm"[31m
+                    [36m>[31m
+                      [0mU[0m
+                    [36m</div>[31m
+                    [36m<div[31m
+                      [33mclass[31m=[32m"hidden md:block text-left"[31m
+                    [36m>[31m
+                      [36m<p[31m
+                        [33mclass[31m=[32m"text-sm font-medium text-gray-900"[31m
+                      [36m>[31m
+                        [0mUser[0m
+                      [36m</p>[31m
+                      [36m<span[31m
+                        [33mclass[31m=[32m"text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"[31m
+                      [36m>[31m
+                        [0mCoordinator[0m
+                      [36m</span>[31m
+                    [36m</div>[31m
+                    [36m<svg[31m
+                      [33mclass[31m=[32m"w-4 h-4 text-gray-500 transition-transform duration-200 "[31m
+                      [33mfill[31m=[32m"none"[31m
+                      [33mstroke[31m=[32m"currentColor"[31m
+                      [33mviewBox[31m=[32m"0 0 24 24"[31m
+                    [36m>[31m
+                      [36m<path[31m
+                        [33md[31m=[32m"M19 9l-7 7-7-7"[31m
+                        [33mstroke-linecap[31m=[32m"round"[31m
+                        [33mstroke-linejoin[31m=[32m"round"[31m
+                        [33mstroke-width[31m=[32m"2"[31m
+                      [36m/>[31m
+                    [36m</svg>[31m
+                  [36m</button>[31m
+                [36m</div>[31m
+                [36m<button[31m
+                  [33maria-label[31m=[32m"Toggle mobile menu"[31m
+                  [33mclass[31m=[32m"md:hidden p-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"[31m
+                [36m>[31m
+                  [36m<svg[31m
+                    [33mclass[31m=[32m"w-6 h-6"[31m
+                    [33mfill[31m=[32m"none"[31m
+                    [33mstroke[31m=[32m"currentColor"[31m
+                    [33mviewBox[31m=[32m"0 0 24 24"[31m
+                  [36m>[31m
+                    [36m<path[31m
+                      [33md[31m=[32m"M4 6h16M4 12h16M4 18h16"[31m
+                      [33mstroke-linecap[31m=[32m"round"[31m
+                      [33mstroke-linejoin[31m=[32m"round"[31m
+                      [33mstroke-width[31m=[32m"2"[31m
+                    [36m/>[31m
+                  [36m</svg>[31m
+                [36m</button>[31m
+              [36m</div>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</header>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex"[31m
+        [36m>[31m
+          [36m<aside[31m
+            [33mclass[31m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 ease-in-out
+                flex flex-col
+            "[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"p-2 flex justify-end"[31m
+            [36m>[31m
+              [36m<button[31m
+                [33maria-label[31m=[32m"Collapse sidebar"[31m
+                [33mclass[31m=[32m"p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"[31m
+              [36m>[31m
+                [36m<svg[31m
+                  [33mclass[31m=[32m"w-5 h-5 transition-transform duration-300 "[31m
+                  [33mfill[31m=[32m"none"[31m
+                  [33mstroke[31m=[32m"currentColor"[31m
+                  [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [36m>[31m
+                  [36m<path[31m
+                    [33md[31m=[32m"M11 19l-7-7 7-7m8 14l-7-7 7-7"[31m
+                    [33mstroke-linecap[31m=[32m"round"[31m
+                    [33mstroke-linejoin[31m=[32m"round"[31m
+                    [33mstroke-width[31m=[32m"2"[...[39m
+[31m   [33mΓ¥»[31m src/tests/Dashboard.test.jsx[2m > [22mDashboard Page Tests[2m > [22mMissing Data State[2m > [22mshould show no comparison data when yesterdayComparison is null[39m
+[31m     ΓåÆ Unable to find an element with the text: No comparison data. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"min-h-screen bg-gray-50"[31m
+    [36m>[31m
+      [36m<header[31m
+        [33mclass[31m=[32m"bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center justify-between h-16"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex-shrink-0"[31m
+              [36m>[31m
+                [36m<h1[31m
+                  [33mclass[31m=[32m"text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2"[31m
+                [36m>[31m
+                  [36m<img[31m
+                    [33malt[31m=[32m"TheatreX Logo"[31m
+                    [33mclass[31m=[32m"w-8 h-8"[31m
+                    [33msrc[31m=[32m"/src/assets/theatrex-logo.svg"[31m
+                  [36m/>[31m
+                  [0mTheatreX[0m
+                [36m</h1>[31m
+              [36m</div>[31m
+              [36m<nav[31m
+                [33mclass[31m=[32m"hidden md:ml-10 md:flex md:space-x-1"[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center gap-4"[31m
+            [36m>[31m
+              [36m<button[31m
+                [33maria-label[31m=[32m"Notifications"[31m
+                [33mclass[31m=[32m"relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-xl"[31m
+                [36m>[31m
+                  [0m≡ƒöö[0m
+                [36m</span>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[31m
+                [36m/>[31m
+              [36m</button>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"relative"[31m
+              [36m>[31m
+                [36m<button[31m
+                  [33maria-label[31m=[32m"User menu"[31m
+                  [33mclass[31m=[32m"flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200"[31m
+                [36m>[31m
+                  [36m<div[31m
+                    [33mclass[31m=[32m"w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm"[31m
+                  [36m>[31m
+                    [0mU[0m
+                  [36m</div>[31m
+                  [36m<div[31m
+                    [33mclass[31m=[32m"hidden md:block text-left"[31m
+                  [36m>[31m
+                    [36m<p[31m
+                      [33mclass[31m=[32m"text-sm font-medium text-gray-900"[31m
+                    [36m>[31m
+                      [0mUser[0m
+                    [36m</p>[31m
+                    [36m<span[31m
+                      [33mclass[31m=[32m"text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"[31m
+                    [36m>[31m
+                      [0mCoordinator[0m
+                    [36m</span>[31m
+                  [36m</div>[31m
+                  [36m<svg[31m
+                    [33mclass[31m=[32m"w-4 h-4 text-gray-500 transition-transform duration-200 "[31m
+                    [33mfill[31m=[32m"none"[31m
+                    [33mstroke[31m=[32m"currentColor"[31m
+                    [33mviewBox[31m=[32m"0 0 24 24"[31m
+                  [36m>[31m
+                    [36m<path[31m
+                      [33md[31m=[32m"M19 9l-7 7-7-7"[31m
+                      [33mstroke-linecap[31m=[32m"round"[31m
+                      [33mstroke-linejoin[31m=[32m"round"[31m
+                      [33mstroke-width[31m=[32m"2"[31m
+                    [36m/>[31m
+                  [36m</svg>[31m
+                [36m</button>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33maria-label[31m=[32m"Toggle mobile menu"[31m
+                [33mclass[31m=[32m"md:hidden p-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"[31m
+              [36m>[31m
+                [36m<svg[31m
+                  [33mclass[31m=[32m"w-6 h-6"[31m
+                  [33mfill[31m=[32m"none"[31m
+                  [33mstroke[31m=[32m"currentColor"[31m
+                  [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [36m>[31m
+                  [36m<path[31m
+                    [33md[31m=[32m"M4 6h16M4 12h16M4 18h16"[31m
+                    [33mstroke-linecap[31m=[32m"round"[31m
+                    [33mstroke-linejoin[31m=[32m"round"[31m
+                    [33mstroke-width[31m=[32m"2"[31m
+                  [36m/>[31m
+                [36m</svg>[31m
+              [36m</button>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</header>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"flex"[31m
+      [36m>[31m
+        [36m<aside[31m
+          [33mclass[31m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 ease-in-out
+                flex flex-col
+            "[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"p-2 flex justify-end"[31m
+          [36m>[31m
+            [36m<button[31m
+              [33maria-label[31m=[32m"Collapse sidebar"[31m
+              [33mclass[31m=[32m"p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33mclass[31m=[32m"w-5 h-5 transition-transform duration-300 "[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M11 19l-7-7 7-7m8 14l-7-7 7-7"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"px-2 mb-4"[31m
+          [36m>[31m
+            [36m<a[31m
+              [33mclass[31m=[32m"
+                        flex ite...
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"min-h-screen bg-gray-50"[31m
+      [36m>[31m
+        [36m<header[31m
+          [33mclass[31m=[32m"bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"flex items-center justify-between h-16"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"flex-shrink-0"[31m
+                [36m>[31m
+                  [36m<h1[31m
+                    [33mclass[31m=[32m"text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2"[31m
+                  [36m>[31m
+                    [36m<img[31m
+                      [33malt[31m=[32m"TheatreX Logo"[31m
+                      [33mclass[31m=[32m"w-8 h-8"[31m
+                      [33msrc[31m=[32m"/src/assets/theatrex-logo.svg"[31m
+                    [36m/>[31m
+                    [0mTheatreX[0m
+                  [36m</h1>[31m
+                [36m</div>[31m
+                [36m<nav[31m
+                  [33mclass[31m=[32m"hidden md:ml-10 md:flex md:space-x-1"[31m
+                [36m/>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"flex items-center gap-4"[31m
+              [36m>[31m
+                [36m<button[31m
+                  [33maria-label[31m=[32m"Notifications"[31m
+                  [33mclass[31m=[32m"relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"[31m
+                [36m>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"text-xl"[31m
+                  [36m>[31m
+                    [0m≡ƒöö[0m
+                  [36m</span>[31m
+                  [36m<span[31m
+                    [33mclass[31m=[32m"absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[31m
+                  [36m/>[31m
+                [36m</button>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"relative"[31m
+                [36m>[31m
+                  [36m<button[31m
+                    [33maria-label[31m=[32m"User menu"[31m
+                    [33mclass[31m=[32m"flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200"[31m
+                  [36m>[31m
+                    [36m<div[31m
+                      [33mclass[31m=[32m"w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm"[31m
+                    [36m>[31m
+                      [0mU[0m
+                    [36m</div>[31m
+                    [36m<div[31m
+                      [33mclass[31m=[32m"hidden md:block text-left"[31m
+                    [36m>[31m
+                      [36m<p[31m
+                        [33mclass[31m=[32m"text-sm font-medium text-gray-900"[31m
+                      [36m>[31m
+                        [0mUser[0m
+                      [36m</p>[31m
+                      [36m<span[31m
+                        [33mclass[31m=[32m"text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"[31m
+                      [36m>[31m
+                        [0mCoordinator[0m
+                      [36m</span>[31m
+                    [36m</div>[31m
+                    [36m<svg[31m
+                      [33mclass[31m=[32m"w-4 h-4 text-gray-500 transition-transform duration-200 "[31m
+                      [33mfill[31m=[32m"none"[31m
+                      [33mstroke[31m=[32m"currentColor"[31m
+                      [33mviewBox[31m=[32m"0 0 24 24"[31m
+                    [36m>[31m
+                      [36m<path[31m
+                        [33md[31m=[32m"M19 9l-7 7-7-7"[31m
+                        [33mstroke-linecap[31m=[32m"round"[31m
+                        [33mstroke-linejoin[31m=[32m"round"[31m
+                        [33mstroke-width[31m=[32m"2"[31m
+                      [36m/>[31m
+                    [36m</svg>[31m
+                  [36m</button>[31m
+                [36m</div>[31m
+                [36m<button[31m
+                  [33maria-label[31m=[32m"Toggle mobile menu"[31m
+                  [33mclass[31m=[32m"md:hidden p-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"[31m
+                [36m>[31m
+                  [36m<svg[31m
+                    [33mclass[31m=[32m"w-6 h-6"[31m
+                    [33mfill[31m=[32m"none"[31m
+                    [33mstroke[31m=[32m"currentColor"[31m
+                    [33mviewBox[31m=[32m"0 0 24 24"[31m
+                  [36m>[31m
+                    [36m<path[31m
+                      [33md[31m=[32m"M4 6h16M4 12h16M4 18h16"[31m
+                      [33mstroke-linecap[31m=[32m"round"[31m
+                      [33mstroke-linejoin[31m=[32m"round"[31m
+                      [33mstroke-width[31m=[32m"2"[31m
+                    [36m/>[31m
+                  [36m</svg>[31m
+                [36m</button>[31m
+              [36m</div>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+        [36m</header>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex"[31m
+        [36m>[31m
+          [36m<aside[31m
+            [33mclass[31m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 ease-in-out
+                flex flex-col
+            "[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"p-2 flex justify-end"[31m
+            [36m>[31m
+              [36m<button[31m
+                [33maria-label[31m=[32m"Collapse sidebar"[31m
+                [33mclass[31m=[32m"p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"[31m
+              [36m>[31m
+                [36m<svg[31m
+                  [33mclass[31m=[32m"w-5 h-5 transition-transform duration-300 "[31m
+                  [33mfill[31m=[32m"none"[31m
+                  [33mstroke[31m=[32m"currentColor"[31m
+                  [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [36m>[31m
+                  [36m<path[31m
+                    [33md[31m=[32m"M11 19l-7-7 7-7m8 14l-7-7 7-7"[31m
+                    [33mstroke-linecap[31m=[32m"round"[31m
+                    [33mstroke-linejoin[31m=[32m"round"[31m
+                    [33mstroke-width[31m=[32m"2"[...[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1m[7m Failed Tests 3 
+[27m[22mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[31m[1m[7m FAIL [27m[22m[39m 
+src/tests/Dashboard.test.jsx[2m > [22mDashboard 
+Page Tests[2m > [22mSuccess State[2m > 
+[22mshould display staff comparison data when 
+available
+[31m[1mTestingLibraryElementError[22m[39m: 
+Unable to find an element with the text: +2 from 
+yesterday. This could be because the text is broken 
+up by multiple elements. In this case, you can 
+provide a function for your text matcher to make 
+your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"min-h-screen 
+bg-gray-50"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"bg-white shadow-sm 
+border-b border-gray-200 sticky top-0 z-50"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto 
+px-4 sm:px-6 lg:px-8"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center 
+justify-between h-16"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex 
+items-center"[39m
+            [36m>[39m
+              [36m<div[39m
+                
+[33mclass[39m=[32m"flex-shrink-0"[39m
+              [36m>[39m
+                [36m<h1[39m
+                  [33mclass[39m=[32m"text-2xl 
+font-bold bg-gradient-to-r from-blue-600 
+to-indigo-600 bg-clip-text text-transparent flex 
+items-center gap-2"[39m
+                [36m>[39m
+                  [36m<img[39m
+                    [33malt[39m=[32m"TheatreX 
+Logo"[39m
+                    [33mclass[39m=[32m"w-8 
+h-8"[39m
+                    [33msrc[39m=[32m"/src/assets/
+theatrex-logo.svg"[39m
+                  [36m/>[39m
+                  [0mTheatreX[0m
+                [36m</h1>[39m
+              [36m</div>[39m
+              [36m<nav[39m
+                [33mclass[39m=[32m"hidden 
+md:ml-10 md:flex md:space-x-1"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex 
+items-center gap-4"[39m
+            [36m>[39m
+              [36m<button[39m
+                
+[33maria-label[39m=[32m"Notifications"[39m
+                [33mclass[39m=[32m"relative p-2 
+text-gray-600 hover:text-blue-600 hover:bg-blue-50 
+rounded-lg transition-all duration-200"[39m
+              [36m>[39m
+                [36m<span[39m
+                  
+[33mclass[39m=[32m"text-xl"[39m
+                [36m>[39m
+                  [0m≡ƒöö[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"absolute 
+top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[39m
+                [36m/>[39m
+              [36m</button>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33maria-label[39m=[32m"User 
+menu"[39m
+                  [33mclass[39m=[32m"flex 
+items-center gap-3 px-3 py-2 rounded-lg 
+hover:bg-gray-50 transition-all duration-200"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"w-8 h-8 
+rounded-full bg-gradient-to-r from-blue-500 
+to-indigo-500 flex items-center justify-center 
+text-white font-semibold text-sm"[39m
+                  [36m>[39m
+                    [0mU[0m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"hidden 
+md:block text-left"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-sm 
+font-medium text-gray-900"[39m
+                    [36m>[39m
+                      [0mUser[0m
+                    [36m</p>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-xs 
+px-2 py-0.5 rounded-full bg-blue-100 
+text-blue-800"[39m
+                    [36m>[39m
+                      [0mCoordinator[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<svg[39m
+                    [33mclass[39m=[32m"w-4 h-4 
+text-gray-500 transition-transform duration-200 
+"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    
+[33mstroke[39m=[32m"currentColor"[39m
+                    [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M19 9l-7 
+7-7-7"[39m
+                      
+[33mstroke-linecap[39m=[32m"round"[39m
+                      
+[33mstroke-linejoin[39m=[32m"round"[39m
+                      
+[33mstroke-width[39m=[32m"2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Toggle 
+mobile menu"[39m
+                [33mclass[39m=[32m"md:hidden p-2 
+rounded-lg text-gray-600 hover:text-blue-600 
+hover:bg-blue-50 transition-all duration-200"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"w-6 
+h-6"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  
+[33mstroke[39m=[32m"currentColor"[39m
+                  [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M4 6h16M4 
+12h16M4 18h16"[39m
+                    
+[33mstroke-linecap[39m=[32m"round"[39m
+                    
+[33mstroke-linejoin[39m=[32m"round"[39m
+                    
+[33mstroke-width[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex"[39m
+      [36m>[39m
+        [36m<aside[39m
+          [33mclass[39m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 
+ease-in-out
+                flex flex-col
+            "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-2 flex 
+justify-end"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Collapse 
+sidebar"[39m
+              [33mclass[39m=[32m"p-2 rounded-lg 
+hover:bg-gray-100 text-gray-500 hover:text-gray-700 
+transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"w-5 h-5 
+transition-transform duration-300 "[39m
+                [33mfill[39m=[32m"none"[39m
+                
+[33mstroke[39m=[32m"currentColor"[39m
+                [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M11 19l-7-7 
+7-7m8 14l-7-7 7-7"[39m
+                  
+[33mstroke-linecap[39m=[32m"round"[39m
+                  
+[33mstroke-linejoin[39m=[32m"round"[39m
+                  
+[33mstroke-width[39m=[32m"2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-2 mb-4"[39m
+          [36m>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"
+                        flex ite...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"min-h-screen 
+bg-gray-50"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"bg-white shadow-sm 
+border-b border-gray-200 sticky top-0 z-50"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"max-w-7xl mx-auto 
+px-4 sm:px-6 lg:px-8"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex 
+items-center justify-between h-16"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex 
+items-center"[39m
+              [36m>[39m
+                [36m<div[39m
+                  
+[33mclass[39m=[32m"flex-shrink-0"[39m
+                [36m>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-2xl 
+font-bold bg-gradient-to-r from-blue-600 
+to-indigo-600 bg-clip-text text-transparent flex 
+items-center gap-2"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"TheatreX 
+Logo"[39m
+                      [33mclass[39m=[32m"w-8 
+h-8"[39m
+                      [33msrc[39m=[32m"/src/asset
+s/theatrex-logo.svg"[39m
+                    [36m/>[39m
+                    [0mTheatreX[0m
+                  [36m</h1>[39m
+                [36m</div>[39m
+                [36m<nav[39m
+                  [33mclass[39m=[32m"hidden 
+md:ml-10 md:flex md:space-x-1"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex 
+items-center gap-4"[39m
+              [36m>[39m
+                [36m<button[39m
+                  
+[33maria-label[39m=[32m"Notifications"[39m
+                  [33mclass[39m=[32m"relative 
+p-2 text-gray-600 hover:text-blue-600 
+hover:bg-blue-50 rounded-lg transition-all 
+duration-200"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    
+[33mclass[39m=[32m"text-xl"[39m
+                  [36m>[39m
+                    [0m≡ƒöö[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"absolute 
+top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[39m
+                  [36m/>[39m
+                [36m</button>[39m
+                [36m<div[39m
+                  
+[33mclass[39m=[32m"relative"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"User 
+menu"[39m
+                    [33mclass[39m=[32m"flex 
+items-center gap-3 px-3 py-2 rounded-lg 
+hover:bg-gray-50 transition-all duration-200"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"w-8 h-8 
+rounded-full bg-gradient-to-r from-blue-500 
+to-indigo-500 flex items-center justify-center 
+text-white font-semibold text-sm"[39m
+                    [36m>[39m
+                      [0mU[0m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"hidden 
+md:block text-left"[39m
+                    [36m>[39m
+                      [36m<p[39m
+                        
+[33mclass[39m=[32m"text-sm font-medium 
+text-gray-900"[39m
+                      [36m>[39m
+                        [0mUser[0m
+                      [36m</p>[39m
+                      [36m<span[39m
+                        
+[33mclass[39m=[32m"text-xs px-2 py-0.5 
+rounded-full bg-blue-100 text-blue-800"[39m
+                      [36m>[39m
+                        [0mCoordinator[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<svg[39m
+                      [33mclass[39m=[32m"w-4 h-4 
+text-gray-500 transition-transform duration-200 
+"[39m
+                      
+[33mfill[39m=[32m"none"[39m
+                      
+[33mstroke[39m=[32m"currentColor"[39m
+                      [33mviewBox[39m=[32m"0 0 
+24 24"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M19 9l-7 
+7-7-7"[39m
+                        
+[33mstroke-linecap[39m=[32m"round"[39m
+                        
+[33mstroke-linejoin[39m=[32m"round"[39m
+                        
+[33mstroke-width[39m=[32m"2"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</div>[39m
+                [36m<button[39m
+                  [33maria-label[39m=[32m"Toggle 
+mobile menu"[39m
+                  [33mclass[39m=[32m"md:hidden 
+p-2 rounded-lg text-gray-600 hover:text-blue-600 
+hover:bg-blue-50 transition-all duration-200"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33mclass[39m=[32m"w-6 
+h-6"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    
+[33mstroke[39m=[32m"currentColor"[39m
+                    [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M4 6h16M4 
+12h16M4 18h16"[39m
+                      
+[33mstroke-linecap[39m=[32m"round"[39m
+                      
+[33mstroke-linejoin[39m=[32m"round"[39m
+                      
+[33mstroke-width[39m=[32m"2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex"[39m
+        [36m>[39m
+          [36m<aside[39m
+            [33mclass[39m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 
+ease-in-out
+                flex flex-col
+            "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-2 flex 
+justify-end"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Collapse 
+sidebar"[39m
+                [33mclass[39m=[32m"p-2 
+rounded-lg hover:bg-gray-100 text-gray-500 
+hover:text-gray-700 transition-colors"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"w-5 h-5 
+transition-transform duration-300 "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  
+[33mstroke[39m=[32m"currentColor"[39m
+                  [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M11 19l-7-7 
+7-7m8 14l-7-7 7-7"[39m
+                    
+[33mstroke-linecap[39m=[32m"round"[39m
+                    
+[33mstroke-linejoin[39m=[32m"round"[39m
+                    
+[33mstroke-width[39m=[32m"2"[...
+[90m [2mΓ¥»[22m Proxy.waitForWrapper node_modules
+/@testing-library/dom/dist/wait-for.js:[2m163:27[2
+2m[39m
+[36m [2mΓ¥»[22m 
+src/tests/Dashboard.test.jsx:[2m173:19[22m[39m
+    [90m171| [39m        
+[34mit[39m([32m'should display staff comparison 
+data when available'[39m[33m,[39m 
+[35masyn[39mΓÇª
+    [90m172| [39m            
+[34mrenderDashboard[39m()[33m;[39m
+    [90m173| [39m            [35mawait[39m 
+[34mwaitFor[39m(() [33m=>[39m {
+    [90m   | [39m                  [31m^[39m
+    [90m174| [39m                [34mexpect[39m(
+screen[33m.[39m[34mgetByText[39m([32m'+2 from 
+yesterday'[39m))[33m.[39m[34mtoBeInTh[39mΓÇª
+    [90m175| [39m            })[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/3]ΓÄ»[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m 
+src/tests/Dashboard.test.jsx[2m > [22mDashboard 
+Page Tests[2m > [22mMissing Data State[2m > 
+[22mshould show no comparison data when 
+yesterdayComparison is null
+[31m[1mTestingLibraryElementError[22m[39m: 
+Unable to find an element with the text: No 
+comparison data. This could be because the text is 
+broken up by multiple elements. In this case, you 
+can provide a function for your text matcher to 
+make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"min-h-screen 
+bg-gray-50"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"bg-white shadow-sm 
+border-b border-gray-200 sticky top-0 z-50"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto 
+px-4 sm:px-6 lg:px-8"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center 
+justify-between h-16"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex 
+items-center"[39m
+            [36m>[39m
+              [36m<div[39m
+                
+[33mclass[39m=[32m"flex-shrink-0"[39m
+              [36m>[39m
+                [36m<h1[39m
+                  [33mclass[39m=[32m"text-2xl 
+font-bold bg-gradient-to-r from-blue-600 
+to-indigo-600 bg-clip-text text-transparent flex 
+items-center gap-2"[39m
+                [36m>[39m
+                  [36m<img[39m
+                    [33malt[39m=[32m"TheatreX 
+Logo"[39m
+                    [33mclass[39m=[32m"w-8 
+h-8"[39m
+                    [33msrc[39m=[32m"/src/assets/
+theatrex-logo.svg"[39m
+                  [36m/>[39m
+                  [0mTheatreX[0m
+                [36m</h1>[39m
+              [36m</div>[39m
+              [36m<nav[39m
+                [33mclass[39m=[32m"hidden 
+md:ml-10 md:flex md:space-x-1"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex 
+items-center gap-4"[39m
+            [36m>[39m
+              [36m<button[39m
+                
+[33maria-label[39m=[32m"Notifications"[39m
+                [33mclass[39m=[32m"relative p-2 
+text-gray-600 hover:text-blue-600 hover:bg-blue-50 
+rounded-lg transition-all duration-200"[39m
+              [36m>[39m
+                [36m<span[39m
+                  
+[33mclass[39m=[32m"text-xl"[39m
+                [36m>[39m
+                  [0m≡ƒöö[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"absolute 
+top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[39m
+                [36m/>[39m
+              [36m</button>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33maria-label[39m=[32m"User 
+menu"[39m
+                  [33mclass[39m=[32m"flex 
+items-center gap-3 px-3 py-2 rounded-lg 
+hover:bg-gray-50 transition-all duration-200"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"w-8 h-8 
+rounded-full bg-gradient-to-r from-blue-500 
+to-indigo-500 flex items-center justify-center 
+text-white font-semibold text-sm"[39m
+                  [36m>[39m
+                    [0mU[0m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"hidden 
+md:block text-left"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-sm 
+font-medium text-gray-900"[39m
+                    [36m>[39m
+                      [0mUser[0m
+                    [36m</p>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-xs 
+px-2 py-0.5 rounded-full bg-blue-100 
+text-blue-800"[39m
+                    [36m>[39m
+                      [0mCoordinator[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<svg[39m
+                    [33mclass[39m=[32m"w-4 h-4 
+text-gray-500 transition-transform duration-200 
+"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    
+[33mstroke[39m=[32m"currentColor"[39m
+                    [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M19 9l-7 
+7-7-7"[39m
+                      
+[33mstroke-linecap[39m=[32m"round"[39m
+                      
+[33mstroke-linejoin[39m=[32m"round"[39m
+                      
+[33mstroke-width[39m=[32m"2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Toggle 
+mobile menu"[39m
+                [33mclass[39m=[32m"md:hidden p-2 
+rounded-lg text-gray-600 hover:text-blue-600 
+hover:bg-blue-50 transition-all duration-200"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"w-6 
+h-6"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  
+[33mstroke[39m=[32m"currentColor"[39m
+                  [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M4 6h16M4 
+12h16M4 18h16"[39m
+                    
+[33mstroke-linecap[39m=[32m"round"[39m
+                    
+[33mstroke-linejoin[39m=[32m"round"[39m
+                    
+[33mstroke-width[39m=[32m"2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex"[39m
+      [36m>[39m
+        [36m<aside[39m
+          [33mclass[39m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 
+ease-in-out
+                flex flex-col
+            "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-2 flex 
+justify-end"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Collapse 
+sidebar"[39m
+              [33mclass[39m=[32m"p-2 rounded-lg 
+hover:bg-gray-100 text-gray-500 hover:text-gray-700 
+transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"w-5 h-5 
+transition-transform duration-300 "[39m
+                [33mfill[39m=[32m"none"[39m
+                
+[33mstroke[39m=[32m"currentColor"[39m
+                [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M11 19l-7-7 
+7-7m8 14l-7-7 7-7"[39m
+                  
+[33mstroke-linecap[39m=[32m"round"[39m
+                  
+[33mstroke-linejoin[39m=[32m"round"[39m
+                  
+[33mstroke-width[39m=[32m"2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-2 mb-4"[39m
+          [36m>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"
+                        flex ite...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"min-h-screen 
+bg-gray-50"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"bg-white shadow-sm 
+border-b border-gray-200 sticky top-0 z-50"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"max-w-7xl mx-auto 
+px-4 sm:px-6 lg:px-8"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex 
+items-center justify-between h-16"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex 
+items-center"[39m
+              [36m>[39m
+                [36m<div[39m
+                  
+[33mclass[39m=[32m"flex-shrink-0"[39m
+                [36m>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-2xl 
+font-bold bg-gradient-to-r from-blue-600 
+to-indigo-600 bg-clip-text text-transparent flex 
+items-center gap-2"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"TheatreX 
+Logo"[39m
+                      [33mclass[39m=[32m"w-8 
+h-8"[39m
+                      [33msrc[39m=[32m"/src/asset
+s/theatrex-logo.svg"[39m
+                    [36m/>[39m
+                    [0mTheatreX[0m
+                  [36m</h1>[39m
+                [36m</div>[39m
+                [36m<nav[39m
+                  [33mclass[39m=[32m"hidden 
+md:ml-10 md:flex md:space-x-1"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex 
+items-center gap-4"[39m
+              [36m>[39m
+                [36m<button[39m
+                  
+[33maria-label[39m=[32m"Notifications"[39m
+                  [33mclass[39m=[32m"relative 
+p-2 text-gray-600 hover:text-blue-600 
+hover:bg-blue-50 rounded-lg transition-all 
+duration-200"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    
+[33mclass[39m=[32m"text-xl"[39m
+                  [36m>[39m
+                    [0m≡ƒöö[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"absolute 
+top-1 right-1 w-2 h-2 bg-red-500 rounded-full"[39m
+                  [36m/>[39m
+                [36m</button>[39m
+                [36m<div[39m
+                  
+[33mclass[39m=[32m"relative"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"User 
+menu"[39m
+                    [33mclass[39m=[32m"flex 
+items-center gap-3 px-3 py-2 rounded-lg 
+hover:bg-gray-50 transition-all duration-200"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"w-8 h-8 
+rounded-full bg-gradient-to-r from-blue-500 
+to-indigo-500 flex items-center justify-center 
+text-white font-semibold text-sm"[39m
+                    [36m>[39m
+                      [0mU[0m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"hidden 
+md:block text-left"[39m
+                    [36m>[39m
+                      [36m<p[39m
+                        
+[33mclass[39m=[32m"text-sm font-medium 
+text-gray-900"[39m
+                      [36m>[39m
+                        [0mUser[0m
+                      [36m</p>[39m
+                      [36m<span[39m
+                        
+[33mclass[39m=[32m"text-xs px-2 py-0.5 
+rounded-full bg-blue-100 text-blue-800"[39m
+                      [36m>[39m
+                        [0mCoordinator[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<svg[39m
+                      [33mclass[39m=[32m"w-4 h-4 
+text-gray-500 transition-transform duration-200 
+"[39m
+                      
+[33mfill[39m=[32m"none"[39m
+                      
+[33mstroke[39m=[32m"currentColor"[39m
+                      [33mviewBox[39m=[32m"0 0 
+24 24"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M19 9l-7 
+7-7-7"[39m
+                        
+[33mstroke-linecap[39m=[32m"round"[39m
+                        
+[33mstroke-linejoin[39m=[32m"round"[39m
+                        
+[33mstroke-width[39m=[32m"2"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</div>[39m
+                [36m<button[39m
+                  [33maria-label[39m=[32m"Toggle 
+mobile menu"[39m
+                  [33mclass[39m=[32m"md:hidden 
+p-2 rounded-lg text-gray-600 hover:text-blue-600 
+hover:bg-blue-50 transition-all duration-200"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33mclass[39m=[32m"w-6 
+h-6"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    
+[33mstroke[39m=[32m"currentColor"[39m
+                    [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M4 6h16M4 
+12h16M4 18h16"[39m
+                      
+[33mstroke-linecap[39m=[32m"round"[39m
+                      
+[33mstroke-linejoin[39m=[32m"round"[39m
+                      
+[33mstroke-width[39m=[32m"2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex"[39m
+        [36m>[39m
+          [36m<aside[39m
+            [33mclass[39m=[32m"
+                w-64 
+                bg-white border-r border-gray-200 
+                min-h-screen sticky top-16 
+                transition-all duration-300 
+ease-in-out
+                flex flex-col
+            "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-2 flex 
+justify-end"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Collapse 
+sidebar"[39m
+                [33mclass[39m=[32m"p-2 
+rounded-lg hover:bg-gray-100 text-gray-500 
+hover:text-gray-700 transition-colors"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"w-5 h-5 
+transition-transform duration-300 "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  
+[33mstroke[39m=[32m"currentColor"[39m
+                  [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M11 19l-7-7 
+7-7m8 14l-7-7 7-7"[39m
+                    
+[33mstroke-linecap[39m=[32m"round"[39m
+                    
+[33mstroke-linejoin[39m=[32m"round"[39m
+                    
+[33mstroke-width[39m=[32m"2"[...
+[90m [2mΓ¥»[22m Proxy.waitForWrapper node_modules
+/@testing-library/dom/dist/wait-for.js:[2m163:27[2
+2m[39m
+[36m [2mΓ¥»[22m 
+src/tests/Dashboard.test.jsx:[2m233:19[22m[39m
+    [90m231| [39m
+    [90m232| [39m            
+[34mrenderDashboard[39m()[33m;[39m
+    [90m233| [39m            [35mawait[39m 
+[34mwaitFor[39m(() [33m=>[39m {
+    [90m   | [39m                  [31m^[39m
+    [90m234| [39m                [34mexpect[39m(
+screen[33m.[39m[34mgetByText[39m([32m'No 
+comparison 
+data'[39m))[33m.[39m[34mtoBeInT[39mΓÇª
+    [90m235| [39m            })[33m;[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/3]ΓÄ»[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m 
+src/tests/LiveStatusPage.test.jsx[2m > 
+[22mLiveStatusPage[2m > [22mshould show surgery 
+info for theatres with a current surgery
+[31m[1mTestingLibraryElementError[22m[39m: 
+Found multiple elements with the text: 55%
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"text-2xl font-bold 
+text-emerald-600"[39m
+[36m>[39m
+  [0m55[0m
+  [0m%[0m
+[36m</p>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"text-xs font-bold 
+text-blue-600"[39m
+[36m>[39m
+  [0m55[0m
+  [0m%[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` 
+variant of the query (like `queryAllByText`, 
+`getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"min-h-screen bg-gray-50 
+py-8 px-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl 
+mx-auto"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col 
+sm:flex-row sm:items-center sm:justify-between mb-6 
+gap-4"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center 
+gap-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-2 bg-blue-600 
+rounded-lg text-white"[39m
+            [36m>[39m
+              [36m<svg[39m
+                
+[33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide 
+lucide-zap w-6 h-6"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                
+[33mstroke[39m=[32m"currentColor"[39m
+                
+[33mstroke-linecap[39m=[32m"round"[39m
+                
+[33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.
+org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M4 14a1 1 0 0 
+1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 
+1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 
+0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-2xl 
+font-bold text-gray-900"[39m
+              [36m>[39m
+                [0mLive Theatre Status[0m
+              [36m</h1>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm 
+text-gray-500"[39m
+              [36m>[39m
+                [0mAuto-refreshes every [0m
+                [0m30[0m
+                [0ms[0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ml-2 
+text-gray-400"[39m
+                [36m>[39m
+                  [0m┬╖ Last updated [0m
+                  [0m12:05:33 AM[0m
+                [36m</span>[39m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center 
+gap-2"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex 
+items-center gap-1.5 px-3 py-2 text-sm font-medium 
+rounded-lg border border-gray-300 bg-white 
+text-gray-700 hover:bg-gray-50 transition-colors 
+disabled:opacity-50"[39m
+            [36m>[39m
+              [36m<svg[39m
+                
+[33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide 
+lucide-refresh-cw w-4 h-4"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                
+[33mstroke[39m=[32m"currentColor"[39m
+                
+[33mstroke-linecap[39m=[32m"round"[39m
+                
+[33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.
+org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 0 1 
+9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 3v5h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12a9 9 0 0 
+1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16H3v5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m15 passed[39m[22m[90m (17)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m305 passed[39m[22m[90m (308)[39m
+[2m   Start at [22m 00:05:31
+[2m   Duration [22m 5.18s[2m (transform 2.22s, setup 9.14s, collect 5.68s, tests 8.93s, environment 16.31s, prepare 4.12s)[22m
+
+              [0mRefresh[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex 
+items-center gap-1.5 px-3 py-2 text-sm font-medium 
+rounded-lg border transition-colors 
+border-amber-300 bg-amber-50 text-amber-700 
+hover:bg-amber-100"[39m
+            [36m>[39m
+              [36m<svg[39m
+                
+[33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide 
+lucide-pause w-4 h-4"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                
+[33mstroke[39m=[32m"currentColor"[39m
+                
+[33mstroke-linecap[39m=[32m"round"[39m
+                
+[33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 
+24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.
+org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"5"[39m
+                  [33mx[39m=[32m"14"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"5"[39m
+                  [33mx[39m=[32m"5"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mPause[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-2 
+sm:grid-cols-5 gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-emerald-50 
+border border-emerald-200 rounded-xl p-4 
+text-center"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-2xl 
+font-bold text-emerald-600"[39m
+            [36m>[39m
+              [0m2[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs 
+text-gray-500 mt-1"[39m
+            [36m>[39m
+              [0mAvailable[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-blue-50 border 
+border-blue-200 rounded-xl p-4 text-center"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-2xl 
+font-bold text-blue-600"[39m
+            [36m>[39m
+              [0m1[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs 
+text-gray-500 mt-1"[39m
+            [36m>[39m
+              [0mIn Use[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[3...
+[90m [2mΓ¥»[22m Object.getElementError node_modul
+es/@testing-library/dom/dist/config.js:[2m37:19[22
+m[39m
+[90m [2mΓ¥»[22m getElementError node_modules/@tes
+ting-library/dom/dist/query-helpers.js:[2m20:35[22
+m[39m
+[90m [2mΓ¥»[22m getMultipleElementsFoundError nod
+e_modules/@testing-library/dom/dist/query-helpers.js
+:[2m23:10[22m[39m
+[90m [2mΓ¥»[22m node_modules/@testing-library/dom
+/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2mΓ¥»[22m node_modules/@testing-library/dom
+/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/tests/LiveStatusPage.test.jsx
+:[2m172:23[22m[39m
+    [90m170| [39m        [34mexpect[39m(screen[
+33m.[39m[34mgetByText[39m([32m'Cardiac Bypass'[
+39m))[33m.[39m[34mtoBeInTheDocument[39m()[33m;
+[39m
+    [90m171| [39m        [34mexpect[39m(screen[
+33m.[39m[34mgetByText[39m([36m/John Doe/[39m))
+[33m.[39m[34mtoBeInTheDocument[39m()[33m;[39m
+    [90m172| [39m        [34mexpect[39m(screen[
+33m.[39m[34mgetByText[39m([32m'55%'[39m))[33m.
+[39m[34mtoBeInTheDocument[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m173| [39m    })[33m;[39m
+    [90m174| [39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/3]ΓÄ»[22m[39m
+

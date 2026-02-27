@@ -6,10 +6,11 @@
 // Page wrapper for the SurgeryForm component
 // ============================================================================
 
+import Layout from '../components/Layout';
 import SurgeryForm from '../components/SurgeryForm';
 
 const CreateSurgery = () => {
-    return <SurgeryForm />;
+    return <Layout><SurgeryForm /></Layout>;
 };
 
 export default CreateSurgery;

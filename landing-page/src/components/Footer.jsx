@@ -46,7 +46,7 @@ export default function Footer() {
             </div> */}
 
             {/* Main Footer */}
-            <div style={{ backgroundColor: '#0F172A', color: '#94A3B8', paddingTop: '8rem', paddingBottom: '4rem' }}>
+            <div style={{ backgroundColor: '#0F172A', color: '#94A3B8', paddingTop: '8rem', paddingBottom: '4rem', position: 'relative', zIndex: 2 }}>
                 <div className="container">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '4rem', marginBottom: '4rem' }}>
 

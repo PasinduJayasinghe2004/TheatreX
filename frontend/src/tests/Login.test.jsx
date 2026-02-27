@@ -1,8 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../context/AuthContext';
 import Login from '../pages/Login';
 import authService from '../services/authService';
+
+// Unmock AuthContext to use the real one for testing login logic
+vi.unmock('../context/AuthContext');
 
 // Mock authService
 vi.mock('../services/authService');
@@ -15,9 +19,11 @@ describe('Login Component Tests', () => {
 
     const renderLogin = () => {
         return render(
-            <BrowserRouter>
-                <Login />
-            </BrowserRouter>
+            <AuthProvider>
+                <BrowserRouter>
+                    <Login />
+                </BrowserRouter>
+            </AuthProvider>
         );
     };
 
@@ -56,7 +62,7 @@ describe('Login Component Tests', () => {
 
             const emailInput = screen.getByPlaceholderText(/email/i);
             fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
-            
+
             // Submit form to trigger validation
             const submitButton = screen.getByRole('button', { name: /sign in/i });
             fireEvent.click(submitButton);

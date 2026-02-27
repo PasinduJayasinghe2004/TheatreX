@@ -23,15 +23,39 @@ describe('RBAC Middleware Tests', () => {
     let anaesthetistToken;
     let technicianToken;
 
-    beforeAll(() => {
-        // Create tokens for different roles to test RBAC
-        adminToken = generateToken({ id: 1, role: 'admin', email: 'admin@theatrex.com' });
-        coordinatorToken = generateToken({ id: 2, role: 'coordinator', email: 'coordinator@theatrex.com' });
-        surgeonToken = generateToken({ id: 3, role: 'surgeon', email: 'surgeon@theatrex.com' });
-        nurseToken = generateToken({ id: 4, role: 'nurse', email: 'nurse@theatrex.com' });
-        anaesthetistToken = generateToken({ id: 5, role: 'anaesthetist', email: 'anaesthetist@theatrex.com' });
-        technicianToken = generateToken({ id: 6, role: 'technician', email: 'technician@theatrex.com' });
-    });
+    beforeAll(async () => {
+        const roles = ['admin', 'coordinator', 'surgeon', 'nurse', 'anaesthetist', 'technician'];
+        const tokens = {};
+        const uniqueId = Date.now();
+
+        for (const role of roles) {
+            const user = {
+                name: `${role} User`,
+                email: `${role}.${uniqueId}@rbac.test`,
+                password: 'SecurePass123!',
+                role: role,
+                phone: `077000${Math.floor(Math.random() * 10000)}`
+            };
+
+            // Register
+            await request(app).post('/api/auth/register').send(user);
+
+            // Login to get real token
+            const loginRes = await request(app).post('/api/auth/login').send({
+                email: user.email,
+                password: user.password
+            });
+
+            tokens[role] = loginRes.body.token;
+        }
+
+        adminToken = tokens['admin'];
+        coordinatorToken = tokens['coordinator'];
+        surgeonToken = tokens['surgeon'];
+        nurseToken = tokens['nurse'];
+        anaesthetistToken = tokens['anaesthetist'];
+        technicianToken = tokens['technician'];
+    }, 30000);
 
     // ========================================================================
     // Admin-Only Route Tests (/api/test/admin-only)
