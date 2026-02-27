@@ -13,7 +13,6 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import surgeonService from '../services/surgeonService';
 import { useAuth } from '../context/AuthContext';
