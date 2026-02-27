@@ -12,9 +12,10 @@
 // ============================================================================
 
 import express from 'express';
-import { createNurse, getAllNurses, getNurseById } from '../controllers/nurseController.js';
+import { createNurse, getAllNurses, getNurseById, updateNurse, deleteNurse } from '../controllers/nurseController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateNurse } from '../middleware/nurseValidation.js';
+import { uploadProfilePicture } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -45,6 +46,22 @@ router.get('/:id', protect, getNurseById);
 // Protected + coordinator or admin only.
 // Created by: M3 (Janani) - Day 13
 // ============================================================================
-router.post('/', protect, authorize('coordinator', 'admin'), validateNurse, createNurse);
+router.post('/', protect, authorize('coordinator', 'admin'), uploadProfilePicture, validateNurse, createNurse);
+
+// ============================================================================
+// ROUTE: PUT /api/nurses/:id
+// ============================================================================
+// Update a nurse record.
+// Protected + coordinator or admin only.
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, updateNurse);
+
+// ============================================================================
+// ROUTE: DELETE /api/nurses/:id
+// ============================================================================
+// Soft delete a nurse.
+// Protected + admin only.
+// ============================================================================
+router.delete('/:id', protect, authorize('admin'), deleteNurse);
 
 export default router;

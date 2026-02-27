@@ -82,6 +82,8 @@ export const createNurse = async (req, res) => {
             });
         }
 
+        const profile_picture = req.file ? `/uploads/profiles/${req.file.filename}` : null;
+
         // ── 5. Insert into nurses table ───────────────────────────────────────
         const insertQuery = `
             INSERT INTO nurses (
@@ -93,8 +95,9 @@ export const createNurse = async (req, res) => {
                 email,
                 is_available,
                 shift_preference,
-                is_active
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE)
+                is_active,
+                profile_picture
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE, $9)
             RETURNING *
         `;
 
@@ -107,6 +110,7 @@ export const createNurse = async (req, res) => {
             email.trim().toLowerCase(),
             is_available,
             shift_preference || 'flexible',
+            profile_picture
         ];
 
         const { rows } = await pool.query(insertQuery, values);
@@ -148,6 +152,120 @@ export const createNurse = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Error creating nurse',
+            error: error.message,
+        });
+    }
+};
+
+// ============================================================================
+// UPDATE NURSE
+// ============================================================================
+// @desc    Update a nurse record
+// @route   PUT /api/nurses/:id
+// @access  Protected (coordinator, admin)
+// ============================================================================
+export const updateNurse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            name,
+            specialization,
+            license_number,
+            years_of_experience,
+            phone,
+            email,
+            is_available,
+            shift_preference,
+        } = req.body;
+
+        let profile_picture = req.body.profile_picture;
+        if (req.file) {
+            profile_picture = `/uploads/profiles/${req.file.filename}`;
+        }
+
+        const query = `
+            UPDATE nurses
+            SET 
+                name = COALESCE($1, name),
+                specialization = COALESCE($2, specialization),
+                license_number = COALESCE($3, license_number),
+                years_of_experience = COALESCE($4, years_of_experience),
+                phone = COALESCE($5, phone),
+                email = COALESCE($6, email),
+                is_available = COALESCE($7, is_available),
+                shift_preference = COALESCE($8, shift_preference),
+                profile_picture = COALESCE($9, profile_picture),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $10 AND is_active = TRUE
+            RETURNING *
+        `;
+
+        const values = [
+            name ? name.trim() : null,
+            specialization ? specialization.trim() : null,
+            license_number ? license_number.trim() : null,
+            years_of_experience ? parseInt(years_of_experience, 10) : null,
+            phone ? phone.trim() : null,
+            email ? email.trim().toLowerCase() : null,
+            is_available === undefined ? null : is_available,
+            shift_preference,
+            profile_picture,
+            id
+        ];
+
+        const { rows } = await pool.query(query, values);
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Nurse not found',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Nurse updated successfully',
+            data: rows[0],
+        });
+    } catch (error) {
+        console.error('Error updating nurse:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error updating nurse',
+            error: error.message,
+        });
+    }
+};
+
+// ============================================================================
+// DELETE NURSE
+// ============================================================================
+// @desc    Soft delete a nurse
+// @route   DELETE /api/nurses/:id
+// @access  Protected (admin)
+// ============================================================================
+export const deleteNurse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const query = `UPDATE nurses SET is_active = FALSE WHERE id = $1 RETURNING *`;
+        const { rows } = await pool.query(query, [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Nurse not found',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Nurse deleted successfully',
+        });
+    } catch (error) {
+        console.error('Error deleting nurse:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error deleting nurse',
             error: error.message,
         });
     }

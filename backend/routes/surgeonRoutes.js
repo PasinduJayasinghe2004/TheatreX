@@ -13,9 +13,10 @@
 // ============================================================================
 
 import express from 'express';
-import { createSurgeon, getAllSurgeons, getSurgeonById } from '../controllers/surgeonController.js';
+import { createSurgeon, getAllSurgeons, getSurgeonById, updateSurgeon, deleteSurgeon } from '../controllers/surgeonController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgeon } from '../middleware/surgeonValidation.js';
+import { uploadProfilePicture } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -45,7 +46,23 @@ router.get('/:id', protect, getSurgeonById);
 // Protected + coordinator or admin only.
 // Created by: M1 (Pasindu) - Day 13
 // ============================================================================
-router.post('/', protect, authorize('coordinator', 'admin'), validateSurgeon, createSurgeon);
+router.post('/', protect, authorize('coordinator', 'admin'), uploadProfilePicture, validateSurgeon, createSurgeon);
+
+// ============================================================================
+// ROUTE: PUT /api/surgeons/:id
+// ============================================================================
+// Update a surgeon record.
+// Protected + coordinator or admin only.
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, updateSurgeon);
+
+// ============================================================================
+// ROUTE: DELETE /api/surgeons/:id
+// ============================================================================
+// Soft delete a surgeon.
+// Protected + admin only.
+// ============================================================================
+router.delete('/:id', protect, authorize('admin'), deleteSurgeon);
 
 export default router;
 

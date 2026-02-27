@@ -59,15 +59,53 @@ const nurseService = {
 
     // ========================================
     // Create a new nurse
+    // Changed to support FormData for image upload
     // Created by: M3 (Janani) - Day 13
     // ========================================
     createNurse: async (nurseData) => {
         try {
-            const response = await api.post('/nurses', nurseData);
+            const config = (nurseData instanceof FormData)
+                ? { headers: { 'Content-Type': 'multipart/form-data' } }
+                : {};
+
+            const response = await api.post('/nurses', nurseData, config);
             return response.data;
         } catch (error) {
             const message =
                 error.response?.data?.message || 'Error creating nurse. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update a nurse
+    // Supports FormData for image upload
+    // ========================================
+    updateNurse: async (id, nurseData) => {
+        try {
+            const config = (nurseData instanceof FormData)
+                ? { headers: { 'Content-Type': 'multipart/form-data' } }
+                : {};
+
+            const response = await api.put(`/nurses/${id}`, nurseData, config);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error updating nurse. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Delete a nurse (Soft delete)
+    // ========================================
+    deleteNurse: async (id) => {
+        try {
+            const response = await api.delete(`/nurses/${id}`);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error deleting nurse. Please try again.';
             throw new Error(message);
         }
     },
