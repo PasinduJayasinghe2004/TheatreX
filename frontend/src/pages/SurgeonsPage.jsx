@@ -452,7 +452,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const SurgeonsPage = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
+
 
     const [surgeons, setSurgeons] = useState([]);
     const [loading, setLoading] = useState(true);
