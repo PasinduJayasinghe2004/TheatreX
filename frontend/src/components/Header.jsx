@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RoleGuard from './RoleGuard';
@@ -13,11 +13,10 @@ import theatrexLogo from '../assets/theatrex-logo.svg';
  * Created by: M4 (Oneli) - Day 2
  * Updated by: M1 (Pasindu) - Day 13 (Redesigned to match dashboard mockup)
  */
-const Header = () => {
+const Header = ({ pageTitle = 'Theatre Management Dashboard', pageSubtitle = 'Real - time monitoring and scheduling overview' }) => {
     const { user, logout } = useAuth();
     const { isDark, toggleTheme } = useTheme();
     const navigate = useNavigate();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -36,14 +35,24 @@ const Header = () => {
         hour12: true,
     });
 
-    const navigationLinks = [
-        { name: 'Dashboard', href: '/dashboard', icon: '📊', roles: [] },
-        { name: 'Surgeries', href: '/surgeries', icon: '🏥', roles: [] },
-        { name: 'Theatres', href: '/theatres', icon: '🏨', roles: [] },
-        { name: 'Staff', href: '/staff', icon: '👥', roles: ['admin', 'coordinator'] },
-        { name: 'Patients', href: '/patients', icon: '🧑‍⚕️', roles: [] },
-        { name: 'Admin Panel', href: '/admin', icon: '⚙️', roles: ['admin'] },
-    ];
+    // Format date as "Today - 25 Feb 2026"
+    const today = new Date();
+    const isToday =
+        currentTime.getDate() === today.getDate() &&
+        currentTime.getMonth() === today.getMonth() &&
+        currentTime.getFullYear() === today.getFullYear();
+
+    const formattedDate = isToday
+        ? `Today - ${currentTime.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        })}`
+        : currentTime.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        });
 
     const handleLogout = () => {
         setIsUserMenuOpen(false);
@@ -221,6 +230,8 @@ const Header = () => {
 };
 
 Header.propTypes = {
+    pageTitle: PropTypes.string,
+    pageSubtitle: PropTypes.string,
     user: PropTypes.shape({
         name: PropTypes.string,
         email: PropTypes.string,
