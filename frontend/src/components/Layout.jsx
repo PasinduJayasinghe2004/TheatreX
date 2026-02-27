@@ -23,7 +23,7 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
             {/* Header Component - Created by M4, Redesigned M1 Day 13 */}
             {showHeader && <Header />}
 
