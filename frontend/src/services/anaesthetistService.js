@@ -4,6 +4,7 @@ import { api } from './authService.js';
  * Anaesthetist Service
  * Handles all anaesthetist-related API calls
  * Created by: M5 - Day 13
+ * Updated by: M3 (Janani) - Day 14 (added updateAnaesthetist, deleteAnaesthetist)
  */
 const anaesthetistService = {
     /**
@@ -42,6 +43,37 @@ const anaesthetistService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error creating anaesthetist. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    /**
+     * Update an existing anaesthetist
+     * Created by: M3 (Janani) - Day 14
+     * @param {string|number} id
+     * @param {Object} anaesthetistData
+     */
+    updateAnaesthetist: async (id, anaesthetistData) => {
+        try {
+            const response = await api.put(`/anaesthetists/${id}`, anaesthetistData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating anaesthetist. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    /**
+     * Delete (soft-delete) an anaesthetist by ID
+     * Created by: M3 (Janani) - Day 14
+     * @param {string|number} id
+     */
+    deleteAnaesthetist: async (id) => {
+        try {
+            const response = await api.delete(`/anaesthetists/${id}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error deleting anaesthetist. Please try again.';
             throw new Error(message);
         }
     },
