@@ -4,6 +4,7 @@
 // Handles all surgeon-related API calls
 // Created by: M1 (Pasindu) - Day 13
 // Updated by: M2 (Chandeepa) - Day 13 (added getSurgeonById)
+// Updated by: M1 (Pasindu)   - Day 14 (added updateSurgeon, deleteSurgeon)
 //
 // FEATURES:
 // - Get all surgeons (with optional search / available filters)
@@ -68,6 +69,36 @@ const surgeonService = {
         } catch (error) {
             const message =
                 error.response?.data?.message || 'Error creating surgeon. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update an existing surgeon
+    // Created by: M1 (Pasindu) - Day 14
+    // ========================================
+    updateSurgeon: async (id, surgeonData) => {
+        try {
+            const response = await api.put(`/surgeons/${id}`, surgeonData);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error updating surgeon. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Delete (soft-delete) a surgeon by ID
+    // Created by: M1 (Pasindu) - Day 14
+    // ========================================
+    deleteSurgeon: async (id) => {
+        try {
+            const response = await api.delete(`/surgeons/${id}`);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error deleting surgeon. Please try again.';
             throw new Error(message);
         }
     },

@@ -2,6 +2,7 @@
 // Nurse Validation Middleware
 // ============================================================================
 // Created by: M3 (Janani) - Day 13
+// Updated by: M2 (Chandeepa) - Day 14 (added validateNurseUpdate)
 //
 // Validates incoming nurse data before the controller processes it.
 // Ensures all required fields are present and correctly formatted.
@@ -51,6 +52,48 @@ export const validateNurse = (req, res, next) => {
     const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
     if (shift_preference && !validShifts.includes(shift_preference)) {
         errors.push(`shift_preference must be one of: ${validShifts.join(', ')}`);
+    }
+
+    if (errors.length > 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Validation failed',
+            errors,
+        });
+    }
+
+    next();
+};
+
+// ── Validate Update Nurse body (partial — all fields optional) ──────────────
+// Created by: M2 (Chandeepa) - Day 14
+export const validateNurseUpdate = (req, res, next) => {
+    const { email, years_of_experience, shift_preference } = req.body;
+
+    const errors = [];
+
+    // Email format (only if provided)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email !== undefined && email !== null && email !== '') {
+        if (!emailRegex.test(email)) {
+            errors.push('email must be a valid email address');
+        }
+    }
+
+    // years_of_experience (only if provided)
+    if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
+        const yoe = Number(years_of_experience);
+        if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
+            errors.push('years_of_experience must be a non-negative integer');
+        }
+    }
+
+    // shift_preference (only if provided)
+    const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
+    if (shift_preference !== undefined && shift_preference !== null && shift_preference !== '') {
+        if (!validShifts.includes(shift_preference)) {
+            errors.push(`shift_preference must be one of: ${validShifts.join(', ')}`);
+        }
     }
 
     if (errors.length > 0) {
