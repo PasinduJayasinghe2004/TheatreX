@@ -12,7 +12,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import surgeryService from '../services/surgeryService';
-import { getDashboardStats } from '../services/dashboardService';
+import { getDashboardStats, getDashboardSummary } from '../services/dashboardService';
 import { AuthProvider } from '../context/AuthContext';
 
 // Mock axios to avoid real API calls from AuthContext
@@ -114,8 +114,8 @@ describe('Dashboard Page Tests', () => {
     // ========================================================================
     describe('Loading State', () => {
         it('should show loading indicator while fetching data', async () => {
-            getDashboardStats.mockImplementation(() => new Promise(() => {}));
-            surgeryService.getAllSurgeries.mockImplementation(() => new Promise(() => {}));
+            getDashboardStats.mockImplementation(() => new Promise(() => { }));
+            surgeryService.getAllSurgeries.mockImplementation(() => new Promise(() => { }));
 
             const { container } = renderDashboard();
             expect(container.querySelector('.animate-spin')).toBeTruthy();
@@ -129,6 +129,16 @@ describe('Dashboard Page Tests', () => {
     describe('Success State', () => {
         beforeEach(() => {
             getDashboardStats.mockResolvedValue(mockStats);
+            getDashboardSummary.mockResolvedValue({
+                success: true,
+                data: {
+                    today_stats: {
+                        total_surgeries: 2,
+                        staff_on_duty: { total: 13 },
+                        yesterday_comparison: 2
+                    }
+                }
+            });
             surgeryService.getAllSurgeries.mockResolvedValue({
                 success: true,
                 data: mockSurgeries
@@ -206,6 +216,15 @@ describe('Dashboard Page Tests', () => {
     describe('Missing Data State', () => {
         it('should show -- for avgDuration when not provided', async () => {
             getDashboardStats.mockResolvedValue({ success: true, data: {} });
+            getDashboardSummary.mockResolvedValue({
+                success: true,
+                data: {
+                    today_stats: {
+                        total_surgeries: 0,
+                        staff_on_duty: { total: undefined }
+                    }
+                }
+            });
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
 
             renderDashboard();
@@ -218,6 +237,14 @@ describe('Dashboard Page Tests', () => {
 
         it('should show no comparison data when yesterdayComparison is null', async () => {
             getDashboardStats.mockResolvedValue({ success: true, data: { yesterdayComparison: null } });
+            getDashboardSummary.mockResolvedValue({
+                success: true,
+                data: {
+                    today_stats: {
+                        yesterday_comparison: null
+                    }
+                }
+            });
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
 
             renderDashboard();
