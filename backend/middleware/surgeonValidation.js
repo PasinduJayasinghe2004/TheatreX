@@ -2,6 +2,7 @@
 // Surgeon Validation Middleware
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 13
+// Updated by: M1 (Pasindu) - Day 14 (added validateSurgeonUpdate)
 //
 // Validates incoming surgeon data before the controller processes it.
 // Ensures all required fields are present and correctly formatted.
@@ -39,6 +40,40 @@ export const validateSurgeon = (req, res, next) => {
     }
 
     // 3. years_of_experience (optional) – must be a non-negative integer if provided
+    if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
+        const yoe = Number(years_of_experience);
+        if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
+            errors.push('years_of_experience must be a non-negative integer');
+        }
+    }
+
+    if (errors.length > 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Validation failed',
+            errors,
+        });
+    }
+
+    next();
+};
+
+// ── Validate Update Surgeon body (partial — all fields optional) ──────────────
+// Created by: M1 (Pasindu) - Day 14
+export const validateSurgeonUpdate = (req, res, next) => {
+    const { email, years_of_experience } = req.body;
+
+    const errors = [];
+
+    // Email format (only if provided)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email !== undefined && email !== null && email !== '') {
+        if (!emailRegex.test(email)) {
+            errors.push('email must be a valid email address');
+        }
+    }
+
+    // years_of_experience (only if provided)
     if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
         const yoe = Number(years_of_experience);
         if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
