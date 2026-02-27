@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ScrollReveal from './ScrollReveal'
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -46,13 +47,16 @@ const Contact = () => {
     }
 
     return (
-        <section id="contact" style={{ padding: '6rem 0', backgroundColor: '#F9FAFB' }}>
+        <section id="contact" style={{ padding: '6rem 0' }}>
             <div className="container">
-                <h2 className="section-title">Get in Touch</h2>
-                <p className="section-subtitle">
-                    Have questions about TheatreX? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-                </p>
+                <ScrollReveal animation="fade-up">
+                    <h2 className="section-title">Get in Touch</h2>
+                    <p className="section-subtitle">
+                        Have questions about TheatreX? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                    </p>
+                </ScrollReveal>
 
+                <ScrollReveal animation="zoom-in" delay={150} duration={700}>
                 <div style={{
                     maxWidth: '700px',
                     margin: '0 auto',
@@ -134,6 +138,7 @@ const Contact = () => {
 
                     </form>
                 </div>
+                </ScrollReveal>
             </div>
         </section>
     )

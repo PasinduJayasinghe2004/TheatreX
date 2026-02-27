@@ -1,0 +1,77 @@
+// ============================================================================
+// Surgeon Service
+// ============================================================================
+// Handles all surgeon-related API calls
+// Created by: M1 (Pasindu) - Day 13
+// Updated by: M2 (Chandeepa) - Day 13 (added getSurgeonById)
+//
+// FEATURES:
+// - Get all surgeons (with optional search / available filters)
+// - Get a single surgeon by ID
+// - Create a new surgeon
+// - Uses the same axios instance as authService for automatic JWT handling
+// ============================================================================
+
+import { api } from './authService.js';
+
+// ============================================================================
+// Surgeon Service Object
+// ============================================================================
+const surgeonService = {
+    // ========================================
+    // Get all surgeons
+    // Supports { search, available } filters
+    // Created by: M1 (Pasindu) - Day 13
+    // ========================================
+    getAllSurgeons: async (filters = {}) => {
+        try {
+            const params = new URLSearchParams();
+            if (filters.search) params.append('search', filters.search);
+            if (filters.available !== undefined && filters.available !== '')
+                params.append('available', filters.available);
+
+            const queryString = params.toString();
+            const url = queryString ? `/surgeons?${queryString}` : '/surgeons';
+
+            const response = await api.get(url);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error fetching surgeons. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get a single surgeon by ID
+    // Created by: M2 (Chandeepa) - Day 13
+    // ========================================
+    getSurgeonById: async (id) => {
+        try {
+            const response = await api.get(`/surgeons/${id}`);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error fetching surgeon details. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Create a new surgeon
+    // Created by: M1 (Pasindu) - Day 13
+    // ========================================
+    createSurgeon: async (surgeonData) => {
+        try {
+            const response = await api.post('/surgeons', surgeonData);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error creating surgeon. Please try again.';
+            throw new Error(message);
+        }
+    },
+};
+
+export default surgeonService;
+

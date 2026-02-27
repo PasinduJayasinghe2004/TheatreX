@@ -1,8 +1,9 @@
 import { ArrowRight, PlayCircle } from 'lucide-react'
+import ScrollReveal from './ScrollReveal'
 
 export default function Hero() {
     return (
-        <section style={{ padding: '5rem 0 5rem 0', backgroundColor: '#fff', overflow: 'hidden' }}>
+        <section style={{ padding: '5rem 0 5rem 0', overflow: 'hidden' }}>
             <div className="container">
                 <div style={{
                     display: 'grid',
@@ -10,7 +11,7 @@ export default function Hero() {
                     gap: '4rem',
                     alignItems: 'center'
                 }}>
-                    <div>
+                    <ScrollReveal animation="fade-right" duration={800}>
                         <div style={{
                             display: 'inline-block',
                             padding: '0.25rem 0.75rem',
@@ -50,8 +51,8 @@ export default function Hero() {
                                 <PlayCircle size={18} style={{ marginRight: '0.5rem' }} /> Live demo
                             </button>
                         </div>
-                    </div>
-                    <div>
+                    </ScrollReveal>
+                    <ScrollReveal animation="fade-left" delay={200} duration={800}>
                         {/* Image container with nice shadow and rounded corners */}
                         <div style={{
                             position: 'relative',
@@ -66,7 +67,7 @@ export default function Hero() {
                                 style={{ width: '100%', height: 'auto', display: 'block' }}
                             />
                         </div>
-                    </div>
+                    </ScrollReveal>
                 </div>
             </div>
         </section>

@@ -49,10 +49,15 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+  background: #EDF2FA;
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--text-main);
-  background-color: var(--bg-gray);
+  background-color: transparent;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }

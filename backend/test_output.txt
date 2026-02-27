@@ -1,0 +1,158 @@
+
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=theatreController.test.js --no-cache --verbose
+
+(node:1404) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1404) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+  console.error
+    Auth Middleware Error: Invalid token
+
+    [0m [90m 68 |[39m
+     [90m 69 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 70 |[39m             console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 71 |[39m             [36mreturn[39m res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 72 |[39m                 success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 73 |[39m                 message[33m:[39m [32m'Not authorized, token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:70:21)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at param (node_modules/express/lib/router/index.js:365:14)
+      at param (node_modules/express/lib/router/index.js:376:14)
+      at Function.process_params (node_modules/express/lib/router/index.js:421:3)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Function.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser (node_modules/body-parser/lib/types/urlencoded.js:82:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/body-parser/lib/read.js:137:5
+      at invokeCallback (node_modules/raw-body/index.js:238:16)
+      at done (node_modules/raw-body/index.js:227:7)
+      at IncomingMessage.onEnd (node_modules/raw-body/index.js:287:7)
+
+  console.error
+    Auth Middleware Error: Invalid token
+
+    [0m [90m 68 |[39m
+     [90m 69 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 70 |[39m             console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 71 |[39m             [36mreturn[39m res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 72 |[39m                 success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 73 |[39m                 message[33m:[39m [32m'Not authorized, token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:70:21)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at param (node_modules/express/lib/router/index.js:365:14)
+      at param (node_modules/express/lib/router/index.js:376:14)
+      at Function.process_params (node_modules/express/lib/router/index.js:421:3)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Function.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser (node_modules/body-parser/lib/types/urlencoded.js:82:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/body-parser/lib/read.js:137:5
+      at invokeCallback (node_modules/raw-body/index.js:238:16)
+      at done (node_modules/raw-body/index.js:227:7)
+      at IncomingMessage.onEnd (node_modules/raw-body/index.js:287:7)
+
+FAIL tests/theatreController.test.js
+  Theatre API Tests
+    GET /api/theatres
+      ΓêÜ should return 401 without auth token (4 ms)
+      ΓêÜ should return theatre list with auth token (141 ms)
+      ΓêÜ should support status filter (167 ms)
+    GET /api/theatres/:id
+      ΓêÜ should return 404 for non-existent theatre (161 ms)
+      ΓêÜ should return theatre detail (333 ms)
+    PUT /api/theatres/:id/status
+      ├ù should return 403 for staff users (RBAC) (18 ms)
+      ΓêÜ should update theatre status for coordinator (385 ms)
+    GET /api/theatres/availability
+      ΓêÜ should return 400 when required params are missing (69 ms)
+    GET /api/theatres/:id/current-surgery
+      ΓêÜ should return 200 even if no surgery is in progress (142 ms)
+    GET /api/theatres/:id/duration
+      ΓêÜ should return 404 for non-existent theatre (129 ms)
+    PATCH /api/theatres/:id/quick-status
+      ΓêÜ should return 401 without auth token (2 ms)
+      ├ù should return 403 for staff users (RBAC) (5 ms)
+      ΓêÜ should update status for coordinator (478 ms)
+      ΓêÜ should return 400 for invalid transition (248 ms)
+
+  ΓùÅ Theatre API Tests ΓÇ║ PUT /api/theatres/:id/status ΓÇ║ should return 403 for staff users (RBAC)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+      137 |                 .set('Authorization', `Bearer ${staffToken}`)
+      138 |                 .send({ status: 'maintenance' });
+    > 139 |             expect(res.statusCode).toBe(403);
+          |                                    ^
+      140 |         });
+      141 |
+      142 |         it('should update theatre status for coordinator', async () => {
+
+      at Object.<anonymous> (tests/theatreController.test.js:139:36)
+
+  ΓùÅ Theatre API Tests ΓÇ║ PATCH /api/theatres/:id/quick-status ΓÇ║ should return 403 for staff users (RBAC)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+      211 |                 .set('Authorization', `Bearer ${staffToken}`)
+      212 |                 .send({ status: 'maintenance' });
+    > 213 |             expect(res.statusCode).toBe(403);
+          |                                    ^
+      214 |         });
+      215 |
+      216 |         it('should update status for coordinator', async () => {
+
+      at Object.<anonymous> (tests/theatreController.test.js:213:36)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 12 passed, 14 total
+Snapshots:   0 total
+Time:        3.963 s
+Ran all test suites matching /theatreController.test.js/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
