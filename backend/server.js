@@ -31,6 +31,7 @@ import surgeryRoutes from './routes/surgeryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js'; // M4 - Day 7
 import theatreRoutes from './routes/theatreRoutes.js'; // M2 - Day 8
 import nurseRoutes from './routes/nurseRoutes.js'; // M4 - Day 13
+import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 14
 
 // Load environment variables
 dotenv.config();
@@ -57,6 +58,7 @@ app.use('/api/surgeries', surgeryRoutes); // Surgery routes - M1 Day 5
 app.use('/api/dashboard', dashboardRoutes); // Dashboard routes - M4 Day 7
 app.use('/api/theatres', theatreRoutes); // Theatre routes - M2 Day 8
 app.use('/api/nurses', nurseRoutes); // Nurse routes - M4 Day 13
+app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 14
 
 // Health check route
 app.get('/api/health', (req, res) => {
