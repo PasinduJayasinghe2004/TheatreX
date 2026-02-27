@@ -49,10 +49,16 @@ const DurationDisplay = ({ startTime, durationMinutes, className = '' }) => {
     const compute = useCallback(() => computeElapsed(startTime), [startTime]);
 
     const [dur, setDur] = useState(() => compute());
+    const [prevStartTime, setPrevStartTime] = useState(startTime);
+
+    // Adjust state if startTime prop changes (React pattern for prop-derived state)
+    if (startTime !== prevStartTime) {
+        setPrevStartTime(startTime);
+        setDur(compute());
+    }
 
     useEffect(() => {
-        setDur(() => compute());
-        const timer = setInterval(() => setDur(() => compute()), 30000);
+        const timer = setInterval(() => setDur(compute()), 30000);
         return () => clearInterval(timer);
     }, [compute]);
 
