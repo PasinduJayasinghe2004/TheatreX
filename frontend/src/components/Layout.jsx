@@ -24,7 +24,7 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header Component - Created by M4 */}
+            {/* Header Component - Created by M4, Redesigned M1 Day 13 */}
             {showHeader && <Header />}
 
             <div className="flex">
@@ -37,7 +37,7 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
                 )}
 
                 {/* Main Content Area */}
-                <main className="flex-1 p-6">
+                <main className="flex-1 p-6 min-h-[calc(100vh-4rem)]">
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>
