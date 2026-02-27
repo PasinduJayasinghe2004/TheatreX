@@ -3,6 +3,7 @@
 // ============================================================================
 // Handles all nurse-related API calls
 // Created by: M3 (Janani) - Day 13
+// Updated by: M2 (Chandeepa) - Day 14 (added updateNurse, deleteNurse)
 //
 // FEATURES:
 // - Get all nurses (with optional search / available / shift filters)
@@ -68,6 +69,36 @@ const nurseService = {
         } catch (error) {
             const message =
                 error.response?.data?.message || 'Error creating nurse. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update an existing nurse
+    // Created by: M2 (Chandeepa) - Day 14
+    // ========================================
+    updateNurse: async (id, nurseData) => {
+        try {
+            const response = await api.put(`/nurses/${id}`, nurseData);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error updating nurse. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Delete (soft-delete) a nurse by ID
+    // Created by: M2 (Chandeepa) - Day 14
+    // ========================================
+    deleteNurse: async (id) => {
+        try {
+            const response = await api.delete(`/nurses/${id}`);
+            return response.data;
+        } catch (error) {
+            const message =
+                error.response?.data?.message || 'Error deleting nurse. Please try again.';
             throw new Error(message);
         }
     },
