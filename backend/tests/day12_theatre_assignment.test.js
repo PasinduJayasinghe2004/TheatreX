@@ -59,7 +59,7 @@ describe('Theatre Assignment API - M3 Day 12', () => {
         name: 'Staff Assign Tester',
         email: `staff.assign${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771200001'
     };
 

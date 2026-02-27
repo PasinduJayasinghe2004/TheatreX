@@ -50,7 +50,7 @@ describe('Quick Status Update API - M6 Day 12', () => {
         name: 'QS Staff Tester',
         email: `qs.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771300001'
     };
 
@@ -119,23 +119,43 @@ describe('Quick Status Update API - M6 Day 12', () => {
         });
 
         it('should allow coordinator users to update status', async () => {
+            // Ensure starting state is 'available'
+            await request(app)
+                .put(`/api/theatres/${theatreId}/status`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ status: 'available' })
+                .catch(() => { }); // ignore if already available
+
             const res = await request(app)
                 .patch(`/api/theatres/${theatreId}/quick-status`)
-                .send({ status: 'available' })
+                .send({ status: 'maintenance' })
                 .set('Authorization', `Bearer ${coordinatorToken}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
+
+            // Restore
+            await request(app)
+                .put(`/api/theatres/${theatreId}/status`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ status: 'available' });
         });
 
         it('should allow admin users to update status', async () => {
+            // Theatre should be 'available' now
             const res = await request(app)
                 .patch(`/api/theatres/${theatreId}/quick-status`)
-                .send({ status: 'available' })
+                .send({ status: 'maintenance' })
                 .set('Authorization', `Bearer ${adminToken}`);
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
+
+            // Restore
+            await request(app)
+                .put(`/api/theatres/${theatreId}/status`)
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ status: 'available' });
         });
     });
 
@@ -190,6 +210,25 @@ describe('Quick Status Update API - M6 Day 12', () => {
             const res = await request(app)
                 .patch(`/api/theatres/${theatreId}/quick-status`)
                 .send({ status: 'maintenance' })
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+        });
+
+        it('should update theatre status back to available from maintenance', async () => {
+            const res = await request(app)
+                .patch(`/api/theatres/${theatreId}/quick-status`)
+                .send({ status: 'available' })
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+        });
+
+        it('should update theatre status to in_use', async () => {
+            const res = await request(app)
+                .patch(`/api/theatres/${theatreId}/quick-status`)
+                .send({ status: 'in_use' })
                 .set('Authorization', `Bearer ${coordinatorToken}`);
 
             expect(res.statusCode).toBe(200);

@@ -80,7 +80,7 @@ describe('SurgeryList Page Tests', () => {
     describe('Loading State', () => {
         it('should show loading indicator while fetching data', async () => {
             surgeryService.getAllSurgeries.mockImplementation(
-                () => new Promise(() => {}) // Never resolves
+                () => new Promise(() => { }) // Never resolves
             );
             const { container } = renderList();
             // Check for loading indicator (Loading component with animate-spin class)
@@ -102,7 +102,7 @@ describe('SurgeryList Page Tests', () => {
         it('should display page title', async () => {
             renderList();
             await waitFor(() => {
-                expect(screen.getByText('Surgeries')).toBeInTheDocument();
+                expect(screen.getByTestId('surgery-list-title')).toBeInTheDocument();
             });
         });
 

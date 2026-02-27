@@ -1,0 +1,627 @@
+﻿
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js tests/rbac.test.js --no-colors
+
+node.exe : (node:332) ExperimentalWarning: VM Modules is an 
+experimental feature and might change at any time
+At line:1 char:1
++ & "C:\New Folder/node.exe" 
+"C:\Users\ASUS\AppData\Roaming\npm/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: ((node:332) Expe...nge  
+   at any time:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was 
+created)
+(node:332) Warning: SECURITY WARNING: The SSL modes 'prefer', 
+'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg 
+v9.0.0), these modes will adopt standard libpq semantics, which 
+have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 
+'sslmode=verify-full'
+- If you want libpq compatibility now, use 
+'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for 
+libpq SSL mode definitions.
+  console.error
+    Auth Middleware Error: Invalid token
+
+    [0m [90m 68 |[39m
+     [90m 69 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 70 |[39m             console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 71 |[39m             [36mreturn[39m res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 72 |[39m                 success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 73 |[39m                 message[33m:[39m [32m'Not authorized, token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:70:21)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser (node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+  console.error
+    Auth Middleware Error: Invalid token
+
+    [0m [90m 68 |[39m
+     [90m 69 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 70 |[39m             console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 71 |[39m             [36mreturn[39m res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 72 |[39m                 success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 73 |[39m                 message[33m:[39m [32m'Not authorized, token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:70:21)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser (node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+FAIL tests/rbac.test.js
+  RBAC Middleware Tests
+    Admin-Only Route Access
+      ├ù Admin should access admin-only routes (1099 ms)
+      ├ù Coordinator should NOT access admin-only routes (126 ms)
+      ├ù Surgeon should NOT access admin-only routes (155 ms)
+      ├ù Nurse should NOT access admin-only routes (114 ms)
+    Coordinator-Only Route Access
+      ├ù Coordinator should access coordinator-only routes (112 ms)
+      ├ù Admin should NOT access coordinator-only routes (155 ms)
+      ├ù Surgeon should NOT access coordinator-only routes (100 ms)
+    Staff Route Access
+      ├ù Surgeon should access staff routes (116 ms)
+      ├ù Nurse should access staff routes (134 ms)
+      ├ù Anaesthetist should access staff routes (272 ms)
+      ├ù Technician should access staff routes (112 ms)
+      ├ù Admin should NOT access staff routes (111 ms)
+      ├ù Coordinator should NOT access staff routes (111 ms)
+    Any Authenticated Route Access
+      ├ù Admin should access any-authenticated routes (126 ms)
+      ├ù Coordinator should access any-authenticated routes (112 ms)
+      ├ù Surgeon should access any-authenticated routes (110 ms)
+      ├ù Nurse should access any-authenticated routes (116 ms)
+    Token Validation in RBAC
+      ΓêÜ Request without token should be denied (401) (6 ms)
+      ΓêÜ Request with invalid token should be denied (401) (23 ms)
+      ΓêÜ Request with malformed Authorization header should be 
+denied (4 ms)
+      ΓêÜ Request with expired token should be denied (9 ms)
+    Cross-Role Access Verification
+      ├ù Each role should only access their permitted routes (118 
+ms)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Admin-Only Route Access ΓÇ║ Admin 
+should access admin-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 43 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${adminToken}`[39m)[33m;[39m
+     [90m 44 |[39m
+    [31m[1m>[22m[39m[90m 45 |[39m             expect(res[33m.
+[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m    |[39m                                    
+[31m[1m^[22m[39m
+     [90m 46 |[39m             expect(res[33m.[39mbody[33m.[39
+msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 47 |[39m             expect(res[33m.[39mbody[33m.[39
+mmessage)[33m.[39mtoContain([32m'Admin access 
+granted'[39m)[33m;[39m
+     [90m 48 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:45:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Admin-Only Route Access ΓÇ║ 
+Coordinator should NOT access admin-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 53 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${coordinatorToken}`[39m)[33m;[39m
+     [90m 54 |[39m
+    [31m[1m>[22m[39m[90m 55 |[39m             expect(res[33m.
+[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m    |[39m                                    
+[31m[1m^[22m[39m
+     [90m 56 |[39m             expect(res[33m.[39mbody[33m.[39
+msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 57 |[39m         })[33m;[39m
+     [90m 58 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:55:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Admin-Only Route Access ΓÇ║ Surgeon 
+should NOT access admin-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 62 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${surgeonToken}`[39m)[33m;[39m
+     [90m 63 |[39m
+    [31m[1m>[22m[39m[90m 64 |[39m             expect(res[33m.
+[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m    |[39m                                    
+[31m[1m^[22m[39m
+     [90m 65 |[39m             expect(res[33m.[39mbody[33m.[39
+msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 66 |[39m         })[33m;[39m
+     [90m 67 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:64:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Admin-Only Route Access ΓÇ║ Nurse 
+should NOT access admin-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 71 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${nurseToken}`[39m)[33m;[39m
+     [90m 72 |[39m
+    [31m[1m>[22m[39m[90m 73 |[39m             expect(res[33m.
+[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m    |[39m                                    
+[31m[1m^[22m[39m
+     [90m 74 |[39m             expect(res[33m.[39mbody[33m.[39
+msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 75 |[39m         })[33m;[39m
+     [90m 76 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:73:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Coordinator-Only Route Access ΓÇ║ 
+Coordinator should access coordinator-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 85 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${coordinatorToken}`[39m)[33m;[39m
+     [90m 86 |[39m
+    [31m[1m>[22m[39m[90m 87 |[39m             expect(res[33m.
+[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m    |[39m                                    
+[31m[1m^[22m[39m
+     [90m 88 |[39m             expect(res[33m.[39mbody[33m.[39
+msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 89 |[39m             expect(res[33m.[39mbody[33m.[39
+mmessage)[33m.[39mtoContain([32m'Coordinator access 
+granted'[39m)[33m;[39m
+     [90m 90 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:87:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Coordinator-Only Route Access ΓÇ║ 
+Admin should NOT access coordinator-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m  95 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${adminToken}`[39m)[33m;[39m
+     [90m  96 |[39m
+    [31m[1m>[22m[39m[90m  97 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m  98 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m  99 |[39m         })[33m;[39m
+     [90m 100 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:97:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Coordinator-Only Route Access ΓÇ║ 
+Surgeon should NOT access coordinator-only routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 104 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${surgeonToken}`[39m)[33m;[39m
+     [90m 105 |[39m
+    [31m[1m>[22m[39m[90m 106 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 107 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 108 |[39m         })[33m;[39m
+     [90m 109 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:106:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Staff Route Access ΓÇ║ Surgeon 
+should access staff routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 118 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${surgeonToken}`[39m)[33m;[39m
+     [90m 119 |[39m
+    [31m[1m>[22m[39m[90m 120 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 121 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 122 |[39m             expect(res[33m.[39mbody[33m.[3
+9mmessage)[33m.[39mtoContain([32m'Staff access 
+granted'[39m)[33m;[39m
+     [90m 123 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:120:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Staff Route Access ΓÇ║ Nurse should 
+access staff routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 128 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${nurseToken}`[39m)[33m;[39m
+     [90m 129 |[39m
+    [31m[1m>[22m[39m[90m 130 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 131 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 132 |[39m         })[33m;[39m
+     [90m 133 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:130:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Staff Route Access ΓÇ║ Anaesthetist 
+should access staff routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 137 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${anaesthetistToken}`[39m)[33m;[39m
+     [90m 138 |[39m
+    [31m[1m>[22m[39m[90m 139 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 140 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 141 |[39m         })[33m;[39m
+     [90m 142 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:139:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Staff Route Access ΓÇ║ Technician 
+should access staff routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 146 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${technicianToken}`[39m)[33m;[39m
+     [90m 147 |[39m
+    [31m[1m>[22m[39m[90m 148 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 149 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 150 |[39m         })[33m;[39m
+     [90m 151 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:148:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Staff Route Access ΓÇ║ Admin should 
+NOT access staff routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 155 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${adminToken}`[39m)[33m;[39m
+     [90m 156 |[39m
+    [31m[1m>[22m[39m[90m 157 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 158 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 159 |[39m         })[33m;[39m
+     [90m 160 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:157:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Staff Route Access ΓÇ║ Coordinator 
+should NOT access staff routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 164 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${coordinatorToken}`[39m)[33m;[39m
+     [90m 165 |[39m
+    [31m[1m>[22m[39m[90m 166 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 167 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 168 |[39m         })[33m;[39m
+     [90m 169 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:166:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Any Authenticated Route Access ΓÇ║ 
+Admin should access any-authenticated routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 178 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${adminToken}`[39m)[33m;[39m
+     [90m 179 |[39m
+    [31m[1m>[22m[39m[90m 180 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 181 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 182 |[39m         })[33m;[39m
+     [90m 183 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:180:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Any Authenticated Route Access ΓÇ║ 
+Coordinator should access any-authenticated routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 187 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${coordinatorToken}`[39m)[33m;[39m
+     [90m 188 |[39m
+    [31m[1m>[22m[39m[90m 189 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 190 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 191 |[39m         })[33m;[39m
+     [90m 192 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:189:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Any Authenticated Route Access ΓÇ║ 
+Surgeon should access any-authenticated routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 196 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${surgeonToken}`[39m)[33m;[39m
+     [90m 197 |[39m
+    [31m[1m>[22m[39m[90m 198 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 199 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 200 |[39m         })[33m;[39m
+     [90m 201 |[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:198:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Any Authenticated Route Access ΓÇ║ 
+Nurse should access any-authenticated routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 205 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${nurseToken}`[39m)[33m;[39m
+     [90m 206 |[39m
+    [31m[1m>[22m[39m[90m 207 |[39m             expect(res[33m
+.[39mstatusCode)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                    
+[31m[1m^[22m[39m
+     [90m 208 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 209 |[39m         })[33m;[39m
+     [90m 210 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:207:36)
+
+  ΓùÅ RBAC Middleware Tests ΓÇ║ Cross-Role Access Verification ΓÇ║ 
+Each role should only access their permitted routes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 403
+    Received: 401
+
+    [0m [90m 263 |[39m                 
+[33m.[39m[36mget[39m([32m'/api/test/coordinator-only'[39m)
+     [90m 264 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${adminToken}`[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 265 |[39m             expect(adminToC
+oordinator[33m.[39mstatusCode)[33m.[39mtoBe([35m403[39m)[33m;
+[39m
+     [90m     |[39m                                               
+    [31m[1m^[22m[39m
+     [90m 266 |[39m
+     [90m 267 |[39m             [36mconst[39m adminToStaff 
+[33m=[39m [36mawait[39m request(app)
+     [90m 268 |[39m                 
+[33m.[39m[36mget[39m([32m'/api/test/staff'[39m)[0m
+
+      at Object.<anonymous> (tests/rbac.test.js:265:51)
+
+Test Suites: 1 failed, 1 total
+Tests:       18 failed, 4 passed, 22 total
+Snapshots:   0 total
+Time:        4.807 s, estimated 7 s
+Ran all test suites matching /tests\\rbac.test.js/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that 
+weren't stopped in your tests. Consider running Jest with 
+`--detectOpenHandles` to troubleshoot this issue.

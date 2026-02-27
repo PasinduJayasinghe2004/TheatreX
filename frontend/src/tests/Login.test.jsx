@@ -5,6 +5,9 @@ import { AuthProvider } from '../context/AuthContext';
 import Login from '../pages/Login';
 import authService from '../services/authService';
 
+// Unmock AuthContext to use the real one for testing login logic
+vi.unmock('../context/AuthContext');
+
 // Mock authService
 vi.mock('../services/authService');
 

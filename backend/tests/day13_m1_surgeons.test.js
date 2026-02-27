@@ -18,7 +18,7 @@ const getToken = async (role = 'coordinator') => {
     const credentials = {
         coordinator: { email: 'coordinator@test.com', password: 'Test1234!' },
         admin: { email: 'admin@test.com', password: 'Test1234!' },
-        staff: { email: 'staff@test.com', password: 'Test1234!' },
+        nurse: { email: 'staff@test.com', password: 'Test1234!' },
     };
     const cred = credentials[role];
     const res = await request(app)
@@ -50,8 +50,8 @@ describe('Surgeon API - M1 Day 13', () => {
             expect(res.statusCode).toBe(401);
         });
 
-        it('should return 403 if authenticated as staff (not coordinator/admin)', async () => {
-            const token = await getToken('staff');
+        it('should return 403 if authenticated as nurse (not coordinator/admin)', async () => {
+            const token = await getToken('nurse');
             if (!token) return; // skip if staff user doesn't exist in test DB
 
             const res = await request(app)

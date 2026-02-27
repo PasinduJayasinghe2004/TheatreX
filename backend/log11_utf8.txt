@@ -1,0 +1,138 @@
+﻿
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js tests/day11_m6_progress_duration.test.js --no-colors
+
+node.exe : (node:23124) ExperimentalWarning: VM Modules is an 
+experimental feature and might change at any time
+At line:1 char:1
++ & "C:\New Folder/node.exe" 
+"C:\Users\ASUS\AppData\Roaming\npm/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: ((node:23124) Ex...nge  
+   at any time:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was 
+created)
+(node:23124) Warning: SECURITY WARNING: The SSL modes 'prefer', 
+'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg 
+v9.0.0), these modes will adopt standard libpq semantics, which 
+have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 
+'sslmode=verify-full'
+- If you want libpq compatibility now, use 
+'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for 
+libpq SSL mode definitions.
+FAIL tests/day11_m6_progress_duration.test.js (11.824 s)
+  PUT /api/theatres/:id/progress ΓÇô Surgery Progress Update
+    Authentication
+      ΓêÜ should return 401 when no token is provided (8 ms)
+    Authorisation
+      ΓêÜ should return 403 when called by a staff 
+(non-coordinator) user (109 ms)
+    Input validation
+      ΓêÜ should return 400 when progress is missing from request 
+body (114 ms)
+      ΓêÜ should return 400 when progress is below 0 (126 ms)
+      ΓêÜ should return 400 when progress exceeds 100 (114 ms)
+      ΓêÜ should return 400 for a non-integer progress value (e.g. 
+45.5) (134 ms)
+    Not found scenarios
+      ΓêÜ should return 404 for a non-existent theatre ID (228 ms)
+    No in-progress surgery
+      ΓêÜ should return 404 when the theatre exists but has no 
+in-progress surgery (576 ms)
+    Happy path
+      ΓêÜ should return 200 with a valid theatre and in-progress 
+surgery (708 ms)
+      ΓêÜ should accept 0 as a valid progress value (736 ms)
+      ΓêÜ should accept 100 as a valid progress value (697 ms)
+  GET /api/theatres/:id/duration ΓÇô Theatre Duration Calculation
+    Authentication
+      ΓêÜ should return 401 when no token is provided (5 ms)
+      ΓêÜ should allow any authenticated user (staff) to access 
+duration (337 ms)
+    Not found
+      ΓêÜ should return 404 for a non-existent theatre ID (224 ms)
+    No in-progress surgery
+      ΓêÜ should return 200 with null data when theatre has no 
+in-progress surgery (614 ms)
+    Happy path (theatre with in-progress surgery)
+      ├ù should return 200 with elapsed, remaining, and total 
+duration fields (653 ms)
+      ΓêÜ elapsed + remaining should roughly equal total_minutes 
+(711 ms)
+      ├ù formatted strings should not be empty (819 ms)
+
+  ΓùÅ GET /api/theatres/:id/duration ΓÇô Theatre Duration 
+Calculation ΓÇ║ Happy path (theatre with in-progress surgery) ΓÇ║ 
+should return 200 with elapsed, remaining, and total duration fields
+
+    expect(received).toHaveProperty(path)
+
+    Expected path: "elapsed_minutes"
+    Received path: []
+
+    Received value: {"duration": {"elapsed": 286, "formatted": 
+{"elapsed": "4h 46m", "overdue": "2h 46m", "remaining": "0m", 
+"total": "2h"}, "overdue": 166, "remaining": 0, "total": 120}, 
+"estimated_end_time": "10:00", "is_overdue": true, "surgery_id": 
+107, "theatre_id": 3, "theatre_name": "QS Theatre 1772172940631"}
+
+    [0m [90m 381 |[39m
+     [90m 382 |[39m             [90m// Raw minute fields[39m
+    [31m[1m>[22m[39m[90m 383 |[39m             expect(d)[33m.
+[39mtoHaveProperty([32m'elapsed_minutes'[39m)[33m;[39m
+     [90m     |[39m                       [31m[1m^[22m[39m
+     [90m 384 |[39m             expect(d)[33m.[39mtoHaveProperty
+([32m'remaining_minutes'[39m)[33m;[39m
+     [90m 385 |[39m             expect(d)[33m.[39mtoHaveProperty
+([32m'total_minutes'[39m)[33m;[39m
+     [90m 386 |[39m[0m
+
+      at Object.<anonymous> 
+(tests/day11_m6_progress_duration.test.js:383:23)
+
+  ΓùÅ GET /api/theatres/:id/duration ΓÇô Theatre Duration 
+Calculation ΓÇ║ Happy path (theatre with in-progress surgery) ΓÇ║ 
+formatted strings should not be empty
+
+    expect(received).toBeTruthy()
+
+    Received: undefined
+
+    [0m [90m 437 |[39m             [36mif[39m 
+([33m![39mres[33m.[39mbody[33m.[39mdata) 
+[36mreturn[39m[33m;[39m
+     [90m 438 |[39m
+    [31m[1m>[22m[39m[90m 439 |[39m             expect(res[33m
+.[39mbody[33m.[39mdata[33m.[39melapsed_formatted)[33m.[39mtoB
+eTruthy()[33m;[39m
+     [90m     |[39m                                               
+      [31m[1m^[22m[39m
+     [90m 440 |[39m             expect(res[33m.[39mbody[33m.[3
+9mdata[33m.[39mremaining_formatted)[33m.[39mtoBeTruthy()[33m;[
+39m
+     [90m 441 |[39m         })[33m;[39m
+     [90m 442 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> 
+(tests/day11_m6_progress_duration.test.js:439:53)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 16 passed, 18 total
+Snapshots:   0 total
+Time:        11.868 s, estimated 14 s
+Ran all test suites matching 
+/tests\\day11_m6_progress_duration.test.js/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that 
+weren't stopped in your tests. Consider running Jest with 
+`--detectOpenHandles` to troubleshoot this issue.

@@ -24,7 +24,7 @@ const SIZE_CLASSES = {
 
 // ── Component ───────────────────────────────────────────────────────────────
 
-const StatusBadge = ({ status, size = 'sm', onClick }) => {
+const StatusBadge = ({ status, size = 'sm', onClick, ...props }) => {
     const style = STATUS_STYLES[status] || STATUS_STYLES.scheduled;
     const sizeClass = SIZE_CLASSES[size] || SIZE_CLASSES.sm;
 
@@ -39,6 +39,7 @@ const StatusBadge = ({ status, size = 'sm', onClick }) => {
             `}
             onClick={onClick}
             {...(onClick ? { type: 'button' } : {})}
+            {...props}
         >
             {/* Colour dot */}
             <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />

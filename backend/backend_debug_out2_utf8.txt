@@ -1,0 +1,171 @@
+﻿
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js tests/day11_live_status.test.js --no-colors
+
+node.exe : (node:8860) ExperimentalWarning: VM Modules is an 
+experimental feature and might change at any time
+At line:1 char:1
++ & "C:\New Folder/node.exe" 
+"C:\Users\ASUS\AppData\Roaming\npm/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: ((node:8860) Exp...nge  
+   at any time:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was 
+created)
+(node:8860) Warning: SECURITY WARNING: The SSL modes 'prefer', 
+'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg 
+v9.0.0), these modes will adopt standard libpq semantics, which 
+have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 
+'sslmode=verify-full'
+- If you want libpq compatibility now, use 
+'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for 
+libpq SSL mode definitions.
+  console.log
+    DEBUG: Staff Registration Failed: Validation failed
+
+      at Object.<anonymous> (tests/day11_live_status.test.js:67:21)
+
+  console.log
+    DEBUG: Coordinator Token: Received
+
+      at Object.<anonymous> (tests/day11_live_status.test.js:75:17)
+
+  console.log
+    DEBUG: Staff Token: MISSING
+
+      at Object.<anonymous> (tests/day11_live_status.test.js:76:17)
+
+  console.log
+    DEBUG: Staff Login Message: Invalid credentials
+
+      at Object.<anonymous> (tests/day11_live_status.test.js:77:46)
+
+  console.error
+    Auth Middleware Error: Invalid token
+
+    [0m [90m 68 |[39m
+     [90m 69 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 70 |[39m             console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 71 |[39m             [36mreturn[39m res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 72 |[39m                 success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 73 |[39m                 message[33m:[39m [32m'Not authorized, token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:70:21)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser (node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] (node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+FAIL tests/day11_live_status.test.js (5.776 s)
+  Live Status Polling API - Integration Tests
+    Authentication
+      ΓêÜ should return 401 when no token is provided (10 ms)
+      ΓêÜ should accept a valid coordinator token (405 ms)
+      ├ù should accept a valid staff token (19 ms)
+    Response structure
+      ΓêÜ should return success, polled_at, summary and data (221 
+ms)
+      ΓêÜ should include polled_at as a valid ISO date string (207 
+ms)
+      ΓêÜ should return summary with counts for each status (242 ms)
+    Theatre data shape
+      ΓêÜ should return theatres with expected fields (399 ms)
+      ΓêÜ theatre.current_surgery should be null when no surgery is 
+in progress (235 ms)
+      ΓêÜ theatre.current_surgery should include auto-progress 
+fields when in_use (388 ms)
+    Consistency
+      ΓêÜ theatres count should equal summary.total (234 ms)
+      ΓêÜ should only return active theatres (620 ms)
+
+  ΓùÅ Live Status Polling API - Integration Tests ΓÇ║ 
+Authentication ΓÇ║ should accept a valid staff token
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 401
+
+    [0m [90m 102 |[39m                 
+[33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m 
+[32m`Bearer ${staffToken}`[39m)[33m;[39m
+     [90m 103 |[39m
+    [31m[1m>[22m[39m[90m 104 |[39m             expect(res[33m
+.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                
+[31m[1m^[22m[39m
+     [90m 105 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+     [90m 106 |[39m         })[33m;[39m
+     [90m 107 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day11_live_status.test.js:104:32)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 10 passed, 11 total
+Snapshots:   0 total
+Time:        5.918 s, estimated 10 s
+Ran all test suites matching /tests\\day11_live_status.test.js/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that 
+weren't stopped in your tests. Consider running Jest with 
+`--detectOpenHandles` to troubleshoot this issue.

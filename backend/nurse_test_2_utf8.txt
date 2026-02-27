@@ -1,0 +1,146 @@
+﻿
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js tests/nurseController.test.js --no-colors
+
+node.exe : (node:15336) ExperimentalWarning: VM Modules is an 
+experimental feature and might change at any time
+At line:1 char:1
++ & "C:\New Folder/node.exe" 
+"C:\Users\ASUS\AppData\Roaming\npm/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: ((node:15336) Ex...nge  
+   at any time:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was 
+created)
+(node:15336) Warning: SECURITY WARNING: The SSL modes 'prefer', 
+'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg 
+v9.0.0), these modes will adopt standard libpq semantics, which 
+have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 
+'sslmode=verify-full'
+- If you want libpq compatibility now, use 
+'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for 
+libpq SSL mode definitions.
+  console.error
+    Error creating nurse: error: duplicate key value violates unique constraint "nurses_email_key"
+        at C:\Users\ASUS\OneDrive\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at createNurse (C:\Users\ASUS\OneDrive\Desktop\SDGP-Project\backend\controllers\nurseController.js:112:26) {
+      length: 231,
+      severity: 'ERROR',
+      code: '23505',
+      detail: 'Key (email)=(jane.nurse1772174441757@hospital.com) already exists.',
+      hint: undefined,
+      position: undefined,
+      internalPosition: undefined,
+      internalQuery: undefined,
+      where: undefined,
+      schema: 'public',
+      table: 'nurses',
+      column: undefined,
+      dataType: undefined,
+      constraint: 'nurses_email_key',
+      file: 'nbtinsert.c',
+      line: '667',
+      routine: '_bt_check_unique'
+    }
+
+    [0m [90m 120 |[39m
+     [90m 121 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 122 |[39m         console[33m.[39merror([32m'Error creating nurse:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 123 |[39m
+     [90m 124 |[39m         [90m// Duplicate email[39m
+     [90m 125 |[39m         [36mif[39m (error[33m.[39mcode [33m===[39m [32m'23505'[39m [33m&&[39m error[33m.[39mconstraint[33m?[39m[33m.[39mincludes([32m'email'[39m)) {[0m
+
+      at createNurse (controllers/nurseController.js:122:17)
+
+FAIL tests/nurseController.test.js (7.818 s)
+  Nurse API Tests - Day 13
+    GET /api/nurses
+      ΓêÜ should return 401 without auth token (5 ms)
+      ΓêÜ should return nurse list with coordinator token (247 ms)
+      ΓêÜ should allow staff users to view nurses (230 ms)
+      ΓêÜ should support is_available filter (202 ms)
+    POST /api/nurses
+      ΓêÜ should return 401 without auth token (4 ms)
+      ΓêÜ should return 403 for staff users (RBAC) (130 ms)
+      ├ù should return 400 when name is missing (151 ms)
+      ├ù should return 400 when email is missing (194 ms)
+      ΓêÜ should return 400 for invalid email format (181 ms)
+      ΓêÜ should return 400 for invalid shift_preference (203 ms)
+      ΓêÜ should create a nurse for coordinator (509 ms)
+      ΓêÜ should return 409 for duplicate email (534 ms)
+    GET /api/nurses/:id
+      ΓêÜ should return 401 without auth token (6 ms)
+      ΓêÜ should return 404 for non-existent nurse (1240 ms)
+      ΓêÜ should return nurse detail for created nurse (228 ms)
+      ΓêÜ should allow staff users to view a nurse (401 ms)
+
+  ΓùÅ Nurse API Tests - Day 13 ΓÇ║ POST /api/nurses ΓÇ║ should 
+return 400 when name is missing
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /name/i
+    Received string:  "Validation failed"
+
+    [0m [90m 142 |[39m             expect(res[33m.[39mstatusCod
+e)[33m.[39mtoBe([35m400[39m)[33m;[39m
+     [90m 143 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 144 |[39m             expect(res[33m
+.[39mbody[33m.[39mmessage)[33m.[39mtoMatch([35m/name/i[39m)[
+33m;[39m
+     [90m     |[39m                                      
+[31m[1m^[22m[39m
+     [90m 145 |[39m         })[33m;[39m
+     [90m 146 |[39m
+     [90m 147 |[39m         it([32m'should return 400 when email 
+is missing'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/nurseController.test.js:144:38)
+
+  ΓùÅ Nurse API Tests - Day 13 ΓÇ║ POST /api/nurses ΓÇ║ should 
+return 400 when email is missing
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /email/i
+    Received string:  "Validation failed"
+
+    [0m [90m 153 |[39m             expect(res[33m.[39mstatusCod
+e)[33m.[39mtoBe([35m400[39m)[33m;[39m
+     [90m 154 |[39m             expect(res[33m.[39mbody[33m.[3
+9msuccess)[33m.[39mtoBe([36mfalse[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 155 |[39m             expect(res[33m
+.[39mbody[33m.[39mmessage)[33m.[39mtoMatch([35m/email/i[39m)
+[33m;[39m
+     [90m     |[39m                                      
+[31m[1m^[22m[39m
+     [90m 156 |[39m         })[33m;[39m
+     [90m 157 |[39m
+     [90m 158 |[39m         it([32m'should return 400 for 
+invalid email format'[39m[33m,[39m [36masync[39m () 
+[33m=>[39m {[0m
+
+      at Object.<anonymous> (tests/nurseController.test.js:155:38)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 14 passed, 16 total
+Snapshots:   0 total
+Time:        7.918 s
+Ran all test suites matching /tests\\nurseController.test.js/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that 
+weren't stopped in your tests. Consider running Jest with 
+`--detectOpenHandles` to troubleshoot this issue.

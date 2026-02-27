@@ -268,7 +268,7 @@ const Dashboard = () => {
                 <div className="bg-white border-b border-gray-100 px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Theatre Management Dashboard</h1>
+                            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-title">Theatre Management Dashboard</h1>
                             <p className="text-sm text-gray-500 mt-1">Real-time monitoring and scheduling overview</p>
                         </div>
                         <div className="flex items-center gap-4">
@@ -276,6 +276,7 @@ const Dashboard = () => {
                             <button
                                 aria-label="Search"
                                 title="Search"
+                                data-testid="dashboard-search-btn"
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                                 onClick={() => navigate('/surgeries')}
                             >
@@ -287,6 +288,7 @@ const Dashboard = () => {
                             <button
                                 aria-label="Notifications"
                                 title="Notifications (coming soon)"
+                                data-testid="dashboard-notifications-btn"
                                 className="p-2 rounded-full transition-colors opacity-50 cursor-not-allowed"
                                 disabled
                             >

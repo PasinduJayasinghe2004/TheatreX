@@ -19,6 +19,7 @@
 import { describe, it, expect, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
+import { pool } from '../config/database.js';
 
 jest.setTimeout(30000);
 
@@ -43,7 +44,7 @@ describe('Theatre API Tests', () => {
         name: 'Theatre Test Staff',
         email: `theatre.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771234568'
     };
 
@@ -145,6 +146,10 @@ describe('Theatre API Tests', () => {
 
         it('should update theatre status for coordinator', async () => {
             if (!testTheatreId) return;
+
+            // Force to available to ensure the transition to 'maintenance' is valid
+            await pool.query('UPDATE theatres SET status = $1 WHERE id = $2', ['available', testTheatreId]);
+
             const res = await request(app)
                 .put(`/api/theatres/${testTheatreId}/status`)
                 .set('Authorization', `Bearer ${coordinatorToken}`)
@@ -153,10 +158,7 @@ describe('Theatre API Tests', () => {
             expect(res.body.data.status).toBe('maintenance');
 
             // Restore
-            await request(app)
-                .put(`/api/theatres/${testTheatreId}/status`)
-                .set('Authorization', `Bearer ${coordinatorToken}`)
-                .send({ status: 'available' });
+            await pool.query('UPDATE theatres SET status = $1 WHERE id = $2', ['available', testTheatreId]);
         });
     });
 

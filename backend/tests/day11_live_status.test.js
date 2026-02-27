@@ -42,7 +42,7 @@ describe('Live Status Polling API - Integration Tests', () => {
         name: 'LivePoll Test Staff',
         email: `livepoll.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771234571'
     };
 

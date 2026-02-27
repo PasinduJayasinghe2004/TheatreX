@@ -193,7 +193,7 @@ describe('Auto-Progress API - Integration Tests', () => {
         name: 'AutoProg Test Staff',
         email: `autoprog.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771234568'
     };
 

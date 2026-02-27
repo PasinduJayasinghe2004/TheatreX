@@ -15,3 +15,21 @@ const localStorageMock = {
     clear: vi.fn(),
 };
 global.localStorage = localStorageMock;
+
+// Global mocks for Contexts used in Layout/Header/Sidebar
+vi.mock('../context/AuthContext', () => ({
+    useAuth: () => ({
+        user: { name: 'Test User', role: 'admin', email: 'test@example.com' },
+        isAuthenticated: true,
+        login: vi.fn().mockResolvedValue({ success: true }),
+        logout: vi.fn(),
+    }),
+    AuthProvider: ({ children }) => children,
+}));
+
+vi.mock('../context/ThemeContext', () => ({
+    useTheme: () => ({
+        isDark: false,
+        toggleTheme: vi.fn(),
+    }),
+}));

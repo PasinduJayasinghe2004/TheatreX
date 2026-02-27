@@ -148,7 +148,7 @@ describe('Dashboard Page Tests', () => {
         it('should display page title after loading', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Theatre Management Dashboard')).toBeInTheDocument();
+                expect(screen.getByTestId('dashboard-title')).toBeInTheDocument();
             });
         });
 
@@ -165,14 +165,15 @@ describe('Dashboard Page Tests', () => {
             renderDashboard();
             await waitFor(() => {
                 // 2 surgeries in mockSurgeries
-                expect(screen.getByText('2')).toBeInTheDocument();
+                const values = screen.getAllByTestId('summary-value');
+                expect(values[0]).toHaveTextContent('2');
             });
         });
 
         it('should display staff comparison data when available', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('+2 from yesterday')).toBeInTheDocument();
+                expect(screen.getByTestId('summary-comparison')).toHaveTextContent('+2 from yesterday');
             });
         });
 
@@ -341,9 +342,9 @@ describe('Dashboard Page Tests', () => {
         it('should navigate to /surgeries when search button is clicked', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Theatre Management Dashboard')).toBeInTheDocument();
+                expect(screen.getByTestId('dashboard-title')).toBeInTheDocument();
             });
-            const searchButton = screen.getByLabelText('Search');
+            const searchButton = screen.getByTestId('dashboard-search-btn');
             fireEvent.click(searchButton);
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries');
         });
