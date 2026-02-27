@@ -12,7 +12,7 @@ const team = [
     },
     {
         name: 'Chandeepa Priyadarshana',
-        role: 'Full Stack developer / UX UI Designer',
+        role: 'Full Stack developer / UI UX Designer',
 
         social: { linkedin: 'https://www.linkedin.com/in/chandeepa-priyadarshana-323228193?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app', email: 'chandeepa.20241753@iit.ac.lk' }
     },
