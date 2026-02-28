@@ -30,6 +30,7 @@ import {
     getTheatres,
     getTheatreById,
     updateTheatreStatus,
+    toggleMaintenanceMode,
     checkTheatreAvailability,
     getCurrentSurgeryByTheatreId,
     updateSurgeryProgress,
@@ -129,6 +130,15 @@ router.put('/:id/status', protect, authorize('coordinator', 'admin'), validateTh
 // Created by: M2 (Chandeepa) - Day 12
 // ============================================================================
 router.patch('/:id/quick-status', protect, authorize('coordinator', 'admin'), validateTheatreStatus, quickUpdateStatus);
+
+// ============================================================================
+// ROUTE: PUT /api/theatres/:id/maintenance
+// ============================================================================
+// Toggle maintenance mode on/off for a specific theatre.
+// Protected + (coordinator or admin only)
+// Created by: M4 (Oneli) - Day 12
+// ============================================================================
+router.put('/:id/maintenance', protect, authorize('coordinator', 'admin'), toggleMaintenanceMode);
 
 // ============================================================================
 // ROUTE: GET /api/theatres/:id/current-surgery

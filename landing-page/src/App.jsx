@@ -9,10 +9,12 @@ import Team from './components/Team'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import OxygenBubbles from './components/OxygenBubbles'
+import ScrollIntro from './components/ScrollIntro'
 
 function App() {
   return (
     <div className="app">
+      <ScrollIntro />
       <OxygenBubbles />
       <Navbar />
       <main style={{ position: 'relative', zIndex: 1 }}>

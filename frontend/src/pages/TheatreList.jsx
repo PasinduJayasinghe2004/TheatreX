@@ -159,7 +159,7 @@ const TheatreList = () => {
                     <div className="mb-8">
                         <div className="flex items-center gap-3 mb-1">
                             <Building2 className="w-8 h-8 text-blue-600" />
-                            <h1 className="text-3xl font-bold text-gray-900">Theatres</h1>
+                            <h1 className="text-3xl font-bold text-gray-900" data-testid="theatre-list-title">Theatres</h1>
                         </div>
                         <p className="mt-1 text-gray-600">
                             Manage and monitor operating theatre status

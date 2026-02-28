@@ -180,7 +180,7 @@ describe('TheatreAssignmentDropdown Component Tests - M6 Day 12', () => {
                 message: 'Surgery assigned successfully'
             });
 
-            const { onAssigned } = renderDropdown();
+            renderDropdown();
 
             await waitFor(() => screen.getAllByText('Assign'));
             fireEvent.click(screen.getAllByText('Assign')[0]);

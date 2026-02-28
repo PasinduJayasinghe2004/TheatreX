@@ -1,7 +1,6 @@
 import request from 'supertest';
 import app from '../server.js';
 import { pool } from '../config/database.js';
-import jwt from 'jsonwebtoken';
 
 describe('Day 9 - Staff Assignment & Conflict Detection', () => {
     let token;
@@ -9,9 +8,22 @@ describe('Day 9 - Staff Assignment & Conflict Detection', () => {
     let surgeryId;
     let testDate; // Shared test date
 
-    // Helper to create a token
-    const generateToken = (id, role) => {
-        return jwt.sign({ id, role }, process.env.JWT_SECRET || 'test_secret', { expiresIn: '1h' });
+    // Helper to get a token
+    const getAdminToken = async () => {
+        const uniqueId = Date.now();
+        const email = `day9admin${uniqueId}@theatrex.com`;
+        await request(app).post('/api/auth/register').send({
+            name: 'Day9 Admin',
+            email,
+            password: 'SecurePass123!',
+            role: 'admin',
+            phone: '0771234599'
+        });
+        const loginRes = await request(app).post('/api/auth/login').send({
+            email,
+            password: 'SecurePass123!'
+        });
+        return loginRes.body.token;
     };
 
     beforeAll(async () => {
@@ -61,8 +73,8 @@ describe('Day 9 - Staff Assignment & Conflict Detection', () => {
             }
             console.log('Got theatre ID:', theatreId);
 
-            // Generate Admin Token
-            token = generateToken(1, 'admin');
+            // Generate admin token via real login
+            token = await getAdminToken();
             console.log('Generated token');
         } catch (err) {
             console.error('Error in beforeAll:', err);

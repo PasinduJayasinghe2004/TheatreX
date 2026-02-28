@@ -1176,6 +1176,14 @@ export const quickUpdateStatus = async (req, res) => {
             });
         }
 
+        // Validate that :id is numeric
+        if (isNaN(parseInt(id, 10)) || !/^\d+$/.test(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Theatre ID must be a numeric value'
+            });
+        }
+
         // 1. Get current status
         const { rows: existing } = await pool.query(
             'SELECT id, status, name FROM theatres WHERE id = $1',

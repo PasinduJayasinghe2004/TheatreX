@@ -11,7 +11,7 @@
 // - Fetches surgeries by date range for performance
 
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -35,22 +35,21 @@ const EVENT_COLOR = {
 const Calendar = () => {
     const navigate = useNavigate();
     const calendarRef = useRef(null);
-    
+
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentView, setCurrentView] = useState('dayGridMonth');
 
-    
+
     // Transform Surgery to Calendar Event
-   
+
     const transformSurgeryToEvent = (surgery) => {
         // Combine date and time for start
         let start = surgery.scheduled_date;
         let startTimeStr = '';
         if (surgery.scheduled_time) {
             // Handle both ISO time and HH:mm:ss formats
-            startTimeStr = surgery.scheduled_time.includes('T') 
+            startTimeStr = surgery.scheduled_time.includes('T')
                 ? surgery.scheduled_time.split('T')[1].substring(0, 5)
                 : surgery.scheduled_time.substring(0, 5);
             start = `${surgery.scheduled_date.split('T')[0]}T${startTimeStr}`;
@@ -67,7 +66,7 @@ const Calendar = () => {
         }
 
         // Format start time for display
-        const formattedStartTime = startTimeStr ? 
+        const formattedStartTime = startTimeStr ?
             new Date(`2000-01-01T${startTimeStr}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
 
         return {
@@ -92,10 +91,10 @@ const Calendar = () => {
         };
     };
 
-    
+
     // Fetch Surgeries for Date Range
-    
-    const fetchSurgeries = async (startDate, endDate) => {
+
+    const fetchSurgeries = useCallback(async (startDate, endDate) => {
         try {
             setLoading(true);
             setError(null);
@@ -117,48 +116,47 @@ const Calendar = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    
+
     // Initial Load - Fetch Current Month
-    
     useEffect(() => {
         const today = new Date();
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         fetchSurgeries(startOfMonth, endOfMonth);
-    }, []);
+    }, [fetchSurgeries]);
 
-    
+
     // Handle Date Range Change (view change/navigation)
-    
+
     const handleDatesSet = (dateInfo) => {
         fetchSurgeries(dateInfo.start, dateInfo.end);
-        setCurrentView(dateInfo.view.type);
+
     };
 
-    
+
     // Handle Event Click - Navigate to Surgery Detail
-    
+
     const handleEventClick = (clickInfo) => {
         const surgeryId = clickInfo.event.extendedProps.surgeryId;
         navigate(`/surgeries/${surgeryId}`);
     };
 
-    
+
     // Handle Date Click - Navigate to Create Surgery
-   
+
     const handleDateClick = (dateInfo) => {
-        navigate('/surgeries/new', { 
-            state: { 
-                prefilledDate: dateInfo.dateStr 
-            } 
+        navigate('/surgeries/new', {
+            state: {
+                prefilledDate: dateInfo.dateStr
+            }
         });
     };
 
-   
+
     // Refresh Calendar
-    
+
     const handleRefresh = () => {
         if (calendarRef.current) {
             const calendarApi = calendarRef.current.getApi();
@@ -168,10 +166,10 @@ const Calendar = () => {
     };
 
     // Custom Event Content Renderer - Match UI Design
-    
+
     const renderEventContent = (eventInfo) => {
         const { startTime, endTime, surgeonName, theatreName } = eventInfo.event.extendedProps;
-        
+
         return (
             <div className="p-1.5 overflow-hidden text-xs text-white leading-tight">
                 {/* Time Range */}
@@ -192,9 +190,9 @@ const Calendar = () => {
         );
     };
 
-    
+
     // Render
-    
+
     return (
         <div className="min-h-screen bg-gray-50 py-6 px-4">
             <div className="max-w-7xl mx-auto">

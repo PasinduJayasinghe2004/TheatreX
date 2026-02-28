@@ -1,5 +1,21 @@
+// ============================================================================
+// Surgeons Page
+// ============================================================================
+// Created by: M1 (Pasindu) - Day 13
+// Updated by: M1 (Pasindu) - Day 14 (added Edit/Delete surgeon UI)
+//
+// Full-featured surgeons management page.
+//
+// FEATURES:
+// - Lists all active surgeons with search and availability filters
+// - Create New Surgeon modal form (coordinator/admin only)
+// - Edit Surgeon modal form (coordinator/admin only)
+// - Delete Surgeon confirmation modal (coordinator/admin only)
+// - Surgeon cards with specialization, contact, availability, active surgery count
+// - Loading skeleton, empty state, and error handling
+// ============================================================================
+
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import surgeonService from '../services/surgeonService';
 import { useAuth } from '../context/AuthContext';
@@ -42,8 +58,9 @@ const SkeletonCard = () => (
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Surgeon Card
+// Updated by: M1 (Pasindu) - Day 14 (added edit/delete buttons)
 // ─────────────────────────────────────────────────────────────────────────────
-const SurgeonCard = ({ surgeon, onEdit, onDelete }) => {
+const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
     const initials = surgeon.name
         .split(' ')
         .map(w => w[0])
@@ -125,65 +142,162 @@ const SurgeonCard = ({ surgeon, onEdit, onDelete }) => {
                 )}
             </div>
 
-            {/* Footer: active surgery count */}
+            {/* Footer: active surgery count + action buttons */}
             <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                <span className="text-xs text-gray-400">Active surgeries</span>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${Number(surgeon.active_surgery_count) > 0
-                    ? 'bg-amber-100 text-amber-700'
-                    : 'bg-gray-100 text-gray-500'
-                    }`}>
-                    {surgeon.active_surgery_count ?? 0}
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400">Active surgeries</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${Number(surgeon.active_surgery_count) > 0
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'bg-gray-100 text-gray-500'
+                        }`}>
+                        {surgeon.active_surgery_count ?? 0}
+                    </span>
+                </div>
+
+                {/* Edit / Delete action buttons (coordinator/admin only) */}
+                {canEdit && (
+                    <div className="flex items-center gap-1">
+                        <button
+                            id={`edit-surgeon-${surgeon.id}`}
+                            onClick={() => onEdit(surgeon)}
+                            title="Edit surgeon"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            aria-label={`Edit ${surgeon.name}`}
+                        >
+                            {/* Pencil icon */}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                        <button
+                            id={`delete-surgeon-${surgeon.id}`}
+                            onClick={() => onDelete(surgeon)}
+                            title="Delete surgeon"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            aria-label={`Delete ${surgeon.name}`}
+                        >
+                            {/* Trash icon */}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Surgeon Modal (Combined Create/Edit)
+// Shared form field helpers
 // ─────────────────────────────────────────────────────────────────────────────
-const SurgeonModal = ({ surgeon, onClose, onSaved }) => {
-    const [form, setForm] = useState(surgeon ? {
-        ...surgeon,
-        years_of_experience: surgeon.years_of_experience || ''
-    } : {
-        name: '',
-        specialization: '',
-        license_number: '',
-        years_of_experience: '',
-        phone: '',
-        email: '',
-        is_available: true,
-    });
+const EMPTY_FIELD_ERRORS = {
+    name: '',
+    specialization: '',
+    license_number: '',
+    phone: '',
+    email: '',
+    years_of_experience: '',
+};
 
-    const [image, setImage] = useState(null);
-    const [fieldErrors, setFieldErrors] = useState({});
+const buildFieldCls = (fieldErrors) => (fieldName) =>
+    `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
+    }`;
+
+const FieldError = ({ fieldErrors, field }) =>
+    fieldErrors[field] ? (
+        <p className="text-xs text-red-500 mt-1">{fieldErrors[field]}</p>
+    ) : null;
+
+/** Client-side validation used by both create and edit forms */
+const validateSurgeonForm = (form, setFieldErrors) => {
+    const errs = { ...EMPTY_FIELD_ERRORS };
+    let valid = true;
+
+    if (!form.name.trim()) {
+        errs.name = 'Full name is required';
+        valid = false;
+    } else if (form.name.trim().length < 2) {
+        errs.name = 'Name must be at least 2 characters';
+        valid = false;
+    }
+
+    if (!form.specialization.trim()) {
+        errs.specialization = 'Specialization is required';
+        valid = false;
+    }
+
+    if (!form.license_number.trim()) {
+        errs.license_number = 'Licence number is required';
+        valid = false;
+    }
+
+    if (!form.phone.trim()) {
+        errs.phone = 'Phone number is required';
+        valid = false;
+    } else if (!/[\d]{7,}/.test(form.phone.replace(/[\s\-+()]/g, ''))) {
+        errs.phone = 'Enter a valid phone number (at least 7 digits)';
+        valid = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!form.email.trim()) {
+        errs.email = 'Email is required';
+        valid = false;
+    } else if (!emailRegex.test(form.email)) {
+        errs.email = 'Enter a valid email address';
+        valid = false;
+    }
+
+    if (form.years_of_experience !== '' && form.years_of_experience !== null) {
+        const yoe = Number(form.years_of_experience);
+        if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
+            errs.years_of_experience = 'Must be a non-negative whole number';
+            valid = false;
+        }
+    }
+
+    setFieldErrors(errs);
+    return valid;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Create Surgeon Modal
+// ─────────────────────────────────────────────────────────────────────────────
+// Enhanced by: M2 (Chandeepa) - Day 13 (client-side validation + success toast)
+// ─────────────────────────────────────────────────────────────────────────────
+const EMPTY_FORM = {
+    name: '',
+    specialization: '',
+    license_number: '',
+    years_of_experience: '',
+    phone: '',
+    email: '',
+    is_available: true,
+};
+
+const CreateSurgeonModal = ({ onClose, onCreated }) => {
+    const [form, setForm] = useState(EMPTY_FORM);
+    const [fieldErrors, setFieldErrors] = useState(EMPTY_FIELD_ERRORS);
     const [serverErrors, setServerErrors] = useState([]);
     const [submitting, setSubmitting] = useState(false);
+
+    const fieldCls = buildFieldCls(fieldErrors);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-        if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: '' }));
-    };
-
-    const validateForm = () => {
-        const errs = {};
-        let valid = true;
-        if (!form.name.trim()) { errs.name = 'Name is required'; valid = false; }
-        if (!form.specialization.trim()) { errs.specialization = 'Required'; valid = false; }
-        if (!form.license_number.trim()) { errs.license_number = 'Required'; valid = false; }
-        if (!form.phone.trim()) { errs.phone = 'Required'; valid = false; }
-        if (!form.email.trim()) { errs.email = 'Required'; valid = false; }
-        setFieldErrors(errs);
-        return valid;
+        if (fieldErrors[name]) {
+            setFieldErrors(prev => ({ ...prev, [name]: '' }));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setServerErrors([]);
-        if (!validateForm()) return;
-
+        if (!validateSurgeonForm(form, setFieldErrors)) return;
         setSubmitting(true);
         try {
             const formData = new FormData();
@@ -207,69 +321,379 @@ const SurgeonModal = ({ surgeon, onClose, onSaved }) => {
         }
     };
 
-    const fieldCls = (fieldName) =>
-        `w-full px-3 py-2 border rounded-lg text-sm transition focus:outline-none focus:ring-2 focus:ring-indigo-400 ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'}`;
-
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between flex-shrink-0">
-                    <h2 className="text-white font-semibold">{surgeon ? 'Edit Surgeon' : 'Add New Surgeon'}</h2>
-                    <button onClick={onClose} className="text-indigo-200 hover:text-white transition-colors"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+        <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                {/* Header */}
+                <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <svg className="w-5 h-5 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <h2 className="text-white font-semibold text-base">Add New Surgeon</h2>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-indigo-200 hover:text-white transition-colors"
+                        aria-label="Close"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
-                <form id="surgeon-form" onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
+                {/* Body */}
+                <form id="create-surgeon-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                     {serverErrors.length > 0 && (
                         <div className="bg-red-50 border border-red-200 p-3 rounded-lg">
                             {serverErrors.map((e, i) => <p key={i} className="text-xs text-red-600 font-medium">{e}</p>)}
                         </div>
                     )}
 
-                    <ImageUpload onImageSelect={setImage} existingImage={surgeon?.profile_picture} />
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Full Name <span className="text-red-500">*</span>
+                        </label>
+                        <input id="surgeon-name" type="text" name="name" value={form.name} onChange={handleChange}
+                            placeholder="Dr. Sarah Connor" className={fieldCls('name')} />
+                        <FieldError fieldErrors={fieldErrors} field="name" />
+                    </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Full Name *</label>
-                        <input name="name" value={form.name} onChange={handleChange} className={fieldCls('name')} />
-                        {fieldErrors.name && <p className="text-[10px] text-red-500 mt-1">{fieldErrors.name}</p>}
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Specialization <span className="text-red-500">*</span>
+                        </label>
+                        <input id="surgeon-specialization" type="text" name="specialization" value={form.specialization}
+                            onChange={handleChange} placeholder="Cardiothoracic Surgery" className={fieldCls('specialization')} />
+                        <FieldError fieldErrors={fieldErrors} field="specialization" />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Licence Number <span className="text-red-500">*</span>
+                        </label>
+                        <input id="surgeon-license" type="text" name="license_number" value={form.license_number}
+                            onChange={handleChange} placeholder="LK-MED-2024-0001" className={fieldCls('license_number')} />
+                        <FieldError fieldErrors={fieldErrors} field="license_number" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Specialization *</label>
-                            <input name="specialization" value={form.specialization} onChange={handleChange} className={fieldCls('specialization')} />
+                            <label className="block text-xs font-medium text-gray-700 mb-1">Years of Experience</label>
+                            <input id="surgeon-yoe" type="number" name="years_of_experience" value={form.years_of_experience}
+                                onChange={handleChange} placeholder="10" min="0" max="60"
+                                className={fieldCls('years_of_experience')} />
+                            <FieldError fieldErrors={fieldErrors} field="years_of_experience" />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Licence Number *</label>
-                            <input name="license_number" value={form.license_number} onChange={handleChange} className={fieldCls('license_number')} />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Phone *</label>
-                            <input name="phone" value={form.phone} onChange={handleChange} className={fieldCls('phone')} />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Experience (Yrs)</label>
-                            <input name="years_of_experience" type="number" value={form.years_of_experience} onChange={handleChange} className={fieldCls('yoe')} />
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                                Phone <span className="text-red-500">*</span>
+                            </label>
+                            <input id="surgeon-phone" type="tel" name="phone" value={form.phone}
+                                onChange={handleChange} placeholder="+94 77 123 4567" className={fieldCls('phone')} />
+                            <FieldError fieldErrors={fieldErrors} field="phone" />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Email *</label>
-                        <input name="email" type="email" value={form.email} onChange={handleChange} className={fieldCls('email')} />
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Email <span className="text-red-500">*</span>
+                        </label>
+                        <input id="surgeon-email" type="email" name="email" value={form.email}
+                            onChange={handleChange} placeholder="surgeon@hospital.com" className={fieldCls('email')} />
+                        <FieldError fieldErrors={fieldErrors} field="email" />
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <input id="avail" type="checkbox" name="is_available" checked={form.is_available} onChange={handleChange} className="w-4 h-4 accent-indigo-600" />
-                        <label htmlFor="avail" className="text-xs font-medium text-gray-700">Available immediately</label>
+                    <div className="flex items-center gap-3">
+                        <input id="surgeon-available" type="checkbox" name="is_available" checked={form.is_available}
+                            onChange={handleChange} className="w-4 h-4 accent-indigo-600 cursor-pointer" />
+                        <label htmlFor="surgeon-available" className="text-xs font-medium text-gray-700 cursor-pointer">
+                            Mark as available immediately
+                        </label>
                     </div>
                 </form>
 
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3 flex-shrink-0">
-                    <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900">Cancel</button>
-                    <button type="submit" form="surgeon-form" disabled={submitting} className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50">
-                        {submitting ? 'Saving...' : (surgeon ? 'Update Changes' : 'Add Surgeon')}
+                {/* Footer */}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                    <button type="button" onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" form="create-surgeon-form" disabled={submitting}
+                        className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        {submitting ? (
+                            <>
+                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                                Saving…
+                            </>
+                        ) : 'Add Surgeon'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Edit Surgeon Modal
+// Created by: M1 (Pasindu) - Day 14
+// ─────────────────────────────────────────────────────────────────────────────
+const EditSurgeonModal = ({ surgeon, onClose, onUpdated }) => {
+    const [form, setForm] = useState({
+        name: surgeon.name ?? '',
+        specialization: surgeon.specialization ?? '',
+        license_number: surgeon.license_number ?? '',
+        years_of_experience: surgeon.years_of_experience ?? '',
+        phone: surgeon.phone ?? '',
+        email: surgeon.email ?? '',
+        is_available: surgeon.is_available ?? true,
+    });
+    const [fieldErrors, setFieldErrors] = useState(EMPTY_FIELD_ERRORS);
+    const [serverErrors, setServerErrors] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
+
+    const fieldCls = buildFieldCls(fieldErrors);
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+        if (fieldErrors[name]) {
+            setFieldErrors(prev => ({ ...prev, [name]: '' }));
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setServerErrors([]);
+        if (!validateSurgeonForm(form, setFieldErrors)) return;
+        setSubmitting(true);
+        try {
+            const result = await surgeonService.updateSurgeon(surgeon.id, form);
+            onUpdated(result.data);
+        } catch (err) {
+            setServerErrors([err.message]);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                {/* Header */}
+                <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <svg className="w-5 h-5 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        <h2 className="text-white font-semibold text-base">Edit Surgeon</h2>
+                    </div>
+                    <button onClick={onClose} className="text-indigo-200 hover:text-white transition-colors" aria-label="Close">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Body */}
+                <form id="edit-surgeon-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                    {serverErrors.length > 0 && (
+                        <div className="rounded-lg bg-red-50 border border-red-200 p-3">
+                            {serverErrors.map((e, i) => (
+                                <p key={i} className="text-xs text-red-600">{e}</p>
+                            ))}
+                        </div>
+                    )}
+
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Full Name <span className="text-red-500">*</span>
+                        </label>
+                        <input id="edit-surgeon-name" type="text" name="name" value={form.name} onChange={handleChange}
+                            className={fieldCls('name')} />
+                        <FieldError fieldErrors={fieldErrors} field="name" />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Specialization <span className="text-red-500">*</span>
+                        </label>
+                        <input id="edit-surgeon-specialization" type="text" name="specialization"
+                            value={form.specialization} onChange={handleChange} className={fieldCls('specialization')} />
+                        <FieldError fieldErrors={fieldErrors} field="specialization" />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Licence Number <span className="text-red-500">*</span>
+                        </label>
+                        <input id="edit-surgeon-license" type="text" name="license_number"
+                            value={form.license_number} onChange={handleChange} className={fieldCls('license_number')} />
+                        <FieldError fieldErrors={fieldErrors} field="license_number" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">Years of Experience</label>
+                            <input id="edit-surgeon-yoe" type="number" name="years_of_experience"
+                                value={form.years_of_experience} onChange={handleChange} min="0" max="60"
+                                className={fieldCls('years_of_experience')} />
+                            <FieldError fieldErrors={fieldErrors} field="years_of_experience" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                                Phone <span className="text-red-500">*</span>
+                            </label>
+                            <input id="edit-surgeon-phone" type="tel" name="phone" value={form.phone}
+                                onChange={handleChange} className={fieldCls('phone')} />
+                            <FieldError fieldErrors={fieldErrors} field="phone" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Email <span className="text-red-500">*</span>
+                        </label>
+                        <input id="edit-surgeon-email" type="email" name="email" value={form.email}
+                            onChange={handleChange} className={fieldCls('email')} />
+                        <FieldError fieldErrors={fieldErrors} field="email" />
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <input id="edit-surgeon-available" type="checkbox" name="is_available" checked={form.is_available}
+                            onChange={handleChange} className="w-4 h-4 accent-indigo-600 cursor-pointer" />
+                        <label htmlFor="edit-surgeon-available" className="text-xs font-medium text-gray-700 cursor-pointer">
+                            Mark as available
+                        </label>
+                    </div>
+                </form>
+
+                {/* Footer */}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                    <button type="button" onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" form="edit-surgeon-form" disabled={submitting}
+                        className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        {submitting ? (
+                            <>
+                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                                Saving…
+                            </>
+                        ) : 'Save Changes'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Delete Surgeon Confirmation Modal
+// Created by: M1 (Pasindu) - Day 14
+// ─────────────────────────────────────────────────────────────────────────────
+const DeleteSurgeonModal = ({ surgeon, onClose, onDeleted }) => {
+    const [deleting, setDeleting] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleDelete = async () => {
+        setError(null);
+        setDeleting(true);
+        try {
+            await surgeonService.deleteSurgeon(surgeon.id);
+            onDeleted(surgeon.id);
+        } catch (err) {
+            setError(err.message);
+            setDeleting(false);
+        }
+    };
+
+    return (
+        <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+                {/* Header */}
+                <div className="bg-red-600 px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <svg className="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        <h2 className="text-white font-semibold text-base">Delete Surgeon</h2>
+                    </div>
+                    <button onClick={onClose} className="text-red-200 hover:text-white transition-colors" aria-label="Close">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Body */}
+                <div className="p-6 space-y-4">
+                    <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-red-100 flex-shrink-0 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-900">
+                                Are you sure you want to delete <span className="font-bold">{surgeon.name}</span>?
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                                This action will deactivate the surgeon record. Their surgery history will be preserved.
+                            </p>
+                        </div>
+                    </div>
+
+                    {error && (
+                        <div className="rounded-lg bg-red-50 border border-red-200 p-3">
+                            <p className="text-xs text-red-600">{error}</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                    <button type="button" onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
+                        Cancel
+                    </button>
+                    <button
+                        id={`confirm-delete-surgeon-${surgeon.id}`}
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="px-5 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                        {deleting ? (
+                            <>
+                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                                Deleting…
+                            </>
+                        ) : 'Confirm Delete'}
                     </button>
                 </div>
             </div>
@@ -282,10 +706,15 @@ const SurgeonModal = ({ surgeon, onClose, onSaved }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const SurgeonsPage = () => {
     const { user } = useAuth();
+
     const [surgeons, setSurgeons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [modal, setModal] = useState({ show: false, surgeon: null });
+
+    // Modal state
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [editingSurgeon, setEditingSurgeon] = useState(null);   // surgeon object to edit
+    const [deletingSurgeon, setDeletingSurgeon] = useState(null); // surgeon object to delete
 
     const [search, setSearch] = useState('');
     const [available, setAvailable] = useState('');
@@ -309,16 +738,27 @@ const SurgeonsPage = () => {
         fetchSurgeons();
     }, [fetchSurgeons]);
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this surgeon record?')) return;
-        try {
-            await surgeonService.deleteSurgeon(id);
-            fetchSurgeons();
-        } catch (err) {
-            alert(err.message);
-        }
+    // ── Handle surgeon created ────────────────────────────────────────────────
+    const handleCreated = (newSurgeon) => {
+        setShowCreateModal(false);
+        setSurgeons(prev => [newSurgeon, ...prev]);
     };
 
+    // ── Handle surgeon updated (Day 14) ──────────────────────────────────────
+    const handleUpdated = (updatedSurgeon) => {
+        setEditingSurgeon(null);
+        setSurgeons(prev =>
+            prev.map(s => (s.id === updatedSurgeon.id ? { ...s, ...updatedSurgeon } : s))
+        );
+    };
+
+    // ── Handle surgeon deleted (Day 14) ──────────────────────────────────────
+    const handleDeleted = (deletedId) => {
+        setDeletingSurgeon(null);
+        setSurgeons(prev => prev.filter(s => s.id !== deletedId));
+    };
+
+    // ── Stats strip ───────────────────────────────────────────────────────────
     const totalAvailable = surgeons.filter(s => s.is_available).length;
 
     return (
@@ -330,8 +770,14 @@ const SurgeonsPage = () => {
                         <p className="text-sm text-gray-500 mt-1">Manage hospital surgeons and profile pictures</p>
                     </div>
                     {canCreate && (
-                        <button onClick={() => setModal({ show: true, surgeon: null })} className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center gap-2">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        <button
+                            id="add-surgeon-btn"
+                            onClick={() => setShowCreateModal(true)}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow transition-colors"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
                             Add Surgeon
                         </button>
                     )}
@@ -354,22 +800,76 @@ const SurgeonsPage = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
-                ) : surgeons.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {surgeons.map(s => <SurgeonCard key={s.id} surgeon={s} onEdit={(sr) => setModal({ show: true, surgeon: sr })} onDelete={handleDelete} />)}
+                ) : error ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <svg className="w-12 h-12 text-red-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <p className="text-gray-600 font-medium">{error}</p>
+                        <button
+                            onClick={fetchSurgeons}
+                            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                        >
+                            Try again
+                        </button>
+                    </div>
+                ) : surgeons.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <p className="text-gray-500 font-medium">No surgeons found</p>
+                        {search || available ? (
+                            <p className="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
+                        ) : canCreate ? (
+                            <button
+                                onClick={() => setShowCreateModal(true)}
+                                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                            >
+                                Add the first surgeon
+                            </button>
+                        ) : null}
                     </div>
                 ) : (
-                    <div className="py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-                        <p className="text-gray-500 font-medium">No results found.</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {surgeons.map(surgeon => (
+                            <SurgeonCard
+                                key={surgeon.id}
+                                surgeon={surgeon}
+                                canEdit={canCreate}
+                                onEdit={setEditingSurgeon}
+                                onDelete={setDeletingSurgeon}
+                            />
+                        ))}
                     </div>
                 )}
             </div>
 
-            {modal.show && (
-                <SurgeonModal
-                    surgeon={modal.surgeon}
-                    onClose={() => setModal({ show: false, surgeon: null })}
-                    onSaved={() => { setModal({ show: false, surgeon: null }); fetchSurgeons(); }}
+            {/* ── Create Surgeon Modal ─────────────────────────────────────── */}
+            {showCreateModal && (
+                <CreateSurgeonModal
+                    onClose={() => setShowCreateModal(false)}
+                    onCreated={handleCreated}
+                />
+            )}
+
+            {/* ── Edit Surgeon Modal (Day 14) ──────────────────────────────── */}
+            {editingSurgeon && (
+                <EditSurgeonModal
+                    surgeon={editingSurgeon}
+                    onClose={() => setEditingSurgeon(null)}
+                    onUpdated={handleUpdated}
+                />
+            )}
+
+            {/* ── Delete Surgeon Modal (Day 14) ────────────────────────────── */}
+            {deletingSurgeon && (
+                <DeleteSurgeonModal
+                    surgeon={deletingSurgeon}
+                    onClose={() => setDeletingSurgeon(null)}
+                    onDeleted={handleDeleted}
                 />
             )}
         </Layout>

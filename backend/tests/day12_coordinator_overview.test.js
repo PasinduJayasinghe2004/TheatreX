@@ -44,7 +44,7 @@ describe('Coordinator Overview API - Day 12', () => {
         name: 'Staff Overview Tester',
         email: `staff.overview${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771100001'
     };
 

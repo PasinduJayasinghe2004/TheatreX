@@ -4,6 +4,7 @@ import { api } from './authService.js';
  * Anaesthetist Service
  * Handles all anaesthetist-related API calls
  * Created by: M5 - Day 13
+ * Updated by: M3 (Janani) - Day 14 (added updateAnaesthetist, deleteAnaesthetist)
  */
 const anaesthetistService = {
     /**
@@ -51,17 +52,14 @@ const anaesthetistService = {
     },
 
     /**
-     * Update an anaesthetist
-     * @param {string} id 
-     * @param {Object|FormData} anaesthetistData 
+     * Update an existing anaesthetist
+     * Created by: M3 (Janani) - Day 14
+     * @param {string|number} id
+     * @param {Object} anaesthetistData
      */
     updateAnaesthetist: async (id, anaesthetistData) => {
         try {
-            const config = (anaesthetistData instanceof FormData)
-                ? { headers: { 'Content-Type': 'multipart/form-data' } }
-                : {};
-
-            const response = await api.put(`/anaesthetists/${id}`, anaesthetistData, config);
+            const response = await api.put(`/anaesthetists/${id}`, anaesthetistData);
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error updating anaesthetist. Please try again.';
@@ -70,8 +68,9 @@ const anaesthetistService = {
     },
 
     /**
-     * Delete an anaesthetist (Soft delete)
-     * @param {string} id 
+     * Delete (soft-delete) an anaesthetist by ID
+     * Created by: M3 (Janani) - Day 14
+     * @param {string|number} id
      */
     deleteAnaesthetist: async (id) => {
         try {

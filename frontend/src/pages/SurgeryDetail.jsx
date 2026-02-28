@@ -288,7 +288,7 @@ const SurgeryDetail = () => {
                         <div className="flex flex-col sm:flex-row justify-between gap-4">
                             {/* Left: Title & badges */}
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">
+                                <h1 className="text-2xl font-bold text-gray-900" data-testid="surgery-type-title">
                                     {surgery.surgery_type}
                                 </h1>
                                 <p className="text-gray-500 mt-1">Surgery #{surgery.id}</p>
@@ -299,6 +299,7 @@ const SurgeryDetail = () => {
                                             status={surgery.status}
                                             size="md"
                                             onClick={allowedTransitions.length > 0 ? () => setShowStatusMenu(!showStatusMenu) : undefined}
+                                            data-testid="status-badge"
                                         />
                                         {allowedTransitions.length > 0 && (
                                             <ChevronDown
@@ -337,6 +338,7 @@ const SurgeryDetail = () => {
 
                                     <span
                                         className={`px-3 py-1 rounded-full text-xs font-semibold border capitalize ${getPriorityStyle(surgery.priority)}`}
+                                        data-testid="priority-badge"
                                     >
                                         {surgery.priority || 'Routine'}
                                     </span>

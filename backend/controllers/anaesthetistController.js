@@ -1,4 +1,5 @@
 import * as AnaesthetistRecord from '../models/anaesthetistModel.js';
+import { pool } from '../config/database.js';
 
 /**
  * @desc    Get all anaesthetists
@@ -89,96 +90,228 @@ export const createAnaesthetist = async (req, res) => {
 };
 
 /**
- * @desc    Update anaesthetist
- * @route   PUT /api/anaesthetists/:id
+ * @desc    Get anaesthetist by ID
+ * @route   GET /api/anaesthetists/:id
  * @access  Private (Coordinator/Admin)
+ * Created by: M3 (Janani) - Day 14
  */
-export const updateAnaesthetist = async (req, res) => {
+export const getAnaesthetistById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference, is_available } = req.body;
-
-        let profile_picture = req.body.profile_picture;
-        if (req.file) {
-            profile_picture = `/uploads/profiles/${req.file.filename}`;
+        const anaesthetistId = parseInt(id, 10);
+        if (isNaN(anaesthetistId) || anaesthetistId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid anaesthetist ID. Must be a positive integer.',
+            });
         }
 
-        const query = `
-            UPDATE anaesthetists
-            SET 
-                name = COALESCE($1, name),
-                email = COALESCE($2, email),
-                phone = COALESCE($3, phone),
-                specialization = COALESCE($4, specialization),
-                license_number = COALESCE($5, license_number),
-                years_of_experience = COALESCE($6, years_of_experience),
-                qualification = COALESCE($7, qualification),
-                shift_preference = COALESCE($8, shift_preference),
-                is_available = COALESCE($9, is_available),
-                profile_picture = COALESCE($10, profile_picture),
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = $11 AND is_active = TRUE
-            RETURNING *
-        `;
-
-        const values = [
-            name, email, phone, specialization, license_number,
-            years_of_experience, qualification, shift_preference,
-            is_available === undefined ? null : is_available,
-            profile_picture,
-            id
-        ];
-
-        const { rows } = await AnaesthetistRecord.pool.query(query, values);
-
-        if (rows.length === 0) {
+        const anaesthetist = await AnaesthetistRecord.getAnaesthetistById(anaesthetistId);
+        if (!anaesthetist || !anaesthetist.is_active) {
             return res.status(404).json({
                 success: false,
-                message: 'Anaesthetist not found'
+                message: 'Anaesthetist not found',
             });
         }
 
         res.status(200).json({
             success: true,
-            message: 'Anaesthetist updated successfully',
-            data: rows[0]
+            data: anaesthetist,
         });
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Error updating anaesthetist',
-            error: error.message
+            message: 'Error fetching anaesthetist',
+            error: error.message,
         });
     }
 };
 
 /**
- * @desc    Delete anaesthetist (Soft delete)
+ * @desc    Update anaesthetist details (partial update)
+ * @route   PUT /api/anaesthetists/:id
+ * @access  Private (Coordinator/Admin)
+ * Created by: M3 (Janani) - Day 14
+ */
+export const updateAnaesthetist = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // 1. Validate ID
+        const anaesthetistId = parseInt(id, 10);
+        if (isNaN(anaesthetistId) || anaesthetistId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid anaesthetist ID. Must be a positive integer.',
+            });
+        }
+
+        // 2. Check anaesthetist exists and is active
+        const existing = await pool.query(
+            'SELECT * FROM anaesthetists WHERE id = $1 AND is_active = TRUE',
+            [anaesthetistId]
+        );
+        if (existing.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Anaesthetist not found',
+            });
+        }
+
+        const current = existing.rows[0];
+
+        // 3. Merge with existing values (partial update)
+        const {
+            name = current.name,
+            email = current.email,
+            phone = current.phone,
+            specialization = current.specialization,
+            license_number = current.license_number,
+            years_of_experience = current.years_of_experience,
+            qualification = current.qualification,
+            is_available = current.is_available,
+            shift_preference = current.shift_preference,
+            notes = current.notes,
+        } = req.body;
+
+        // 4. Business-rule validations
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email && !emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: ['email must be a valid email address'],
+            });
+        }
+
+        if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
+            const yoe = Number(years_of_experience);
+            if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Validation failed',
+                    errors: ['years_of_experience must be a non-negative integer'],
+                });
+            }
+        }
+
+        // 5. Run UPDATE
+        const updateQuery = `
+            UPDATE anaesthetists
+            SET
+                name                = $1,
+                email               = $2,
+                phone               = $3,
+                specialization      = $4,
+                license_number      = $5,
+                years_of_experience = $6,
+                qualification       = $7,
+                is_available        = $8,
+                shift_preference    = $9,
+                notes               = $10,
+                updated_at          = NOW()
+            WHERE id = $11 AND is_active = TRUE
+            RETURNING *
+        `;
+
+        const values = [
+            name?.trim?.() ?? name,
+            email?.trim?.()?.toLowerCase?.() ?? email,
+            phone?.trim?.() ?? phone,
+            specialization?.trim?.() ?? specialization,
+            license_number?.trim?.() ?? license_number,
+            years_of_experience !== '' && years_of_experience !== null
+                ? parseInt(years_of_experience, 10)
+                : null,
+            qualification?.trim?.() ?? qualification,
+            is_available,
+            shift_preference,
+            notes?.trim?.() ?? notes,
+            anaesthetistId,
+        ];
+
+        const { rows } = await pool.query(updateQuery, values);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Anaesthetist updated successfully',
+            data: rows[0],
+        });
+    } catch (error) {
+        console.error('Error updating anaesthetist:', error);
+
+        if (error.code === '23505' && error.constraint?.includes('email')) {
+            return res.status(409).json({
+                success: false,
+                message: 'An anaesthetist with this email already exists',
+            });
+        }
+
+        if (error.code === '23505' && error.constraint?.includes('license_number')) {
+            return res.status(409).json({
+                success: false,
+                message: 'An anaesthetist with this licence number already exists',
+            });
+        }
+
+        if (error.code === '23505') {
+            return res.status(409).json({
+                success: false,
+                message: 'Duplicate entry — email or licence number already registered',
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: 'Error updating anaesthetist',
+            error: error.message,
+        });
+    }
+};
+
+/**
+ * @desc    Soft-delete an anaesthetist (sets is_active = FALSE)
  * @route   DELETE /api/anaesthetists/:id
- * @access  Private (Admin)
+ * @access  Private (Coordinator/Admin)
+ * Created by: M3 (Janani) - Day 14
  */
 export const deleteAnaesthetist = async (req, res) => {
     try {
         const { id } = req.params;
-        const query = `UPDATE anaesthetists SET is_active = FALSE WHERE id = $1 RETURNING *`;
-        const { rows } = await AnaesthetistRecord.pool.query(query, [id]);
+
+        const anaesthetistId = parseInt(id, 10);
+        if (isNaN(anaesthetistId) || anaesthetistId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid anaesthetist ID. Must be a positive integer.',
+            });
+        }
+
+        const { rows } = await pool.query(
+            `UPDATE anaesthetists
+             SET is_active = FALSE, updated_at = NOW()
+             WHERE id = $1 AND is_active = TRUE
+             RETURNING id, name`,
+            [anaesthetistId]
+        );
 
         if (rows.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'Anaesthetist not found'
+                message: 'Anaesthetist not found',
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
-            message: 'Anaesthetist deleted successfully'
+            message: `Anaesthetist "${rows[0].name}" deleted successfully`,
         });
     } catch (error) {
-        res.status(500).json({
+        console.error('Error deleting anaesthetist:', error);
+        return res.status(500).json({
             success: false,
             message: 'Error deleting anaesthetist',
-            error: error.message
+            error: error.message,
         });
     }
 };

@@ -15,7 +15,7 @@
 import { useState, useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import StatsCard from '../components/StatsCard'; // Keeping for reference or other uses
+
 import SummaryCard from '../components/SummaryCard';
 import StatusBadge from '../components/StatusBadge';
 import { getDashboardStats, getDashboardSummary } from '../services/dashboardService';
@@ -207,11 +207,6 @@ const Dashboard = () => {
         }
     };
 
-    // Calculate today's stats
-    const todaysSurgeries = surgeries.length;
-    const yesterdayComparison = stats?.yesterdayComparison ?? null;
-    const staffOnDuty = stats?.staffOnDuty ?? null;
-    const avgDuration = stats?.avgDuration ?? null;
 
     // Get upcoming surgeries (scheduled, not in progress)
     const upcomingSurgeries = surgeries
@@ -273,7 +268,7 @@ const Dashboard = () => {
                 <div className="bg-white border-b border-gray-100 px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Theatre Management Dashboard</h1>
+                            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-title">Theatre Management Dashboard</h1>
                             <p className="text-sm text-gray-500 mt-1">Real-time monitoring and scheduling overview</p>
                         </div>
                         <div className="flex items-center gap-4">
@@ -281,6 +276,7 @@ const Dashboard = () => {
                             <button
                                 aria-label="Search"
                                 title="Search"
+                                data-testid="dashboard-search-btn"
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                                 onClick={() => navigate('/surgeries')}
                             >
@@ -292,6 +288,7 @@ const Dashboard = () => {
                             <button
                                 aria-label="Notifications"
                                 title="Notifications (coming soon)"
+                                data-testid="dashboard-notifications-btn"
                                 className="p-2 rounded-full transition-colors opacity-50 cursor-not-allowed"
                                 disabled
                             >
@@ -329,7 +326,8 @@ const Dashboard = () => {
                         {/* Staff on Duty */}
                         <SummaryCard
                             label="Staff on Duty"
-                            value={summary?.today_stats?.staff_on_duty?.total ?? 0}
+                            value={summary?.today_stats?.staff_on_duty?.total ?? '--'}
+                            comparison={summary?.today_stats?.yesterday_comparison}
                             colour="bg-indigo-50"
                             icon={
                                 <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

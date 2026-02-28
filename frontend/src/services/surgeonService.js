@@ -4,6 +4,7 @@
 // Handles all surgeon-related API calls
 // Created by: M1 (Pasindu) - Day 13
 // Updated by: M2 (Chandeepa) - Day 13 (added getSurgeonById)
+// Updated by: M1 (Pasindu)   - Day 14 (added updateSurgeon, deleteSurgeon)
 //
 // FEATURES:
 // - Get all surgeons (with optional search / available filters)
@@ -80,16 +81,12 @@ const surgeonService = {
     },
 
     // ========================================
-    // Update a surgeon
-    // Supports FormData for image upload
+    // Update an existing surgeon
+    // Created by: M1 (Pasindu) - Day 14
     // ========================================
     updateSurgeon: async (id, surgeonData) => {
         try {
-            const config = (surgeonData instanceof FormData)
-                ? { headers: { 'Content-Type': 'multipart/form-data' } }
-                : {};
-
-            const response = await api.put(`/surgeons/${id}`, surgeonData, config);
+            const response = await api.put(`/surgeons/${id}`, surgeonData);
             return response.data;
         } catch (error) {
             const message =
@@ -99,7 +96,8 @@ const surgeonService = {
     },
 
     // ========================================
-    // Delete a surgeon (Soft delete)
+    // Delete (soft-delete) a surgeon by ID
+    // Created by: M1 (Pasindu) - Day 14
     // ========================================
     deleteSurgeon: async (id) => {
         try {

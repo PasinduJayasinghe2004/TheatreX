@@ -94,7 +94,7 @@ const NurseForm = ({ onSuccess, onClose }) => {
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-gray-900">Add New Nurse</h2>
-                            <p className="text-sm text-gray-500">Fill in the nurse's details below</p>
+                            <p className="text-sm text-gray-500">Fill in the nurse&apos;s details below</p>
                         </div>
                     </div>
                     <button

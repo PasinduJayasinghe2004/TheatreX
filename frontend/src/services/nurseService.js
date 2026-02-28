@@ -3,6 +3,7 @@
 // ============================================================================
 // Handles all nurse-related API calls
 // Created by: M3 (Janani) - Day 13
+// Updated by: M2 (Chandeepa) - Day 14 (added updateNurse, deleteNurse)
 //
 // FEATURES:
 // - Get all nurses (with optional search / available / shift filters)
@@ -78,16 +79,12 @@ const nurseService = {
     },
 
     // ========================================
-    // Update a nurse
-    // Supports FormData for image upload
+    // Update an existing nurse
+    // Created by: M2 (Chandeepa) - Day 14
     // ========================================
     updateNurse: async (id, nurseData) => {
         try {
-            const config = (nurseData instanceof FormData)
-                ? { headers: { 'Content-Type': 'multipart/form-data' } }
-                : {};
-
-            const response = await api.put(`/nurses/${id}`, nurseData, config);
+            const response = await api.put(`/nurses/${id}`, nurseData);
             return response.data;
         } catch (error) {
             const message =
@@ -97,7 +94,8 @@ const nurseService = {
     },
 
     // ========================================
-    // Delete a nurse (Soft delete)
+    // Delete (soft-delete) a nurse by ID
+    // Created by: M2 (Chandeepa) - Day 14
     // ========================================
     deleteNurse: async (id) => {
         try {

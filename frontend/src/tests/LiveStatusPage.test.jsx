@@ -67,7 +67,7 @@ const mockLiveResponse = {
                 duration_minutes: 120,
                 manual_progress: 30,
                 priority: 'high',
-                auto_progress: 55,
+                auto_progress: 45,
                 elapsed_minutes: 66,
                 remaining_minutes: 54,
                 is_overdue: false,
@@ -116,6 +116,14 @@ describe('LiveStatusPage', () => {
         vi.useFakeTimers();
         vi.clearAllMocks();
         theatreService.getLiveStatus.mockResolvedValue(mockLiveResponse);
+        theatreService.getTheatreStats.mockResolvedValue({
+            success: true,
+            data: {
+                total_theatres: 4,
+                utilization: { utilization_rate: 25 },
+                average_surgery_progress: 60
+            }
+        });
     });
 
     afterEach(() => {
@@ -161,7 +169,7 @@ describe('LiveStatusPage', () => {
 
         expect(screen.getByText('Cardiac Bypass')).toBeInTheDocument();
         expect(screen.getByText(/John Doe/)).toBeInTheDocument();
-        expect(screen.getByText('55%')).toBeInTheDocument();
+        expect(screen.getByText('45%')).toBeInTheDocument();
     });
 
     it('should display "No surgery in progress" for idle theatres', async () => {
@@ -177,6 +185,7 @@ describe('LiveStatusPage', () => {
 
     it('should show an error message when the API fails', async () => {
         theatreService.getLiveStatus.mockRejectedValue(new Error('Server unreachable'));
+        theatreService.getTheatreStats.mockResolvedValue({ success: false });
         renderPage();
         await flushPromises();
 

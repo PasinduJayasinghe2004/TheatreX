@@ -22,8 +22,7 @@ import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
 import CoordinatorDashboard from '../pages/CoordinatorDashboard'; // M1 - Day 12
 import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
 import NursesPage from '../pages/NursesPage'; // M3 - Day 13
-import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M5 - Day 14
-import TechniciansPage from '../pages/TechniciansPage'; // M5 - Day 14
+import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -152,17 +151,10 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Anaesthetists Page - M5 - Day 14 */}
+            {/* Anaesthetists Page - M6 (Dinil) Day 13 */}
             <Route path="/staff/anaesthetists" element={
                 <ProtectedRoute>
                     <AnaesthetistsPage />
-                </ProtectedRoute>
-            } />
-
-            {/* Technicians Page - M5 - Day 14 */}
-            <Route path="/staff/technicians" element={
-                <ProtectedRoute>
-                    <TechniciansPage />
                 </ProtectedRoute>
             } />
 
