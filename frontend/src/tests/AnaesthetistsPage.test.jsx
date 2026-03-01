@@ -90,7 +90,7 @@ describe('AnaesthetistsPage Tests (Day 14)', () => {
 
     // ── Loading State ────────────────────────────────────────────────────────
     it('should show loading skeletons while fetching', () => {
-        anaesthetistService.getAllAnaesthetists.mockReturnValue(new Promise(() => {})); // never resolves
+        anaesthetistService.getAllAnaesthetists.mockReturnValue(new Promise(() => { })); // never resolves
         renderPage();
         const skeletons = document.querySelectorAll('.animate-pulse');
         expect(skeletons.length).toBeGreaterThan(0);
@@ -123,8 +123,8 @@ describe('AnaesthetistsPage Tests (Day 14)', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Total Anaesthetists')).toBeInTheDocument();
-            expect(screen.getByText('Available')).toBeInTheDocument();
-            expect(screen.getByText('Unavailable')).toBeInTheDocument();
+            expect(screen.getAllByText('Available').length).toBeGreaterThan(0);
+            expect(screen.getAllByText('Unavailable').length).toBeGreaterThan(0);
             // 3 total, 2 available, 1 unavailable
             expect(screen.getByText('3')).toBeInTheDocument();
             expect(screen.getByText('2')).toBeInTheDocument();
