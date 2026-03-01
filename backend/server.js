@@ -24,6 +24,7 @@ import { createNursesTable } from './models/nurseModel.js';
 import { createTechniciansTable } from './models/technicianModel.js';
 import { createTheatresTable } from './models/theatreModel.js'; // M2 - Day 8
 import { createSurgeryNursesTable } from './models/surgeryNurseModel.js'; // M2 - Day 9
+import { createPatientsTable } from './models/patientModel.js'; // M1 - Day 15
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
@@ -32,6 +33,7 @@ import dashboardRoutes from './routes/dashboardRoutes.js'; // M4 - Day 7
 import theatreRoutes from './routes/theatreRoutes.js'; // M2 - Day 8
 import nurseRoutes from './routes/nurseRoutes.js'; // M4 - Day 13
 import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 14
+import patientRoutes from './routes/patientRoutes.js'; // M1 - Day 15
 
 // Load environment variables
 dotenv.config();
@@ -59,6 +61,7 @@ app.use('/api/dashboard', dashboardRoutes); // Dashboard routes - M4 Day 7
 app.use('/api/theatres', theatreRoutes); // Theatre routes - M2 Day 8
 app.use('/api/nurses', nurseRoutes); // Nurse routes - M4 Day 13
 app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 14
+app.use('/api/patients', patientRoutes); // Patient routes - M1 Day 15
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -132,6 +135,7 @@ const startServer = async () => {
             await createTechniciansTable();
             await createTheatresTable(); // M2 - Day 8
             await createSurgeryNursesTable(); // M2 - Day 9
+            await createPatientsTable(); // M1 - Day 15
         }
 
         // Start listening
