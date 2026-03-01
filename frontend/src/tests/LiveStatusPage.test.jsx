@@ -1,6 +1,8 @@
 // ============================================================================
 // Live Status Page Tests – M3 (Janani) – Day 11
 // ============================================================================
+// Fixed by: M6 (Dinil) – Day 11 Bug Fix
+//
 // Tests for the LiveStatusPage component:
 // - Loading state
 // - Successful data display (theatres + summary)
@@ -8,11 +10,15 @@
 // - Pause / Resume controls
 // - Manual refresh button
 //
+// Bug fixed: `waitFor` internally uses real setTimeout which hangs when
+// vi.useFakeTimers() is active. Replaced with `act(async () => {})` to
+// flush microtasks / promise chains without relying on real timers.
+//
 // Run with: npx vitest run src/tests/LiveStatusPage.test.jsx
 // ============================================================================
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import LiveStatusPage from '../pages/LiveStatusPage';
 import theatreService from '../services/theatreService';
@@ -61,7 +67,7 @@ const mockLiveResponse = {
                 duration_minutes: 120,
                 manual_progress: 30,
                 priority: 'high',
-                auto_progress: 55,
+                auto_progress: 45,
                 elapsed_minutes: 66,
                 remaining_minutes: 54,
                 is_overdue: false,
@@ -96,6 +102,13 @@ const renderPage = () =>
         </BrowserRouter>
     );
 
+/** Flush all pending React state updates + microtasks */
+const flushPromises = async () => {
+    await act(async () => {
+        await Promise.resolve();
+    });
+};
+
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 describe('LiveStatusPage', () => {
@@ -103,6 +116,14 @@ describe('LiveStatusPage', () => {
         vi.useFakeTimers();
         vi.clearAllMocks();
         theatreService.getLiveStatus.mockResolvedValue(mockLiveResponse);
+        theatreService.getTheatreStats.mockResolvedValue({
+            success: true,
+            data: {
+                total_theatres: 4,
+                utilization: { utilization_rate: 25 },
+                average_surgery_progress: 60
+            }
+        });
     });
 
     afterEach(() => {
@@ -113,7 +134,7 @@ describe('LiveStatusPage', () => {
 
     it('should show a loading spinner before data arrives', () => {
         // Make the service hang
-        theatreService.getLiveStatus.mockReturnValue(new Promise(() => {}));
+        theatreService.getLiveStatus.mockReturnValue(new Promise(() => { }));
         renderPage();
 
         // The heading should already be visible
@@ -124,95 +145,89 @@ describe('LiveStatusPage', () => {
 
     it('should render theatre names after data loads', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            expect(screen.getByText('Theatre A')).toBeInTheDocument();
-            expect(screen.getByText('Theatre B')).toBeInTheDocument();
-            expect(screen.getByText('Theatre C')).toBeInTheDocument();
-            expect(screen.getByText('Theatre D')).toBeInTheDocument();
-        });
+        expect(screen.getByText('Theatre A')).toBeInTheDocument();
+        expect(screen.getByText('Theatre B')).toBeInTheDocument();
+        expect(screen.getByText('Theatre C')).toBeInTheDocument();
+        expect(screen.getByText('Theatre D')).toBeInTheDocument();
     });
 
     it('should display summary counts', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            // Available count = 2
-            expect(screen.getByText('2')).toBeInTheDocument();
-            // In use count = 1, maintenance count = 1 shown in summary cards
-            expect(screen.getAllByText('1').length).toBeGreaterThanOrEqual(2);
-        });
+        // Available count = 2
+        expect(screen.getByText('2')).toBeInTheDocument();
+        // In use count = 1, maintenance count = 1 shown in summary cards
+        expect(screen.getAllByText('1').length).toBeGreaterThanOrEqual(2);
     });
 
     it('should show surgery info for theatres with a current surgery', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            expect(screen.getByText('Cardiac Bypass')).toBeInTheDocument();
-            expect(screen.getByText(/John Doe/)).toBeInTheDocument();
-            expect(screen.getByText('55%')).toBeInTheDocument();
-        });
+        expect(screen.getByText('Cardiac Bypass')).toBeInTheDocument();
+        expect(screen.getByText(/John Doe/)).toBeInTheDocument();
+        expect(screen.getByText('45%')).toBeInTheDocument();
     });
 
     it('should display "No surgery in progress" for idle theatres', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            const labels = screen.getAllByText('No surgery in progress');
-            // 3 out of 4 theatres have no current surgery
-            expect(labels.length).toBe(3);
-        });
+        const labels = screen.getAllByText('No surgery in progress');
+        // 3 out of 4 theatres have no current surgery
+        expect(labels.length).toBe(3);
     });
 
     // ── Error state ──────────────────────────────────────────────────────
 
     it('should show an error message when the API fails', async () => {
         theatreService.getLiveStatus.mockRejectedValue(new Error('Server unreachable'));
+        theatreService.getTheatreStats.mockResolvedValue({ success: false });
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            expect(screen.getByText('Polling Error')).toBeInTheDocument();
-            expect(screen.getByText('Server unreachable')).toBeInTheDocument();
-        });
+        expect(screen.getByText('Polling Error')).toBeInTheDocument();
+        expect(screen.getByText('Server unreachable')).toBeInTheDocument();
     });
 
     // ── Controls ─────────────────────────────────────────────────────────
 
     it('should have Refresh and Pause buttons', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            expect(screen.getByText('Refresh')).toBeInTheDocument();
-            expect(screen.getByText('Pause')).toBeInTheDocument();
-        });
+        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(screen.getByText('Pause')).toBeInTheDocument();
     });
 
     it('should toggle to Resume when Pause is clicked', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            expect(screen.getByText('Pause')).toBeInTheDocument();
+        expect(screen.getByText('Pause')).toBeInTheDocument();
+
+        await act(async () => {
+            fireEvent.click(screen.getByText('Pause'));
         });
 
-        fireEvent.click(screen.getByText('Pause'));
-
-        await waitFor(() => {
-            expect(screen.getByText('Resume')).toBeInTheDocument();
-            expect(screen.getByText('Polling paused')).toBeInTheDocument();
-        });
+        expect(screen.getByText('Resume')).toBeInTheDocument();
+        expect(screen.getByText('Polling paused')).toBeInTheDocument();
     });
 
     it('should call getLiveStatus again when Refresh is clicked', async () => {
         renderPage();
+        await flushPromises();
 
-        await waitFor(() => {
-            expect(theatreService.getLiveStatus).toHaveBeenCalledTimes(1);
+        expect(theatreService.getLiveStatus).toHaveBeenCalledTimes(1);
+
+        await act(async () => {
+            fireEvent.click(screen.getByText('Refresh'));
+            await Promise.resolve();
         });
 
-        fireEvent.click(screen.getByText('Refresh'));
-
-        await waitFor(() => {
-            expect(theatreService.getLiveStatus).toHaveBeenCalledTimes(2);
-        });
+        expect(theatreService.getLiveStatus).toHaveBeenCalledTimes(2);
     });
 });

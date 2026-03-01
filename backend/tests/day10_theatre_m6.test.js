@@ -13,7 +13,7 @@
 // Run with: npm test -- --testPathPattern=day10_theatre_m6
 // ============================================================================
 
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 
@@ -41,7 +41,7 @@ describe('M6 Theatre API Tests – Day 10', () => {
         name: 'M6 Staff User',
         email: `m6.staff.${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0779000002'
     };
 

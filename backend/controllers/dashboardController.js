@@ -120,3 +120,104 @@ export const getDashboardStats = async (req, res) => {
         });
     }
 };
+
+// ============================================================================
+// GET DASHBOARD SUMMARY (Coordinator Overview)
+// ============================================================================
+// @desc    Get a high-level summary for the coordinator dashboard
+// @route   GET /api/dashboard/summary
+// @access  Protected
+// Created by: M5 (Inthusha) - Day 12
+// ============================================================================
+export const getDashboardSummary = async (req, res) => {
+    try {
+        // 1. Theatre status counts
+        const theatreStatusQuery = `
+            SELECT status, COUNT(*) as count
+            FROM theatres
+            WHERE is_active = TRUE
+            GROUP BY status
+        `;
+
+        // 2. Overdue surgeries count
+        // Overdue = in_progress AND (scheduled_time + duration < NOW)
+        const overdueQuery = `
+            SELECT COUNT(*) as count
+            FROM surgeries
+            WHERE status = 'in_progress'
+            AND (scheduled_time + (duration_minutes || ' minutes')::interval) < CURRENT_TIME
+        `;
+
+        // 3. Today's total surgeries
+        const todaySurgeriesQuery = `
+            SELECT COUNT(*) as count
+            FROM surgeries
+            WHERE scheduled_date = CURRENT_DATE
+        `;
+
+        // 4. Staff on duty counts (simplified)
+        const staffOnDutyQuery = `
+            SELECT 
+                (SELECT COUNT(*) FROM surgeons WHERE is_active = TRUE) as surgeons,
+                (SELECT COUNT(*) FROM nurses WHERE is_active = TRUE) as nurses,
+                (SELECT COUNT(*) FROM anaesthetists WHERE is_active = TRUE) as anaesthetists,
+                (SELECT COUNT(*) FROM technicians WHERE is_active = TRUE) as technicians
+        `;
+
+        const [theatreResult, overdueResult, todayResult, staffResult] = await Promise.all([
+            pool.query(theatreStatusQuery),
+            pool.query(overdueQuery),
+            pool.query(todaySurgeriesQuery),
+            pool.query(staffOnDutyQuery)
+        ]);
+
+        // Process theatre counts
+        const theatreStatus = {
+            total: 0,
+            available: 0,
+            in_use: 0,
+            maintenance: 0,
+            cleaning: 0
+        };
+
+        theatreResult.rows.forEach(row => {
+            const count = parseInt(row.count);
+            theatreStatus[row.status] = count;
+            theatreStatus.total += count;
+        });
+
+        // Calculate utilization
+        const utilization_rate = theatreStatus.total > 0
+            ? parseFloat(((theatreStatus.in_use / theatreStatus.total) * 100).toFixed(1))
+            : 0;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                theatre_summary: {
+                    ...theatreStatus,
+                    utilization_rate,
+                    overdue_count: parseInt(overdueResult.rows[0]?.count || 0)
+                },
+                today_stats: {
+                    total_surgeries: parseInt(todayResult.rows[0]?.count || 0),
+                    staff_on_duty: {
+                        surgeons: parseInt(staffResult.rows[0]?.surgeons || 0),
+                        nurses: parseInt(staffResult.rows[0]?.nurses || 0),
+                        anaesthetists: parseInt(staffResult.rows[0]?.anaesthetists || 0),
+                        technicians: parseInt(staffResult.rows[0]?.technicians || 0),
+                        total: Object.values(staffResult.rows[0] || {}).reduce((a, b) => parseInt(a) + parseInt(b), 0)
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching dashboard summary:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching dashboard summary',
+            error: error.message
+        });
+    }
+};

@@ -31,9 +31,9 @@ import testRoutes from './routes/testRoutes.js';
 import surgeryRoutes from './routes/surgeryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js'; // M4 - Day 7
 import theatreRoutes from './routes/theatreRoutes.js'; // M2 - Day 8
-import nurseRoutes from './routes/nurseRoutes.js'; // M4 - Day 13
-import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 14
-import patientRoutes from './routes/patientRoutes.js'; // M1 - Day 15
+import surgeonRoutes from './routes/surgeonRoutes.js'; // M1 - Day 13
+import nurseRoutes from './routes/nurseRoutes.js'; // M3 - Day 13
+import anaesthetistRoutes from './routes/anaesthetistRoutes.js'; // M6 - Day 13
 
 // Load environment variables
 dotenv.config();
@@ -52,6 +52,9 @@ app.use(express.json());
 // extended: true allows for rich objects and arrays to be encoded
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
@@ -59,9 +62,9 @@ app.use('/api/test', testRoutes); // RBAC test routes - M4 Day 4
 app.use('/api/surgeries', surgeryRoutes); // Surgery routes - M1 Day 5
 app.use('/api/dashboard', dashboardRoutes); // Dashboard routes - M4 Day 7
 app.use('/api/theatres', theatreRoutes); // Theatre routes - M2 Day 8
-app.use('/api/nurses', nurseRoutes); // Nurse routes - M4 Day 13
-app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 14
-app.use('/api/patients', patientRoutes); // Patient routes - M1 Day 15
+app.use('/api/surgeons', surgeonRoutes); // Surgeon routes - M1 Day 13
+app.use('/api/nurses', nurseRoutes); // Nurse routes - M3 Day 13
+app.use('/api/anaesthetists', anaesthetistRoutes); // Anaesthetist routes - M6 Day 13
 
 // Health check route
 app.get('/api/health', (req, res) => {

@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input } from '../components/ui';
 import axios from 'axios';
+import theatrexLogo from '../assets/theatrex-logo.svg';
 
 /**
  * Register Component
@@ -185,7 +186,7 @@ const Register = () => {
                 {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-                        <span className="text-4xl">🎭</span>
+                        <img src={theatrexLogo} alt="TheatreX Logo" className="w-10 h-10" />
                         TheatreX
                     </h1>
                     <p className="text-gray-600">Create your account</p>

@@ -6,6 +6,7 @@
 // Updated by: M1 (Pasindu) - Day 11 (Surgery progress update)
 // Updated by: M2 (Chandeepa) - Day 11 (Auto-progress calculation)
 // Updated by: M4 (Oneli)    - Day 11 (Theatre duration calculation)
+// Updated by: M1 (Pasindu) - Day 12 (Coordinator overview)
 //
 // FEATURES:
 // - Get all theatres (with optional status / type filters)
@@ -15,6 +16,7 @@
 // - Get auto-calculated progress (M2 Day 11)
 // - Live status polling (M3 Day 11)
 // - Theatre duration calculation (M4 Day 11)
+// - Coordinator overview (M1 Day 12)
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -166,17 +168,45 @@ const theatreService = {
     },
 
     // ========================================
-    // Toggle maintenance mode for a theatre
-    // Created by: M4 (Oneli) - Day 12
+    // Get theatre summary statistics
+    // Created by: M5 (Inthusha) - Day 11
     // ========================================
-    toggleMaintenanceMode: async (id, enable, reason = null) => {
+    getTheatreStats: async () => {
         try {
-            const body = { enable };
-            if (reason) body.reason = reason;
-            const response = await api.put(`/theatres/${id}/maintenance`, body);
+            const response = await api.get('/theatres/stats');
             return response.data;
         } catch (error) {
-            const message = error.response?.data?.message || 'Error toggling maintenance mode. Please try again.';
+            const message = error.response?.data?.message || 'Error fetching theatre stats. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get coordinator overview of all theatres
+    // Returns all theatres + current surgery (enriched with auto-progress)
+    // plus a summary object — coordinator/admin only
+    // Created by: M1 (Pasindu) - Day 12
+    // ========================================
+    getCoordinatorOverview: async () => {
+        try {
+            const response = await api.get('/theatres/coordinator-overview');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching coordinator overview. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Quick update theatre status (One-click)
+    // Created by: M2 (Chandeepa) - Day 12
+    // ========================================
+    quickUpdateStatus: async (id, status) => {
+        try {
+            const response = await api.patch(`/theatres/${id}/quick-status`, { status });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating theatre status. Please try again.';
             throw new Error(message);
         }
     }
