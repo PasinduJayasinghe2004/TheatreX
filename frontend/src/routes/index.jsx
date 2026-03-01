@@ -23,6 +23,7 @@ import CoordinatorDashboard from '../pages/CoordinatorDashboard'; // M1 - Day 12
 import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
 import NursesPage from '../pages/NursesPage'; // M3 - Day 13
 import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
+import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
