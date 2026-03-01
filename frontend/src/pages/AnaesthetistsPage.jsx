@@ -22,6 +22,10 @@ import { useAuth } from '../context/AuthContext';
 // Small helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Small helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
 /** Availability pill badge */
 const AvailBadge = ({ available }) =>
     available ? (
@@ -32,11 +36,10 @@ const AvailBadge = ({ available }) =>
     ) : (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
-            Unavailable
+            Busy
         </span>
     );
 
-/** Loading skeleton card */
 const SkeletonCard = () => (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 animate-pulse">
         <div className="flex items-start gap-4">
@@ -67,8 +70,7 @@ const EMPTY_FIELD_ERRORS = {
 };
 
 const buildFieldCls = (fieldErrors) => (fieldName) =>
-    `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition ${
-        fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
+    `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
     }`;
 
 const FieldError = ({ fieldErrors, field }) =>
@@ -132,13 +134,30 @@ const AnaesthetistCard = ({ anaesthetist, canEdit, onEdit, onDelete }) => {
         .toUpperCase()
         .slice(0, 2);
 
+    const profilePic = anaesthetist.profile_picture
+        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${anaesthetist.profile_picture}`
+        : null;
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5 relative group">
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <button onClick={() => onEdit(anaesthetist)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-blue-600 hover:border-blue-200 shadow-sm transition-all focus:outline-none">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </button>
+                <button onClick={() => onDelete(anaesthetist.id)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:border-red-200 shadow-sm transition-all focus:outline-none">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+            </div>
+
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-blue-700">{initials}</span>
-                    </div>
+                    {profilePic ? (
+                        <img src={profilePic} alt={anaesthetist.name} className="w-12 h-12 rounded-full object-cover border border-gray-100 flex-shrink-0" />
+                    ) : (
+                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-bold text-blue-700">{initials}</span>
+                        </div>
+                    )}
                     <div>
                         <h3 className="text-sm font-semibold text-gray-900 leading-tight">{anaesthetist.name}</h3>
                         <p className="text-xs text-blue-600 font-medium mt-0.5">{anaesthetist.specialization}</p>
@@ -147,18 +166,13 @@ const AnaesthetistCard = ({ anaesthetist, canEdit, onEdit, onDelete }) => {
                 <AvailBadge available={anaesthetist.is_available} />
             </div>
 
-            <div className="space-y-1.5 text-xs text-gray-600">
+            <div className="space-y-1.5 text-xs text-gray-600 mt-4">
                 <div className="flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span className="text-gray-500">Licence:</span>
-                    <span className="font-medium text-gray-900">{anaesthetist.license_number}</span>
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span>Licence: {anaesthetist.license_number}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                     <span className="truncate">{anaesthetist.email}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -252,8 +266,12 @@ const CreateAnaesthetistModal = ({ onClose, onCreated }) => {
         if (!validateAnaesthetistForm(form, setFieldErrors)) return;
         setSubmitting(true);
         try {
-            const result = await anaesthetistService.createAnaesthetist(form);
-            onCreated(result.data);
+            const formData = new FormData();
+            Object.keys(form).forEach(k => {
+                if (form[k] !== null && form[k] !== undefined) formData.append(k, form[k]);
+            });
+            const res = await anaesthetistService.createAnaesthetist(formData);
+            onCreated(res.data);
         } catch (err) {
             setServerErrors([err.message]);
         } finally {
@@ -287,7 +305,8 @@ const CreateAnaesthetistModal = ({ onClose, onCreated }) => {
                         <input type="text" name="name" value={form.name} onChange={handleChange} className={fieldCls('name')} placeholder="Dr. John Smith" />
                         <FieldError fieldErrors={fieldErrors} field="name" />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+
+                    <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Specialization <span className="text-red-500">*</span></label>
                             <input type="text" name="specialization" value={form.specialization} onChange={handleChange} className={fieldCls('specialization')} placeholder="General / Pediatric" />
@@ -299,7 +318,8 @@ const CreateAnaesthetistModal = ({ onClose, onCreated }) => {
                             <FieldError fieldErrors={fieldErrors} field="license_number" />
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+
+                    <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
                             <input type="email" name="email" value={form.email} onChange={handleChange} className={fieldCls('email')} placeholder="john@hospital.com" />
@@ -326,6 +346,7 @@ const CreateAnaesthetistModal = ({ onClose, onCreated }) => {
                             </select>
                         </div>
                     </div>
+
                     <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">Qualification</label>
                         <input type="text" name="qualification" value={form.qualification} onChange={handleChange} className={fieldCls('qualification')} placeholder="MBBS, MD Anaesthesiology" />
@@ -708,8 +729,8 @@ const AnaesthetistsPage = () => {
                 {/* ── Page Header ─────────────────────────────────────────── */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Anaesthetists</h1>
-                        <p className="text-sm text-gray-500 mt-1">Manage anaesthesia department staff</p>
+                        <h1 className="text-2xl font-bold text-gray-900 font-outfit">Anaesthetists</h1>
+                        <p className="text-sm text-gray-500 mt-1">Manage anaesthesia department staff and profile pictures</p>
                     </div>
                     {canCreate && (
                         <button

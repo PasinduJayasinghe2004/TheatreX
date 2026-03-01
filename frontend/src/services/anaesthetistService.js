@@ -35,11 +35,15 @@ const anaesthetistService = {
 
     /**
      * Create a new anaesthetist
-     * @param {Object} anaesthetistData 
+     * @param {Object|FormData} anaesthetistData 
      */
     createAnaesthetist: async (anaesthetistData) => {
         try {
-            const response = await api.post('/anaesthetists', anaesthetistData);
+            const config = (anaesthetistData instanceof FormData)
+                ? { headers: { 'Content-Type': 'multipart/form-data' } }
+                : {};
+
+            const response = await api.post('/anaesthetists', anaesthetistData, config);
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error creating anaesthetist. Please try again.';

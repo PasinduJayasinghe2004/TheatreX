@@ -115,14 +115,14 @@ const getAnaesthetistById = async (id) => {
 
 // Create a new anaesthetist
 const createAnaesthetist = async (anaesthetistData) => {
-    const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference } = anaesthetistData;
+    const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference, profile_picture } = anaesthetistData;
 
     try {
         const { rows } = await pool.query(
-            `INSERT INTO anaesthetists (name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `INSERT INTO anaesthetists (name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference, profile_picture)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
              RETURNING id`,
-            [name, email, phone, specialization, license_number, years_of_experience || 0, qualification, shift_preference || 'flexible']
+            [name, email, phone, specialization, license_number, years_of_experience || 0, qualification, shift_preference || 'flexible', profile_picture]
         );
         return { id: rows[0].id, ...anaesthetistData };
     } catch (error) {
@@ -204,6 +204,7 @@ const deleteAnaesthetist = async (id) => {
 };
 
 export {
+    pool,
     createAnaesthetistsTable,
     getAllAnaesthetists,
     getAvailableAnaesthetists,

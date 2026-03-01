@@ -53,6 +53,7 @@ export const getAvailableAnaesthetists = async (req, res) => {
 export const createAnaesthetist = async (req, res) => {
     try {
         const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference } = req.body;
+        const profile_picture = req.file ? `/uploads/profiles/${req.file.filename}` : null;
 
         // Basic validation
         if (!name || !email || !specialization || !license_number) {
@@ -70,7 +71,8 @@ export const createAnaesthetist = async (req, res) => {
             license_number,
             years_of_experience,
             qualification,
-            shift_preference
+            shift_preference,
+            profile_picture
         });
 
         res.status(201).json({

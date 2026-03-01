@@ -123,8 +123,8 @@ describe('AnaesthetistsPage Tests (Day 14)', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Total Anaesthetists')).toBeInTheDocument();
-            expect(screen.getAllByText('Available').length).toBeGreaterThan(0);
-            expect(screen.getAllByText('Unavailable').length).toBeGreaterThan(0);
+            expect(screen.getAllByText('Available')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Unavailable')[0]).toBeInTheDocument();
             // 3 total, 2 available, 1 unavailable
             expect(screen.getByText('3')).toBeInTheDocument();
             expect(screen.getByText('2')).toBeInTheDocument();

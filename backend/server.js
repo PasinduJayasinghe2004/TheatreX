@@ -51,6 +51,9 @@ app.use(express.json());
 // extended: true allows for rich objects and arrays to be encoded
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
