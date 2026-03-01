@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 const ImageUpload = ({ onImageSelect, existingImage, label = "Profile Picture" }) => {
     const [preview, setPreview] = useState(existingImage ? (existingImage.startsWith('http') ? existingImage : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${existingImage}`) : null);

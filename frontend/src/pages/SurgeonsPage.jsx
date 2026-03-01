@@ -19,7 +19,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import surgeonService from '../services/surgeonService';
 import { useAuth } from '../context/AuthContext';
-import ImageUpload from '../components/common/ImageUpload';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -306,14 +305,8 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                     formData.append(key, form[key]);
                 }
             });
-            if (image) formData.append('profile_picture', image);
-
-            if (surgeon?.id) {
-                await surgeonService.updateSurgeon(surgeon.id, formData);
-            } else {
-                await surgeonService.createSurgeon(formData);
-            }
-            onSaved();
+            const res = await surgeonService.createSurgeon(formData);
+            onCreated(res.data);
         } catch (err) {
             setServerErrors([err.message]);
         } finally {
@@ -757,9 +750,6 @@ const SurgeonsPage = () => {
         setDeletingSurgeon(null);
         setSurgeons(prev => prev.filter(s => s.id !== deletedId));
     };
-
-    // ── Stats strip ───────────────────────────────────────────────────────────
-    const totalAvailable = surgeons.filter(s => s.is_available).length;
 
     return (
         <Layout>

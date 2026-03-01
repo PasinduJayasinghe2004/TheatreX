@@ -17,7 +17,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import anaesthetistService from '../services/anaesthetistService';
 import { useAuth } from '../context/AuthContext';
-import ImageUpload from '../components/common/ImageUpload';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -71,8 +70,7 @@ const EMPTY_FIELD_ERRORS = {
 };
 
 const buildFieldCls = (fieldErrors) => (fieldName) =>
-    `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition ${
-        fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
+    `w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition ${fieldErrors[fieldName] ? 'border-red-400 bg-red-50' : 'border-gray-300'
     }`;
 
 const FieldError = ({ fieldErrors, field }) =>
@@ -135,6 +133,10 @@ const AnaesthetistCard = ({ anaesthetist, canEdit, onEdit, onDelete }) => {
         .join('')
         .toUpperCase()
         .slice(0, 2);
+
+    const profilePic = anaesthetist.profile_picture
+        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${anaesthetist.profile_picture}`
+        : null;
 
     return (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5 relative group">
@@ -268,14 +270,8 @@ const CreateAnaesthetistModal = ({ onClose, onCreated }) => {
             Object.keys(form).forEach(k => {
                 if (form[k] !== null && form[k] !== undefined) formData.append(k, form[k]);
             });
-            if (image) formData.append('profile_picture', image);
-
-            if (anaesthetist?.id) {
-                await anaesthetistService.updateAnaesthetist(anaesthetist.id, formData);
-            } else {
-                await anaesthetistService.createAnaesthetist(formData);
-            }
-            onSaved();
+            const res = await anaesthetistService.createAnaesthetist(formData);
+            onCreated(res.data);
         } catch (err) {
             setServerErrors([err.message]);
         } finally {

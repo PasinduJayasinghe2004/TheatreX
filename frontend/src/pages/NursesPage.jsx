@@ -19,7 +19,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import nurseService from '../services/nurseService';
 import { useAuth } from '../context/AuthContext';
-import ImageUpload from '../components/common/ImageUpload';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -131,7 +130,7 @@ const NurseCard = ({ nurse, canEdit, onEdit, onDelete }) => {
                             d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
                     </svg>
                     <span className="text-gray-500">Shift:</span>
-                    <ShiftBadge shift={nurse.shift_preference} />
+                    <span className="capitalize font-medium text-gray-900">{nurse.shift_preference}</span>
                 </div>
             </div>
 
@@ -554,7 +553,8 @@ const NursesPage = () => {
     const [available, setAvailable] = useState('');
     const [shift, setShift] = useState('');
 
-    const canManage = user?.role === 'coordinator' || user?.role === 'admin';
+    const canCreate = user?.role === 'admin';
+    const canEdit = user?.role === 'coordinator' || user?.role === 'admin';
 
     const fetchNurses = useCallback(async () => {
         setLoading(true);
@@ -587,7 +587,6 @@ const NursesPage = () => {
     };
 
     const totalAvailable = nurses.filter(n => n.is_available).length;
-    const totalUnavailable = nurses.length - totalAvailable;
 
     return (
         <Layout>
@@ -678,7 +677,7 @@ const NursesPage = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {nurses.map(nurse => (
-                            <NurseCard key={nurse.id} nurse={nurse} canEdit={canCreate}
+                            <NurseCard key={nurse.id} nurse={nurse} canEdit={canEdit}
                                 onEdit={setEditingNurse} onDelete={setDeletingNurse} />
                         ))}
                     </div>
