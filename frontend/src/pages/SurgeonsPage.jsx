@@ -67,15 +67,33 @@ const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
         .toUpperCase()
         .slice(0, 2);
 
+    const profilePic = surgeon.profile_picture
+        ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${surgeon.profile_picture}`
+        : null;
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-4 relative group">
+            {/* Actions overlay */}
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <button onClick={() => onEdit(surgeon)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all focus:outline-none">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </button>
+                <button onClick={() => onDelete(surgeon.id)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:border-red-200 shadow-sm transition-all focus:outline-none">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+            </div>
+
             {/* Header */}
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                    {/* Avatar circle */}
-                    <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-indigo-700">{initials}</span>
-                    </div>
+                    {/* Avatar/Profile Pic */}
+                    {profilePic ? (
+                        <img src={profilePic} alt={surgeon.name} className="w-12 h-12 rounded-full object-cover border border-gray-100 flex-shrink-0" />
+                    ) : (
+                        <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-bold text-indigo-700">{initials}</span>
+                        </div>
+                    )}
                     <div>
                         <h3 className="text-sm font-semibold text-gray-900 leading-tight">{surgeon.name}</h3>
                         <p className="text-xs text-indigo-600 font-medium mt-0.5">{surgeon.specialization}</p>
@@ -97,7 +115,6 @@ const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* Email icon */}
                     <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                             d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -106,7 +123,6 @@ const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* Phone icon */}
                     <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -116,7 +132,6 @@ const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
 
                 {surgeon.years_of_experience != null && (
                     <div className="flex items-center gap-2">
-                        {/* Experience icon */}
                         <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -284,8 +299,14 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
         if (!validateSurgeonForm(form, setFieldErrors)) return;
         setSubmitting(true);
         try {
-            const result = await surgeonService.createSurgeon(form);
-            onCreated(result.data);
+            const formData = new FormData();
+            Object.keys(form).forEach(key => {
+                if (form[key] !== null && form[key] !== undefined) {
+                    formData.append(key, form[key]);
+                }
+            });
+            const res = await surgeonService.createSurgeon(formData);
+            onCreated(res.data);
         } catch (err) {
             setServerErrors([err.message]);
         } finally {
@@ -322,10 +343,8 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                 {/* Body */}
                 <form id="create-surgeon-form" onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                     {serverErrors.length > 0 && (
-                        <div className="rounded-lg bg-red-50 border border-red-200 p-3">
-                            {serverErrors.map((e, i) => (
-                                <p key={i} className="text-xs text-red-600">{e}</p>
-                            ))}
+                        <div className="bg-red-50 border border-red-200 p-3 rounded-lg">
+                            {serverErrors.map((e, i) => <p key={i} className="text-xs text-red-600 font-medium">{e}</p>)}
                         </div>
                     )}
 
@@ -690,13 +709,11 @@ const SurgeonsPage = () => {
     const [editingSurgeon, setEditingSurgeon] = useState(null);   // surgeon object to edit
     const [deletingSurgeon, setDeletingSurgeon] = useState(null); // surgeon object to delete
 
-    // Filter state
     const [search, setSearch] = useState('');
     const [available, setAvailable] = useState('');
 
     const canCreate = user?.role === 'coordinator' || user?.role === 'admin';
 
-    // ── Fetch surgeons ────────────────────────────────────────────────────────
     const fetchSurgeons = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -734,21 +751,13 @@ const SurgeonsPage = () => {
         setSurgeons(prev => prev.filter(s => s.id !== deletedId));
     };
 
-    // ── Stats strip ───────────────────────────────────────────────────────────
-    const totalAvailable = surgeons.filter(s => s.is_available).length;
-    const totalUnavailable = surgeons.length - totalAvailable;
-
     return (
         <Layout>
             <div className="p-6 max-w-7xl mx-auto">
-
-                {/* ── Page Header ─────────────────────────────────────────── */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Surgeons</h1>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Manage and view all surgeon records
-                        </p>
+                        <h1 className="text-2xl font-bold text-gray-900 font-outfit">Surgeons</h1>
+                        <p className="text-sm text-gray-500 mt-1">Manage hospital surgeons and profile pictures</p>
                     </div>
                     {canCreate && (
                         <button
@@ -764,68 +773,21 @@ const SurgeonsPage = () => {
                     )}
                 </div>
 
-                {/* ── Summary Stats ────────────────────────────────────────── */}
-                {!loading && !error && (
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                        {[
-                            { label: 'Total Surgeons', value: surgeons.length, colour: 'bg-indigo-100 text-indigo-700' },
-                            { label: 'Available', value: totalAvailable, colour: 'bg-emerald-100 text-emerald-700' },
-                            { label: 'Unavailable', value: totalUnavailable, colour: 'bg-red-100 text-red-600' },
-                        ].map(stat => (
-                            <div key={stat.label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-xl ${stat.colour.split(' ')[0]} flex items-center justify-center`}>
-                                    <span className={`text-xl font-bold ${stat.colour.split(' ')[1]}`}>{stat.value}</span>
-                                </div>
-                                <span className="text-sm text-gray-500 font-medium">{stat.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* ── Filters ─────────────────────────────────────────────── */}
+                {/* Filters */}
                 <div className="flex flex-wrap gap-3 mb-6">
-                    <div className="relative flex-1 min-w-[200px]">
-                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input
-                            id="surgeon-search"
-                            type="text"
-                            placeholder="Search by name, specialization or email…"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                        />
+                    <div className="relative flex-1 min-w-[300px]">
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        <input placeholder="Search named, specialization..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                     </div>
-                    <select
-                        id="surgeon-availability-filter"
-                        value={available}
-                        onChange={e => setAvailable(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-                    >
+                    <select value={available} onChange={e => setAvailable(e.target.value)} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 outline-none">
                         <option value="">All Availability</option>
                         <option value="true">Available</option>
                         <option value="false">Unavailable</option>
                     </select>
-                    <button
-                        id="surgeon-refresh-btn"
-                        onClick={fetchSurgeons}
-                        className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-                        title="Refresh"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Refresh
-                    </button>
                 </div>
 
-                {/* ── Content ─────────────────────────────────────────────── */}
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
                 ) : error ? (

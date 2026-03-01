@@ -60,11 +60,16 @@ const nurseService = {
 
     // ========================================
     // Create a new nurse
+    // Changed to support FormData for image upload
     // Created by: M3 (Janani) - Day 13
     // ========================================
     createNurse: async (nurseData) => {
         try {
-            const response = await api.post('/nurses', nurseData);
+            const config = (nurseData instanceof FormData)
+                ? { headers: { 'Content-Type': 'multipart/form-data' } }
+                : {};
+
+            const response = await api.post('/nurses', nurseData, config);
             return response.data;
         } catch (error) {
             const message =

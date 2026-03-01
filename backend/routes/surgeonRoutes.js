@@ -48,7 +48,23 @@ router.get('/:id', protect, getSurgeonById);
 // Protected + coordinator or admin only.
 // Created by: M1 (Pasindu) - Day 13
 // ============================================================================
-router.post('/', protect, authorize('coordinator', 'admin'), validateSurgeon, createSurgeon);
+router.post('/', protect, authorize('coordinator', 'admin'), uploadProfilePicture, validateSurgeon, createSurgeon);
+
+// ============================================================================
+// ROUTE: PUT /api/surgeons/:id
+// ============================================================================
+// Update a surgeon record.
+// Protected + coordinator or admin only.
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, updateSurgeon);
+
+// ============================================================================
+// ROUTE: DELETE /api/surgeons/:id
+// ============================================================================
+// Soft delete a surgeon.
+// Protected + admin only.
+// ============================================================================
+router.delete('/:id', protect, authorize('admin'), deleteSurgeon);
 
 // ============================================================================
 // ROUTE: PUT /api/surgeons/:id

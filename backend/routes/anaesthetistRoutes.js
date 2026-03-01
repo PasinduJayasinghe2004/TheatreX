@@ -42,7 +42,13 @@ router.get('/available', authorize('coordinator', 'admin'), getAvailableAnaesthe
 router.get('/:id', authorize('coordinator', 'admin'), getAnaesthetistById);
 
 // Create new anaesthetist - Admin only
-router.post('/', authorize('admin'), createAnaesthetist);
+router.post('/', authorize('admin'), uploadProfilePicture, createAnaesthetist);
+
+// Update anaesthetist - Coordinator and Admin
+router.put('/:id', authorize('coordinator', 'admin'), uploadProfilePicture, updateAnaesthetist);
+
+// Delete anaesthetist - Admin only
+router.delete('/:id', authorize('admin'), deleteAnaesthetist);
 
 // Update anaesthetist - Coordinator and Admin
 router.put('/:id', authorize('coordinator', 'admin'), validateAnaesthetistUpdate, updateAnaesthetist);
