@@ -2,15 +2,20 @@
 // PatientForm Component
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M4 (Oneli) - Day 15 (added edit mode support)
 //
-// Modal form for adding a new patient.
+// Modal form for adding / editing a patient.
 // Fields: name, date_of_birth, gender, blood_type, phone, email, address,
 //         emergency contact info, medical history, allergies, medications
-// On submit → calls patientService.createPatient()
+//
+// Props:
+//   - onSuccess(patientData)  – called after a successful create/update
+//   - onClose()               – called when the modal should close
+//   - patient (optional)      – if provided, form opens in EDIT mode
 // ============================================================================
 
-import { useState } from 'react';
-import { X, UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, UserPlus, Edit3, AlertCircle, CheckCircle } from 'lucide-react';
 import patientService from '../services/patientService';
 
 const GENDER_OPTIONS = [
@@ -31,7 +36,9 @@ const BLOOD_TYPE_OPTIONS = [
     { value: 'O-', label: 'O-' },
 ];
 
-const PatientForm = ({ onSuccess, onClose }) => {
+const PatientForm = ({ onSuccess, onClose, patient }) => {
+    const isEdit = Boolean(patient);
+
     const [formData, setFormData] = useState({
         name: '',
         date_of_birth: '',
@@ -51,6 +58,33 @@ const PatientForm = ({ onSuccess, onClose }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+
+    // Pre-fill when editing
+    useEffect(() => {
+        if (patient) {
+            // Format date_of_birth to YYYY-MM-DD for input[type=date]
+            let dob = patient.date_of_birth || '';
+            if (dob && dob.length > 10) {
+                dob = dob.substring(0, 10);
+            }
+
+            setFormData({
+                name: patient.name || '',
+                date_of_birth: dob,
+                gender: patient.gender || 'male',
+                blood_type: patient.blood_type || '',
+                phone: patient.phone || '',
+                email: patient.email || '',
+                address: patient.address || '',
+                emergency_contact_name: patient.emergency_contact_name || '',
+                emergency_contact_phone: patient.emergency_contact_phone || '',
+                emergency_contact_relationship: patient.emergency_contact_relationship || '',
+                medical_history: patient.medical_history || '',
+                allergies: patient.allergies || '',
+                current_medications: patient.current_medications || '',
+            });
+        }
+    }, [patient]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -83,7 +117,12 @@ const PatientForm = ({ onSuccess, onClose }) => {
                 current_medications: formData.current_medications.trim() || undefined,
             };
 
-            const response = await patientService.createPatient(payload);
+            let response;
+            if (isEdit) {
+                response = await patientService.updatePatient(patient.id, payload);
+            } else {
+                response = await patientService.createPatient(payload);
+            }
 
             if (response.success) {
                 setSuccess(true);
@@ -92,7 +131,7 @@ const PatientForm = ({ onSuccess, onClose }) => {
                 }, 1200);
             }
         } catch (err) {
-            setError(err.message || 'Failed to create patient.');
+            setError(err.message || `Failed to ${isEdit ? 'update' : 'create'} patient.`);
         } finally {
             setLoading(false);
         }
@@ -112,12 +151,18 @@ const PatientForm = ({ onSuccess, onClose }) => {
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                            <UserPlus className="w-5 h-5 text-emerald-600" />
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isEdit ? 'bg-amber-100' : 'bg-emerald-100'}`}>
+                            {isEdit
+                                ? <Edit3 className="w-5 h-5 text-amber-600" />
+                                : <UserPlus className="w-5 h-5 text-emerald-600" />}
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900">Add New Patient</h2>
-                            <p className="text-sm text-gray-500">Fill in the patient&apos;s details below</p>
+                            <h2 className="text-lg font-bold text-gray-900">
+                                {isEdit ? 'Edit Patient' : 'Add New Patient'}
+                            </h2>
+                            <p className="text-sm text-gray-500">
+                                {isEdit ? 'Update the patient\u0027s details below' : 'Fill in the patient\u0027s details below'}
+                            </p>
                         </div>
                     </div>
                     <button
@@ -133,7 +178,9 @@ const PatientForm = ({ onSuccess, onClose }) => {
                 {success && (
                     <div className="mx-6 mt-4 flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
                         <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                        <span className="text-sm font-medium">Patient created successfully!</span>
+                        <span className="text-sm font-medium">
+                            Patient {isEdit ? 'updated' : 'created'} successfully!
+                        </span>
                     </div>
                 )}
 
@@ -373,8 +420,9 @@ const PatientForm = ({ onSuccess, onClose }) => {
                                 </>
                             ) : (
                                 <>
-                                    <UserPlus className="w-4 h-4" />
-                                    Add Patient
+                                    {isEdit
+                                        ? <><Edit3 className="w-4 h-4" /> Update Patient</>
+                                        : <><UserPlus className="w-4 h-4" /> Add Patient</>}
                                 </>
                             )}
                         </button>
