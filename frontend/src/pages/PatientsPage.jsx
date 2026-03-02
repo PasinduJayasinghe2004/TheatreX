@@ -2,17 +2,19 @@
 // PatientsPage
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M4 (Oneli) - Day 15 (added edit patient support)
 //
 // Patients management page featuring:
 // - Patient list (card grid) fetched from GET /api/patients
 // - Search by name/phone/email, filter by gender and blood type
 // - "Add Patient" button (coordinator/admin only) → opens PatientForm modal
+// - Edit action on each card (coordinator/admin only)
 // - Loading / error / empty states
 // ============================================================================
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-    UserPlus, Search, Filter, RefreshCw,
+    UserPlus, Search, Filter, RefreshCw, Edit3,
     Phone, Mail, MapPin, Heart, Droplets,
     AlertTriangle, XCircle
 } from 'lucide-react';
@@ -47,7 +49,7 @@ const BLOOD_COLORS = {
 
 // ── PatientCard ─────────────────────────────────────────────────────────────
 
-const PatientCard = ({ patient }) => (
+const PatientCard = ({ patient, canManage, onEdit }) => (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
         {/* Header: avatar + name + gender */}
         <div className="flex items-start justify-between gap-2">
@@ -92,25 +94,39 @@ const PatientCard = ({ patient }) => (
             )}
         </div>
 
-        {/* Footer: blood type + allergies */}
-        <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-gray-100">
-            {patient.blood_type && (
-                <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 text-gray-600'}`}>
-                    <Droplets className="w-3 h-3" />
-                    {patient.blood_type}
-                </span>
-            )}
-            {patient.allergies && (
-                <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
-                    <AlertTriangle className="w-3 h-3" />
-                    Allergies
-                </span>
-            )}
-            {patient.emergency_contact_name && (
-                <span className="inline-flex items-center gap-1 text-xs text-gray-400">
-                    <Heart className="w-3 h-3" />
-                    {patient.emergency_contact_name}
-                </span>
+        {/* Footer: blood type + allergies + edit */}
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
+            <div className="flex items-center gap-2 flex-wrap">
+                {patient.blood_type && (
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 text-gray-600'}`}>
+                        <Droplets className="w-3 h-3" />
+                        {patient.blood_type}
+                    </span>
+                )}
+                {patient.allergies && (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                        <AlertTriangle className="w-3 h-3" />
+                        Allergies
+                    </span>
+                )}
+                {patient.emergency_contact_name && (
+                    <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                        <Heart className="w-3 h-3" />
+                        {patient.emergency_contact_name}
+                    </span>
+                )}
+            </div>
+
+            {canManage && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                    <button
+                        onClick={() => onEdit(patient)}
+                        title="Edit patient"
+                        className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                    >
+                        <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                </div>
             )}
         </div>
     </div>
@@ -125,6 +141,7 @@ const PatientsPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [editingPatient, setEditingPatient] = useState(null);
 
     // Filters
     const [search, setSearch] = useState('');
@@ -173,6 +190,13 @@ const PatientsPage = () => {
     const handlePatientCreated = (newPatient) => {
         setShowForm(false);
         setPatients(prev => [newPatient, ...prev]);
+    };
+
+    const handlePatientUpdated = (updatedPatient) => {
+        setEditingPatient(null);
+        setPatients(prev =>
+            prev.map(p => (p.id === updatedPatient.id ? updatedPatient : p))
+        );
     };
 
     // ── render ──────────────────────────────────────────────────────────
@@ -333,7 +357,12 @@ const PatientsPage = () => {
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                             {displayed.map(patient => (
-                                <PatientCard key={patient.id} patient={patient} />
+                                <PatientCard
+                                    key={patient.id}
+                                    patient={patient}
+                                    canManage={canManage}
+                                    onEdit={(p) => setEditingPatient(p)}
+                                />
                             ))}
                         </div>
                     </>
@@ -345,6 +374,15 @@ const PatientsPage = () => {
                 <PatientForm
                     onSuccess={handlePatientCreated}
                     onClose={() => setShowForm(false)}
+                />
+            )}
+
+            {/* Edit Patient Modal */}
+            {editingPatient && (
+                <PatientForm
+                    patient={editingPatient}
+                    onSuccess={handlePatientUpdated}
+                    onClose={() => setEditingPatient(null)}
                 />
             )}
         </div>

@@ -2,15 +2,17 @@
 // Patient Routes
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M4 (Oneli) - Day 15 (added PUT update route)
 //
 // ROUTES:
 // - GET  /api/patients         - List all active patients (Protected)
 // - GET  /api/patients/:id     - Get patient detail (Protected)
 // - POST /api/patients         - Create a new patient (Coordinator/Admin)
+// - PUT  /api/patients/:id     - Update a patient (Coordinator/Admin)
 // ============================================================================
 
 import express from 'express';
-import { getPatients, getPatientById, createPatient } from '../controllers/patientController.js';
+import { getPatients, getPatientById, createPatient, updatePatient } from '../controllers/patientController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -30,6 +32,14 @@ router.get('/', protect, getPatients);
 // Protected + coordinator or admin only
 // ============================================================================
 router.post('/', protect, authorize('coordinator', 'admin'), createPatient);
+
+// ============================================================================
+// ROUTE: PUT /api/patients/:id
+// ============================================================================
+// Update an existing patient record (partial update)
+// Protected + coordinator or admin only
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), updatePatient);
 
 // ============================================================================
 // ROUTE: GET /api/patients/:id

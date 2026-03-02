@@ -2,11 +2,13 @@
 // Patient Controller Tests
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M4 (Oneli) - Day 15 (added PUT update tests)
 //
 // Tests for patient API endpoints:
 // - GET  /api/patients        (List patients)
 // - GET  /api/patients/:id    (Get patient detail)
 // - POST /api/patients        (Create patient)
+// - PUT  /api/patients/:id    (Update patient)
 //
 // Run with: npm test -- --testPathPattern=patientController
 // ============================================================================
@@ -302,6 +304,101 @@ describe('Patient API Tests - Day 15', () => {
 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
+        });
+    });
+
+    // ========================================================================
+    // PUT /api/patients/:id - Update Patient
+    // ========================================================================
+    describe('PUT /api/patients/:id', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .put('/api/patients/1')
+                .send({ name: 'Updated Name' });
+
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 403 for staff users (RBAC)', async () => {
+            if (!createdPatientId) return;
+
+            const res = await request(app)
+                .put(`/api/patients/${createdPatientId}`)
+                .set('Authorization', `Bearer ${staffToken}`)
+                .send({ name: 'Updated Name' });
+
+            expect(res.statusCode).toBe(403);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 404 for non-existent patient', async () => {
+            const res = await request(app)
+                .put('/api/patients/99999999')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ name: 'Updated Name' });
+
+            expect(res.statusCode).toBe(404);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 400 for empty body (no fields)', async () => {
+            if (!createdPatientId) return;
+
+            const res = await request(app)
+                .put(`/api/patients/${createdPatientId}`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({});
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toMatch(/no fields/i);
+        });
+
+        it('should return 400 for invalid gender', async () => {
+            if (!createdPatientId) return;
+
+            const res = await request(app)
+                .put(`/api/patients/${createdPatientId}`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ gender: 'invalid' });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toMatch(/gender/i);
+        });
+
+        it('should return 400 for invalid blood type', async () => {
+            if (!createdPatientId) return;
+
+            const res = await request(app)
+                .put(`/api/patients/${createdPatientId}`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({ blood_type: 'Z+' });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toMatch(/blood type/i);
+        });
+
+        it('should successfully update patient name and phone', async () => {
+            if (!createdPatientId) return;
+
+            const updatedPhone = `08${uniqueId}`;
+            const res = await request(app)
+                .put(`/api/patients/${createdPatientId}`)
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    name: 'John Doe Updated',
+                    phone: updatedPhone,
+                    allergies: 'Penicillin, Latex'
+                });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.name).toBe('John Doe Updated');
+            expect(res.body.data.phone).toBe(updatedPhone);
+            expect(res.body.data.allergies).toBe('Penicillin, Latex');
+            expect(res.body.data.id).toBe(createdPatientId);
         });
     });
 });

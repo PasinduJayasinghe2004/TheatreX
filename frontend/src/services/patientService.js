@@ -8,6 +8,7 @@
 // - Get all patients (with optional gender / blood_type filters)
 // - Get patient by ID
 // - Create a new patient
+// - Update an existing patient
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -61,6 +62,19 @@ const patientService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error creating patient. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Update an existing patient
+    // ========================================
+    updatePatient: async (id, patientData) => {
+        try {
+            const response = await api.put(`/patients/${id}`, patientData);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error updating patient. Please try again.';
             throw new Error(message);
         }
     }
