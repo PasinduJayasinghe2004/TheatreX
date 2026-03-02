@@ -24,7 +24,6 @@ import { useAuth } from '../context/AuthContext';
 // Small helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Availability pill badge */
 const AvailBadge = ({ available }) =>
     available ? (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -34,27 +33,10 @@ const AvailBadge = ({ available }) =>
     ) : (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
-            Unavailable
+            Busy
         </span>
     );
 
-/** Shift preference badge */
-const ShiftBadge = ({ shift }) => {
-    const config = {
-        morning: { bg: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Morning' },
-        afternoon: { bg: 'bg-blue-100 text-blue-700 border-blue-200', label: 'Afternoon' },
-        night: { bg: 'bg-purple-100 text-purple-700 border-purple-200', label: 'Night' },
-        flexible: { bg: 'bg-gray-100 text-gray-600 border-gray-200', label: 'Flexible' },
-    };
-    const c = config[shift] || config.flexible;
-    return (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${c.bg}`}>
-            {c.label}
-        </span>
-    );
-};
-
-/** Loading skeleton card */
 const SkeletonCard = () => (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 animate-pulse">
         <div className="flex items-start gap-4">
@@ -84,8 +66,16 @@ const NurseCard = ({ nurse, canEdit, onEdit, onDelete }) => {
         .slice(0, 2);
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-4">
-            {/* Header */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5 relative group">
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <button onClick={() => onEdit(nurse)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-teal-600 hover:border-teal-200 shadow-sm transition-all focus:outline-none">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                </button>
+                <button onClick={() => onDelete(nurse.id)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:border-red-200 shadow-sm transition-all focus:outline-none">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+            </div>
+
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
@@ -99,8 +89,7 @@ const NurseCard = ({ nurse, canEdit, onEdit, onDelete }) => {
                 <AvailBadge available={nurse.is_available} />
             </div>
 
-            {/* Details */}
-            <div className="space-y-1.5 text-xs text-gray-600">
+            <div className="space-y-1.5 text-xs text-gray-600 mt-4">
                 <div className="flex items-center gap-2">
                     <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -109,7 +98,6 @@ const NurseCard = ({ nurse, canEdit, onEdit, onDelete }) => {
                     <span className="text-gray-500">Licence:</span>
                     <span className="font-medium text-gray-900">{nurse.license_number}</span>
                 </div>
-
                 <div className="flex items-center gap-2">
                     <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -117,7 +105,6 @@ const NurseCard = ({ nurse, canEdit, onEdit, onDelete }) => {
                     </svg>
                     <span className="truncate">{nurse.email}</span>
                 </div>
-
                 <div className="flex items-center gap-2">
                     <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -143,7 +130,7 @@ const NurseCard = ({ nurse, canEdit, onEdit, onDelete }) => {
                             d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
                     </svg>
                     <span className="text-gray-500">Shift:</span>
-                    <ShiftBadge shift={nurse.shift_preference} />
+                    <span className="capitalize font-medium text-gray-900">{nurse.shift_preference}</span>
                 </div>
             </div>
 
@@ -413,7 +400,7 @@ const EditNurseModal = ({ nurse, onClose, onUpdated }) => {
             const result = await nurseService.updateNurse(nurse.id, form);
             onUpdated(result.data);
         } catch (err) {
-            setServerErrors([err.message]);
+            alert(err.message);
         } finally {
             setSubmitting(false);
         }
@@ -553,7 +540,6 @@ const DeleteNurseModal = ({ nurse, onClose, onDeleted }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const NursesPage = () => {
     const { user } = useAuth();
-
     const [nurses, setNurses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -563,14 +549,13 @@ const NursesPage = () => {
     const [editingNurse, setEditingNurse] = useState(null);
     const [deletingNurse, setDeletingNurse] = useState(null);
 
-    // Filter state
     const [search, setSearch] = useState('');
     const [available, setAvailable] = useState('');
     const [shift, setShift] = useState('');
 
-    const canCreate = user?.role === 'coordinator' || user?.role === 'admin';
+    const canCreate = user?.role === 'admin';
+    const canEdit = user?.role === 'coordinator' || user?.role === 'admin';
 
-    // ── Fetch nurses ──────────────────────────────────────────────────────────
     const fetchNurses = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -602,14 +587,11 @@ const NursesPage = () => {
     };
 
     const totalAvailable = nurses.filter(n => n.is_available).length;
-    const totalUnavailable = nurses.length - totalAvailable;
 
     return (
         <Layout>
             <div className="p-6 max-w-7xl mx-auto">
-
-                {/* ── Page Header ─────────────────────────────────────────── */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Nurses</h1>
                         <p className="text-sm text-gray-500 mt-1">Manage and view all nurse records</p>
@@ -625,25 +607,6 @@ const NursesPage = () => {
                     )}
                 </div>
 
-                {/* ── Summary Stats ────────────────────────────────────────── */}
-                {!loading && !error && (
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                        {[
-                            { label: 'Total Nurses', value: nurses.length, colour: 'bg-teal-100 text-teal-700' },
-                            { label: 'Available', value: totalAvailable, colour: 'bg-emerald-100 text-emerald-700' },
-                            { label: 'Unavailable', value: totalUnavailable, colour: 'bg-red-100 text-red-600' },
-                        ].map(stat => (
-                            <div key={stat.label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-xl ${stat.colour.split(' ')[0]} flex items-center justify-center`}>
-                                    <span className={`text-xl font-bold ${stat.colour.split(' ')[1]}`}>{stat.value}</span>
-                                </div>
-                                <span className="text-sm text-gray-500 font-medium">{stat.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* ── Filters ─────────────────────────────────────────────── */}
                 <div className="flex flex-wrap gap-3 mb-6">
                     <div className="relative flex-1 min-w-[200px]">
                         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -659,7 +622,7 @@ const NursesPage = () => {
                         className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white">
                         <option value="">All Availability</option>
                         <option value="true">Available</option>
-                        <option value="false">Unavailable</option>
+                        <option value="false">Busy</option>
                     </select>
                     <select id="nurse-shift-filter" value={shift} onChange={e => setShift(e.target.value)}
                         className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white">
@@ -679,9 +642,8 @@ const NursesPage = () => {
                     </button>
                 </div>
 
-                {/* ── Content ─────────────────────────────────────────────── */}
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
                     </div>
                 ) : error ? (
@@ -715,7 +677,7 @@ const NursesPage = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {nurses.map(nurse => (
-                            <NurseCard key={nurse.id} nurse={nurse} canEdit={canCreate}
+                            <NurseCard key={nurse.id} nurse={nurse} canEdit={canEdit}
                                 onEdit={setEditingNurse} onDelete={setDeletingNurse} />
                         ))}
                     </div>

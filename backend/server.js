@@ -24,6 +24,7 @@ import { createNursesTable } from './models/nurseModel.js';
 import { createTechniciansTable } from './models/technicianModel.js';
 import { createTheatresTable } from './models/theatreModel.js'; // M2 - Day 8
 import { createSurgeryNursesTable } from './models/surgeryNurseModel.js'; // M2 - Day 9
+import { createPatientsTable } from './models/patientModel.js'; // M1 - Day 15
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
@@ -50,6 +51,9 @@ app.use(express.json());
 // Parse URL-encoded data (form submissions)
 // extended: true allows for rich objects and arrays to be encoded
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/users', userRoutes);
@@ -134,6 +138,7 @@ const startServer = async () => {
             await createTechniciansTable();
             await createTheatresTable(); // M2 - Day 8
             await createSurgeryNursesTable(); // M2 - Day 9
+            await createPatientsTable(); // M1 - Day 15
         }
 
         // Start listening

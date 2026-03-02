@@ -60,11 +60,18 @@ const surgeonService = {
 
     // ========================================
     // Create a new surgeon
+    // Changed to support FormData for image upload
     // Created by: M1 (Pasindu) - Day 13
     // ========================================
     createSurgeon: async (surgeonData) => {
         try {
-            const response = await api.post('/surgeons', surgeonData);
+            // If surgeonData is NOT FormData, it might be from an old caller
+            // But we'll assume new callers pass FormData or we handle both
+            const config = (surgeonData instanceof FormData)
+                ? { headers: { 'Content-Type': 'multipart/form-data' } }
+                : {};
+
+            const response = await api.post('/surgeons', surgeonData, config);
             return response.data;
         } catch (error) {
             const message =
