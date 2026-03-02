@@ -2,11 +2,13 @@
 // PatientsPage
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M2 (Chandeepa) - Day 15
 //
 // Patients management page featuring:
 // - Patient list (card grid) fetched from GET /api/patients
 // - Search by name/phone/email, filter by gender and blood type
 // - "Add Patient" button (coordinator/admin only) → opens PatientForm modal
+// - Edit / Delete patient support (coordinator/admin only)
 // - Loading / error / empty states
 // ============================================================================
 
@@ -14,7 +16,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
     UserPlus, Search, Filter, RefreshCw,
     Phone, Mail, MapPin, Heart, Droplets,
-    AlertTriangle, XCircle
+    AlertTriangle, XCircle, Edit3, Trash2
 } from 'lucide-react';
 import PatientForm from '../components/PatientForm';
 import patientService from '../services/patientService';
@@ -47,7 +49,7 @@ const BLOOD_COLORS = {
 
 // ── PatientCard ─────────────────────────────────────────────────────────────
 
-const PatientCard = ({ patient }) => (
+const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
         {/* Header: avatar + name + gender */}
         <div className="flex items-start justify-between gap-2">
@@ -66,10 +68,12 @@ const PatientCard = ({ patient }) => (
                 </div>
             </div>
 
-            {/* Gender badge */}
-            <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${GENDER_COLORS[patient.gender] ?? 'bg-gray-100 text-gray-600'}`}>
-                {GENDER_LABELS[patient.gender] ?? patient.gender}
-            </span>
+            <div className="flex items-center gap-1 flex-shrink-0">
+                {/* Gender badge */}
+                <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${GENDER_COLORS[patient.gender] ?? 'bg-gray-100 text-gray-600'}`}>
+                    {GENDER_LABELS[patient.gender] ?? patient.gender}
+                </span>
+            </div>
         </div>
 
         {/* Details */}
@@ -92,25 +96,47 @@ const PatientCard = ({ patient }) => (
             )}
         </div>
 
-        {/* Footer: blood type + allergies */}
-        <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-gray-100">
-            {patient.blood_type && (
-                <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 text-gray-600'}`}>
-                    <Droplets className="w-3 h-3" />
-                    {patient.blood_type}
-                </span>
-            )}
-            {patient.allergies && (
-                <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
-                    <AlertTriangle className="w-3 h-3" />
-                    Allergies
-                </span>
-            )}
-            {patient.emergency_contact_name && (
-                <span className="inline-flex items-center gap-1 text-xs text-gray-400">
-                    <Heart className="w-3 h-3" />
-                    {patient.emergency_contact_name}
-                </span>
+        {/* Footer: blood type + allergies + actions */}
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
+            <div className="flex items-center gap-2 flex-wrap">
+                {patient.blood_type && (
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 text-gray-600'}`}>
+                        <Droplets className="w-3 h-3" />
+                        {patient.blood_type}
+                    </span>
+                )}
+                {patient.allergies && (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                        <AlertTriangle className="w-3 h-3" />
+                        Allergies
+                    </span>
+                )}
+                {patient.emergency_contact_name && (
+                    <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                        <Heart className="w-3 h-3" />
+                        {patient.emergency_contact_name}
+                    </span>
+                )}
+            </div>
+
+            {/* Edit / Delete actions */}
+            {canManage && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                    <button
+                        onClick={() => onEdit?.(patient)}
+                        title="Edit patient"
+                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                        <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                        onClick={() => onDelete?.(patient)}
+                        title="Delete patient"
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                </div>
             )}
         </div>
     </div>
@@ -125,6 +151,9 @@ const PatientsPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [editingPatient, setEditingPatient] = useState(null);
+    const [deletingPatient, setDeletingPatient] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     // Filters
     const [search, setSearch] = useState('');
@@ -173,6 +202,35 @@ const PatientsPage = () => {
     const handlePatientCreated = (newPatient) => {
         setShowForm(false);
         setPatients(prev => [newPatient, ...prev]);
+    };
+
+    const handleEditClick = (patient) => {
+        setEditingPatient(patient);
+    };
+
+    const handlePatientUpdated = (updatedPatient) => {
+        setEditingPatient(null);
+        setPatients(prev =>
+            prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
+        );
+    };
+
+    const handleDeleteClick = (patient) => {
+        setDeletingPatient(patient);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!deletingPatient) return;
+        setDeleteLoading(true);
+        try {
+            await patientService.deletePatient(deletingPatient.id);
+            setPatients(prev => prev.filter(p => p.id !== deletingPatient.id));
+            setDeletingPatient(null);
+        } catch (err) {
+            setError(err.message || 'Failed to delete patient.');
+        } finally {
+            setDeleteLoading(false);
+        }
     };
 
     // ── render ──────────────────────────────────────────────────────────
@@ -333,7 +391,13 @@ const PatientsPage = () => {
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                             {displayed.map(patient => (
-                                <PatientCard key={patient.id} patient={patient} />
+                                <PatientCard
+                                    key={patient.id}
+                                    patient={patient}
+                                    canManage={canManage}
+                                    onEdit={handleEditClick}
+                                    onDelete={handleDeleteClick}
+                                />
                             ))}
                         </div>
                     </>
@@ -346,6 +410,67 @@ const PatientsPage = () => {
                     onSuccess={handlePatientCreated}
                     onClose={() => setShowForm(false)}
                 />
+            )}
+
+            {/* Edit Patient Modal */}
+            {editingPatient && (
+                <PatientForm
+                    patient={editingPatient}
+                    onSuccess={handlePatientUpdated}
+                    onClose={() => setEditingPatient(null)}
+                />
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deletingPatient && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    onClick={(e) => { if (e.target === e.currentTarget && !deleteLoading) setDeletingPatient(null); }}
+                >
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <Trash2 className="w-5 h-5 text-red-600" />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-900">Delete Patient</h2>
+                                <p className="text-sm text-gray-500">This action can be reversed by an admin</p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-gray-600 mb-6">
+                            Are you sure you want to delete <strong>{deletingPatient.name}</strong>?
+                            The patient record will be deactivated.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setDeletingPatient(null)}
+                                disabled={deleteLoading}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteConfirm}
+                                disabled={deleteLoading}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+                            >
+                                {deleteLoading ? (
+                                    <>
+                                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Deleting…
+                                    </>
+                                ) : (
+                                    <>
+                                        <Trash2 className="w-4 h-4" />
+                                        Delete Patient
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
