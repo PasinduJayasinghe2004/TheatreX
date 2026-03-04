@@ -12,7 +12,7 @@
 // ============================================================================
 
 import express from 'express';
-import { getPatients, getPatientById, createPatient, updatePatient } from '../controllers/patientController.js';
+import { getPatients, getPatientById, createPatient, updatePatient, deletePatient } from '../controllers/patientController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -40,6 +40,14 @@ router.post('/', protect, authorize('coordinator', 'admin'), createPatient);
 // Protected + coordinator or admin only
 // ============================================================================
 router.put('/:id', protect, authorize('coordinator', 'admin'), updatePatient);
+
+// ============================================================================
+// ROUTE: DELETE /api/patients/:id
+// ============================================================================
+// Soft delete a patient record
+// Protected + coordinator or admin only
+// ============================================================================
+router.delete('/:id', protect, authorize('coordinator', 'admin'), deletePatient);
 
 // ============================================================================
 // ROUTE: GET /api/patients/:id
