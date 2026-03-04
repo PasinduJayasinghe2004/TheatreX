@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import RoleGuard from './RoleGuard';
+import NotificationDropdown from './NotificationDropdown';
+import notificationService from '../services/notificationService';
 import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 
 /**
  * Header Component
  * Professional header with navigation, user menu, and notifications
  * Created by: M4 (Oneli) - Day 2
+ * Updated by: M4 (Oneli) - Day 16 (unread badge + notification dropdown)
  * 
  * @param {Object} props - Component props
  * @param {Object} props.user - User object with name, email, role
@@ -15,6 +18,24 @@ import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 const Header = ({ user, onLogout }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    // Fetch unread count on mount and every 30 seconds
+    const fetchUnreadCount = useCallback(async () => {
+        try {
+            const response = await notificationService.getUnreadCount();
+            setUnreadCount(response.count || 0);
+        } catch {
+            // Silently fail – user may not be authenticated yet
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchUnreadCount();
+        const interval = setInterval(fetchUnreadCount, 30000);
+        return () => clearInterval(interval);
+    }, [fetchUnreadCount]);
 
     const navigationLinks = [
         { name: 'Dashboard', href: '/dashboard', icon: '📊', roles: [] },
@@ -30,6 +51,14 @@ const Header = ({ user, onLogout }) => {
             onLogout();
         }
         setIsUserMenuOpen(false);
+    };
+
+    const handleBellClick = () => {
+        setIsNotifOpen((prev) => !prev);
+        // Refresh unread count when closing
+        if (isNotifOpen) {
+            fetchUnreadCount();
+        }
     };
 
     return (
@@ -64,14 +93,31 @@ const Header = ({ user, onLogout }) => {
                     {/* Right Section - Notifications & User Menu */}
                     <div className="flex items-center gap-4">
                         {/* Notification Bell */}
-                        <button
-                            className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                            aria-label="Notifications"
-                        >
-                            <span className="text-xl">🔔</span>
-                            {/* Notification Badge */}
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={handleBellClick}
+                                className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                                aria-label="Notifications"
+                                id="notification-bell"
+                            >
+                                <span className={`text-xl ${isNotifOpen ? 'animate-bounce' : ''}`}>🔔</span>
+                                {/* Unread Badge – hidden when count is 0 */}
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1 leading-none shadow">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Notification Dropdown */}
+                            <NotificationDropdown
+                                isOpen={isNotifOpen}
+                                onClose={() => {
+                                    setIsNotifOpen(false);
+                                    fetchUnreadCount();
+                                }}
+                            />
+                        </div>
 
                         {/* User Menu */}
                         <div className="relative">
