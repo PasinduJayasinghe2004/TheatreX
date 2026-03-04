@@ -50,7 +50,7 @@ const BLOOD_COLORS = {
 
 // ── PatientCard ─────────────────────────────────────────────────────────────
 
-const PatientCard = ({ patient, canManage, onEdit }) => (
+const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
         {/* Header: avatar + name + gender */}
         <div className="flex items-start justify-between gap-2">
