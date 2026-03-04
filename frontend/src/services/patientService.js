@@ -77,6 +77,19 @@ const patientService = {
             const message = error.response?.data?.message || 'Error updating patient. Please try again.';
             throw new Error(message);
         }
+    },
+
+    // ========================================
+    // Delete a patient (soft delete)
+    // ========================================
+    deletePatient: async (id) => {
+        try {
+            const response = await api.delete(`/patients/${id}`);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error deleting patient. Please try again.';
+            throw new Error(message);
+        }
     }
 };
 

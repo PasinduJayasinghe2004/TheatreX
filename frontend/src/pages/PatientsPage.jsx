@@ -16,9 +16,10 @@ import { useState, useEffect, useCallback } from 'react';
 import {
     UserPlus, Search, Filter, RefreshCw, Edit3,
     Phone, Mail, MapPin, Heart, Droplets,
-    AlertTriangle, XCircle
+    AlertTriangle, XCircle, Trash2
 } from 'lucide-react';
 import PatientForm from '../components/PatientForm';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import patientService from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 
@@ -126,6 +127,13 @@ const PatientCard = ({ patient, canManage, onEdit }) => (
                     >
                         <Edit3 className="w-3.5 h-3.5" />
                     </button>
+                    <button
+                        onClick={() => onDelete(patient)}
+                        title="Delete patient"
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                 </div>
             )}
         </div>
@@ -142,6 +150,8 @@ const PatientsPage = () => {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [editingPatient, setEditingPatient] = useState(null);
+    const [deletingPatient, setDeletingPatient] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Filters
     const [search, setSearch] = useState('');
@@ -197,6 +207,20 @@ const PatientsPage = () => {
         setPatients(prev =>
             prev.map(p => (p.id === updatedPatient.id ? updatedPatient : p))
         );
+    };
+
+    const handleDeletePatient = async () => {
+        if (!deletingPatient) return;
+        setIsDeleting(true);
+        try {
+            await patientService.deletePatient(deletingPatient.id);
+            setPatients(prev => prev.filter(p => p.id !== deletingPatient.id));
+            setDeletingPatient(null);
+        } catch (err) {
+            alert(err.message || 'Failed to delete patient');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     // ── render ──────────────────────────────────────────────────────────
@@ -362,6 +386,7 @@ const PatientsPage = () => {
                                     patient={patient}
                                     canManage={canManage}
                                     onEdit={(p) => setEditingPatient(p)}
+                                    onDelete={(p) => setDeletingPatient(p)}
                                 />
                             ))}
                         </div>
@@ -385,6 +410,17 @@ const PatientsPage = () => {
                     onClose={() => setEditingPatient(null)}
                 />
             )}
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirmationModal
+                isOpen={!!deletingPatient}
+                onClose={() => setDeletingPatient(null)}
+                onConfirm={handleDeletePatient}
+                title="Delete Patient"
+                message="Are you sure you want to delete this patient record? This action will remove the patient from the active list."
+                itemName={deletingPatient?.name}
+                isLoading={isDeleting}
+            />
         </div>
     );
 };

@@ -555,3 +555,46 @@ export const updatePatient = async (req, res) => {
         });
     }
 };
+// ============================================================================
+// DELETE PATIENT
+// ============================================================================
+// @desc    Soft delete a patient (set is_active = FALSE)
+// @route   DELETE /api/patients/:id
+// @access  Protected (coordinator, admin)
+// ============================================================================
+export const deletePatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Check if patient exists
+        const { rows: existingRows } = await pool.query(
+            'SELECT id, name FROM patients WHERE id = $1',
+            [id]
+        );
+
+        if (existingRows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Patient not found'
+            });
+        }
+
+        // Soft delete the patient
+        await pool.query(
+            'UPDATE patients SET is_active = FALSE, updated_at = NOW() WHERE id = $1',
+            [id]
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Patient '${existingRows[0].name}' deleted successfully`
+        });
+    } catch (error) {
+        console.error('Error deleting patient:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting patient',
+            error: error.message
+        });
+    }
+};
