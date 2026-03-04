@@ -12,7 +12,7 @@
 // Run with: npm test
 // ============================================================================
 
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 

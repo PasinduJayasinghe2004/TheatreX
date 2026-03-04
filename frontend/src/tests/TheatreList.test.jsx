@@ -147,7 +147,7 @@ describe('TheatreList Page – M6 Day 10', () => {
 
         it('should display the page title "Theatres"', async () => {
             renderPage();
-            await waitFor(() => expect(screen.getByText('Theatres')).toBeInTheDocument());
+            await waitFor(() => expect(screen.getByTestId('theatre-list-title')).toBeInTheDocument());
         });
 
         it('should show correct theatre count (3)', async () => {

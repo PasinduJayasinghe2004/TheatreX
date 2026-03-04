@@ -15,8 +15,10 @@
 import { useState, useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+
+import SummaryCard from '../components/SummaryCard';
 import StatusBadge from '../components/StatusBadge';
-import { getDashboardStats } from '../services/dashboardService';
+import { getDashboardStats, getDashboardSummary } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
 // Clock component for real-time display
@@ -129,6 +131,7 @@ const LiveTheatreCard = ({ theatre, surgery }) => {
 const Dashboard = () => {
     const navigate = useNavigate();
     const [stats, setStats] = useState(null);
+    const [summary, setSummary] = useState(null);
     const [surgeries, setSurgeries] = useState([]);
     const [liveSurgeries, setLiveSurgeries] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -143,10 +146,18 @@ const Dashboard = () => {
             setLoading(true);
             setError(null);
 
-            // Fetch dashboard stats
-            const statsResponse = await getDashboardStats();
+            // Fetch dashboard stats and summary in parallel
+            const [statsResponse, summaryResponse] = await Promise.all([
+                getDashboardStats(),
+                getDashboardSummary()
+            ]);
+
             if (statsResponse.success) {
                 setStats(statsResponse.data);
+            }
+
+            if (summaryResponse.success) {
+                setSummary(summaryResponse.data);
             }
 
             // Fetch today's surgeries
@@ -196,11 +207,6 @@ const Dashboard = () => {
         }
     };
 
-    // Calculate today's stats
-    const todaysSurgeries = surgeries.length;
-    const yesterdayComparison = stats?.yesterdayComparison ?? null;
-    const staffOnDuty = stats?.staffOnDuty ?? null;
-    const avgDuration = stats?.avgDuration ?? null;
 
     // Get upcoming surgeries (scheduled, not in progress)
     const upcomingSurgeries = surgeries
@@ -262,7 +268,7 @@ const Dashboard = () => {
                 <div className="bg-white border-b border-gray-100 px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Theatre Management Dashboard</h1>
+                            <h1 className="text-2xl font-bold text-gray-900" data-testid="dashboard-title">Theatre Management Dashboard</h1>
                             <p className="text-sm text-gray-500 mt-1">Real-time monitoring and scheduling overview</p>
                         </div>
                         <div className="flex items-center gap-4">
@@ -270,6 +276,7 @@ const Dashboard = () => {
                             <button
                                 aria-label="Search"
                                 title="Search"
+                                data-testid="dashboard-search-btn"
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                                 onClick={() => navigate('/surgeries')}
                             >
@@ -281,6 +288,7 @@ const Dashboard = () => {
                             <button
                                 aria-label="Notifications"
                                 title="Notifications (coming soon)"
+                                data-testid="dashboard-notifications-btn"
                                 className="p-2 rounded-full transition-colors opacity-50 cursor-not-allowed"
                                 disabled
                             >
@@ -301,70 +309,44 @@ const Dashboard = () => {
                 </div>
 
                 <div className="p-8">
-                    {/* Stats Cards */}
+                    {/* Stats Cards / Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         {/* Today's Surgeries */}
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <p className="text-sm text-blue-600 font-medium mb-1">Today&apos;s Surgeries</p>
-                                    <p className="text-4xl font-bold text-gray-900">{todaysSurgeries}</p>
-                                    <p className="text-sm text-green-500 mt-2 flex items-center gap-1">
-                                        {yesterdayComparison !== null ? (
-                                            <>
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                                </svg>
-                                                +{yesterdayComparison} from yesterday
-                                            </>
-                                        ) : (
-                                            <span className="text-gray-400">No comparison data</span>
-                                        )}
-                                    </p>
-                                </div>
-                                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
+                        <SummaryCard
+                            label="Today's Surgeries"
+                            value={summary?.today_stats?.total_surgeries ?? 0}
+                            colour="bg-blue-50"
+                            icon={
+                                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            }
+                        />
 
                         {/* Staff on Duty */}
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <p className="text-sm text-blue-600 font-medium mb-1">Staff on Duty</p>
-                                    <p className="text-4xl font-bold text-gray-900">{staffOnDuty?.total ?? '--'}</p>
-                                    <p className="text-sm text-gray-500 mt-2">
-                                        {staffOnDuty ? (
-                                            `${staffOnDuty.surgeons ?? '--'} surgeons, ${staffOnDuty.nurses ?? '--'} nurses, ${staffOnDuty.anaesthetists ?? '--'} anaesthetists, ${staffOnDuty.technicians ?? '--'} techs`
-                                        ) : 'No staff data available'}
-                                    </p>
-                                </div>
-                                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
+                        <SummaryCard
+                            label="Staff on Duty"
+                            value={summary?.today_stats?.staff_on_duty?.total ?? '--'}
+                            comparison={summary?.today_stats?.yesterday_comparison}
+                            colour="bg-indigo-50"
+                            icon={
+                                <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            }
+                        />
 
-                        {/* Average Duration */}
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <p className="text-sm text-blue-600 font-medium mb-1">Avg Duration</p>
-                                    <p className="text-4xl font-bold text-gray-900">{avgDuration ?? '--'}</p>
-                                    <p className="text-sm text-gray-500 mt-2">minutes per surgery</p>
-                                </div>
-                                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
+                        {/* Avg Duration - Still from existing stats or a fallback */}
+                        <SummaryCard
+                            label="Avg Duration"
+                            value={stats?.avgDuration || '--'}
+                            colour="bg-amber-50"
+                            icon={
+                                <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            }
+                        />
                     </div>
 
                     {/* Action Buttons */}

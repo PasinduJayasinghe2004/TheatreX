@@ -147,14 +147,14 @@ describe('SurgeryDetail Page Tests', () => {
         it('should display status badge', async () => {
             renderDetail();
             await waitFor(() => {
-                expect(screen.getByText(/scheduled/i)).toBeInTheDocument();
+                expect(screen.getByTestId('status-badge')).toHaveTextContent(/scheduled/i);
             });
         });
 
         it('should display priority badge', async () => {
             renderDetail();
             await waitFor(() => {
-                expect(screen.getByText(/routine/i)).toBeInTheDocument();
+                expect(screen.getByTestId('priority-badge')).toHaveTextContent(/routine/i);
             });
         });
 
@@ -186,7 +186,7 @@ describe('SurgeryDetail Page Tests', () => {
 
             renderDetail();
             await waitFor(() => {
-                const statusBadge = screen.getByText(/completed/i);
+                const statusBadge = screen.getByTestId('status-badge');
                 expect(statusBadge.className).toContain('emerald');
             });
         });
@@ -199,7 +199,7 @@ describe('SurgeryDetail Page Tests', () => {
 
             renderDetail();
             await waitFor(() => {
-                const statusBadge = screen.getByText(/in.?progress/i);
+                const statusBadge = screen.getByTestId('status-badge');
                 expect(statusBadge.className).toContain('blue');
             });
         });
@@ -212,7 +212,7 @@ describe('SurgeryDetail Page Tests', () => {
 
             renderDetail();
             await waitFor(() => {
-                const statusBadge = screen.getByText(/cancelled/i);
+                const statusBadge = screen.getByTestId('status-badge');
                 expect(statusBadge.className).toContain('red');
             });
         });
@@ -230,7 +230,7 @@ describe('SurgeryDetail Page Tests', () => {
 
             renderDetail();
             await waitFor(() => {
-                const priorityBadge = screen.getByText(/emergency/i);
+                const priorityBadge = screen.getByTestId('priority-badge');
                 expect(priorityBadge.className).toContain('red');
             });
         });
@@ -243,7 +243,7 @@ describe('SurgeryDetail Page Tests', () => {
 
             renderDetail();
             await waitFor(() => {
-                const priorityBadge = screen.getByText(/urgent/i);
+                const priorityBadge = screen.getByTestId('priority-badge');
                 expect(priorityBadge.className).toContain('orange');
             });
         });
