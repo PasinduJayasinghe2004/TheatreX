@@ -2,9 +2,10 @@
 // Patient Controller
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M6 (Dinil) - Day 15 (added patient search API)
 //
 // Handles patient-related HTTP requests including:
-// - Listing all active patients (with optional gender/blood_type filters)
+// - Listing all active patients (with optional gender/blood_type/search filters)
 // - Getting a single patient by ID
 // - Creating a new patient
 // - Updating an existing patient
@@ -25,12 +26,13 @@ import { pool } from '../config/database.js';
 //          - ?gender=male
 //          - ?blood_type=A+
 //          - ?is_active=true
+//          - ?search=john         (M6 Day 15 - searches name, phone, email)
 // @route   GET /api/patients
 // @access  Protected
 // ============================================================================
 export const getPatients = async (req, res) => {
     try {
-        const { gender, blood_type, is_active } = req.query;
+        const { gender, blood_type, is_active, search } = req.query;
 
         const conditions = [];
         const params = [];
@@ -52,6 +54,15 @@ export const getPatients = async (req, res) => {
         if (blood_type) {
             params.push(blood_type);
             conditions.push(`blood_type = $${params.length}`);
+        }
+
+        // M6 Day 15: Patient search - filters by name, phone, or email (case-insensitive)
+        if (search && search.trim()) {
+            const term = `%${search.trim()}%`;
+            params.push(term);
+            conditions.push(
+                `(name ILIKE $${params.length} OR phone ILIKE $${params.length} OR email ILIKE $${params.length})`
+            );
         }
 
         const whereClause = conditions.length > 0
@@ -97,6 +108,7 @@ export const getPatients = async (req, res) => {
         });
     }
 };
+
 
 // ============================================================================
 // GET PATIENT BY ID

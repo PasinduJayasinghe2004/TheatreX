@@ -3,16 +3,17 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
 // Updated by: M4 (Oneli) - Day 15 (added edit patient support)
+// Updated by: M6 (Dinil) - Day 15 (connected backend search API with debounce)
 //
 // Patients management page featuring:
 // - Patient list (card grid) fetched from GET /api/patients
-// - Search by name/phone/email, filter by gender and blood type
+// - Backend search by name/phone/email (?search=...), filter by gender and blood type
 // - "Add Patient" button (coordinator/admin only) → opens PatientForm modal
 // - Edit action on each card (coordinator/admin only)
 // - Loading / error / empty states
 // ============================================================================
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
     UserPlus, Search, Filter, RefreshCw, Edit3,
     Phone, Mail, MapPin, Heart, Droplets,
@@ -155,12 +156,25 @@ const PatientsPage = () => {
 
     // Filters
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [filterGender, setFilterGender] = useState(''); // '' | 'male' | 'female' | 'other'
     const [filterBloodType, setFilterBloodType] = useState('');
 
     const canManage = user?.role === 'coordinator' || user?.role === 'admin';
 
+    // ── M6 Day 15: Debounce search input (400ms) so API is not called on every keystroke
+    const debounceTimer = useRef(null);
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearch(value);
+        clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => {
+            setDebouncedSearch(value);
+        }, 400);
+    };
+
     // ── fetch ───────────────────────────────────────────────────────────
+    // M6 Day 15: search is now sent to backend as ?search=... instead of filtering client-side
     const fetchPatients = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -168,6 +182,7 @@ const PatientsPage = () => {
             const filters = {};
             if (filterGender) filters.gender = filterGender;
             if (filterBloodType) filters.blood_type = filterBloodType;
+            if (debouncedSearch.trim()) filters.search = debouncedSearch.trim();
 
             const response = await patientService.getAllPatients(filters);
             setPatients(response.data ?? []);
@@ -176,22 +191,14 @@ const PatientsPage = () => {
         } finally {
             setLoading(false);
         }
-    }, [filterGender, filterBloodType]);
+    }, [filterGender, filterBloodType, debouncedSearch]);
 
     useEffect(() => {
         fetchPatients();
     }, [fetchPatients]);
 
-    // ── client-side search filter ───────────────────────────────────────
-    const displayed = patients.filter(p => {
-        if (!search.trim()) return true;
-        const q = search.toLowerCase();
-        return (
-            p.name?.toLowerCase().includes(q) ||
-            p.phone?.toLowerCase().includes(q) ||
-            p.email?.toLowerCase().includes(q)
-        );
-    });
+    // Backend handles filtering, so displayed === patients
+    const displayed = patients;
 
     // ── unique blood types for filter dropdown ──────────────────────────
     const bloodTypes = [...new Set(patients.map(p => p.blood_type).filter(Boolean))].sort();
@@ -275,7 +282,7 @@ const PatientsPage = () => {
                             type="text"
                             placeholder="Search name, phone or email…"
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={handleSearchChange}
                             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                         />
                     </div>

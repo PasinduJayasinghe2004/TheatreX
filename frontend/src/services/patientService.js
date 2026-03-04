@@ -3,9 +3,11 @@
 // ============================================================================
 // Handles all patient-related API calls
 // Created by: M1 (Pasindu) - Day 15
+// Updated by: M6 (Dinil) - Day 15 (added patient search support)
 //
 // FEATURES:
-// - Get all patients (with optional gender / blood_type filters)
+// - Get all patients (with optional gender / blood_type / search filters)
+// - Search patients by name, phone, or email
 // - Get patient by ID
 // - Create a new patient
 // - Update an existing patient
@@ -17,7 +19,7 @@ import { api } from './authService.js';
 const patientService = {
     // ========================================
     // Get all patients
-    // Optional filters: { gender, blood_type }
+    // Optional filters: { gender, blood_type, search }
     // ========================================
     getAllPatients: async (filters = {}) => {
         try {
@@ -28,6 +30,10 @@ const patientService = {
             if (filters.blood_type) {
                 params.append('blood_type', filters.blood_type);
             }
+            // M6 Day 15: pass search term to backend
+            if (filters.search && filters.search.trim()) {
+                params.append('search', filters.search.trim());
+            }
 
             const queryString = params.toString();
             const url = queryString ? `/patients?${queryString}` : '/patients';
@@ -36,6 +42,19 @@ const patientService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching patients. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // M6 Day 15: Search patients by name, phone, or email
+    // Convenience wrapper around getAllPatients with a search term
+    // ========================================
+    searchPatients: async (searchTerm, filters = {}) => {
+        try {
+            return await patientService.getAllPatients({ ...filters, search: searchTerm });
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error searching patients. Please try again.';
             throw new Error(message);
         }
     },
