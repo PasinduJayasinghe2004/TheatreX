@@ -5,7 +5,7 @@
 // Created by: M2 - Day 16
 // ============================================================================
 
-import React from 'react';
+
 
 const NotificationItem = ({ notification, onMarkRead }) => {
     const { id, type, title, message, is_read, created_at } = notification;

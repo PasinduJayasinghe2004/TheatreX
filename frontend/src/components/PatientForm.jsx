@@ -14,7 +14,7 @@
 //   onClose   - callback to close the modal
 // ============================================================================
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, UserPlus, Edit3, AlertCircle, CheckCircle } from 'lucide-react';
 import patientService from '../services/patientService';
 

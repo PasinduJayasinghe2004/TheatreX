@@ -16,10 +16,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import {
     UserPlus, Search, Filter, RefreshCw, Edit3,
     Phone, Mail, MapPin, Heart, Droplets,
-    AlertTriangle, XCircle, Edit3, Trash2
+    AlertTriangle, XCircle, Trash2
 } from 'lucide-react';
 import PatientForm from '../components/PatientForm';
-import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import patientService from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 
