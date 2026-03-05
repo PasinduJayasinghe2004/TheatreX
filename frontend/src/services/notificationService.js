@@ -64,6 +64,21 @@ const notificationService = {
             const message = error.response?.data?.message || 'Error marking all notifications as read.';
             throw new Error(message);
         }
+    },
+
+    /**
+     * Create a new notification
+     * @param {Object} data - Notification data
+     * @returns {Promise<Object>} API response
+     */
+    createNotification: async (data) => {
+        try {
+            const response = await api.post('/notifications', data);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error creating notification.';
+            throw new Error(message);
+        }
     }
 };
 
