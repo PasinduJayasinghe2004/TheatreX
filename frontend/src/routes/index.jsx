@@ -25,6 +25,7 @@ import NursesPage from '../pages/NursesPage'; // M3 - Day 13
 import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
 import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
+import LandingPage from '../pages/LandingPage';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -181,8 +182,8 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Default Landing Page */}
+            <Route path="/" element={<LandingPage />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

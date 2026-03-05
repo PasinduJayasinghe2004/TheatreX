@@ -1,4 +1,5 @@
 import { ArrowRight, PlayCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function Hero() {
     return (
@@ -43,12 +44,12 @@ export default function Hero() {
                             Real-time theatre monitoring, intelligent staff scheduling, and comprehensive analytics all in one powerful platform. Optimize your surgical operations for maximum efficiency.
                         </p>
                         <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button className="btn btn-primary">
+                            <Link to="/register" className="btn btn-primary" style={{ textDecoration: 'none' }}>
                                 Get started <ArrowRight size={18} />
-                            </button>
-                            <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB' }}>
-                                <PlayCircle size={18} style={{ marginRight: '0.5rem' }} /> Live demo
-                            </button>
+                            </Link>
+                            <Link to="/login" className="btn btn-outline" style={{ border: '1px solid #E5E7EB', textDecoration: 'none' }}>
+                                <PlayCircle size={18} style={{ marginRight: '0.5rem' }} /> Try Login
+                            </Link>
                         </div>
                     </div>
                     <div>
