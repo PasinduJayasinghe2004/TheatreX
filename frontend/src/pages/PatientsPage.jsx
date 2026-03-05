@@ -11,6 +11,7 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import {
     UserPlus, Search, Filter, RefreshCw,
     Phone, Mail, MapPin, Heart, Droplets,
@@ -48,7 +49,8 @@ const BLOOD_COLORS = {
 // ── PatientCard ─────────────────────────────────────────────────────────────
 
 const PatientCard = ({ patient }) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
+    <Link to={`/patients/${patient.id}`} className="block">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3 cursor-pointer">
         {/* Header: avatar + name + gender */}
         <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-3 min-w-0">
@@ -114,6 +116,7 @@ const PatientCard = ({ patient }) => (
             )}
         </div>
     </div>
+    </Link>
 );
 
 // ── PatientsPage ────────────────────────────────────────────────────────────
