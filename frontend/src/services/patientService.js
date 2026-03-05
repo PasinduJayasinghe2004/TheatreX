@@ -3,14 +3,14 @@
 // ============================================================================
 // Handles all patient-related API calls
 // Created by: M1 (Pasindu) - Day 15
-// Updated by: M6 (Dinil) - Day 15 (added patient search support)
+// Updated by: M2 (Chandeepa) - Day 15
 //
 // FEATURES:
 // - Get all patients (with optional gender / blood_type / search filters)
-// - Search patients by name, phone, or email
 // - Get patient by ID
 // - Create a new patient
 // - Update an existing patient
+// - Delete (soft-delete) a patient
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -30,9 +30,8 @@ const patientService = {
             if (filters.blood_type) {
                 params.append('blood_type', filters.blood_type);
             }
-            // M6 Day 15: pass search term to backend
-            if (filters.search && filters.search.trim()) {
-                params.append('search', filters.search.trim());
+            if (filters.search) {
+                params.append('search', filters.search);
             }
 
             const queryString = params.toString();
@@ -86,7 +85,7 @@ const patientService = {
     },
 
     // ========================================
-    // Update an existing patient
+    // Update a patient by ID
     // ========================================
     updatePatient: async (id, patientData) => {
         try {
@@ -99,7 +98,7 @@ const patientService = {
     },
 
     // ========================================
-    // Delete a patient (soft delete)
+    // Delete (soft-delete) a patient by ID
     // ========================================
     deletePatient: async (id) => {
         try {

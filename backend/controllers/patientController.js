@@ -26,7 +26,7 @@ import { pool } from '../config/database.js';
 //          - ?gender=male
 //          - ?blood_type=A+
 //          - ?is_active=true
-//          - ?search=john         (M6 Day 15 - searches name, phone, email)
+//          - ?search=john  (search by name, phone, email)
 // @route   GET /api/patients
 // @access  Protected
 // ============================================================================
@@ -56,12 +56,13 @@ export const getPatients = async (req, res) => {
             conditions.push(`blood_type = $${params.length}`);
         }
 
-        // M6 Day 15: Patient search - filters by name, phone, or email (case-insensitive)
+        // Server-side search by name, phone, or email
         if (search && search.trim()) {
-            const term = `%${search.trim()}%`;
-            params.push(term);
+            const searchTerm = `%${search.trim().toLowerCase()}%`;
+            params.push(searchTerm);
+            const idx = params.length;
             conditions.push(
-                `(name ILIKE $${params.length} OR phone ILIKE $${params.length} OR email ILIKE $${params.length})`
+                `(LOWER(name) LIKE $${idx} OR LOWER(phone) LIKE $${idx} OR LOWER(COALESCE(email, '')) LIKE $${idx})`
             );
         }
 
@@ -338,27 +339,13 @@ export const createPatient = async (req, res) => {
 // ============================================================================
 // UPDATE PATIENT
 // ============================================================================
-// @desc    Update an existing patient (partial update)
+// @desc    Update an existing patient record
 // @route   PUT /api/patients/:id
 // @access  Protected (coordinator, admin)
 // ============================================================================
 export const updatePatient = async (req, res) => {
     try {
         const { id } = req.params;
-
-        // Check patient exists
-        const { rows: existingRows } = await pool.query(
-            'SELECT id FROM patients WHERE id = $1',
-            [id]
-        );
-
-        if (existingRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Patient not found'
-            });
-        }
-
         const {
             name,
             date_of_birth,
@@ -375,176 +362,157 @@ export const updatePatient = async (req, res) => {
             current_medications
         } = req.body;
 
-        // ── Validate provided fields ────────────────────────────────────
+        // Check that the patient exists
+        const { rows: existing } = await pool.query(
+            'SELECT id FROM patients WHERE id = $1',
+            [id]
+        );
 
-        // Validate name if provided
-        if (name !== undefined && (!name || !name.trim())) {
-            return res.status(400).json({
+        if (existing.length === 0) {
+            return res.status(404).json({
                 success: false,
-                message: 'Name cannot be empty'
+                message: 'Patient not found'
             });
         }
 
-        // Validate date_of_birth if provided
-        let newAge;
-        if (date_of_birth !== undefined) {
-            if (!date_of_birth) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Date of birth cannot be empty'
-                });
+        // Build dynamic SET clause
+        const fields = [];
+        const params = [];
+        let idx = 0;
+
+        if (name !== undefined) {
+            if (!name.trim()) {
+                return res.status(400).json({ success: false, message: 'Name cannot be empty' });
             }
-            const dob = new Date(date_of_birth);
-            if (isNaN(dob.getTime())) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid date of birth format'
-                });
-            }
-            // Recalculate age
-            const today = new Date();
-            newAge = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-                newAge--;
-            }
+            params.push(name.trim());
+            fields.push(`name = $${++idx}`);
         }
 
-        // Validate gender if provided
-        const validGenders = ['male', 'female', 'other'];
-        if (gender !== undefined) {
-            if (!gender || !gender.trim()) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Gender cannot be empty'
-                });
+        if (date_of_birth !== undefined) {
+            const dob = new Date(date_of_birth);
+            if (isNaN(dob.getTime())) {
+                return res.status(400).json({ success: false, message: 'Invalid date of birth format' });
             }
+            params.push(date_of_birth);
+            fields.push(`date_of_birth = $${++idx}`);
+
+            // Recalculate age
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            params.push(age);
+            fields.push(`age = $${++idx}`);
+        }
+
+        if (gender !== undefined) {
+            const validGenders = ['male', 'female', 'other'];
             if (!validGenders.includes(gender.toLowerCase())) {
                 return res.status(400).json({
                     success: false,
                     message: `Invalid gender. Must be one of: ${validGenders.join(', ')}`
                 });
             }
+            params.push(gender.toLowerCase());
+            fields.push(`gender = $${++idx}`);
         }
 
-        // Validate blood_type if provided
-        const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-        if (blood_type !== undefined && blood_type && !validBloodTypes.includes(blood_type)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid blood type. Must be one of: ${validBloodTypes.join(', ')}`
-            });
+        if (blood_type !== undefined) {
+            const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+            if (blood_type && !validBloodTypes.includes(blood_type)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid blood type. Must be one of: ${validBloodTypes.join(', ')}`
+                });
+            }
+            params.push(blood_type || null);
+            fields.push(`blood_type = $${++idx}`);
         }
 
-        // Validate phone if provided
-        if (phone !== undefined && (!phone || !phone.trim())) {
-            return res.status(400).json({
-                success: false,
-                message: 'Phone cannot be empty'
-            });
-        }
-
-        // Duplicate phone check (excluding current patient)
         if (phone !== undefined) {
-            const { rows: dupRows } = await pool.query(
+            if (!phone.trim()) {
+                return res.status(400).json({ success: false, message: 'Phone cannot be empty' });
+            }
+            // Check for duplicate phone (excluding current patient)
+            const { rows: dup } = await pool.query(
                 'SELECT id FROM patients WHERE phone = $1 AND id != $2',
                 [phone.trim(), id]
             );
-            if (dupRows.length > 0) {
+            if (dup.length > 0) {
                 return res.status(409).json({
                     success: false,
                     message: 'A patient with this phone number already exists'
                 });
             }
-        }
-
-        // Validate email format if provided
-        if (email !== undefined && email && email.trim()) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.trim())) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid email format'
-                });
-            }
-        }
-
-        // ── Build dynamic SET clause ─────────────────────────────────────
-        const setClauses = [];
-        const params = [];
-
-        if (name !== undefined) {
-            params.push(name.trim());
-            setClauses.push(`name = $${params.length}`);
-        }
-        if (date_of_birth !== undefined) {
-            params.push(date_of_birth);
-            setClauses.push(`date_of_birth = $${params.length}`);
-            params.push(newAge);
-            setClauses.push(`age = $${params.length}`);
-        }
-        if (gender !== undefined) {
-            params.push(gender.toLowerCase());
-            setClauses.push(`gender = $${params.length}`);
-        }
-        if (blood_type !== undefined) {
-            params.push(blood_type || null);
-            setClauses.push(`blood_type = $${params.length}`);
-        }
-        if (phone !== undefined) {
             params.push(phone.trim());
-            setClauses.push(`phone = $${params.length}`);
+            fields.push(`phone = $${++idx}`);
         }
+
         if (email !== undefined) {
-            params.push(email ? email.trim().toLowerCase() : null);
-            setClauses.push(`email = $${params.length}`);
+            if (email && email.trim()) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email.trim())) {
+                    return res.status(400).json({ success: false, message: 'Invalid email format' });
+                }
+                params.push(email.trim().toLowerCase());
+            } else {
+                params.push(null);
+            }
+            fields.push(`email = $${++idx}`);
         }
+
         if (address !== undefined) {
             params.push(address || null);
-            setClauses.push(`address = $${params.length}`);
-        }
-        if (emergency_contact_name !== undefined) {
-            params.push(emergency_contact_name || null);
-            setClauses.push(`emergency_contact_name = $${params.length}`);
-        }
-        if (emergency_contact_phone !== undefined) {
-            params.push(emergency_contact_phone || null);
-            setClauses.push(`emergency_contact_phone = $${params.length}`);
-        }
-        if (emergency_contact_relationship !== undefined) {
-            params.push(emergency_contact_relationship || null);
-            setClauses.push(`emergency_contact_relationship = $${params.length}`);
-        }
-        if (medical_history !== undefined) {
-            params.push(medical_history || null);
-            setClauses.push(`medical_history = $${params.length}`);
-        }
-        if (allergies !== undefined) {
-            params.push(allergies || null);
-            setClauses.push(`allergies = $${params.length}`);
-        }
-        if (current_medications !== undefined) {
-            params.push(current_medications || null);
-            setClauses.push(`current_medications = $${params.length}`);
+            fields.push(`address = $${++idx}`);
         }
 
-        if (setClauses.length === 0) {
+        if (emergency_contact_name !== undefined) {
+            params.push(emergency_contact_name || null);
+            fields.push(`emergency_contact_name = $${++idx}`);
+        }
+
+        if (emergency_contact_phone !== undefined) {
+            params.push(emergency_contact_phone || null);
+            fields.push(`emergency_contact_phone = $${++idx}`);
+        }
+
+        if (emergency_contact_relationship !== undefined) {
+            params.push(emergency_contact_relationship || null);
+            fields.push(`emergency_contact_relationship = $${++idx}`);
+        }
+
+        if (medical_history !== undefined) {
+            params.push(medical_history || null);
+            fields.push(`medical_history = $${++idx}`);
+        }
+
+        if (allergies !== undefined) {
+            params.push(allergies || null);
+            fields.push(`allergies = $${++idx}`);
+        }
+
+        if (current_medications !== undefined) {
+            params.push(current_medications || null);
+            fields.push(`current_medications = $${++idx}`);
+        }
+
+        if (fields.length === 0) {
             return res.status(400).json({
                 success: false,
-                message: 'No fields to update'
+                message: 'No fields provided to update'
             });
         }
 
-        // Always update updated_at
-        setClauses.push('updated_at = NOW()');
-
+        // Add id as last param
         params.push(id);
-        const idPlaceholder = `$${params.length}`;
+        const idIdx = params.length;
 
         const { rows } = await pool.query(`
             UPDATE patients
-            SET ${setClauses.join(', ')}
-            WHERE id = ${idPlaceholder}
+            SET ${fields.join(', ')}, updated_at = NOW()
+            WHERE id = $${idIdx}
             RETURNING
                 id, name, date_of_birth, age, gender, blood_type,
                 phone, email, address,
@@ -567,10 +535,11 @@ export const updatePatient = async (req, res) => {
         });
     }
 };
+
 // ============================================================================
-// DELETE PATIENT
+// DELETE PATIENT (soft-delete)
 // ============================================================================
-// @desc    Soft delete a patient (set is_active = FALSE)
+// @desc    Soft-delete a patient (set is_active = false)
 // @route   DELETE /api/patients/:id
 // @access  Protected (coordinator, admin)
 // ============================================================================
@@ -578,20 +547,26 @@ export const deletePatient = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check if patient exists
-        const { rows: existingRows } = await pool.query(
-            'SELECT id, name FROM patients WHERE id = $1',
+        // Check that patient exists and is active
+        const { rows: existing } = await pool.query(
+            'SELECT id, name, is_active FROM patients WHERE id = $1',
             [id]
         );
 
-        if (existingRows.length === 0) {
+        if (existing.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Patient not found'
             });
         }
 
-        // Soft delete the patient
+        if (!existing[0].is_active) {
+            return res.status(400).json({
+                success: false,
+                message: 'Patient is already deactivated'
+            });
+        }
+
         await pool.query(
             'UPDATE patients SET is_active = FALSE, updated_at = NOW() WHERE id = $1',
             [id]
@@ -599,7 +574,7 @@ export const deletePatient = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: `Patient '${existingRows[0].name}' deleted successfully`
+            message: `Patient '${existing[0].name}' has been deactivated`
         });
     } catch (error) {
         console.error('Error deleting patient:', error);
