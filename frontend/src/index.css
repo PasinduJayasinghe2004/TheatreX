@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
 @import "tailwindcss";
 
 /* Enable class-based dark mode for Tailwind v4
@@ -312,4 +313,15 @@
   80% {
     transform: translateX(5px);
   }
+}
+
+/* ========================================
+   Landing Page Scoped Styles
+   ======================================== */
+.landing-page {
+  background: #EDF2FA;
+}
+
+.landing-page * {
+  box-sizing: border-box;
 }
