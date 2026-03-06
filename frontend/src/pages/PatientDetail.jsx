@@ -18,7 +18,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-    ArrowLeft, AlertCircle, User, Phone, Mail, MapPin,
+    ArrowLeft, AlertCircle, Phone,
     Droplets, Heart, Calendar, Clock, FileText,
     AlertTriangle, Pill, Activity, Stethoscope
 } from 'lucide-react';
