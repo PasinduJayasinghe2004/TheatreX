@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import theatrexLogo from '../assets/theatrex-logo.svg'
 
 export default function Navbar() {
@@ -21,8 +22,8 @@ export default function Navbar() {
                         <a href="#">Resources</a>
                     </div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button className="btn btn-outline" style={{ padding: '0.5rem 1rem' }}>Log in</button>
-                        <button className="btn btn-primary" style={{ padding: '0.5rem 1rem' }}>Request demo</button>
+                        <Link to="/login" className="btn btn-outline" style={{ padding: '0.5rem 1rem', textDecoration: 'none' }}>Log in</Link>
+                        <Link to="/register" className="btn btn-primary" style={{ padding: '0.5rem 1rem', textDecoration: 'none' }}>Sign Up</Link>
                     </div>
                 </div>
 

@@ -1,5 +1,5 @@
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
@@ -24,6 +24,9 @@ import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
 import NursesPage from '../pages/NursesPage'; // M3 - Day 13
 import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
 import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
+import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
+import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
+import LandingPage from '../pages/LandingPage';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -166,6 +169,13 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
+            {/* Patient Detail - M3 (Janani) Day 15 */}
+            <Route path="/patients/:id" element={
+                <ProtectedRoute>
+                    <PatientDetail />
+                </ProtectedRoute>
+            } />
+
             {/* Calendar View - M1 (Pasindu) Day 7 */}
             <Route path="/calendar" element={
                 <ProtectedRoute>
@@ -173,8 +183,15 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Notifications Page - M1 Day 16 */}
+            <Route path="/notifications" element={
+                <ProtectedRoute>
+                    <NotificationsPage />
+                </ProtectedRoute>
+            } />
+
+            {/* Default Landing Page */}
+            <Route path="/" element={<LandingPage />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

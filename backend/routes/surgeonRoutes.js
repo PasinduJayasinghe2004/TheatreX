@@ -19,6 +19,7 @@ import express from 'express';
 import { createSurgeon, getAllSurgeons, getSurgeonById, updateSurgeon, deleteSurgeon } from '../controllers/surgeonController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgeon, validateSurgeonUpdate } from '../middleware/surgeonValidation.js';
+import { uploadProfilePicture } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -53,27 +54,11 @@ router.post('/', protect, authorize('coordinator', 'admin'), uploadProfilePictur
 // ============================================================================
 // ROUTE: PUT /api/surgeons/:id
 // ============================================================================
-// Update a surgeon record.
-// Protected + coordinator or admin only.
-// ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, updateSurgeon);
-
-// ============================================================================
-// ROUTE: DELETE /api/surgeons/:id
-// ============================================================================
-// Soft delete a surgeon.
-// Protected + admin only.
-// ============================================================================
-router.delete('/:id', protect, authorize('admin'), deleteSurgeon);
-
-// ============================================================================
-// ROUTE: PUT /api/surgeons/:id
-// ============================================================================
 // Update an existing surgeon's details (partial update supported).
 // Protected + coordinator or admin only.
 // Created by: M1 (Pasindu) - Day 14
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), validateSurgeonUpdate, updateSurgeon);
+router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, validateSurgeonUpdate, updateSurgeon);
 
 // ============================================================================
 // ROUTE: DELETE /api/surgeons/:id
@@ -83,6 +68,8 @@ router.put('/:id', protect, authorize('coordinator', 'admin'), validateSurgeonUp
 // Created by: M1 (Pasindu) - Day 14
 // ============================================================================
 router.delete('/:id', protect, authorize('coordinator', 'admin'), deleteSurgeon);
+
+
 
 export default router;
 

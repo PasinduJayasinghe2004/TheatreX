@@ -2,21 +2,22 @@
 // PatientsPage
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
-// Updated by: M4 (Oneli) - Day 15 (added edit patient support)
+// Updated by: M2 (Chandeepa) - Day 15
 //
 // Patients management page featuring:
 // - Patient list (card grid) fetched from GET /api/patients
-// - Search by name/phone/email, filter by gender and blood type
+// - Backend search by name/phone/email (?search=...), filter by gender and blood type
 // - "Add Patient" button (coordinator/admin only) → opens PatientForm modal
-// - Edit action on each card (coordinator/admin only)
+// - Edit / Delete patient support (coordinator/admin only)
 // - Loading / error / empty states
 // ============================================================================
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
     UserPlus, Search, Filter, RefreshCw, Edit3,
     Phone, Mail, MapPin, Heart, Droplets,
-    AlertTriangle, XCircle
+    AlertTriangle, XCircle, Trash2
 } from 'lucide-react';
 import PatientForm from '../components/PatientForm';
 import patientService from '../services/patientService';
@@ -49,54 +50,60 @@ const BLOOD_COLORS = {
 
 // ── PatientCard ─────────────────────────────────────────────────────────────
 
-const PatientCard = ({ patient, canManage, onEdit }) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
-        {/* Header: avatar + name + gender */}
-        <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-3 min-w-0">
-                {/* Avatar */}
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-emerald-600 font-semibold text-sm">
-                        {patient.name?.trim().charAt(0).toUpperCase() ?? 'P'}
+const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col h-full">
+        {/* clickable area */}
+        <Link
+            to={`/patients/${patient.id}`}
+            className="p-5 flex-1 flex flex-col gap-3"
+        >
+            {/* Header: avatar + name + gender */}
+            <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3 min-w-0">
+                    {/* Avatar */}
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-200 transition-colors">
+                        <span className="text-emerald-600 font-semibold text-sm">
+                            {patient.name?.trim().charAt(0).toUpperCase() ?? 'P'}
+                        </span>
+                    </div>
+                    <div className="min-w-0">
+                        <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-emerald-700 transition-colors">{patient.name}</h3>
+                        {patient.age != null && (
+                            <p className="text-xs text-gray-400">{patient.age} years old</p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-1 flex-shrink-0">
+                    {/* Gender badge */}
+                    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${GENDER_COLORS[patient.gender] ?? 'bg-gray-100 text-gray-600'}`}>
+                        {GENDER_LABELS[patient.gender] ?? patient.gender}
                     </span>
                 </div>
-                <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 truncate">{patient.name}</h3>
-                    {patient.age != null && (
-                        <p className="text-xs text-gray-400">{patient.age} years old</p>
-                    )}
-                </div>
             </div>
 
-            {/* Gender badge */}
-            <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${GENDER_COLORS[patient.gender] ?? 'bg-gray-100 text-gray-600'}`}>
-                {GENDER_LABELS[patient.gender] ?? patient.gender}
-            </span>
-        </div>
-
-        {/* Details */}
-        <div className="space-y-1.5 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span>{patient.phone}</span>
+            {/* Details */}
+            <div className="space-y-1.5 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span>{patient.phone}</span>
+                </div>
+                {patient.email && (
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <span className="truncate">{patient.email}</span>
+                    </div>
+                )}
+                {patient.address && (
+                    <div className="flex items-center gap-2 min-w-0">
+                        <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <span className="truncate">{patient.address}</span>
+                    </div>
+                )}
             </div>
-            {patient.email && (
-                <div className="flex items-center gap-2 min-w-0">
-                    <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{patient.email}</span>
-                </div>
-            )}
-            {patient.address && (
-                <div className="flex items-center gap-2 min-w-0">
-                    <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{patient.address}</span>
-                </div>
-            )}
-        </div>
 
-        {/* Footer: blood type + allergies + edit */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
-            <div className="flex items-center gap-2 flex-wrap">
+            {/* Badges footer */}
+            <div className="flex items-center gap-2 flex-wrap mt-auto pt-1">
                 {patient.blood_type && (
                     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 text-gray-600'}`}>
                         <Droplets className="w-3 h-3" />
@@ -109,26 +116,44 @@ const PatientCard = ({ patient, canManage, onEdit }) => (
                         Allergies
                     </span>
                 )}
-                {patient.emergency_contact_name && (
-                    <span className="inline-flex items-center gap-1 text-xs text-gray-400">
-                        <Heart className="w-3 h-3" />
-                        {patient.emergency_contact_name}
-                    </span>
-                )}
             </div>
+        </Link>
 
-            {canManage && (
-                <div className="flex items-center gap-1 flex-shrink-0">
+        {/* Action footer (separate from Link) */}
+        {canManage && (
+            <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-1 text-xs text-gray-400 truncate">
+                    {patient.emergency_contact_name && (
+                        <>
+                            <Heart className="w-3 h-3" />
+                            <span className="truncate">{patient.emergency_contact_name}</span>
+                        </>
+                    )}
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0 ml-2">
                     <button
-                        onClick={() => onEdit(patient)}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onEdit?.(patient);
+                        }}
                         title="Edit patient"
-                        className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     >
                         <Edit3 className="w-3.5 h-3.5" />
                     </button>
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onDelete?.(patient);
+                        }}
+                        title="Delete patient"
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                 </div>
-            )}
-        </div>
+            </div>
+        )}
     </div>
 );
 
@@ -142,15 +167,30 @@ const PatientsPage = () => {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [editingPatient, setEditingPatient] = useState(null);
+    const [deletingPatient, setDeletingPatient] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     // Filters
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [filterGender, setFilterGender] = useState(''); // '' | 'male' | 'female' | 'other'
     const [filterBloodType, setFilterBloodType] = useState('');
 
     const canManage = user?.role === 'coordinator' || user?.role === 'admin';
 
+    // ── M6 Day 15: Debounce search input (400ms) so API is not called on every keystroke
+    const debounceTimer = useRef(null);
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearch(value);
+        clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => {
+            setDebouncedSearch(value);
+        }, 400);
+    };
+
     // ── fetch ───────────────────────────────────────────────────────────
+    // M6 Day 15: search is now sent to backend as ?search=... instead of filtering client-side
     const fetchPatients = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -158,6 +198,7 @@ const PatientsPage = () => {
             const filters = {};
             if (filterGender) filters.gender = filterGender;
             if (filterBloodType) filters.blood_type = filterBloodType;
+            if (debouncedSearch.trim()) filters.search = debouncedSearch.trim();
 
             const response = await patientService.getAllPatients(filters);
             setPatients(response.data ?? []);
@@ -166,22 +207,14 @@ const PatientsPage = () => {
         } finally {
             setLoading(false);
         }
-    }, [filterGender, filterBloodType]);
+    }, [filterGender, filterBloodType, debouncedSearch]);
 
     useEffect(() => {
         fetchPatients();
     }, [fetchPatients]);
 
-    // ── client-side search filter ───────────────────────────────────────
-    const displayed = patients.filter(p => {
-        if (!search.trim()) return true;
-        const q = search.toLowerCase();
-        return (
-            p.name?.toLowerCase().includes(q) ||
-            p.phone?.toLowerCase().includes(q) ||
-            p.email?.toLowerCase().includes(q)
-        );
-    });
+    // Backend handles filtering, so displayed === patients
+    const displayed = patients;
 
     // ── unique blood types for filter dropdown ──────────────────────────
     const bloodTypes = [...new Set(patients.map(p => p.blood_type).filter(Boolean))].sort();
@@ -192,11 +225,33 @@ const PatientsPage = () => {
         setPatients(prev => [newPatient, ...prev]);
     };
 
+    const handleEditClick = (patient) => {
+        setEditingPatient(patient);
+    };
+
     const handlePatientUpdated = (updatedPatient) => {
         setEditingPatient(null);
         setPatients(prev =>
-            prev.map(p => (p.id === updatedPatient.id ? updatedPatient : p))
+            prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
         );
+    };
+
+    const handleDeleteClick = (patient) => {
+        setDeletingPatient(patient);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!deletingPatient) return;
+        setDeleteLoading(true);
+        try {
+            await patientService.deletePatient(deletingPatient.id);
+            setPatients(prev => prev.filter(p => p.id !== deletingPatient.id));
+            setDeletingPatient(null);
+        } catch (err) {
+            setError(err.message || 'Failed to delete patient.');
+        } finally {
+            setDeleteLoading(false);
+        }
     };
 
     // ── render ──────────────────────────────────────────────────────────
@@ -251,7 +306,7 @@ const PatientsPage = () => {
                             type="text"
                             placeholder="Search name, phone or email…"
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={handleSearchChange}
                             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                         />
                     </div>
@@ -361,7 +416,8 @@ const PatientsPage = () => {
                                     key={patient.id}
                                     patient={patient}
                                     canManage={canManage}
-                                    onEdit={(p) => setEditingPatient(p)}
+                                    onEdit={handleEditClick}
+                                    onDelete={handleDeleteClick}
                                 />
                             ))}
                         </div>
@@ -384,6 +440,58 @@ const PatientsPage = () => {
                     onSuccess={handlePatientUpdated}
                     onClose={() => setEditingPatient(null)}
                 />
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deletingPatient && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    onClick={(e) => { if (e.target === e.currentTarget && !deleteLoading) setDeletingPatient(null); }}
+                >
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <Trash2 className="w-5 h-5 text-red-600" />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-900">Delete Patient</h2>
+                                <p className="text-sm text-gray-500">This action can be reversed by an admin</p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-gray-600 mb-6">
+                            Are you sure you want to delete <strong>{deletingPatient.name}</strong>?
+                            The patient record will be deactivated.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setDeletingPatient(null)}
+                                disabled={deleteLoading}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteConfirm}
+                                disabled={deleteLoading}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+                            >
+                                {deleteLoading ? (
+                                    <>
+                                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Deleting…
+                                    </>
+                                ) : (
+                                    <>
+                                        <Trash2 className="w-4 h-4" />
+                                        Delete Patient
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

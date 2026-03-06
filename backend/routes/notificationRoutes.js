@@ -1,29 +1,51 @@
-// ============================================================================
-// Notification Routes
-// ============================================================================
-// Created by: M4 (Oneli) - Day 16
-//
-// Routes:
-// - POST  /api/notifications           (coordinator/admin only)
-// - GET   /api/notifications           (any authenticated user)
-// - GET   /api/notifications/unread-count (any authenticated user)
-// ============================================================================
-
-import { Router } from 'express';
-import { protect, authorize } from '../middleware/authMiddleware.js';
+import express from 'express';
 import {
     createNotification,
-    getMyNotifications,
+    getNotifications,
+    markAsRead,
+    markAllAsRead,
     getUnreadCount
 } from '../controllers/notificationController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
-const router = Router();
+const router = express.Router();
 
-// GET must come before any /:id style routes
-router.get('/unread-count', protect, getUnreadCount);
-router.get('/', protect, getMyNotifications);
+// All notification routes are protected
+router.use(protect);
 
-// Only coordinators/admins can manually create notifications
-router.post('/', protect, authorize('coordinator', 'admin'), createNotification);
+/**
+ * @route   POST /api/notifications
+ * @desc    Create a new notification
+ * @access  Private (System/Admin)
+ */
+router.post('/', createNotification);
+
+/**
+ * @route   GET /api/notifications
+ * @desc    Get all notifications for current user
+ * @access  Private
+ */
+router.get('/', getNotifications);
+
+/**
+ * @route   GET /api/notifications/unread-count
+ * @desc    Get unread notification count
+ * @access  Private
+ */
+router.get('/unread-count', getUnreadCount);
+
+/**
+ * @route   PUT /api/notifications/:id/read
+ * @desc    Mark a notification as read
+ * @access  Private
+ */
+router.put('/:id/read', markAsRead);
+
+/**
+ * @route   PUT /api/notifications/read-all
+ * @desc    Mark all notifications as read
+ * @access  Private
+ */
+router.put('/read-all', markAllAsRead);
 
 export default router;

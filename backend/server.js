@@ -35,6 +35,7 @@ import theatreRoutes from './routes/theatreRoutes.js'; // M2 - Day 8
 import surgeonRoutes from './routes/surgeonRoutes.js'; // M1 - Day 13
 import nurseRoutes from './routes/nurseRoutes.js'; // M3 - Day 13
 import anaesthetistRoutes from './routes/anaesthetistRoutes.js'; // M6 - Day 13
+import patientRoutes from './routes/patientRoutes.js'; // M2 - Day 15
 
 // Load environment variables
 dotenv.config();
@@ -66,6 +67,7 @@ app.use('/api/theatres', theatreRoutes); // Theatre routes - M2 Day 8
 app.use('/api/surgeons', surgeonRoutes); // Surgeon routes - M1 Day 13
 app.use('/api/nurses', nurseRoutes); // Nurse routes - M3 Day 13
 app.use('/api/anaesthetists', anaesthetistRoutes); // Anaesthetist routes - M6 Day 13
+app.use('/api/patients', patientRoutes); // Patient routes - M2 Day 15
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -152,7 +154,7 @@ const startServer = async () => {
         app.listen(PORT, () => {
             console.log('');
             console.log('🚀 ================================');
-            console.log(`🎭 TheatreX Backend Server`);
+            console.log(`   TheatreX Backend Server`);
             console.log(`📡 Server running on port ${PORT}`);
             console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
             console.log(`🔗 API URL: http://localhost:${PORT}`);
