@@ -586,8 +586,6 @@ const NursesPage = () => {
         setNurses(prev => prev.filter(n => n.id !== deletedId));
     };
 
-    const totalAvailable = nurses.filter(n => n.is_available).length;
-
     return (
         <Layout>
             <div className="p-6 max-w-7xl mx-auto">

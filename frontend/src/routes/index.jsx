@@ -24,7 +24,7 @@ import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
 import NursesPage from '../pages/NursesPage'; // M3 - Day 13
 import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
 import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
-import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
+import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -178,6 +178,13 @@ const AppRoutes = () => {
             <Route path="/calendar" element={
                 <ProtectedRoute>
                     <Calendar />
+                </ProtectedRoute>
+            } />
+
+            {/* Notifications Page - M1 Day 16 */}
+            <Route path="/notifications" element={
+                <ProtectedRoute>
+                    <NotificationsPage />
                 </ProtectedRoute>
             } />
 

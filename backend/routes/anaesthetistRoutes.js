@@ -26,6 +26,7 @@ import {
 } from '../controllers/anaesthetistController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateAnaesthetistUpdate } from '../middleware/anaesthetistValidation.js';
+import { uploadProfilePicture } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -45,15 +46,9 @@ router.get('/:id', authorize('coordinator', 'admin'), getAnaesthetistById);
 router.post('/', authorize('admin'), uploadProfilePicture, createAnaesthetist);
 
 // Update anaesthetist - Coordinator and Admin
-router.put('/:id', authorize('coordinator', 'admin'), uploadProfilePicture, updateAnaesthetist);
+router.put('/:id', authorize('coordinator', 'admin'), uploadProfilePicture, validateAnaesthetistUpdate, updateAnaesthetist);
 
-// Delete anaesthetist - Admin only
-router.delete('/:id', authorize('admin'), deleteAnaesthetist);
-
-// Update anaesthetist - Coordinator and Admin
-router.put('/:id', authorize('coordinator', 'admin'), validateAnaesthetistUpdate, updateAnaesthetist);
-
-// Delete (soft-delete) anaesthetist - Coordinator and Admin
+// Delete (soft-delete) anaesthetist - Admin only (or Coordinator/Admin based on requirements)
 router.delete('/:id', authorize('coordinator', 'admin'), deleteAnaesthetist);
 
 // Update availability - Coordinator and Admin

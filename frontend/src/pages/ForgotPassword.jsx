@@ -121,10 +121,18 @@ const ForgotPassword = () => {
                         </div>
 
                         <div className="mt-6 text-center">
-                            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-4 h-4" />
-                                Back to Sign In
-                            </Link>
+                            <div className="flex flex-col gap-4">
+                                <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 flex items-center justify-center gap-2">
+                                    <ArrowLeft className="w-4 h-4" />
+                                    Back to Sign In
+                                </Link>
+                                <p className="text-sm text-gray-500">
+                                    Don&apos;t have an account?{' '}
+                                    <Link to="/register" className="text-blue-600 hover:text-blue-500 font-medium">
+                                        Sign Up
+                                    </Link>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
