@@ -52,7 +52,7 @@ const Contact = () => {
                 <ScrollReveal animation="fade-up">
                     <h2 className="section-title">Get in Touch</h2>
                     <p className="section-subtitle">
-                        Have questions about TheatreX? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                        Have questions about TheatreX? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
                     </p>
                 </ScrollReveal>
 
