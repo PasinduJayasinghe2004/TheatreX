@@ -200,4 +200,116 @@ describe('Notification API Tests - Day 16', () => {
             expect(typeof res.body.count).toBe('number');
         });
     });
+
+    // ========================================================================
+    // PUT /api/notifications/:id/read - Mark Single As Read (Day 17)
+    // ========================================================================
+    describe('PUT /api/notifications/:id/read', () => {
+        let notificationId;
+
+        // Create a notification to mark as read
+        beforeAll(async () => {
+            const res = await request(app)
+                .post('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    user_id: coordinatorUserId || 1,
+                    title: 'Read Test Notification',
+                    message: 'This will be marked as read',
+                    type: 'info'
+                });
+            notificationId = res.body.data?.id;
+        }, 15000);
+
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .put(`/api/notifications/${notificationId}/read`);
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should mark a notification as read', async () => {
+            const res = await request(app)
+                .put(`/api/notifications/${notificationId}/read`)
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.is_read).toBe(true);
+            expect(res.body.data.read_at).toBeTruthy();
+        });
+
+        it('should return 404 for non-existent notification', async () => {
+            const res = await request(app)
+                .put('/api/notifications/99999/read')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(404);
+            expect(res.body.success).toBe(false);
+        });
+
+        it('should return 404 when staff tries to mark another user\'s notification', async () => {
+            // The notification belongs to coordinator, not staff
+            if (!notificationId) return;
+            const res = await request(app)
+                .put(`/api/notifications/${notificationId}/read`)
+                .set('Authorization', `Bearer ${staffToken}`);
+
+            // Should be 404 because the notification doesn't belong to staff user
+            expect(res.statusCode).toBe(404);
+        });
+    });
+
+    // ========================================================================
+    // PUT /api/notifications/read-all - Mark All As Read (Day 17)
+    // ========================================================================
+    describe('PUT /api/notifications/read-all', () => {
+        // Create a couple of unread notifications
+        beforeAll(async () => {
+            await request(app)
+                .post('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    user_id: coordinatorUserId || 1,
+                    title: 'Unread Bulk Test 1',
+                    message: 'This should be marked read in bulk',
+                    type: 'info'
+                });
+            await request(app)
+                .post('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    user_id: coordinatorUserId || 1,
+                    title: 'Unread Bulk Test 2',
+                    message: 'This should also be marked read in bulk',
+                    type: 'alert'
+                });
+        }, 15000);
+
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .put('/api/notifications/read-all');
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should mark all notifications as read', async () => {
+            const res = await request(app)
+                .put('/api/notifications/read-all')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(typeof res.body.count).toBe('number');
+            expect(res.body.count).toBeGreaterThanOrEqual(0);
+        });
+
+        it('should return count 0 when no unread notifications remain', async () => {
+            const res = await request(app)
+                .put('/api/notifications/read-all')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.count).toBe(0);
+        });
+    });
 });
