@@ -114,14 +114,16 @@ export const getPatients = async (req, res) => {
 // ============================================================================
 // GET PATIENT BY ID
 // ============================================================================
-// @desc    Get a single patient by ID
+// @desc    Get a single patient by ID, including their surgery history
 // @route   GET /api/patients/:id
 // @access  Protected
+// Updated by: M3 (Janani) - Day 15  (added surgery history join)
 // ============================================================================
 export const getPatientById = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Fetch patient
         const { rows } = await pool.query(`
             SELECT
                 id,
@@ -153,9 +155,39 @@ export const getPatientById = async (req, res) => {
             });
         }
 
+        const patient = rows[0];
+
+        // Fetch related surgeries for this patient
+        let surgeries = [];
+        try {
+            const surgeryResult = await pool.query(`
+                SELECT
+                    id,
+                    surgery_type,
+                    status,
+                    priority,
+                    scheduled_date,
+                    scheduled_start_time,
+                    scheduled_end_time,
+                    theatre_id,
+                    surgeon_id,
+                    notes,
+                    created_at
+                FROM surgeries
+                WHERE patient_id = $1
+                ORDER BY scheduled_date DESC, scheduled_start_time DESC
+            `, [id]);
+            surgeries = surgeryResult.rows;
+        } catch {
+            // surgeries table may not have patient_id yet – silently skip
+        }
+
         res.status(200).json({
             success: true,
-            data: rows[0]
+            data: {
+                ...patient,
+                surgeries
+            }
         });
     } catch (error) {
         console.error('Error fetching patient:', error);

@@ -147,7 +147,7 @@ const startServer = async () => {
         app.listen(PORT, () => {
             console.log('');
             console.log('🚀 ================================');
-            console.log(`🎭 TheatreX Backend Server`);
+            console.log(`   TheatreX Backend Server`);
             console.log(`📡 Server running on port ${PORT}`);
             console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
             console.log(`🔗 API URL: http://localhost:${PORT}`);
