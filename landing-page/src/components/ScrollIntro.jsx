@@ -59,7 +59,7 @@ export default function ScrollIntro() {
                 <div className="scroll-intro-image-wrap">
                     <img
                         ref={imageRef}
-                        src="/hero-surgery.jpg"
+                        src="/Gemini.png"
                         alt="Surgical theatre"
                         className="scroll-intro-image"
                     />
