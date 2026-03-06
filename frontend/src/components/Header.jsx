@@ -116,6 +116,7 @@ const Header = ({ user, onLogout }) => {
                                     setIsNotifOpen(false);
                                     fetchUnreadCount();
                                 }}
+                                onCountChange={fetchUnreadCount}
                             />
                         </div>
 

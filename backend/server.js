@@ -36,7 +36,7 @@ import nurseRoutes from './routes/nurseRoutes.js'; // M4 - Day 13
 import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 14
 import patientRoutes from './routes/patientRoutes.js'; // M1 - Day 15
 import notificationRoutes from './routes/notificationRoutes.js'; // M4 - Day 16
-import { checkSurgeryReminders } from './controllers/notificationController.js'; // M4 - Day 16
+import { checkSurgeryReminders, clearOldNotifications } from './controllers/notificationController.js'; // M4 - Day 16, M1 - Day 17
 
 // Load environment variables
 dotenv.config();
@@ -147,6 +147,12 @@ const startServer = async () => {
             await checkSurgeryReminders();
         });
         console.log('⏰ Surgery reminder cron job started (every 60s)');
+
+        // Clear old read notifications daily at 3 AM - M1 Day 17
+        cron.schedule('0 3 * * *', async () => {
+            await clearOldNotifications();
+        });
+        console.log('🧹 Old notification cleanup cron job started (daily at 3 AM)');
 
         // Start listening
         app.listen(PORT, () => {

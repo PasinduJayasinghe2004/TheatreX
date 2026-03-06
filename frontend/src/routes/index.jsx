@@ -22,6 +22,7 @@ import LiveStatusPage from '../pages/LiveStatusPage'; // M3 - Day 11
 import NursesPage from '../pages/NursesPage'; // M4 - Day 13
 import TechniciansPage from '../pages/TechniciansPage'; // M4 - Day 14
 import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
+import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 17
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -147,6 +148,13 @@ const AppRoutes = () => {
             <Route path="/patients" element={
                 <ProtectedRoute>
                     <PatientsPage />
+                </ProtectedRoute>
+            } />
+
+            {/* Notifications Page - M1 (Pasindu) Day 17 */}
+            <Route path="/notifications" element={
+                <ProtectedRoute>
+                    <NotificationsPage />
                 </ProtectedRoute>
             } />
 

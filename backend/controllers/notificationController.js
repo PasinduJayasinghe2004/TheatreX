@@ -2,14 +2,18 @@
 // Notification Controller
 // ============================================================================
 // Created by: M4 (Oneli) - Day 16
+// Updated by: M1 (Pasindu) - Day 17 (mark read, mark all, clear old)
 //
 // Endpoints:
-// - POST  /api/notifications           (Create notification)
-// - GET   /api/notifications           (Get current user's notifications)
-// - GET   /api/notifications/unread-count (Get unread count)
+// - POST  /api/notifications              (Create notification)
+// - GET   /api/notifications              (Get current user's notifications)
+// - GET   /api/notifications/unread-count  (Get unread count)
+// - PUT   /api/notifications/read-all      (Mark all as read)
+// - PUT   /api/notifications/:id/read      (Mark single as read)
 //
-// Cron helper:
+// Cron helpers:
 // - checkSurgeryReminders()  – creates reminder notifications 15 min before
+// - clearOldNotifications()  – deletes read notifications older than 30 days
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -107,6 +111,86 @@ export const getUnreadCount = async (req, res) => {
     } catch (error) {
         console.error('Error fetching unread count:', error.message);
         res.status(500).json({ success: false, message: 'Server error fetching unread count' });
+    }
+};
+
+// ============================================================================
+// PUT /api/notifications/:id/read - Mark a single notification as read
+// ============================================================================
+export const markAsRead = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { id } = req.params;
+
+        const { rows } = await pool.query(
+            `UPDATE notifications
+             SET is_read = true, read_at = NOW()
+             WHERE id = $1 AND user_id = $2
+             RETURNING *`,
+            [id, userId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Notification not found or not owned by you'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Notification marked as read',
+            data: rows[0]
+        });
+    } catch (error) {
+        console.error('Error marking notification as read:', error.message);
+        res.status(500).json({ success: false, message: 'Server error marking notification as read' });
+    }
+};
+
+// ============================================================================
+// PUT /api/notifications/read-all - Mark all notifications as read
+// ============================================================================
+export const markAllAsRead = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const { rowCount } = await pool.query(
+            `UPDATE notifications
+             SET is_read = true, read_at = NOW()
+             WHERE user_id = $1 AND is_read = false`,
+            [userId]
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `${rowCount} notification(s) marked as read`,
+            count: rowCount
+        });
+    } catch (error) {
+        console.error('Error marking all notifications as read:', error.message);
+        res.status(500).json({ success: false, message: 'Server error marking all as read' });
+    }
+};
+
+// ============================================================================
+// CRON HELPER: clearOldNotifications
+// ============================================================================
+// Deletes read notifications older than 30 days to keep the table clean.
+// ============================================================================
+export const clearOldNotifications = async () => {
+    try {
+        const { rowCount } = await pool.query(
+            `DELETE FROM notifications
+             WHERE is_read = true
+               AND created_at < NOW() - INTERVAL '30 days'`
+        );
+
+        if (rowCount > 0) {
+            console.log(`🧹 Cleared ${rowCount} old read notification(s)`);
+        }
+    } catch (error) {
+        console.error('❌ Error clearing old notifications:', error.message);
     }
 };
 
