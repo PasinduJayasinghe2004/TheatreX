@@ -1,5 +1,5 @@
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
@@ -24,6 +24,7 @@ import SurgeonsPage from '../pages/SurgeonsPage'; // M1 - Day 13
 import NursesPage from '../pages/NursesPage'; // M3 - Day 13
 import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
 import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
+import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import LandingPage from '../pages/LandingPage';
 
