@@ -58,7 +58,7 @@ const Team = () => {
                     {team.map((member, index) => (
                         <ScrollReveal key={index} animation="fade-up" delay={index * 120} duration={600}>
                             <div style={{
-                                backgroundColor: 'var(--bg-white)',
+                                backgroundColor: '#fff',
                                 borderRadius: 'var(--radius-lg)',
                                 padding: '2rem',
                                 boxShadow: 'var(--shadow-md)',

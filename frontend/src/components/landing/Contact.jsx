@@ -60,7 +60,7 @@ const Contact = () => {
                     <div style={{
                         maxWidth: '700px',
                         margin: '0 auto',
-                        backgroundColor: 'var(--bg-white)',
+                        backgroundColor: '#fff',
                         padding: '3rem',
                         borderRadius: 'var(--radius-lg)',
                         boxShadow: 'var(--shadow-md)',
