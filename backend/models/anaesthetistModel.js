@@ -115,14 +115,14 @@ const getAnaesthetistById = async (id) => {
 
 // Create a new anaesthetist
 const createAnaesthetist = async (anaesthetistData) => {
-    const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference } = anaesthetistData;
+    const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference, profile_picture } = anaesthetistData;
 
     try {
         const { rows } = await pool.query(
-            `INSERT INTO anaesthetists (name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `INSERT INTO anaesthetists (name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference, profile_picture)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
              RETURNING id`,
-            [name, email, phone, specialization, license_number, years_of_experience || 0, qualification, shift_preference || 'flexible']
+            [name, email, phone, specialization, license_number, years_of_experience || 0, qualification, shift_preference || 'flexible', profile_picture]
         );
         return { id: rows[0].id, ...anaesthetistData };
     } catch (error) {
@@ -145,11 +145,72 @@ const updateAnaesthetistAvailability = async (id, isAvailable) => {
     }
 };
 
+// Update anaesthetist details (partial update)
+const updateAnaesthetist = async (id, data) => {
+    try {
+        const fields = [];
+        const values = [];
+        let paramIdx = 1;
+
+        const allowedFields = [
+            'name', 'email', 'phone', 'specialization', 'license_number',
+            'years_of_experience', 'qualification', 'is_available', 'shift_preference',
+            'profile_picture', 'notes'
+        ];
+
+        for (const field of allowedFields) {
+            if (data[field] !== undefined) {
+                fields.push(`${field} = $${paramIdx}`);
+                values.push(data[field]);
+                paramIdx++;
+            }
+        }
+
+        if (fields.length === 0) return null;
+
+        fields.push(`updated_at = NOW()`);
+        values.push(id);
+
+        const query = `
+            UPDATE anaesthetists
+            SET ${fields.join(', ')}
+            WHERE id = $${paramIdx} AND is_active = TRUE
+            RETURNING *
+        `;
+
+        const { rows } = await pool.query(query, values);
+        return rows[0] || null;
+    } catch (error) {
+        console.error('❌ Error updating anaesthetist:', error.message);
+        throw error;
+    }
+};
+
+// Soft-delete anaesthetist (set is_active = FALSE)
+const deleteAnaesthetist = async (id) => {
+    try {
+        const { rows } = await pool.query(
+            `UPDATE anaesthetists
+             SET is_active = FALSE, updated_at = NOW()
+             WHERE id = $1 AND is_active = TRUE
+             RETURNING id, name`,
+            [id]
+        );
+        return rows[0] || null;
+    } catch (error) {
+        console.error('❌ Error deleting anaesthetist:', error.message);
+        throw error;
+    }
+};
+
 export {
+    pool,
     createAnaesthetistsTable,
     getAllAnaesthetists,
     getAvailableAnaesthetists,
     getAnaesthetistById,
     createAnaesthetist,
-    updateAnaesthetistAvailability
+    updateAnaesthetistAvailability,
+    updateAnaesthetist,
+    deleteAnaesthetist
 };

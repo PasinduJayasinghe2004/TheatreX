@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
 @import "tailwindcss";
+
+/* Enable class-based dark mode for Tailwind v4
+   Activates dark: variants when any ancestor has class="dark" */
+@variant dark (&:where(.dark, .dark *));
 
 /* ========================================
    Custom CSS Variables (Theme Tokens)
@@ -44,6 +49,35 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* ========================================
+   Dark Mode Variable Overrides
+   Applied when .dark class is on <html>
+   ======================================== */
+.dark {
+  /* Brand Colors - slightly brighter for dark bg */
+  --primary: #3B82F6;
+  --primary-hover: #2563EB;
+  --primary-light: #1E3A5F;
+  --secondary: #60A5FA;
+  --accent: #93C5FD;
+
+  /* Text Colors */
+  --text-main: #F1F5F9;
+  --text-muted: #94A3B8;
+  --text-light: #64748B;
+  --text-white: #FFFFFF;
+
+  /* Background Colors */
+  --bg-white: #0F172A;
+  --bg-gray: #1E293B;
+  --bg-dark: #020617;
+
+  /* Shadows (lighter on dark bg) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
 }
 
 /* ========================================
@@ -124,7 +158,7 @@
   .section-title {
     font-size: 2.25rem;
     font-weight: 700;
-    color: var(--text-main);
+    color: #000;
     text-align: center;
     margin-bottom: 3rem;
     letter-spacing: -0.02em;
@@ -279,4 +313,15 @@
   80% {
     transform: translateX(5px);
   }
+}
+
+/* ========================================
+   Landing Page Scoped Styles
+   ======================================== */
+.landing-page {
+  background: #EDF2FA;
+}
+
+.landing-page * {
+  box-sizing: border-box;
 }

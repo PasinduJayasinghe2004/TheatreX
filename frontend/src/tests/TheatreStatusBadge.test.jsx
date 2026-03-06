@@ -30,7 +30,6 @@ import {
     getStatusGradient,
     getStatusCardBorder,
     getStatusHex,
-    THEATRE_TYPE,
     VALID_THEATRE_TYPES,
     getTypeColor,
     getTypeLabel,
@@ -209,7 +208,7 @@ describe('TheatreStatusBadge component', () => {
     });
 
     it('falls back gracefully for an unknown status', () => {
-        const { container } = render(
+        render(
             <TheatreStatusBadge status="nonexistent" />
         );
         // Should fall back to available styling
@@ -262,7 +261,7 @@ describe('TheatreStatusLegend component', () => {
 
     it('renders <button> items when interactive', () => {
         const { container } = render(
-            <TheatreStatusLegend interactive onStatusClick={() => {}} />
+            <TheatreStatusLegend interactive onStatusClick={() => { }} />
         );
         const buttons = container.querySelectorAll('button');
         // 4 status buttons (no clear button when nothing active)
@@ -283,7 +282,7 @@ describe('TheatreStatusLegend component', () => {
             <TheatreStatusLegend
                 interactive
                 activeStatus="in_use"
-                onStatusClick={() => {}}
+                onStatusClick={() => { }}
             />
         );
         expect(screen.getByText(/Clear/)).toBeInTheDocument();

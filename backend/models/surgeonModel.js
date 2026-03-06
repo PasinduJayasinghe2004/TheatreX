@@ -38,6 +38,9 @@ const createSurgeonsTable = async () => {
       -- STATUS
       is_active BOOLEAN DEFAULT TRUE,
       
+      -- PROFILE
+      profile_picture VARCHAR(500),
+      
       -- TIMESTAMPS
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

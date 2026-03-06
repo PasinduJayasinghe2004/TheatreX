@@ -1,5 +1,7 @@
-import { Menu, X, Activity } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import theatrexLogo from '../assets/theatrex-logo.svg'
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
@@ -8,7 +10,7 @@ export default function Navbar() {
         <nav style={{ backgroundColor: '#fff', borderBottom: '1px solid #f3f4f6', padding: '1rem 0' }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Activity color="var(--primary)" size={24} />
+                    <img src={theatrexLogo} alt="TheatreX Logo" style={{ width: '32px', height: '32px' }} />
                     <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>TheatreX</span>
                 </div>
 
@@ -20,8 +22,8 @@ export default function Navbar() {
                         <a href="#">Resources</a>
                     </div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button className="btn btn-outline" style={{ padding: '0.5rem 1rem' }}>Log in</button>
-                        <button className="btn btn-primary" style={{ padding: '0.5rem 1rem' }}>Request demo</button>
+                        <Link to="/login" className="btn btn-outline" style={{ padding: '0.5rem 1rem', textDecoration: 'none' }}>Log in</Link>
+                        <Link to="/register" className="btn btn-primary" style={{ padding: '0.5rem 1rem', textDecoration: 'none' }}>Sign Up</Link>
                     </div>
                 </div>
 

@@ -23,6 +23,21 @@ export const getDashboardStats = async () => {
     }
 };
 
+/**
+ * Get high-level dashboard summary
+ * @returns {Promise} Dashboard summary data
+ */
+export const getDashboardSummary = async () => {
+    try {
+        const response = await api.get('/api/dashboard/summary');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching dashboard summary:', error);
+        throw error;
+    }
+};
+
 export default {
-    getDashboardStats
+    getDashboardStats,
+    getDashboardSummary
 };

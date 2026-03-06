@@ -1,5 +1,16 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
+
+// Polyfill for HTMLFormElement.prototype.requestSubmit (not implemented in JSDOM)
+if (typeof HTMLFormElement !== 'undefined' && !HTMLFormElement.prototype.requestSubmit) {
+    HTMLFormElement.prototype.requestSubmit = function (submitter) {
+        if (submitter) {
+            submitter.click();
+        } else {
+            this.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    };
+}
 import { BrowserRouter } from 'react-router-dom';
 // import Profile from '../pages/Profile'; // Component to be implemented
 // Mock the Profile component since it doesn't exist yet

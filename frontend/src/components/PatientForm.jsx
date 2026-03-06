@@ -2,16 +2,16 @@
 // PatientForm Component
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 15
-// Updated by: M4 (Oneli) - Day 15 (added edit mode support)
+// Updated by: M2 (Chandeepa) - Day 15
 //
-// Modal form for adding / editing a patient.
+// Modal form for adding or editing a patient.
 // Fields: name, date_of_birth, gender, blood_type, phone, email, address,
 //         emergency contact info, medical history, allergies, medications
 //
 // Props:
-//   - onSuccess(patientData)  – called after a successful create/update
-//   - onClose()               – called when the modal should close
-//   - patient (optional)      – if provided, form opens in EDIT mode
+//   patient   - (optional) existing patient object for edit mode
+//   onSuccess - callback with the created/updated patient data
+//   onClose   - callback to close the modal
 // ============================================================================
 
 import { useState, useEffect } from 'react';
@@ -36,23 +36,25 @@ const BLOOD_TYPE_OPTIONS = [
     { value: 'O-', label: 'O-' },
 ];
 
-const PatientForm = ({ onSuccess, onClose, patient }) => {
-    const isEdit = Boolean(patient);
+const PatientForm = ({ patient, onSuccess, onClose }) => {
+    const isEditMode = Boolean(patient?.id);
 
     const [formData, setFormData] = useState({
-        name: '',
-        date_of_birth: '',
-        gender: 'male',
-        blood_type: '',
-        phone: '',
-        email: '',
-        address: '',
-        emergency_contact_name: '',
-        emergency_contact_phone: '',
-        emergency_contact_relationship: '',
-        medical_history: '',
-        allergies: '',
-        current_medications: '',
+        name: patient?.name || '',
+        date_of_birth: patient?.date_of_birth
+            ? new Date(patient.date_of_birth).toISOString().slice(0, 10)
+            : '',
+        gender: patient?.gender || 'male',
+        blood_type: patient?.blood_type || '',
+        phone: patient?.phone || '',
+        email: patient?.email || '',
+        address: patient?.address || '',
+        emergency_contact_name: patient?.emergency_contact_name || '',
+        emergency_contact_phone: patient?.emergency_contact_phone || '',
+        emergency_contact_relationship: patient?.emergency_contact_relationship || '',
+        medical_history: patient?.medical_history || '',
+        allergies: patient?.allergies || '',
+        current_medications: patient?.current_medications || '',
     });
 
     const [loading, setLoading] = useState(false);
@@ -118,7 +120,7 @@ const PatientForm = ({ onSuccess, onClose, patient }) => {
             };
 
             let response;
-            if (isEdit) {
+            if (isEditMode) {
                 response = await patientService.updatePatient(patient.id, payload);
             } else {
                 response = await patientService.createPatient(payload);
@@ -131,7 +133,7 @@ const PatientForm = ({ onSuccess, onClose, patient }) => {
                 }, 1200);
             }
         } catch (err) {
-            setError(err.message || `Failed to ${isEdit ? 'update' : 'create'} patient.`);
+            setError(err.message || `Failed to ${isEditMode ? 'update' : 'create'} patient.`);
         } finally {
             setLoading(false);
         }
@@ -151,18 +153,15 @@ const PatientForm = ({ onSuccess, onClose, patient }) => {
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isEdit ? 'bg-amber-100' : 'bg-emerald-100'}`}>
-                            {isEdit
-                                ? <Edit3 className="w-5 h-5 text-amber-600" />
-                                : <UserPlus className="w-5 h-5 text-emerald-600" />}
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isEditMode ? 'bg-blue-100' : 'bg-emerald-100'}`}>
+                            {isEditMode
+                                ? <Edit3 className="w-5 h-5 text-blue-600" />
+                                : <UserPlus className="w-5 h-5 text-emerald-600" />
+                            }
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900">
-                                {isEdit ? 'Edit Patient' : 'Add New Patient'}
-                            </h2>
-                            <p className="text-sm text-gray-500">
-                                {isEdit ? 'Update the patient\u0027s details below' : 'Fill in the patient\u0027s details below'}
-                            </p>
+                            <h2 className="text-lg font-bold text-gray-900">{isEditMode ? 'Edit Patient' : 'Add New Patient'}</h2>
+                            <p className="text-sm text-gray-500">{isEditMode ? 'Update the patient\'s details below' : 'Fill in the patient\'s details below'}</p>
                         </div>
                     </div>
                     <button
@@ -178,9 +177,7 @@ const PatientForm = ({ onSuccess, onClose, patient }) => {
                 {success && (
                     <div className="mx-6 mt-4 flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
                         <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                        <span className="text-sm font-medium">
-                            Patient {isEdit ? 'updated' : 'created'} successfully!
-                        </span>
+                        <span className="text-sm font-medium">Patient {isEditMode ? 'updated' : 'created'} successfully!</span>
                     </div>
                 )}
 
@@ -416,13 +413,12 @@ const PatientForm = ({ onSuccess, onClose, patient }) => {
                             {loading ? (
                                 <>
                                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    Saving…
+                                    {isEditMode ? 'Updating…' : 'Saving…'}
                                 </>
                             ) : (
                                 <>
-                                    {isEdit
-                                        ? <><Edit3 className="w-4 h-4" /> Update Patient</>
-                                        : <><UserPlus className="w-4 h-4" /> Add Patient</>}
+                                    {isEditMode ? <Edit3 className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                                    {isEditMode ? 'Update Patient' : 'Add Patient'}
                                 </>
                             )}
                         </button>

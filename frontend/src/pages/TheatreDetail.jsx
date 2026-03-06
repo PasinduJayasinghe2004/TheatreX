@@ -17,6 +17,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
+import Layout from '../components/Layout';
 import TheatreDetailCard from '../components/TheatreDetailCard';
 import theatreService from '../services/theatreService';
 import { useAuth } from '../context/AuthContext'; // M4 - Day 10
@@ -120,19 +121,53 @@ const TheatreDetail = () => {
     // ── Loading State ──────────────────────────────────────────────────────
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 py-8 px-4">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <Layout>
+                <div className="min-h-screen bg-gray-50 py-8 px-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="flex justify-center py-16">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Layout>
         );
     }
 
     // ── Error State ────────────────────────────────────────────────────────
     if (error) {
         return (
+            <Layout>
+                <div className="min-h-screen bg-gray-50 py-8 px-4">
+                    <div className="max-w-4xl mx-auto">
+                        {/* Back button */}
+                        <button
+                            onClick={() => navigate('/theatres')}
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                            <span className="text-sm font-medium">Back to Theatres</span>
+                        </button>
+
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                            <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+                            <h2 className="text-lg font-semibold text-red-700 mb-1">Error Loading Theatre</h2>
+                            <p className="text-red-600 text-sm">{error}</p>
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="mt-4 text-sm text-red-600 hover:text-red-800 underline"
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Layout>
+        );
+    }
+
+    // ── Content ────────────────────────────────────────────────────────────
+    return (
+        <Layout>
             <div className="min-h-screen bg-gray-50 py-8 px-4">
                 <div className="max-w-4xl mx-auto">
                     {/* Back button */}
@@ -144,47 +179,19 @@ const TheatreDetail = () => {
                         <span className="text-sm font-medium">Back to Theatres</span>
                     </button>
 
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                        <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-                        <h2 className="text-lg font-semibold text-red-700 mb-1">Error Loading Theatre</h2>
-                        <p className="text-red-600 text-sm">{error}</p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="mt-4 text-sm text-red-600 hover:text-red-800 underline"
-                        >
-                            Try Again
-                        </button>
-                    </div>
+                    {/* Theatre Detail Card with status toggle - M4 (Oneli) Day 10 */}
+                    {/* Updated by M1 - Day 11: Added progress slider integration */}
+                    <TheatreDetailCard
+                        theatre={theatre}
+                        onStatusChange={handleStatusChange}
+                        onProgressChange={handleProgressChange}
+                        userRole={user?.role}
+                        isUpdating={statusUpdating}
+                        isProgressUpdating={progressUpdating}
+                    />
                 </div>
             </div>
-        );
-    }
-
-    // ── Content ────────────────────────────────────────────────────────────
-    return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
-            <div className="max-w-4xl mx-auto">
-                {/* Back button */}
-                <button
-                    onClick={() => navigate('/theatres')}
-                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                    <span className="text-sm font-medium">Back to Theatres</span>
-                </button>
-
-                {/* Theatre Detail Card with status toggle - M4 (Oneli) Day 10 */}
-                {/* Updated by M1 - Day 11: Added progress slider integration */}
-                <TheatreDetailCard
-                    theatre={theatre}
-                    onStatusChange={handleStatusChange}
-                    onProgressChange={handleProgressChange}
-                    userRole={user?.role}
-                    isUpdating={statusUpdating}
-                    isProgressUpdating={progressUpdating}
-                />
-            </div>
-        </div>
+        </Layout>
     );
 };
 

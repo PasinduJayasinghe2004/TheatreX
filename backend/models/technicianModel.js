@@ -28,10 +28,13 @@ const createTechniciansTable = async () => {
       shift_preference VARCHAR(20) DEFAULT 'flexible'
         CHECK (shift_preference IN ('morning', 'afternoon', 'night', 'flexible')),
       
-      -- Status
+      -- STATUS
       is_active BOOLEAN DEFAULT TRUE,
       
-      -- Timestamps
+      -- PROFILE
+      profile_picture VARCHAR(500),
+      
+      -- TIMESTAMPS
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

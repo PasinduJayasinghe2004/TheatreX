@@ -13,7 +13,7 @@
 // Run with: npm test -- --testPathPattern=day11_auto_progress
 // ============================================================================
 
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 import {
@@ -193,7 +193,7 @@ describe('Auto-Progress API - Integration Tests', () => {
         name: 'AutoProg Test Staff',
         email: `autoprog.staff${uniqueId}@theatrex.com`,
         password: 'SecurePass123!',
-        role: 'staff',
+        role: 'nurse',
         phone: '0771234568'
     };
 

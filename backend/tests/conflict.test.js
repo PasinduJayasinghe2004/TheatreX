@@ -11,7 +11,7 @@
 // Run with: npm test tests/conflict.test.js
 // ============================================================================
 
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
 import { pool } from '../config/database.js';
@@ -83,11 +83,13 @@ describe('Surgery Conflict & Emergency Tests', () => {
 
         // 4. Create a "Base" Surgery to conflict with
         //    Schedule: 10:00 - 12:00 (120 mins)
-        await request(app)
+        const createRes = await request(app)
             .post('/api/surgeries')
             .set('Authorization', `Bearer ${authToken}`)
             .send({
                 patient_name: 'Base Patient',
+                patient_age: 35,
+                patient_gender: 'male',
                 surgery_type: 'Base Surgery',
                 scheduled_date: testDate,
                 scheduled_time: '10:00',
@@ -97,6 +99,7 @@ describe('Surgery Conflict & Emergency Tests', () => {
                 status: 'scheduled',
                 priority: 'routine'
             });
+        console.log("Create Base Surgery:", createRes.body);
     });
 
     // ========================================================================
@@ -176,6 +179,8 @@ describe('Surgery Conflict & Emergency Tests', () => {
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     patient_name: 'Emergency Override Patient',
+                    patient_age: 40,
+                    patient_gender: 'female',
                     surgery_type: 'Emergency Section',
                     scheduled_date: testDate,
                     scheduled_time: '10:00',

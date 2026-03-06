@@ -1,13 +1,19 @@
-import { Menu, X, Activity, Home, Zap, Calendar, BarChart2, Users, Mail } from 'lucide-react'
+import { Menu, X, Home, Zap, Calendar, BarChart2, Users, Mail } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import theatrexLogo from '../assets/theatrex-logo.svg'
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
+    const [revealed, setRevealed] = useState(false)
     const [scrolled, setScrolled] = useState(false)
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 20)
-        window.addEventListener('scroll', onScroll)
+        const threshold = window.innerHeight * 0.6  // trigger at 60% of first viewport height
+        const onScroll = () => {
+            setRevealed(window.scrollY > threshold)
+            setScrolled(window.scrollY > threshold + 80)
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
         return () => window.removeEventListener('scroll', onScroll)
     }, [])
 
@@ -21,11 +27,11 @@ export default function Navbar() {
     ]
 
     return (
-        <nav className={`quick-nav ${scrolled ? 'quick-nav--scrolled' : ''}`}>
+        <nav className={`quick-nav${revealed ? ' nav-revealed' : ''}${scrolled ? ' nav-scrolled' : ''}`}>
             <div className="quick-nav__inner">
                 {/* Logo */}
                 <a href="#" className="quick-nav__logo">
-                    <Activity color="#00b4ff" size={22} />
+                    <img src={theatrexLogo} alt="TheatreX Logo" style={{ width: '24px', height: '24px' }} />
                     <span>TheatreX</span>
                 </a>
 
@@ -87,20 +93,42 @@ export default function Navbar() {
 
             <style>{`
                 .quick-nav {
-                    position: sticky;
+                    /* Fixed to viewport — always at the top, regardless of scroll position */
+                    position: fixed;
                     top: 0;
-                    z-index: 100;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    z-index: 1000;
                     padding: 0.6rem 1.5rem;
-                    background: rgba(15, 23, 42, 0.75);
-                    backdrop-filter: blur(16px);
-                    -webkit-backdrop-filter: blur(16px);
-                    border-bottom: 1px solid rgba(0, 180, 255, 0.15);
-                    transition: all 0.3s ease;
+                    background: rgba(15, 23, 42, 0.78);
+                    backdrop-filter: blur(18px);
+                    -webkit-backdrop-filter: blur(18px);
+                    border-bottom: 1px solid rgba(0, 180, 255, 0.18);
+                    /* Hidden above viewport by default */
+                    transform: translateY(-110%);
+                    opacity: 0;
+                    pointer-events: none;
+                    /* Smooth slide + fade transition */
+                    transition:
+                        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        opacity   0.4s ease,
+                        background 0.35s ease,
+                        box-shadow 0.35s ease;
                 }
-                .quick-nav--scrolled {
-                    background: rgba(15, 23, 42, 0.92);
-                    box-shadow: 0 4px 30px rgba(0, 140, 255, 0.1);
-                    border-bottom-color: rgba(0, 180, 255, 0.25);
+
+                /* Slide down into view */
+                .nav-revealed {
+                    transform: translateY(0);
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+
+                /* Deepen background as user scrolls further */
+                .nav-scrolled {
+                    background: rgba(10, 16, 36, 0.96) !important;
+                    box-shadow: 0 4px 32px rgba(0, 140, 255, 0.2);
+                    border-bottom-color: rgba(0, 180, 255, 0.35) !important;
                 }
                 .quick-nav__inner {
                     max-width: 1200px;
