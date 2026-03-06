@@ -3,6 +3,48 @@ import { Activity, Linkedin, Twitter, Facebook, Instagram } from 'lucide-react'
 export default function Footer() {
     return (
         <footer>
+            {/* CTA Banner
+            <div className="container" style={{ position: 'relative', zIndex: 10, marginBottom: '-4rem' }}>
+                <div style={{
+                    backgroundColor: '#3B82F6',
+                    borderRadius: '1.5rem',
+                    padding: '4rem 2rem',
+                    textAlign: 'center',
+                    color: 'white',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    backgroundImage: 'linear-gradient(to bottom right, #3B82F6, #2563EB)'
+                }}>
+                    <h2 style={{ fontSize: '2.25rem', fontWeight: '700', marginBottom: '1rem' }}>
+                        Ready to Optimize Your Theatre Operations?
+                    </h2>
+                    <p style={{ fontSize: '1.125rem', opacity: 0.9, marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto 2.5rem auto' }}>
+                        Join leading healthcare providers who have transformed their surgical management with TheatreX. Get started today.
+                    </p>
+                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                        <button style={{
+                            backgroundColor: 'white',
+                            color: '#1D4ED8',
+                            padding: '0.75rem 2rem',
+                            borderRadius: '999px',
+                            fontWeight: '600',
+                            border: 'none'
+                        }}>
+                            Schedule Demo
+                        </button>
+                        <button style={{
+                            backgroundColor: 'transparent',
+                            color: 'white',
+                            border: '1px solid white',
+                            padding: '0.75rem 2rem',
+                            borderRadius: '999px',
+                            fontWeight: '600'
+                        }}>
+                            Contact Sales
+                        </button>
+                    </div>
+                </div>
+            </div> */}
+
             {/* Main Footer */}
             <div style={{ backgroundColor: '#0F172A', color: '#94A3B8', paddingTop: '8rem', paddingBottom: '4rem', position: 'relative', zIndex: 2 }}>
                 <div className="container">

@@ -53,6 +53,7 @@ export default function Hero() {
                         </div>
                     </ScrollReveal>
                     <ScrollReveal animation="fade-left" delay={200} duration={800}>
+                        {/* Image container with nice shadow and rounded corners */}
                         <div style={{
                             position: 'relative',
                             borderRadius: '1.5rem',

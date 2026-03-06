@@ -2,6 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 
 /**
  * ScrollReveal wrapper — animates children into view when they enter the viewport.
+ *
+ * Props:
+ *  - animation: 'fade-up' | 'fade-down' | 'fade-left' | 'fade-right' | 'zoom-in' | 'fade' (default: 'fade-up')
+ *  - delay: ms delay before animation starts (default: 0)
+ *  - duration: ms transition duration (default: 700)
+ *  - threshold: 0-1 how much must be visible (default: 0.15)
+ *  - once: only animate once (default: true)
+ *  - style: extra inline styles
+ *  - className: extra class names
  */
 export default function ScrollReveal({
     children,
