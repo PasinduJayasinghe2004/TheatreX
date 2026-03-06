@@ -15,6 +15,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import cron from 'node-cron';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
 import { createNotificationsTable } from './models/notificationModel.js';
@@ -142,6 +143,12 @@ const startServer = async () => {
             await createSurgeryNursesTable(); // M2 - Day 9
             await createPatientsTable(); // M1 - Day 15
         }
+
+        // Start surgery reminder cron job (runs every 60 seconds) - M4 Day 16
+        cron.schedule('* * * * *', async () => {
+            await checkSurgeryReminders();
+        });
+        console.log('⏰ Surgery reminder cron job started (every 60s)');
 
         // Start listening
         app.listen(PORT, () => {
