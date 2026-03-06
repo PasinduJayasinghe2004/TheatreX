@@ -77,6 +77,8 @@ const NotificationDropdown = () => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [shouldAnimate, setShouldAnimate] = useState(false);
+    const prevCountRef = useRef(0);
     const dropdownRef = useRef(null);
 
     // ──────────────────────────────────────────────────────────────
@@ -86,7 +88,16 @@ const NotificationDropdown = () => {
         try {
             const res = await notificationService.getUnreadCount();
             if (res.success) {
-                setUnreadCount(res.data.unread_count);
+                const newCount = res.data.unread_count || res.count; // Compatibility with both response structures
+
+                // Trigger animation if count increased
+                if (newCount > prevCountRef.current) {
+                    setShouldAnimate(true);
+                    setTimeout(() => setShouldAnimate(false), 1000); // Reset animation after 1s
+                }
+
+                setUnreadCount(newCount);
+                prevCountRef.current = newCount;
             }
         } catch {
             // Silently ignore count errors — non-critical
@@ -158,7 +169,8 @@ const NotificationDropdown = () => {
             <button
                 id="header-notifications-btn"
                 onClick={toggleDropdown}
-                className="relative p-2 rounded-lg text-gray-400 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 transition-all duration-200"
+                className={`relative p-2 rounded-lg text-gray-400 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 transition-all duration-200 ${shouldAnimate ? 'animate-bellShake' : ''
+                    }`}
                 aria-label="Notifications"
                 aria-expanded={isOpen}
             >
@@ -241,9 +253,8 @@ const NotificationDropdown = () => {
                                     return (
                                         <li
                                             key={notif.id}
-                                            className={`flex gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer ${
-                                                !notif.is_read ? 'bg-blue-50/40 dark:bg-blue-900/10' : ''
-                                            }`}
+                                            className={`flex gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer ${!notif.is_read ? 'bg-blue-50/40 dark:bg-blue-900/10' : ''
+                                                }`}
                                         >
                                             {/* Type icon */}
                                             <div className={`shrink-0 w-8 h-8 rounded-lg ${config.bg} flex items-center justify-center mt-0.5`}>
@@ -255,11 +266,10 @@ const NotificationDropdown = () => {
                                             {/* Content */}
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-start justify-between gap-2">
-                                                    <p className={`text-sm leading-snug ${
-                                                        !notif.is_read
+                                                    <p className={`text-sm leading-snug ${!notif.is_read
                                                             ? 'font-semibold text-gray-900 dark:text-slate-100'
                                                             : 'font-medium text-gray-700 dark:text-slate-300'
-                                                    }`}>
+                                                        }`}>
                                                         {notif.title}
                                                     </p>
                                                     {!notif.is_read && (
