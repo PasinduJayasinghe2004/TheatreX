@@ -153,6 +153,12 @@ const startServer = async () => {
         });
         console.log('⏰ Surgery reminder cron job started (every 60s)');
 
+        // Clear old read notifications daily at 3 AM - M1 Day 17
+        cron.schedule('0 3 * * *', async () => {
+            await clearOldNotifications();
+        });
+        console.log('🧹 Old notification cleanup cron job started (daily at 3 AM)');
+
         // Start listening
         app.listen(PORT, () => {
             console.log('');

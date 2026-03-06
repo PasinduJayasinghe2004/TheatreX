@@ -80,6 +80,7 @@ const NotificationDropdown = () => {
     const [shouldAnimate, setShouldAnimate] = useState(false);
     const prevCountRef = useRef(0);
     const dropdownRef = useRef(null);
+    const pollRef = useRef(null);
 
     // ──────────────────────────────────────────────────────────────
     // Fetch unread count (lightweight poll)
@@ -137,6 +138,13 @@ const NotificationDropdown = () => {
     useEffect(() => {
         if (isOpen) {
             fetchNotifications();
+            // Poll every 30 seconds while open
+            pollRef.current = setInterval(fetchNotifications, 30000);
+        } else {
+            if (pollRef.current) {
+                clearInterval(pollRef.current);
+                pollRef.current = null;
+            }
         }
     }, [isOpen, fetchNotifications]);
 
