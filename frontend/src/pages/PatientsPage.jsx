@@ -140,6 +140,7 @@ const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
             )}
         </div>
     </div>
+    </Link>
 );
 
 // ── PatientsPage ────────────────────────────────────────────────────────────

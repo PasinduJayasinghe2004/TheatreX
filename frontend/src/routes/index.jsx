@@ -168,6 +168,13 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
+            {/* Patient Detail - M3 (Janani) Day 15 */}
+            <Route path="/patients/:id" element={
+                <ProtectedRoute>
+                    <PatientDetail />
+                </ProtectedRoute>
+            } />
+
             {/* Calendar View - M1 (Pasindu) Day 7 */}
             <Route path="/calendar" element={
                 <ProtectedRoute>
