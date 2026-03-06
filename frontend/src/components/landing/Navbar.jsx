@@ -138,14 +138,15 @@ export default function LandingNavbar() {
                     justify-content: space-between;
                     gap: 1rem;
                 }
-                .quick-nav__logo {
+                .quick-nav__logo,
+                .landing-page .quick-nav__logo {
                     display: flex;
                     align-items: center;
                     gap: 0.4rem;
                     text-decoration: none;
                     font-weight: 700;
                     font-size: 1.15rem;
-                    color: #fff;
+                    color: #fff !important;
                     flex-shrink: 0;
                 }
                 .quick-nav__links {
@@ -153,7 +154,8 @@ export default function LandingNavbar() {
                     align-items: center;
                     gap: 0.25rem;
                 }
-                .quick-nav__link {
+                .quick-nav__link,
+                .landing-page .quick-nav__link {
                     display: flex;
                     align-items: center;
                     gap: 0.35rem;
@@ -161,7 +163,7 @@ export default function LandingNavbar() {
                     border-radius: 999px;
                     font-size: 0.85rem;
                     font-weight: 500;
-                    color: rgba(255, 255, 255, 0.7);
+                    color: rgba(255, 255, 255, 0.8) !important;
                     text-decoration: none;
                     transition: all 0.2s ease;
                     white-space: nowrap;
@@ -188,13 +190,14 @@ export default function LandingNavbar() {
                     gap: 0.25rem;
                     padding: 0.75rem 0 0.5rem;
                 }
-                .quick-nav__mobile-link {
+                .quick-nav__mobile-link,
+                .landing-page .quick-nav__mobile-link {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
                     padding: 0.6rem 0.75rem;
                     border-radius: 0.5rem;
-                    color: rgba(255, 255, 255, 0.8);
+                    color: rgba(255, 255, 255, 0.8) !important;
                     text-decoration: none;
                     font-size: 0.9rem;
                     font-weight: 500;

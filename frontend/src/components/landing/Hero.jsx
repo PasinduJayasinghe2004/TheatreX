@@ -47,7 +47,7 @@ export default function Hero() {
                             <button className="btn btn-primary">
                                 Get started <ArrowRight size={18} />
                             </button>
-                            <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB' }}>
+                            <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB', color: '#111827' }}>
                                 <PlayCircle size={18} style={{ marginRight: '0.5rem' }} /> Live demo
                             </button>
                         </div>
