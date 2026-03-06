@@ -36,6 +36,7 @@ import surgeonRoutes from './routes/surgeonRoutes.js'; // M1 - Day 13
 import nurseRoutes from './routes/nurseRoutes.js'; // M3 - Day 13
 import anaesthetistRoutes from './routes/anaesthetistRoutes.js'; // M6 - Day 13
 import patientRoutes from './routes/patientRoutes.js'; // M2 - Day 15
+import { checkSurgeryReminders } from './utils/scheduler.js'; // M4 - Day 16
 
 // Load environment variables
 dotenv.config();
