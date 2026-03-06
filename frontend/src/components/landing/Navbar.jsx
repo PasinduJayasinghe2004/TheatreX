@@ -30,7 +30,13 @@ export default function LandingNavbar() {
 
     const handleLogin = (e) => {
         e.preventDefault()
-        navigate('/login')
+        const landing = document.querySelector('.landing-page')
+        if (landing) {
+            landing.classList.add('landing-exit')
+            landing.addEventListener('animationend', () => navigate('/login'), { once: true })
+        } else {
+            navigate('/login')
+        }
     }
 
     return (

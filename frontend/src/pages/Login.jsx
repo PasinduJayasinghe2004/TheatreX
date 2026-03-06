@@ -235,7 +235,8 @@ const Login = () => {
     };
 
     return (
-        <div className="h-screen overflow-hidden flex relative">
+        <div className="h-screen overflow-hidden flex relative" style={{ animation: 'loginEnter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
+            <style>{`@keyframes loginEnter { from { opacity: 0; transform: scale(1.04); filter: blur(4px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }`}</style>
             {/* Logout Success Toast */}
             {logoutMessage && (
                 <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100]" style={{ animation: 'slideDown 0.4s ease-out' }}>
