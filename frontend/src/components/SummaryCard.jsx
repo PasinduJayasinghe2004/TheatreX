@@ -17,7 +17,7 @@
  * @param {number|null} comparison - Comparison value from yesterday
  */
 const SummaryCard = ({ label, value, colour, icon, comparison, subtitle, ...props }) => (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 flex items-start gap-4 transition-all duration-200 hover:shadow-md hover:scale-[1.02]" {...props}>
+    <div className="bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 flex items-start gap-4 transition-all duration-200 hover:shadow-md hover:scale-[1.02]" {...props}>
         <div className="flex-1 min-h-[72px] flex flex-col justify-between">
             <div>
                 <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">{label}</p>
@@ -37,7 +37,7 @@ const SummaryCard = ({ label, value, colour, icon, comparison, subtitle, ...prop
                 )}
             </div>
         </div>
-        <div className={`w-12 h-12 ${colour} rounded-xl flex items-center justify-center flex-shrink-0`}>
+        <div className={`w-12 h-12 ${colour} rounded-2xl flex items-center justify-center flex-shrink-0`}>
             {icon}
         </div>
     </div>

@@ -611,7 +611,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* ─── Summary Header ─── */}
-                <div className="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 shadow-sm px-6 py-4" data-testid="dashboard-title">
+                <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm px-6 py-4 rounded-3xl mx-6 mb-8 mt-2" data-testid="dashboard-title">
                     <div className="flex items-stretch gap-4 flex-wrap">
                         {/* Summary Cards */}
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">

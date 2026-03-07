@@ -180,7 +180,7 @@ const LiveStatusPage = () => {
                         {summaryCards(summary).map((card) => (
                             <div
                                 key={card.label}
-                                className={`${card.bg} border ${card.border} rounded-xl p-4 text-center`}
+                                className={`${card.bg} border ${card.border} rounded-3xl p-4 text-center`}
                             >
                                 <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
                                 <p className="text-xs text-gray-500 mt-1">{card.label}</p>
