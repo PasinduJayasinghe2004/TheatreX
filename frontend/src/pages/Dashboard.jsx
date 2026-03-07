@@ -7,9 +7,10 @@
 //          live theatre status, and staff status sections.
 
 
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import SummaryCard from '../components/SummaryCard';
 import StatusBadge from '../components/StatusBadge';
@@ -17,6 +18,7 @@ import DashboardModal from '../components/DashboardModal';
 import TodaySurgeriesModal from '../components/TodaySurgeriesModal';
 import StaffOnDutyModal from '../components/StaffOnDutyModal';
 import AverageDurationModal from '../components/AverageDurationModal';
+import { useAuth } from '../context/AuthContext';
 import { getDashboardStats, getDashboardSummary } from '../services/dashboardService';
 import surgeryService from '../services/surgeryService';
 
@@ -88,6 +90,32 @@ const SAMPLE_SURGERIES = [
     { id: 's3', time: '11:00', patient: 'Martin Smith', procedure: 'Cardiac Bypass', theatre: 'Theatre 1', surgeon: 'Dr.Sam', status: 'scheduled' },
     { id: 's4', time: '14:00', patient: 'Kristina Rose', procedure: 'Appendectomy', theatre: 'Theatre 3', surgeon: 'Dr.Lee', status: 'scheduled' },
     { id: 's5', time: '16:30', patient: 'Jimmy Anderson', procedure: 'Gallbladder Removal', theatre: 'Theatre 2', surgeon: 'Dr.Gopal', status: 'scheduled' },
+];
+
+// Sample data for Weekly Surgery Chart
+const WEEKLY_CHART_DATA = [
+    { day: 'Mon', surgeries: 8 },
+    { day: 'Tue', surgeries: 12 },
+    { day: 'Wed', surgeries: 10 },
+    { day: 'Thu', surgeries: 14 },
+    { day: 'Fri', surgeries: 11 },
+    { day: 'Sat', surgeries: 6 },
+    { day: 'Sun', surgeries: 3 },
+];
+
+// Sample data for Recent Activity Feed
+const SAMPLE_ACTIVITIES = [
+    { id: 'a1', time: '08:30', action: 'Dr. Sam started Cardiac Bypass', type: 'start', color: 'bg-green-500' },
+    { id: 'a2', time: '08:15', action: 'Theatre 2 prepared for Hip Replacement', type: 'prep', color: 'bg-yellow-500' },
+    { id: 'a3', time: '07:45', action: 'Dr. Johnson arrived for morning rounds', type: 'info', color: 'bg-blue-500' },
+    { id: 'a4', time: '07:30', action: 'Surgery schedule finalized for today', type: 'info', color: 'bg-indigo-500' },
+    { id: 'a5', time: '07:00', action: 'Morning sterilization completed', type: 'complete', color: 'bg-emerald-500' },
+];
+
+// Sample alerts
+const INITIAL_ALERTS = [
+    { id: 'alert1', message: 'Theatre 3 maintenance scheduled for tomorrow 6:00 AM – 8:00 AM', type: 'warning' },
+    { id: 'alert2', message: 'Dr. Perera\'s 14:30 surgery delayed by 30 mins due to prior case overrun', type: 'delay' },
 ];
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -232,16 +260,27 @@ const StaffCard = ({ staff }) => {
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [stats, setStats] = useState(null);
     const [summary, setSummary] = useState(null);
     const [surgeries, setSurgeries] = useState([]);
     const [liveSurgeries, setLiveSurgeries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeModal, setActiveModal] = useState(null); // 'surgeries' | 'staff' | 'duration' | null
+    const [activeModal, setActiveModal] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [alerts, setAlerts] = useState(INITIAL_ALERTS);
+    const [lastRefresh, setLastRefresh] = useState(new Date());
+    const refreshTimerRef = useRef(null);
 
+    // ── Auto-refresh every 60 seconds ──
     useEffect(() => {
         fetchDashboardData();
+        refreshTimerRef.current = setInterval(() => {
+            fetchDashboardData();
+            setLastRefresh(new Date());
+        }, 60000);
+        return () => clearInterval(refreshTimerRef.current);
     }, []);
 
     const fetchDashboardData = async () => {
@@ -317,6 +356,27 @@ const Dashboard = () => {
     // Use sample data when no real surgeries loaded
     const displaySurgeries = upcomingSurgeries.length > 0 ? upcomingSurgeries : SAMPLE_SURGERIES;
 
+    // Filter surgeries by search query
+    const filteredSurgeries = displaySurgeries.filter(s => {
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase();
+        const patientName = (s.patient_name || s.patient || '').toLowerCase();
+        const procedure = (s.surgery_type || s.procedure || '').toLowerCase();
+        const surgeon = (s.surgeon?.name || s.surgeon_name || s.surgeon || '').toLowerCase();
+        return patientName.includes(q) || procedure.includes(q) || surgeon.includes(q);
+    });
+
+    // Manual refresh handler
+    const handleManualRefresh = () => {
+        fetchDashboardData();
+        setLastRefresh(new Date());
+    };
+
+    // Dismiss alert
+    const dismissAlert = (alertId) => {
+        setAlerts(prev => prev.filter(a => a.id !== alertId));
+    };
+
     // Format time for display
     const formatTime = (timeStr) => {
         if (!timeStr) return '--:--';
@@ -366,6 +426,63 @@ const Dashboard = () => {
     return (
         <Layout>
             <div className="min-h-screen bg-gray-50">
+
+                {/* ─── Welcome Greeting + Alerts ─── */}
+                <div className="px-6 pt-5 pb-2 space-y-3">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">
+                                Welcome back, {user?.name?.split(' ')[0] || 'Doctor'} 👋
+                            </h1>
+                            <p className="text-sm text-gray-500 mt-0.5">Here's what's happening in your theatres today</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs text-gray-400">
+                                Last updated: {lastRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            </span>
+                            <button
+                                onClick={handleManualRefresh}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm"
+                                title="Refresh dashboard data"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Alerts Banner */}
+                    {alerts.length > 0 && (
+                        <div className="space-y-2">
+                            {alerts.map(alert => (
+                                <div
+                                    key={alert.id}
+                                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${alert.type === 'delay'
+                                        ? 'bg-red-50 text-red-800 border border-red-100'
+                                        : 'bg-amber-50 text-amber-800 border border-amber-100'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span>{alert.type === 'delay' ? '⏰' : '⚠️'}</span>
+                                        <span>{alert.message}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => dismissAlert(alert.id)}
+                                        className="p-1 hover:bg-black/5 rounded-full transition-colors"
+                                        aria-label="Dismiss alert"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 {/* ─── Summary Header ─── */}
                 <div className="bg-white border-b border-gray-100 shadow-sm px-6 py-4" data-testid="dashboard-title">
                     <div className="flex items-stretch gap-4 flex-wrap">
@@ -446,8 +563,21 @@ const Dashboard = () => {
 
                     {/* ─── Upcoming Surgeries Table ─── */}
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-100">
+                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
                             <h2 className="text-lg font-bold text-gray-900">Upcoming Surgeries</h2>
+                            {/* Search Input */}
+                            <div className="relative">
+                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    placeholder="Search by patient, procedure, or surgeon..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 w-72 transition-all"
+                                />
+                            </div>
                         </div>
                         <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
                             <table className="w-full">
@@ -464,8 +594,8 @@ const Dashboard = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {upcomingSurgeries.length > 0 ? (
-                                        upcomingSurgeries.map((surgery, idx) => (
-                                            <tr key={surgery.id || idx} className="hover:bg-blue-50/40 transition-colors duration-150 group">
+                                        filteredSurgeries.map((surgery, idx) => (
+                                            <tr key={surgery.id || idx} className={`hover:bg-blue-50/40 transition-colors duration-150 group ${idx % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className="text-sm font-medium text-gray-900">
                                                         {formatTime(surgery.scheduled_time)}
@@ -536,8 +666,8 @@ const Dashboard = () => {
                                         ))
                                     ) : (
                                         /* Show sample data when no real surgeries */
-                                        displaySurgeries.map((s, idx) => (
-                                            <tr key={s.id || idx} className="hover:bg-blue-50/40 transition-colors duration-150 group">
+                                        filteredSurgeries.map((s, idx) => (
+                                            <tr key={s.id || idx} className={`hover:bg-blue-50/40 transition-colors duration-150 group ${idx % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className="text-sm font-medium text-gray-900">{s.time}</span>
                                                 </td>
@@ -606,6 +736,61 @@ const Dashboard = () => {
                             <div className="space-y-3">
                                 {SAMPLE_STAFF.map((staff, idx) => (
                                     <StaffCard key={idx} staff={staff} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ─── Third Section: Weekly Chart + Activity Feed ─── */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        {/* Weekly Surgery Chart (2/3 width) */}
+                        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 mb-4">Surgeries This Week</h2>
+                            <div className="h-64">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={WEEKLY_CHART_DATA} barCategoryGap="20%">
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                        <XAxis dataKey="day" tick={{ fontSize: 13, fill: '#6b7280' }} />
+                                        <YAxis tick={{ fontSize: 13, fill: '#6b7280' }} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                borderRadius: '12px',
+                                                border: '1px solid #e5e7eb',
+                                                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                                            }}
+                                        />
+                                        <Bar
+                                            dataKey="surgeries"
+                                            fill="url(#blueGradient)"
+                                            radius={[6, 6, 0, 0]}
+                                        />
+                                        <defs>
+                                            <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor="#3b82f6" />
+                                                <stop offset="100%" stopColor="#6366f1" />
+                                            </linearGradient>
+                                        </defs>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Recent Activity Feed (1/3 width) */}
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
+                            <div className="space-y-4">
+                                {SAMPLE_ACTIVITIES.map((activity) => (
+                                    <div key={activity.id} className="flex gap-3">
+                                        <div className="flex flex-col items-center">
+                                            <div className={`w-3 h-3 rounded-full ${activity.color} flex-shrink-0 mt-1`} />
+                                            <div className="w-0.5 flex-1 bg-gray-100 mt-1" />
+                                        </div>
+                                        <div className="flex-1 pb-4">
+                                            <p className="text-sm text-gray-700 leading-relaxed">{activity.action}</p>
+                                            <p className="text-xs text-gray-400 mt-0.5">{activity.time}</p>
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
                         </div>

@@ -17,7 +17,7 @@
  * @param {number|null} comparison - Comparison value from yesterday
  */
 const SummaryCard = ({ label, value, colour, icon, comparison, subtitle, ...props }) => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-start gap-4 transition-all hover:shadow-md" {...props}>
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-start gap-4 transition-all duration-200 hover:shadow-md hover:scale-[1.02]" {...props}>
         <div className="flex-1 min-h-[72px] flex flex-col justify-between">
             <div>
                 <p className="text-sm text-gray-500 font-medium">{label}</p>
