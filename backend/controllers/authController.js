@@ -87,9 +87,9 @@ export const register = async (req, res) => {
             });
         }
 
-        
+
         // STEP 2: Check if User Already Exists
-        
+
         const { rows: existingUsers } = await pool.query(
             'SELECT id FROM users WHERE email = $1',
             [email]
@@ -102,16 +102,16 @@ export const register = async (req, res) => {
             });
         }
 
-        
+
         // STEP 3: Hash Password with Bcrypt
-        
+
         // This converts plain text password into a secure hash
         // Example: "password123" -> "$2b$10$N9qo8uLOickgx2ZMRZoMye..."
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        
+
         // STEP 4: Insert User into Database
-        
+
         // PostgreSQL uses RETURNING to get the inserted row's id
         const { rows: insertResult } = await pool.query(
             `INSERT INTO users (name, email, password, role) 
@@ -120,9 +120,9 @@ export const register = async (req, res) => {
             [name, email, hashedPassword, role]
         );
 
-        
+
         // STEP 5: Return Success Response
-        
+
         // Note: We don't return the password (even hashed) for security
         res.status(201).json({
             success: true,
@@ -136,7 +136,7 @@ export const register = async (req, res) => {
         });
 
     } catch (error) {
-        
+
         // ERROR HANDLING
         console.error('Registration error:', error);
         res.status(500).json({
@@ -212,9 +212,9 @@ export const login = async (req, res) => {
             });
         }
 
-        
+
         // STEP 4: Generate JWT Tokens (Access + Refresh)
-        
+
         // Using centralized JWT utility (created by M5 - Day 3)
         // Access token: short-lived, used for API authorization
         // Refresh token: long-lived, used to obtain new access tokens
@@ -240,6 +240,7 @@ export const login = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 phone: user.phone,
+                profile_image: user.profile_image,
                 is_active: user.is_active,
                 created_at: user.created_at
             }
@@ -390,9 +391,9 @@ export const refreshTokenHandler = async (req, res) => {
             });
         }
 
-        
+
         // STEP 2: Verify Refresh Token
-        
+
         // This will throw an error if the token is expired or invalid
         let decoded;
         try {
@@ -405,11 +406,11 @@ export const refreshTokenHandler = async (req, res) => {
             });
         }
 
-        
+
         // STEP 3: Verify User Still Exists and Is Active
-        
+
         const { rows: users } = await pool.query(
-            'SELECT id, name, email, role, is_active FROM users WHERE id = $1',
+            'SELECT id, name, email, role, profile_image, is_active FROM users WHERE id = $1',
             [decoded.id]
         );
 
@@ -429,9 +430,9 @@ export const refreshTokenHandler = async (req, res) => {
             });
         }
 
-        
+
         // STEP 4: Generate New Access Token
-        
+
         const newAccessToken = generateToken({
             id: user.id,
             email: user.email,
@@ -499,7 +500,7 @@ export const getProfile = async (req, res) => {
 // ============================================================================
 export const updateProfile = async (req, res) => {
     try {
-        const { name, phone, password } = req.body;
+        const { name, phone, password, profile_image } = req.body;
         const userId = req.user.id;
 
         // Build update query dynamically based on provided fields
@@ -516,6 +517,11 @@ export const updateProfile = async (req, res) => {
         if (phone) {
             updates.push(`phone = $${paramIndex++}`);
             values.push(phone);
+        }
+
+        if (profile_image) {
+            updates.push(`profile_image = $${paramIndex++}`);
+            values.push(profile_image);
         }
 
         if (password) {
@@ -552,7 +558,7 @@ export const updateProfile = async (req, res) => {
 
         // Fetch updated user data (without password)
         const { rows: users } = await pool.query(
-            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = $1',
+            'SELECT id, name, email, role, phone, profile_image, is_active, created_at FROM users WHERE id = $1',
             [userId]
         );
 
