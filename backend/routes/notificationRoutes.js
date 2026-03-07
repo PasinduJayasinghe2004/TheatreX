@@ -2,6 +2,7 @@ import express from 'express';
 import {
     createNotification,
     getNotifications,
+    pollNotifications,
     markAsRead,
     markAllAsRead,
     getUnreadCount
@@ -26,6 +27,14 @@ router.post('/', createNotification);
  * @access  Private
  */
 router.get('/', getNotifications);
+
+/**
+ * @route   GET /api/notifications/poll
+ * @desc    Poll for new notifications since a timestamp (lightweight delta endpoint)
+ * @access  Private
+ * Created by: M3 (Janani) - Day 17
+ */
+router.get('/poll', pollNotifications);
 
 /**
  * @route   GET /api/notifications/unread-count

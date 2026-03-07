@@ -79,6 +79,25 @@ const notificationService = {
             const message = error.response?.data?.message || 'Error creating notification.';
             throw new Error(message);
         }
+    },
+
+    /**
+     * Poll for new notifications since a given timestamp (delta updates)
+     * Created by: M3 (Janani) - Day 17
+     * @param {string} since - ISO-8601 timestamp
+     * @param {Object} params - Optional query params (limit)
+     * @returns {Promise<Object>} API response with new notifications + unreadCount
+     */
+    pollNotifications: async (since, params = {}) => {
+        try {
+            const response = await api.get('/notifications/poll', {
+                params: { since, ...params }
+            });
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error polling notifications.';
+            throw new Error(message);
+        }
     }
 };
 

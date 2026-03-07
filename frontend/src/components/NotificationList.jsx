@@ -3,59 +3,73 @@
 // ============================================================================
 // Displays a list of notifications for the current user
 // Created by: M1 (Pasindu) - Day 16
+// Updated by: M3 (Janani) - Day 17 — added 30s polling via usePolling hook
 // ============================================================================
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import notificationService from '../services/notificationService';
 import NotificationItem from './NotificationItem';
+import usePolling from '../hooks/usePolling';
 
-const NotificationList = ({ unreadOnly = false, onMarkRead }) => {
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const NotificationList = ({ unreadOnly = false, onMarkRead, onPollingStatus }) => {
+    const [optimisticUpdates, setOptimisticUpdates] = useState({});
 
+    // ── Fetch function given to usePolling ──────────────────────────
     const fetchNotifications = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const res = await notificationService.getNotifications({
-                limit: 100,
-            });
-            setNotifications(res.data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+        const res = await notificationService.getNotifications({ limit: 100 });
+        return res.data; // usePolling stores this in `data`
     }, []);
 
-    useEffect(() => {
-        fetchNotifications();
-    }, [fetchNotifications]);
+    // ── Poll every 30s ─────────────────────────────────────────────
+    const {
+        data: notifications,
+        loading,
+        error,
+        lastPolledAt,
+        refresh,
+        pause,
+        resume,
+        paused
+    } = usePolling(fetchNotifications, { interval: 30000 });
 
+    // Expose polling status to parent (NotificationsPage)
+    if (onPollingStatus) {
+        // Using a ref-like callback to avoid infinite re-renders
+        // Parent can read these values via the callback
+        onPollingStatus({ lastPolledAt, refresh, pause, resume, paused });
+    }
+
+    // ── Mark single notification as read (optimistic) ──────────────
     const handleMarkAsRead = async (id) => {
+        setOptimisticUpdates(prev => ({ ...prev, [id]: true }));
         try {
             await notificationService.markAsRead(id);
-            setNotifications(prev =>
-                prev.map(n => n.id === id ? { ...n, is_read: true } : n)
-            );
             if (onMarkRead) onMarkRead(id);
+            // Refresh the list to get server state
+            refresh();
         } catch (err) {
             console.error('Error marking as read:', err);
+            setOptimisticUpdates(prev => {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            });
         }
     };
 
+    // ── Mark all as read ───────────────────────────────────────────
     const handleMarkAllAsRead = async () => {
         try {
             await notificationService.markAllAsRead();
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
             if (onMarkRead) onMarkRead('all');
+            refresh();
         } catch (err) {
             console.error('Error marking all as read:', err);
         }
     };
 
-    if (loading) {
+    // ── Loading skeleton ───────────────────────────────────────────
+    if (loading && !notifications) {
         return (
             <div className="space-y-3">
                 {[1, 2, 3].map(i => (
@@ -65,7 +79,8 @@ const NotificationList = ({ unreadOnly = false, onMarkRead }) => {
         );
     }
 
-    if (error) {
+    // ── Error state ────────────────────────────────────────────────
+    if (error && !notifications) {
         return (
             <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">
                 {error}
@@ -73,10 +88,16 @@ const NotificationList = ({ unreadOnly = false, onMarkRead }) => {
         );
     }
 
-    const filteredNotifications = unreadOnly
-        ? notifications.filter(n => !n.is_read)
-        : notifications;
+    // Apply optimistic read updates on top of polled data
+    const notificationList = (notifications || []).map(n =>
+        optimisticUpdates[n.id] ? { ...n, is_read: true } : n
+    );
 
+    const filteredNotifications = unreadOnly
+        ? notificationList.filter(n => !n.is_read)
+        : notificationList;
+
+    // ── Empty state ────────────────────────────────────────────────
     if (filteredNotifications.length === 0) {
         return (
             <div className="text-center py-10">
@@ -88,9 +109,10 @@ const NotificationList = ({ unreadOnly = false, onMarkRead }) => {
         );
     }
 
+    // ── Notification list ──────────────────────────────────────────
     return (
         <div className="space-y-3">
-            {!unreadOnly && notifications.some(n => !n.is_read) && (
+            {!unreadOnly && notificationList.some(n => !n.is_read) && (
                 <div className="flex justify-end mb-2">
                     <button
                         onClick={handleMarkAllAsRead}

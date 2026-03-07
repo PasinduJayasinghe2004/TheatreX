@@ -139,6 +139,26 @@ class Notification {
     const { rows } = await pool.query(query, [userId]);
     return parseInt(rows[0].count);
   }
+
+  /**
+   * Get notifications created after a given timestamp (for polling / delta updates)
+   * @param {number} userId  - ID of the user
+   * @param {string} since   - ISO-8601 timestamp (exclusive lower bound)
+   * @param {number} limit   - Max rows to return
+   * Created by: M3 (Janani) - Day 17
+   */
+  static async getNewSince(userId, since, limit = 50) {
+    const query = `
+      SELECT n.*, s.surgery_type AS surgery_name
+      FROM notifications n
+      LEFT JOIN surgeries s ON n.surgery_id = s.id
+      WHERE n.user_id = $1 AND n.created_at > $2
+      ORDER BY n.created_at DESC
+      LIMIT $3;
+    `;
+    const { rows } = await pool.query(query, [userId, since, limit]);
+    return rows;
+  }
 }
 
 export { createNotificationsTable, Notification };

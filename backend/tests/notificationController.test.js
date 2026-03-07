@@ -312,4 +312,99 @@ describe('Notification API Tests - Day 16', () => {
             expect(res.body.count).toBe(0);
         });
     });
+
+    // ========================================================================
+    // GET /api/notifications/poll - Poll New Notifications (Day 17 - M3)
+    // ========================================================================
+    describe('GET /api/notifications/poll', () => {
+        let sinceTimestamp;
+
+        // Record a timestamp, then create a notification after it
+        beforeAll(async () => {
+            sinceTimestamp = new Date().toISOString();
+            // Wait a tiny bit to ensure the new notification's created_at > since
+            await new Promise(r => setTimeout(r, 100));
+            await request(app)
+                .post('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    user_id: coordinatorUserId || 1,
+                    title: 'Poll Test Notification',
+                    message: 'Created after the since timestamp',
+                    type: 'info'
+                });
+        }, 15000);
+
+        it('should return 401 without auth token', async () => {
+            const res = await request(app)
+                .get('/api/notifications/poll')
+                .query({ since: sinceTimestamp });
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 400 when since parameter is missing', async () => {
+            const res = await request(app)
+                .get('/api/notifications/poll')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toMatch(/since/i);
+        });
+
+        it('should return 400 for invalid since timestamp', async () => {
+            const res = await request(app)
+                .get('/api/notifications/poll')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .query({ since: 'not-a-date' });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toMatch(/invalid/i);
+        });
+
+        it('should return new notifications since timestamp', async () => {
+            const res = await request(app)
+                .get('/api/notifications/poll')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .query({ since: sinceTimestamp });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(Array.isArray(res.body.data)).toBe(true);
+            expect(res.body.count).toBeGreaterThanOrEqual(1);
+            expect(typeof res.body.unreadCount).toBe('number');
+            expect(res.body.polledAt).toBeTruthy();
+
+            // Verify the notification we just created is included
+            const found = res.body.data.find(n => n.title === 'Poll Test Notification');
+            expect(found).toBeTruthy();
+        });
+
+        it('should return empty array for future since timestamp', async () => {
+            const futureDate = new Date(Date.now() + 86400000).toISOString(); // +1 day
+            const res = await request(app)
+                .get('/api/notifications/poll')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .query({ since: futureDate });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.data).toHaveLength(0);
+            expect(res.body.count).toBe(0);
+        });
+
+        it('should not return other users\' notifications when polling', async () => {
+            const res = await request(app)
+                .get('/api/notifications/poll')
+                .set('Authorization', `Bearer ${staffToken}`)
+                .query({ since: sinceTimestamp });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            // Staff user shouldn't see coordinator's "Poll Test Notification"
+            const found = res.body.data.find(n => n.title === 'Poll Test Notification');
+            expect(found).toBeFalsy();
+        });
+    });
 });

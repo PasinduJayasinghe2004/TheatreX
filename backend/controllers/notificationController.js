@@ -202,6 +202,54 @@ export const markAllAsRead = async (req, res) => {
 };
 
 /**
+ * Poll for new notifications since a given timestamp
+ * @route GET /api/notifications/poll
+ * @access Private
+ * @query since - ISO-8601 timestamp (returns notifications created after this time)
+ * Created by: M3 (Janani) - Day 17
+ */
+export const pollNotifications = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const since = req.query.since;
+
+        if (!since) {
+            return res.status(400).json({
+                success: false,
+                message: 'Query parameter "since" (ISO-8601 timestamp) is required.'
+            });
+        }
+
+        // Validate timestamp
+        const sinceDate = new Date(since);
+        if (isNaN(sinceDate.getTime())) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid "since" timestamp. Provide a valid ISO-8601 date string.'
+            });
+        }
+
+        const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+        const newNotifications = await Notification.getNewSince(userId, sinceDate.toISOString(), limit);
+        const unreadCount = await Notification.getUnreadCount(userId);
+
+        res.status(200).json({
+            success: true,
+            data: newNotifications,
+            count: newNotifications.length,
+            unreadCount,
+            polledAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Error polling notifications:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
+
+/**
  * Get unread count for current user
  * @route GET /api/notifications/unread-count
  * @access Private
