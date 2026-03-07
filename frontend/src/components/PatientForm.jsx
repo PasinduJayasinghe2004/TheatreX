@@ -14,7 +14,7 @@
 //   onClose   - callback to close the modal
 // ============================================================================
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, UserPlus, Edit3, AlertCircle, CheckCircle } from 'lucide-react';
 import patientService from '../services/patientService';
 
@@ -60,6 +60,33 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+
+    // Pre-fill when editing
+    useEffect(() => {
+        if (patient) {
+            // Format date_of_birth to YYYY-MM-DD for input[type=date]
+            let dob = patient.date_of_birth || '';
+            if (dob && dob.length > 10) {
+                dob = dob.substring(0, 10);
+            }
+
+            setFormData({
+                name: patient.name || '',
+                date_of_birth: dob,
+                gender: patient.gender || 'male',
+                blood_type: patient.blood_type || '',
+                phone: patient.phone || '',
+                email: patient.email || '',
+                address: patient.address || '',
+                emergency_contact_name: patient.emergency_contact_name || '',
+                emergency_contact_phone: patient.emergency_contact_phone || '',
+                emergency_contact_relationship: patient.emergency_contact_relationship || '',
+                medical_history: patient.medical_history || '',
+                allergies: patient.allergies || '',
+                current_medications: patient.current_medications || '',
+            });
+        }
+    }, [patient]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

@@ -46,6 +46,19 @@ const patientService = {
     },
 
     // ========================================
+    // M6 Day 15: Search patients by name, phone, or email
+    // Convenience wrapper around getAllPatients with a search term
+    // ========================================
+    searchPatients: async (searchTerm, filters = {}) => {
+        try {
+            return await patientService.getAllPatients({ ...filters, search: searchTerm });
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error searching patients. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
     // Get a single patient by ID
     // ========================================
     getPatientById: async (id) => {

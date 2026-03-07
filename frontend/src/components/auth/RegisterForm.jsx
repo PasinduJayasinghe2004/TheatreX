@@ -165,7 +165,14 @@ const RegisterForm = () => {
                         {/* API Error */}
                         {apiError && (
                             <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg text-sm">
-                                {apiError}
+                                <div>{apiError}</div>
+                                {apiError.toLowerCase().includes('already exists') && (
+                                    <div className="mt-2 text-xs">
+                                        <Link to="/forgot-password" id="forgot-password-api-link" className="text-blue-400 hover:text-blue-300 font-medium underline">
+                                            Forgot your password?
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -268,13 +275,18 @@ const RegisterForm = () => {
                             {isLoading ? 'Creating Account...' : 'Create Account'}
                         </Button>
 
-                        {/* Login Link */}
-                        <p className="text-center text-gray-400 text-sm mt-4">
-                            Already have an account?{' '}
-                            <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium">
-                                Sign in here
+                        {/* Login & Forgot Password Links */}
+                        <div className="text-center space-y-2 mt-4">
+                            <p className="text-gray-400 text-sm">
+                                Already have an account?{' '}
+                                <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium">
+                                    Sign in here
+                                </Link>
+                            </p>
+                            <Link to="/forgot-password" id="forgot-password-link" className="inline-block text-xs text-blue-400/80 hover:text-blue-300 transition-colors">
+                                Forgot your password?
                             </Link>
-                        </p>
+                        </div>
                     </form>
                 </div>
             </div>

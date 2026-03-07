@@ -18,6 +18,7 @@ import express from 'express';
 import { createNurse, getAllNurses, getNurseById, updateNurse, deleteNurse } from '../controllers/nurseController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateNurse, validateNurseUpdate } from '../middleware/nurseValidation.js';
+import { uploadProfilePicture } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -53,27 +54,11 @@ router.post('/', protect, authorize('coordinator', 'admin'), uploadProfilePictur
 // ============================================================================
 // ROUTE: PUT /api/nurses/:id
 // ============================================================================
-// Update a nurse record.
-// Protected + coordinator or admin only.
-// ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, updateNurse);
-
-// ============================================================================
-// ROUTE: DELETE /api/nurses/:id
-// ============================================================================
-// Soft delete a nurse.
-// Protected + admin only.
-// ============================================================================
-router.delete('/:id', protect, authorize('admin'), deleteNurse);
-
-// ============================================================================
-// ROUTE: PUT /api/nurses/:id
-// ============================================================================
 // Update an existing nurse's details (partial update supported).
 // Protected + coordinator or admin only.
 // Created by: M2 (Chandeepa) - Day 14
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), validateNurseUpdate, updateNurse);
+router.put('/:id', protect, authorize('coordinator', 'admin'), uploadProfilePicture, validateNurseUpdate, updateNurse);
 
 // ============================================================================
 // ROUTE: DELETE /api/nurses/:id
@@ -83,5 +68,7 @@ router.put('/:id', protect, authorize('coordinator', 'admin'), validateNurseUpda
 // Created by: M2 (Chandeepa) - Day 14
 // ============================================================================
 router.delete('/:id', protect, authorize('coordinator', 'admin'), deleteNurse);
+
+
 
 export default router;

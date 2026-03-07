@@ -148,117 +148,6 @@ export const createSurgeon = async (req, res) => {
 };
 
 // ============================================================================
-// UPDATE SURGEON
-// ============================================================================
-// @desc    Update a surgeon record
-// @route   PUT /api/surgeons/:id
-// @access  Protected (coordinator, admin)
-// ============================================================================
-export const updateSurgeon = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const {
-            name,
-            specialization,
-            license_number,
-            years_of_experience,
-            phone,
-            email,
-            is_available,
-        } = req.body;
-
-        let profile_picture = req.body.profile_picture;
-        if (req.file) {
-            profile_picture = `/uploads/profiles/${req.file.filename}`;
-        }
-
-        const query = `
-            UPDATE surgeons
-            SET 
-                name = COALESCE($1, name),
-                specialization = COALESCE($2, specialization),
-                license_number = COALESCE($3, license_number),
-                years_of_experience = COALESCE($4, years_of_experience),
-                phone = COALESCE($5, phone),
-                email = COALESCE($6, email),
-                is_available = COALESCE($7, is_available),
-                profile_picture = COALESCE($8, profile_picture),
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = $9 AND is_active = TRUE
-            RETURNING *
-        `;
-
-        const values = [
-            name ? name.trim() : null,
-            specialization ? specialization.trim() : null,
-            license_number ? license_number.trim() : null,
-            years_of_experience ? parseInt(years_of_experience, 10) : null,
-            phone ? phone.trim() : null,
-            email ? email.trim().toLowerCase() : null,
-            is_available === undefined ? null : is_available,
-            profile_picture,
-            id
-        ];
-
-        const { rows } = await pool.query(query, values);
-
-        if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Surgeon not found',
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'Surgeon updated successfully',
-            data: rows[0],
-        });
-    } catch (error) {
-        console.error('Error updating surgeon:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error updating surgeon',
-            error: error.message,
-        });
-    }
-};
-
-// ============================================================================
-// DELETE SURGEON
-// ============================================================================
-// @desc    Soft delete a surgeon
-// @route   DELETE /api/surgeons/:id
-// @access  Protected (admin)
-// ============================================================================
-export const deleteSurgeon = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const query = `UPDATE surgeons SET is_active = FALSE WHERE id = $1 RETURNING *`;
-        const { rows } = await pool.query(query, [id]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Surgeon not found',
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'Surgeon deleted successfully',
-        });
-    } catch (error) {
-        console.error('Error deleting surgeon:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error deleting surgeon',
-            error: error.message,
-        });
-    }
-};
-
-// ============================================================================
 // GET ALL SURGEONS
 // ============================================================================
 // @desc    Get all active surgeons, with optional ?search= and ?available= filters
@@ -432,6 +321,13 @@ export const updateSurgeon = async (req, res) => {
             is_available = current.is_available,
         } = req.body;
 
+        let profile_picture = current.profile_picture;
+        if (req.file) {
+            profile_picture = `/uploads/profiles/${req.file.filename}`;
+        } else if (req.body.profile_picture !== undefined) {
+            profile_picture = req.body.profile_picture;
+        }
+
         // ── 4. Business-rule validations (email format, YOE) ──────────────────
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email && !emailRegex.test(email)) {
@@ -464,8 +360,9 @@ export const updateSurgeon = async (req, res) => {
                 phone               = $5,
                 email               = $6,
                 is_available        = $7,
+                profile_picture     = $8,
                 updated_at          = NOW()
-            WHERE id = $8 AND is_active = TRUE
+            WHERE id = $9 AND is_active = TRUE
             RETURNING *
         `;
 
@@ -479,6 +376,7 @@ export const updateSurgeon = async (req, res) => {
             phone.trim(),
             email.trim().toLowerCase(),
             is_available,
+            profile_picture,
             surgeonId,
         ];
 

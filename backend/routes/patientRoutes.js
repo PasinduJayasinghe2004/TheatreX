@@ -41,6 +41,22 @@ router.get('/', protect, getPatients);
 router.post('/', protect, authorize('coordinator', 'admin'), createPatient);
 
 // ============================================================================
+// ROUTE: PUT /api/patients/:id
+// ============================================================================
+// Update an existing patient record (partial update)
+// Protected + coordinator or admin only
+// ============================================================================
+router.put('/:id', protect, authorize('coordinator', 'admin'), updatePatient);
+
+// ============================================================================
+// ROUTE: DELETE /api/patients/:id
+// ============================================================================
+// Soft delete a patient record
+// Protected + coordinator or admin only
+// ============================================================================
+router.delete('/:id', protect, authorize('coordinator', 'admin'), deletePatient);
+
+// ============================================================================
 // ROUTE: GET /api/patients/:id
 // ============================================================================
 // Get single patient detail

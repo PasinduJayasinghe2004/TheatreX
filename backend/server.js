@@ -15,6 +15,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import cron from 'node-cron';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
 import { createNotificationsTable } from './models/notificationModel.js';
@@ -35,6 +36,9 @@ import surgeonRoutes from './routes/surgeonRoutes.js'; // M1 - Day 13
 import nurseRoutes from './routes/nurseRoutes.js'; // M3 - Day 13
 import anaesthetistRoutes from './routes/anaesthetistRoutes.js'; // M6 - Day 13
 import patientRoutes from './routes/patientRoutes.js'; // M2 - Day 15
+import notificationRoutes from './routes/notificationRoutes.js'; // M5/M6 - Day 16
+import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 13
+import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
 // Load environment variables
 dotenv.config();
@@ -67,6 +71,8 @@ app.use('/api/surgeons', surgeonRoutes); // Surgeon routes - M1 Day 13
 app.use('/api/nurses', nurseRoutes); // Nurse routes - M3 Day 13
 app.use('/api/anaesthetists', anaesthetistRoutes); // Anaesthetist routes - M6 Day 13
 app.use('/api/patients', patientRoutes); // Patient routes - M2 Day 15
+app.use('/api/notifications', notificationRoutes); // Notification routes - M5/M6 Day 16
+app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 13
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -85,7 +91,8 @@ app.get('/', (req, res) => {
         version: '1.0.0',
         endpoints: {
             health: '/api/health',
-            users: '/api/users'
+            users: '/api/users',
+            technicians: '/api/technicians'
         }
     });
 });
@@ -143,11 +150,23 @@ const startServer = async () => {
             await createPatientsTable(); // M1 - Day 15
         }
 
+        // Start surgery reminder cron job (runs every 60 seconds) - M4 Day 16
+        cron.schedule('* * * * *', async () => {
+            await checkSurgeryReminders();
+        });
+        console.log('⏰ Surgery reminder cron job started (every 60s)');
+
+        // Clear old read notifications daily at 3 AM - M1 Day 17
+        cron.schedule('0 3 * * *', async () => {
+            await clearOldNotifications();
+        });
+        console.log('🧹 Old notification cleanup cron job started (daily at 3 AM)');
+
         // Start listening
         app.listen(PORT, () => {
             console.log('');
             console.log('🚀 ================================');
-            console.log(`🎭 TheatreX Backend Server`);
+            console.log(`   TheatreX Backend Server`);
             console.log(`📡 Server running on port ${PORT}`);
             console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
             console.log(`🔗 API URL: http://localhost:${PORT}`);

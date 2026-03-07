@@ -58,4 +58,87 @@ const createNotificationsTable = async () => {
   }
 };
 
-export { createNotificationsTable };
+/**
+ * Notification Model Class
+ * Static methods to interact with the notifications table
+ */
+class Notification {
+  /**
+   * Create a new notification
+   * @param {Object} data - Notification data (user_id, type, title, message, surgery_id)
+   */
+  static async create(data) {
+    const { user_id, type, title, message, surgery_id } = data;
+    const query = `
+      INSERT INTO notifications (user_id, type, title, message, surgery_id)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `;
+    const values = [user_id, type || 'info', title, message, surgery_id || null];
+    const { rows } = await pool.query(query, values);
+    return rows[0];
+  }
+
+  /**
+   * Get all notifications for a user with pagination
+   * @param {number} userId - ID of the user
+   * @param {number} limit - Number of records to return
+   * @param {number} offset - Number of records to skip
+   */
+  static async getAllForUser(userId, limit = 20, offset = 0) {
+    const query = `
+      SELECT * FROM notifications
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT $2 OFFSET $3;
+    `;
+    const { rows } = await pool.query(query, [userId, limit, offset]);
+    return rows;
+  }
+
+  /**
+   * Mark a notification as read
+   * @param {number} id - Notification ID
+   * @param {number} userId - User ID (to ensure ownership)
+   */
+  static async markAsRead(id, userId) {
+    const query = `
+      UPDATE notifications
+      SET is_read = TRUE, read_at = CURRENT_TIMESTAMP
+      WHERE id = $1 AND user_id = $2
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(query, [id, userId]);
+    return rows[0];
+  }
+
+  /**
+   * Mark all notifications for a user as read
+   * @param {number} userId - User ID
+   */
+  static async markAllAsRead(userId) {
+    const query = `
+      UPDATE notifications
+      SET is_read = TRUE, read_at = CURRENT_TIMESTAMP
+      WHERE user_id = $1 AND is_read = FALSE
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(query, [userId]);
+    return rows;
+  }
+
+  /**
+   * Get unread count for a user
+   * @param {number} userId - User ID
+   */
+  static async getUnreadCount(userId) {
+    const query = `
+      SELECT COUNT(*) as count FROM notifications
+      WHERE user_id = $1 AND is_read = FALSE;
+    `;
+    const { rows } = await pool.query(query, [userId]);
+    return parseInt(rows[0].count);
+  }
+}
+
+export { createNotificationsTable, Notification };
