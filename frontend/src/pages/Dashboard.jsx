@@ -32,56 +32,71 @@ const SAMPLE_THEATRES = [
         status: 'in-use',
         procedure: 'Cardiac Bypass',
         surgeon: 'Dr.Sam',
+        patient: 'Martin Smith',
+        anesthesiologist: 'Dr.Perera',
         startTime: '08:30',
         progress: 78,
         duration: 240,
+        preOpChecklist: { consent: true, bloodWork: true, imaging: true, anesthesia: true },
     },
     {
         name: 'Theatre 2',
         status: 'preparing',
         procedure: 'Hip Replacement',
         surgeon: 'Dr.Johnson',
+        patient: 'John Cena',
+        anesthesiologist: 'Dr.Silva',
         startTime: '10:30',
         progress: 0,
         duration: 240,
+        preOpChecklist: { consent: true, bloodWork: true, imaging: false, anesthesia: false },
     },
     {
         name: 'Theatre 4',
         status: 'cleaning',
         procedure: null,
         surgeon: null,
+        patient: null,
+        anesthesiologist: null,
         startTime: null,
         progress: 0,
         duration: 0,
+        preOpChecklist: null,
     },
     {
         name: 'Theatre 3',
         status: 'available',
         procedure: null,
         surgeon: null,
+        patient: null,
+        anesthesiologist: null,
         startTime: null,
         progress: 0,
         duration: 0,
+        preOpChecklist: null,
     },
     {
         name: 'Theatre 5',
         status: 'available',
         procedure: null,
         surgeon: null,
+        patient: null,
+        anesthesiologist: null,
         startTime: null,
         progress: 0,
         duration: 0,
+        preOpChecklist: null,
     },
 ];
 
 const SAMPLE_STAFF = [
-    { name: 'Dr.Jayasinghe', role: 'Surgeon', status: 'busy' },
-    { name: 'Dr.Oneli', role: 'Surgeon', status: 'available-soon' },
-    { name: 'Dr.Chaminda', role: 'Surgeon', status: 'busy' },
-    { name: 'Dr.Karavita', role: 'Surgeon', status: 'available' },
-    { name: 'Dr.Dilmith', role: 'Surgeon', status: 'busy' },
-    { name: 'Dr.Inthusha', role: 'Surgeon', status: 'available' },
-    { name: 'Dr.Herath', role: 'Surgeon', status: 'busy' },
+    { name: 'Dr.Jayasinghe', role: 'Surgeon', status: 'busy', specialty: 'Cardiac', id: 'staff1' },
+    { name: 'Dr.Oneli', role: 'Surgeon', status: 'available-soon', specialty: 'Ortho', id: 'staff2' },
+    { name: 'Dr.Chaminda', role: 'Surgeon', status: 'busy', specialty: 'General', id: 'staff3' },
+    { name: 'Dr.Karavita', role: 'Surgeon', status: 'available', specialty: 'Neuro', id: 'staff4' },
+    { name: 'Dr.Dilmith', role: 'Surgeon', status: 'busy', specialty: 'Cardiac', id: 'staff5' },
+    { name: 'Dr.Inthusha', role: 'Surgeon', status: 'available', specialty: 'General', id: 'staff6' },
+    { name: 'Dr.Herath', role: 'Surgeon', status: 'busy', specialty: 'Ortho', id: 'staff7' },
 ];
 
 const SAMPLE_SURGERIES = [
@@ -178,20 +193,65 @@ const TheatreIcon = ({ status }) => {
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Live Theatre Card
+// Helper: Estimated finish time
 // ──────────────────────────────────────────────────────────────────────────────
 
-const LiveTheatreCard = ({ theatre }) => {
+const getEstFinish = (startTime, duration) => {
+    if (!startTime || !duration) return null;
+    const [h, m] = startTime.split(':').map(Number);
+    const startMinutes = h * 60 + m;
+    const endMinutes = startMinutes + duration;
+    const endH = Math.floor(endMinutes / 60) % 24;
+    const endM = endMinutes % 60;
+    const d = new Date(2000, 0, 1, endH, endM);
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+};
+
+// Helper: Progress bar color
+const getProgressColor = (progress) => {
+    if (progress >= 90) return 'from-red-400 to-red-600';
+    if (progress >= 70) return 'from-yellow-400 to-yellow-600';
+    return 'from-green-400 to-green-600';
+};
+
+// Specialty tag colors
+const SPECIALTY_COLORS = {
+    Cardiac: 'bg-red-50 text-red-600 border-red-200',
+    Ortho: 'bg-blue-50 text-blue-600 border-blue-200',
+    General: 'bg-gray-100 text-gray-600 border-gray-200',
+    Neuro: 'bg-purple-50 text-purple-600 border-purple-200',
+};
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Live Theatre Card (Enhanced)
+// ──────────────────────────────────────────────────────────────────────────────
+
+const LiveTheatreCard = ({ theatre, isExpanded, onToggle, isGrid }) => {
     const style = THEATRE_STATUS_STYLES[theatre.status] || THEATRE_STATUS_STYLES.available;
+    const estFinish = getEstFinish(theatre.startTime, theatre.duration);
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-all duration-300">
+        <div
+            className={`bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer ${isGrid ? 'p-4' : 'p-5'
+                }`}
+            onClick={onToggle}
+        >
             <div className="flex items-start gap-3 mb-3">
                 <TheatreIcon status={theatre.status} />
                 <div className="flex-1">
                     <h4 className="font-semibold text-gray-800">{theatre.name}</h4>
-                    <span className={`inline-block mt-1 px-3 py-0.5 rounded-full text-xs font-bold ${style.bg} ${style.text}`}>
-                        {style.label}
-                    </span>
+                    <div className="flex items-center gap-2 mt-1">
+                        {/* Pulsing status dot */}
+                        <span className="relative flex h-2.5 w-2.5">
+                            {theatre.status === 'in-use' && (
+                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${style.dotBg} opacity-75`} />
+                            )}
+                            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${style.dotBg}`} />
+                        </span>
+                        <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${style.bg} ${style.text}`}>
+                            {style.label}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -200,6 +260,9 @@ const LiveTheatreCard = ({ theatre }) => {
                     <p className="text-sm font-semibold text-gray-800">{theatre.procedure}</p>
                     <p className="text-sm text-gray-500">Surgeon: {theatre.surgeon}</p>
                     <p className="text-sm text-gray-500">Started: {theatre.startTime}</p>
+                    {estFinish && (
+                        <p className="text-sm text-indigo-600 font-medium">Est. finish: {estFinish}</p>
+                    )}
                 </div>
             )}
 
@@ -211,7 +274,7 @@ const LiveTheatreCard = ({ theatre }) => {
                     </div>
                     <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-1000 ease-out"
+                            className={`h-full bg-gradient-to-r ${getProgressColor(theatre.progress)} rounded-full transition-all duration-1000 ease-out`}
                             style={{ width: `${theatre.progress}%` }}
                         />
                     </div>
@@ -231,25 +294,86 @@ const LiveTheatreCard = ({ theatre }) => {
                     <p className="text-sm text-gray-400 mt-2 text-right">Duration: {theatre.duration} mins</p>
                 </div>
             )}
+
+            {/* Expandable Details */}
+            {isExpanded && theatre.procedure && (
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 animate-fadeIn">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <p className="text-gray-400 text-xs uppercase tracking-wider">Patient</p>
+                            <p className="text-gray-800 font-medium">{theatre.patient || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-400 text-xs uppercase tracking-wider">Anesthesiologist</p>
+                            <p className="text-gray-800 font-medium">{theatre.anesthesiologist || 'N/A'}</p>
+                        </div>
+                    </div>
+                    {theatre.preOpChecklist && (
+                        <div>
+                            <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Pre-Op Checklist</p>
+                            <div className="flex flex-wrap gap-2">
+                                {Object.entries(theatre.preOpChecklist).map(([key, done]) => (
+                                    <span
+                                        key={key}
+                                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${done
+                                            ? 'bg-green-50 text-green-700 border-green-200'
+                                            : 'bg-gray-50 text-gray-400 border-gray-200'
+                                            }`}
+                                    >
+                                        {done ? '✓' : '○'} {key.replace(/([A-Z])/g, ' $1').trim()}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Staff Status Card
+// Staff Status Card (Enhanced)
 // ──────────────────────────────────────────────────────────────────────────────
 
-const StaffCard = ({ staff }) => {
+const StaffCard = ({ staff, navigate }) => {
     const style = STAFF_STATUS_STYLES[staff.status] || STAFF_STATUS_STYLES.available;
+    const initials = staff.name.split('.').pop()?.charAt(0).toUpperCase() || staff.name.charAt(0).toUpperCase();
+    const specialtyStyle = SPECIALTY_COLORS[staff.specialty] || SPECIALTY_COLORS.General;
+
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between hover:shadow-md transition-all duration-300">
-            <div>
-                <p className="font-semibold text-gray-800">{staff.name}</p>
-                <p className="text-sm text-gray-400">{staff.role}</p>
+        <div
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition-all duration-300 cursor-pointer"
+            onClick={() => navigate && navigate(`/staff/surgeons`)}
+            title={`View ${staff.name}'s profile`}
+        >
+            {/* Avatar with initials */}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+                {initials}
             </div>
-            <span className={`px-3 py-1 rounded-full text-xs font-bold border ${style.bg} ${style.text} ${style.border}`}>
-                {style.label}
-            </span>
+            <div className="flex-1 min-w-0">
+                <p className="font-semibold text-gray-800 truncate">{staff.name}</p>
+                <p className="text-sm text-gray-400">{staff.role}</p>
+                {staff.specialty && (
+                    <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${specialtyStyle}`}>
+                        {staff.specialty}
+                    </span>
+                )}
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Pulsing status dot */}
+                <span className="relative flex h-2 w-2">
+                    {staff.status === 'busy' && (
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                    )}
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${staff.status === 'busy' ? 'bg-red-500' :
+                        staff.status === 'available-soon' ? 'bg-yellow-500' : 'bg-green-500'
+                        }`} />
+                </span>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${style.bg} ${style.text} ${style.border}`}>
+                    {style.label}
+                </span>
+            </div>
         </div>
     );
 };
@@ -271,6 +395,9 @@ const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [alerts, setAlerts] = useState(INITIAL_ALERTS);
     const [lastRefresh, setLastRefresh] = useState(new Date());
+    const [theatreView, setTheatreView] = useState('list'); // 'list' | 'grid'
+    const [expandedTheatre, setExpandedTheatre] = useState(null);
+    const [staffFilter, setStaffFilter] = useState('all'); // 'all' | 'busy' | 'available-soon' | 'available'
     const refreshTimerRef = useRef(null);
 
     // ── Auto-refresh every 60 seconds ──
@@ -722,22 +849,121 @@ const Dashboard = () => {
 
                         {/* Left Column – Live Theatre Status (2/3 width) */}
                         <div className="lg:col-span-2">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Live Theatre Status</h2>
-                            <div className="space-y-4">
-                                {SAMPLE_THEATRES.map((theatre, idx) => (
-                                    <LiveTheatreCard key={idx} theatre={theatre} />
-                                ))}
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <span>🏥</span> Live Theatre Status
+                                </h2>
+                                {/* Grid / List Toggle */}
+                                <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+                                    <button
+                                        onClick={() => setTheatreView('list')}
+                                        className={`p-1.5 rounded-md transition-all ${theatreView === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                                        title="List view"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        onClick={() => setTheatreView('grid')}
+                                        className={`p-1.5 rounded-md transition-all ${theatreView === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                                        title="Grid view"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
+                            {SAMPLE_THEATRES.length > 0 ? (
+                                <div className={theatreView === 'grid' ? 'grid grid-cols-2 gap-4' : 'space-y-4'}>
+                                    {SAMPLE_THEATRES.map((theatre, idx) => (
+                                        <LiveTheatreCard
+                                            key={idx}
+                                            theatre={theatre}
+                                            isGrid={theatreView === 'grid'}
+                                            isExpanded={expandedTheatre === idx}
+                                            onToggle={() => setExpandedTheatre(expandedTheatre === idx ? null : idx)}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
+                                    <div className="text-5xl mb-3">🏥</div>
+                                    <p className="text-gray-500 font-medium">No theatres in use</p>
+                                    <p className="text-gray-400 text-sm mt-1">All theatres are currently available</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Right Column – Staff Status (1/3 width) */}
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Staff Status</h2>
-                            <div className="space-y-3">
-                                {SAMPLE_STAFF.map((staff, idx) => (
-                                    <StaffCard key={idx} staff={staff} />
+                            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <span>👥</span> Staff Status
+                            </h2>
+
+                            {/* Staff Count Summary Bar */}
+                            {(() => {
+                                const busyCount = SAMPLE_STAFF.filter(s => s.status === 'busy').length;
+                                const soonCount = SAMPLE_STAFF.filter(s => s.status === 'available-soon').length;
+                                const availCount = SAMPLE_STAFF.filter(s => s.status === 'available').length;
+                                const total = SAMPLE_STAFF.length;
+                                return (
+                                    <div className="mb-3">
+                                        <div className="flex h-2 rounded-full overflow-hidden">
+                                            <div className="bg-red-400" style={{ width: `${(busyCount / total) * 100}%` }} />
+                                            <div className="bg-yellow-400" style={{ width: `${(soonCount / total) * 100}%` }} />
+                                            <div className="bg-green-400" style={{ width: `${(availCount / total) * 100}%` }} />
+                                        </div>
+                                        <div className="flex justify-between mt-1.5 text-[10px] text-gray-500 font-medium">
+                                            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-400 inline-block" /> {busyCount} Busy</span>
+                                            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" /> {soonCount} Soon</span>
+                                            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-400 inline-block" /> {availCount} Available</span>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
+                            {/* Staff Filter Tabs */}
+                            <div className="flex gap-1 mb-3 flex-wrap">
+                                {[
+                                    { key: 'all', label: 'All' },
+                                    { key: 'busy', label: 'Busy' },
+                                    { key: 'available-soon', label: 'Soon' },
+                                    { key: 'available', label: 'Available' },
+                                ].map(tab => (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() => setStaffFilter(tab.key)}
+                                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${staffFilter === tab.key
+                                                ? 'bg-blue-600 text-white shadow-sm'
+                                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                            }`}
+                                    >
+                                        {tab.label}
+                                    </button>
                                 ))}
                             </div>
+
+                            {/* Staff Cards */}
+                            {(() => {
+                                const filtered = staffFilter === 'all'
+                                    ? SAMPLE_STAFF
+                                    : SAMPLE_STAFF.filter(s => s.status === staffFilter);
+                                return filtered.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {filtered.map((staff, idx) => (
+                                            <StaffCard key={staff.id || idx} staff={staff} navigate={navigate} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+                                        <div className="text-4xl mb-2">👥</div>
+                                        <p className="text-gray-500 font-medium text-sm">No staff found</p>
+                                        <p className="text-gray-400 text-xs mt-1">Try a different filter</p>
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
 
