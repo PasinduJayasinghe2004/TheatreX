@@ -91,3 +91,23 @@ export const checkSurgeryReminders = async () => {
         console.error('❌ Error in checkSurgeryReminders scheduler:', error.message);
     }
 };
+
+/**
+ * Clear notifications that are read and older than 30 days
+ * This helps keep the database clean
+ */
+export const clearOldNotifications = async () => {
+    try {
+        const query = `
+            DELETE FROM notifications 
+            WHERE is_read = TRUE 
+            AND created_at < (CURRENT_TIMESTAMP - INTERVAL '30 days')
+        `;
+        const { rowCount } = await pool.query(query);
+        if (rowCount > 0) {
+            console.log(`🧹 Cleaned up ${rowCount} old notifications`);
+        }
+    } catch (error) {
+        console.error('❌ Error in clearOldNotifications scheduler:', error.message);
+    }
+};
