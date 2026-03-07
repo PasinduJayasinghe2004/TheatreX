@@ -1,39 +1,16 @@
 // ============================================================================
 // Notification Item Component
 // ============================================================================
-// Displays a single notification item
+// Displays a single notification item with type-based icon, colors, and label.
 // Created by: M2 - Day 16
+// Updated by: M4 (Oneli) - Day 17 — use shared TYPE_CONFIG, add type label badge
 // ============================================================================
 
-
+import TYPE_CONFIG from '../constants/notificationTypes.js';
 
 const NotificationItem = ({ notification, onMarkRead }) => {
     const { id, type, title, message, is_read, created_at } = notification;
-
-    const getTypeStyles = (type) => {
-        switch (type) {
-            case 'reminder': return 'bg-blue-50 text-blue-700 border-blue-100';
-            case 'alert': return 'bg-red-50 text-red-700 border-red-100';
-            case 'warning': return 'bg-amber-50 text-amber-700 border-amber-100';
-            case 'success': return 'bg-emerald-50 text-emerald-700 border-emerald-100';
-            default: return 'bg-gray-50 text-gray-700 border-gray-100';
-        }
-    };
-
-    const getTypeIcon = (type) => {
-        switch (type) {
-            case 'reminder':
-                return <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
-            case 'alert':
-                return <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
-            case 'warning':
-                return <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
-            case 'success':
-                return <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
-            default:
-                return <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
-        }
-    };
+    const config = TYPE_CONFIG[type] || TYPE_CONFIG.info;
 
     return (
         <div
@@ -44,8 +21,11 @@ const NotificationItem = ({ notification, onMarkRead }) => {
             )}
 
             <div className="flex items-start gap-3">
-                <div className={`mt-1 p-2 rounded-lg border ${getTypeStyles(type)}`}>
-                    {getTypeIcon(type)}
+                {/* Type icon */}
+                <div className={`mt-1 p-2 rounded-lg border ${config.bg} ${config.text} border-current/20`}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={config.icon} />
+                    </svg>
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -60,6 +40,12 @@ const NotificationItem = ({ notification, onMarkRead }) => {
                     <p className={`text-xs mt-1 leading-relaxed ${!is_read ? 'text-gray-700' : 'text-gray-500'}`}>
                         {message}
                     </p>
+
+                    {/* Type label badge — Day 17 M4 */}
+                    <span className={`inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 text-[10px] font-medium rounded-full ${config.bg} ${config.text}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
+                        {config.label}
+                    </span>
                 </div>
 
                 {!is_read && (

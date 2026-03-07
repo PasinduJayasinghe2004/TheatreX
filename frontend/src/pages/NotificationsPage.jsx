@@ -4,11 +4,13 @@
 // Main page for viewing and managing user notifications
 // Created by: M1 (Pasindu) - Day 16
 // Updated by: M3 (Janani) - Day 17 — added auto-refresh controls (polling)
+// Updated by: M4 (Oneli) - Day 17 — added type filter tabs
 // ============================================================================
 
 import { useState, useRef, useCallback } from 'react';
 import Layout from '../components/Layout';
 import NotificationList from '../components/NotificationList';
+import TYPE_CONFIG, { NOTIFICATION_TYPE_KEYS } from '../constants/notificationTypes.js';
 
 const NotificationsPage = () => {
     // Polling controls provided by NotificationList via callback
@@ -17,6 +19,9 @@ const NotificationsPage = () => {
         paused: false,
         lastPolledAt: null
     });
+
+    // ── Type filter state (Day 17 - M4) ─────────────────────────────
+    const [activeType, setActiveType] = useState('');
 
     const handlePollingStatus = useCallback((status) => {
         pollingRef.current = status;
@@ -103,16 +108,54 @@ const NotificationsPage = () => {
                     </div>
                 </div>
 
+                {/* ── Type filter tabs (Day 17 - M4) ───────────────────────── */}
+                <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
+                    {/* "All" tab */}
+                    <button
+                        onClick={() => setActiveType('')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-colors whitespace-nowrap ${activeType === ''
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                            }`}
+                    >
+                        All
+                    </button>
+
+                    {/* One tab per notification type */}
+                    {NOTIFICATION_TYPE_KEYS.map((key) => {
+                        const cfg = TYPE_CONFIG[key];
+                        const isActive = activeType === key;
+                        return (
+                            <button
+                                key={key}
+                                onClick={() => setActiveType(key)}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-colors whitespace-nowrap ${isActive
+                                        ? `${cfg.bg} ${cfg.text} border-current/30`
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={cfg.icon} />
+                                </svg>
+                                {cfg.label}
+                            </button>
+                        );
+                    })}
+                </div>
+
                 {/* Notification list with polling */}
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
-                        All Notifications
+                        {activeType ? `${TYPE_CONFIG[activeType].label} Notifications` : 'All Notifications'}
                     </h2>
 
-                    <NotificationList onPollingStatus={handlePollingStatus} />
+                    <NotificationList
+                        typeFilter={activeType}
+                        onPollingStatus={handlePollingStatus}
+                    />
                 </div>
             </div>
         </Layout>

@@ -1,8 +1,6 @@
 import { Notification } from '../models/notificationModel.js';
 import { pool } from '../config/database.js';
-
-// Valid notification types (must stay in sync with DB CHECK constraint)
-const VALID_TYPES = ['reminder', 'alert', 'info', 'warning', 'success'];
+import { NOTIFICATION_TYPES, VALID_TYPE_VALUES as VALID_TYPES } from '../constants/notificationTypes.js';
 
 // Roles allowed to create notifications on behalf of users
 const ADMIN_ROLES = ['admin', 'coordinator'];
@@ -275,4 +273,17 @@ export const getUnreadCount = async (req, res) => {
             message: 'Internal server error.'
         });
     }
+};
+
+/**
+ * Return the list of valid notification types with labels
+ * @route GET /api/notifications/types
+ * @access Private
+ * Created by: M4 (Oneli) - Day 17
+ */
+export const getNotificationTypes = (_req, res) => {
+    res.status(200).json({
+        success: true,
+        data: NOTIFICATION_TYPES
+    });
 };
