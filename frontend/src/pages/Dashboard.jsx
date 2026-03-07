@@ -232,14 +232,14 @@ const LiveTheatreCard = ({ theatre, isExpanded, onToggle, isGrid }) => {
 
     return (
         <div
-            className={`bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer ${isGrid ? 'p-4' : 'p-5'
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer ${isGrid ? 'p-4' : 'p-5'
                 }`}
             onClick={onToggle}
         >
             <div className="flex items-start gap-3 mb-3">
                 <TheatreIcon status={theatre.status} />
                 <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800">{theatre.name}</h4>
+                    <h4 className="font-semibold text-gray-800 dark:text-slate-100">{theatre.name}</h4>
                     <div className="flex items-center gap-2 mt-1">
                         {/* Pulsing status dot */}
                         <span className="relative flex h-2.5 w-2.5">
@@ -257,11 +257,11 @@ const LiveTheatreCard = ({ theatre, isExpanded, onToggle, isGrid }) => {
 
             {theatre.procedure && (
                 <div className="mt-2 space-y-0.5">
-                    <p className="text-sm font-semibold text-gray-800">{theatre.procedure}</p>
-                    <p className="text-sm text-gray-500">Surgeon: {theatre.surgeon}</p>
-                    <p className="text-sm text-gray-500">Started: {theatre.startTime}</p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">{theatre.procedure}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400">Surgeon: {theatre.surgeon}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400">Started: {theatre.startTime}</p>
                     {estFinish && (
-                        <p className="text-sm text-indigo-600 font-medium">Est. finish: {estFinish}</p>
+                        <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Est. finish: {estFinish}</p>
                     )}
                 </div>
             )}
@@ -269,48 +269,48 @@ const LiveTheatreCard = ({ theatre, isExpanded, onToggle, isGrid }) => {
             {theatre.status === 'in-use' && (
                 <div className="mt-4">
                     <div className="flex items-center justify-between text-sm mb-1.5">
-                        <span className="text-gray-500">Progress</span>
-                        <span className="font-semibold text-gray-700">{theatre.progress}%</span>
+                        <span className="text-gray-500 dark:text-slate-400">Progress</span>
+                        <span className="font-semibold text-gray-700 dark:text-slate-300">{theatre.progress}%</span>
                     </div>
-                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-2.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div
                             className={`h-full bg-gradient-to-r ${getProgressColor(theatre.progress)} rounded-full transition-all duration-1000 ease-out`}
                             style={{ width: `${theatre.progress}%` }}
                         />
                     </div>
-                    <p className="text-sm text-gray-400 mt-2 text-right">Duration: {theatre.duration} mins</p>
+                    <p className="text-sm text-gray-400 dark:text-slate-500 mt-2 text-right">Duration: {theatre.duration} mins</p>
                 </div>
             )}
 
             {theatre.status === 'preparing' && (
                 <div className="mt-4">
                     <div className="flex items-center justify-between text-sm mb-1.5">
-                        <span className="text-gray-500">Progress</span>
-                        <span className="font-semibold text-gray-700">0%</span>
+                        <span className="text-gray-500 dark:text-slate-400">Progress</span>
+                        <span className="font-semibold text-gray-700 dark:text-slate-300">0%</span>
                     </div>
-                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-gray-200 rounded-full" style={{ width: '0%' }} />
+                    <div className="h-2.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-full bg-gray-200 dark:bg-slate-600 rounded-full" style={{ width: '0%' }} />
                     </div>
-                    <p className="text-sm text-gray-400 mt-2 text-right">Duration: {theatre.duration} mins</p>
+                    <p className="text-sm text-gray-400 dark:text-slate-500 mt-2 text-right">Duration: {theatre.duration} mins</p>
                 </div>
             )}
 
             {/* Expandable Details */}
             {isExpanded && theatre.procedure && (
-                <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 animate-fadeIn">
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 space-y-3 animate-fadeIn">
                     <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
-                            <p className="text-gray-400 text-xs uppercase tracking-wider">Patient</p>
-                            <p className="text-gray-800 font-medium">{theatre.patient || 'N/A'}</p>
+                            <p className="text-gray-400 dark:text-slate-500 text-xs uppercase tracking-wider">Patient</p>
+                            <p className="text-gray-800 dark:text-slate-200 font-medium">{theatre.patient || 'N/A'}</p>
                         </div>
                         <div>
-                            <p className="text-gray-400 text-xs uppercase tracking-wider">Anesthesiologist</p>
-                            <p className="text-gray-800 font-medium">{theatre.anesthesiologist || 'N/A'}</p>
+                            <p className="text-gray-400 dark:text-slate-500 text-xs uppercase tracking-wider">Anesthesiologist</p>
+                            <p className="text-gray-800 dark:text-slate-200 font-medium">{theatre.anesthesiologist || 'N/A'}</p>
                         </div>
                     </div>
                     {theatre.preOpChecklist && (
                         <div>
-                            <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Pre-Op Checklist</p>
+                            <p className="text-gray-400 dark:text-slate-500 text-xs uppercase tracking-wider mb-2">Pre-Op Checklist</p>
                             <div className="flex flex-wrap gap-2">
                                 {Object.entries(theatre.preOpChecklist).map(([key, done]) => (
                                     <span
@@ -343,7 +343,7 @@ const StaffCard = ({ staff, navigate }) => {
 
     return (
         <div
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition-all duration-300 cursor-pointer"
+            className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition-all duration-300 cursor-pointer"
             onClick={() => navigate && navigate(`/staff/surgeons`)}
             title={`View ${staff.name}'s profile`}
         >
@@ -352,8 +352,8 @@ const StaffCard = ({ staff, navigate }) => {
                 {initials}
             </div>
             <div className="flex-1 min-w-0">
-                <p className="font-semibold text-gray-800 truncate">{staff.name}</p>
-                <p className="text-sm text-gray-400">{staff.role}</p>
+                <p className="font-semibold text-gray-800 dark:text-slate-100 truncate">{staff.name}</p>
+                <p className="text-sm text-gray-400 dark:text-slate-500">{staff.role}</p>
                 {staff.specialty && (
                     <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${specialtyStyle}`}>
                         {staff.specialty}
@@ -519,10 +519,10 @@ const Dashboard = () => {
     if (loading) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600">Loading dashboard...</p>
+                        <p className="mt-4 text-gray-600 dark:text-slate-400">Loading dashboard...</p>
                     </div>
                 </div>
             </Layout>
@@ -533,11 +533,11 @@ const Dashboard = () => {
     if (error) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
                         <div className="text-red-600 text-5xl mb-4">⚠️</div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Dashboard</h2>
-                        <p className="text-gray-600 mb-4">{error}</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Error Loading Dashboard</h2>
+                        <p className="text-gray-600 dark:text-slate-400 mb-4">{error}</p>
                         <button
                             onClick={fetchDashboardData}
                             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -552,24 +552,24 @@ const Dashboard = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen">
 
                 {/* ─── Welcome Greeting + Alerts ─── */}
                 <div className="px-6 pt-5 pb-2 space-y-3">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                                 Welcome back, {user?.name?.split(' ')[0] || 'Doctor'} 👋
                             </h1>
-                            <p className="text-sm text-gray-500 mt-0.5">Here's what's happening in your theatres today</p>
+                            <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Here's what's happening in your theatres today</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-gray-400 dark:text-slate-500">
                                 Last updated: {lastRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                             </span>
                             <button
                                 onClick={handleManualRefresh}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-slate-500 transition-all duration-200 shadow-sm"
                                 title="Refresh dashboard data"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -587,8 +587,8 @@ const Dashboard = () => {
                                 <div
                                     key={alert.id}
                                     className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${alert.type === 'delay'
-                                        ? 'bg-red-50 text-red-800 border border-red-100'
-                                        : 'bg-amber-50 text-amber-800 border border-amber-100'
+                                        ? 'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-100 dark:border-red-800'
+                                        : 'bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border border-amber-100 dark:border-amber-800'
                                         }`}
                                 >
                                     <div className="flex items-center gap-2">
@@ -611,7 +611,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* ─── Summary Header ─── */}
-                <div className="bg-white border-b border-gray-100 shadow-sm px-6 py-4" data-testid="dashboard-title">
+                <div className="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 shadow-sm px-6 py-4" data-testid="dashboard-title">
                     <div className="flex items-stretch gap-4 flex-wrap">
                         {/* Summary Cards */}
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
@@ -689,12 +689,12 @@ const Dashboard = () => {
                 <div className="p-6 space-y-8">
 
                     {/* ─── Upcoming Surgeries Table ─── */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
-                            <h2 className="text-lg font-bold text-gray-900">Upcoming Surgeries</h2>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between flex-wrap gap-3">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Upcoming Surgeries</h2>
                             {/* Search Input */}
                             <div className="relative">
-                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                                 <input
@@ -702,34 +702,34 @@ const Dashboard = () => {
                                     placeholder="Search by patient, procedure, or surgeon..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 w-72 transition-all"
+                                    className="pl-9 pr-4 py-2 text-sm border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500 focus:border-blue-400 w-72 transition-all placeholder:text-gray-400 dark:placeholder:text-slate-500"
                                 />
                             </div>
                         </div>
                         <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
                             <table className="w-full">
-                                <thead className="bg-blue-50 sticky top-0 z-10">
+                                <thead className="bg-blue-50 dark:bg-blue-900/30 sticky top-0 z-10">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Time</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Patient</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Procedure</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Theatre</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Surgeon</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Time</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Patient</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Procedure</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Theatre</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Surgeon</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Status</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
                                     {upcomingSurgeries.length > 0 ? (
                                         filteredSurgeries.map((surgery, idx) => (
-                                            <tr key={surgery.id || idx} className={`hover:bg-blue-50/40 transition-colors duration-150 group ${idx % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
+                                            <tr key={surgery.id || idx} className={`hover:bg-blue-50/40 dark:hover:bg-blue-900/20 transition-colors duration-150 group ${idx % 2 === 1 ? 'bg-gray-50/50 dark:bg-slate-700/30' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm font-medium text-gray-900">
+                                                    <span className="text-sm font-medium text-gray-900 dark:text-slate-100">
                                                         {formatTime(surgery.scheduled_time)}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-700">
+                                                    <span className="text-sm text-gray-700 dark:text-slate-300">
                                                         {surgery.patient_name || 'N/A'}
                                                     </span>
                                                 </td>
@@ -794,21 +794,21 @@ const Dashboard = () => {
                                     ) : (
                                         /* Show sample data when no real surgeries */
                                         filteredSurgeries.map((s, idx) => (
-                                            <tr key={s.id || idx} className={`hover:bg-blue-50/40 transition-colors duration-150 group ${idx % 2 === 1 ? 'bg-gray-50/50' : ''}`}>
+                                            <tr key={s.id || idx} className={`hover:bg-blue-50/40 dark:hover:bg-blue-900/20 transition-colors duration-150 group ${idx % 2 === 1 ? 'bg-gray-50/50 dark:bg-slate-700/30' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm font-medium text-gray-900">{s.time}</span>
+                                                    <span className="text-sm font-medium text-gray-900 dark:text-slate-100">{s.time}</span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-700">{s.patient}</span>
+                                                    <span className="text-sm text-gray-700 dark:text-slate-300">{s.patient}</span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-700">{s.procedure}</span>
+                                                    <span className="text-sm text-gray-700 dark:text-slate-300">{s.procedure}</span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-700">{s.theatre}</span>
+                                                    <span className="text-sm text-gray-700 dark:text-slate-300">{s.theatre}</span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-700">{s.surgeon}</span>
+                                                    <span className="text-sm text-gray-700 dark:text-slate-300">{s.surgeon}</span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
@@ -818,18 +818,18 @@ const Dashboard = () => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-1.5">
-                                                        <button className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors" title="View" aria-label="View surgery">
+                                                        <button className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg transition-colors" title="View" aria-label="View surgery">
                                                             <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                             </svg>
                                                         </button>
-                                                        <button className="p-1.5 hover:bg-green-100 rounded-lg transition-colors" title="Edit" aria-label="Edit surgery">
+                                                        <button className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900/40 rounded-lg transition-colors" title="Edit" aria-label="Edit surgery">
                                                             <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                             </svg>
                                                         </button>
-                                                        <button className="p-1.5 hover:bg-red-100 rounded-lg transition-colors" title="Delete" aria-label="Delete surgery">
+                                                        <button className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-lg transition-colors" title="Delete" aria-label="Delete surgery">
                                                             <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                             </svg>
@@ -850,14 +850,14 @@ const Dashboard = () => {
                         {/* Left Column – Live Theatre Status (2/3 width) */}
                         <div className="lg:col-span-2">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                     <span>🏥</span> Live Theatre Status
                                 </h2>
                                 {/* Grid / List Toggle */}
-                                <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+                                <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-0.5">
                                     <button
                                         onClick={() => setTheatreView('list')}
-                                        className={`p-1.5 rounded-md transition-all ${theatreView === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                                        className={`p-1.5 rounded-md transition-all ${theatreView === 'list' ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200'}`}
                                         title="List view"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -866,7 +866,7 @@ const Dashboard = () => {
                                     </button>
                                     <button
                                         onClick={() => setTheatreView('grid')}
-                                        className={`p-1.5 rounded-md transition-all ${theatreView === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                                        className={`p-1.5 rounded-md transition-all ${theatreView === 'grid' ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200'}`}
                                         title="Grid view"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -888,17 +888,17 @@ const Dashboard = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
+                                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-12 text-center">
                                     <div className="text-5xl mb-3">🏥</div>
-                                    <p className="text-gray-500 font-medium">No theatres in use</p>
-                                    <p className="text-gray-400 text-sm mt-1">All theatres are currently available</p>
+                                    <p className="text-gray-500 dark:text-slate-400 font-medium">No theatres in use</p>
+                                    <p className="text-gray-400 dark:text-slate-500 text-sm mt-1">All theatres are currently available</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Right Column – Staff Status (1/3 width) */}
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                 <span>👥</span> Staff Status
                             </h2>
 
@@ -910,12 +910,12 @@ const Dashboard = () => {
                                 const total = SAMPLE_STAFF.length;
                                 return (
                                     <div className="mb-3">
-                                        <div className="flex h-2 rounded-full overflow-hidden">
+                                        <div className="flex h-2 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                                             <div className="bg-red-400" style={{ width: `${(busyCount / total) * 100}%` }} />
                                             <div className="bg-yellow-400" style={{ width: `${(soonCount / total) * 100}%` }} />
                                             <div className="bg-green-400" style={{ width: `${(availCount / total) * 100}%` }} />
                                         </div>
-                                        <div className="flex justify-between mt-1.5 text-[10px] text-gray-500 font-medium">
+                                        <div className="flex justify-between mt-1.5 text-[10px] text-gray-500 dark:text-slate-400 font-medium">
                                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-400 inline-block" /> {busyCount} Busy</span>
                                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" /> {soonCount} Soon</span>
                                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-400 inline-block" /> {availCount} Available</span>
@@ -936,8 +936,8 @@ const Dashboard = () => {
                                         key={tab.key}
                                         onClick={() => setStaffFilter(tab.key)}
                                         className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${staffFilter === tab.key
-                                                ? 'bg-blue-600 text-white shadow-sm'
-                                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                            ? 'bg-blue-600 text-white shadow-sm'
+                                            : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-600'
                                             }`}
                                     >
                                         {tab.label}
@@ -957,10 +957,10 @@ const Dashboard = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+                                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-8 text-center">
                                         <div className="text-4xl mb-2">👥</div>
-                                        <p className="text-gray-500 font-medium text-sm">No staff found</p>
-                                        <p className="text-gray-400 text-xs mt-1">Try a different filter</p>
+                                        <p className="text-gray-500 dark:text-slate-400 font-medium text-sm">No staff found</p>
+                                        <p className="text-gray-400 dark:text-slate-500 text-xs mt-1">Try a different filter</p>
                                     </div>
                                 );
                             })()}
@@ -971,8 +971,8 @@ const Dashboard = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                         {/* Weekly Surgery Chart (2/3 width) */}
-                        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Surgeries This Week</h2>
+                        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Surgeries This Week</h2>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={WEEKLY_CHART_DATA} barCategoryGap="20%">
@@ -1003,18 +1003,18 @@ const Dashboard = () => {
                         </div>
 
                         {/* Recent Activity Feed (1/3 width) */}
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
                             <div className="space-y-4">
                                 {SAMPLE_ACTIVITIES.map((activity) => (
                                     <div key={activity.id} className="flex gap-3">
                                         <div className="flex flex-col items-center">
                                             <div className={`w-3 h-3 rounded-full ${activity.color} flex-shrink-0 mt-1`} />
-                                            <div className="w-0.5 flex-1 bg-gray-100 mt-1" />
+                                            <div className="w-0.5 flex-1 bg-gray-100 dark:bg-slate-700 mt-1" />
                                         </div>
                                         <div className="flex-1 pb-4">
-                                            <p className="text-sm text-gray-700 leading-relaxed">{activity.action}</p>
-                                            <p className="text-xs text-gray-400 mt-0.5">{activity.time}</p>
+                                            <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">{activity.action}</p>
+                                            <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{activity.time}</p>
                                         </div>
                                     </div>
                                 ))}

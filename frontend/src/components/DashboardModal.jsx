@@ -45,18 +45,18 @@ const DashboardModal = ({ isOpen, onClose, title, children }) => {
 
             {/* Modal Card */}
             <div
-                className="relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto"
+                className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto"
                 style={{ maxWidth: '1000px', animation: 'scaleIn 0.25s ease-out' }}
             >
                 {/* Header */}
-                <div className="sticky top-0 z-10 bg-white rounded-t-2xl px-8 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+                <div className="sticky top-0 z-10 bg-white dark:bg-slate-800 rounded-t-2xl px-8 pt-6 pb-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
                         aria-label="Close modal"
                     >
-                        <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>

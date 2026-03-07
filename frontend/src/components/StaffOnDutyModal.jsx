@@ -70,29 +70,29 @@ const StaffOnDutyModal = () => {
                     return (
                         <div
                             key={idx}
-                            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-5 hover:shadow-md transition-all duration-300"
+                            className="bg-white dark:bg-slate-700/50 rounded-2xl border border-gray-100 dark:border-slate-600 shadow-sm p-5 flex items-center gap-5 hover:shadow-md transition-all duration-300"
                         >
                             {/* Avatar */}
-                            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-100 flex-shrink-0">
+                            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-100 dark:border-slate-600 flex-shrink-0">
                                 <img
                                     src={staff.avatar}
                                     alt={staff.name}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                         e.target.style.display = 'none';
-                                        e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xl font-bold">${staff.name.charAt(0)}</div>`;
+                                        e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center text-gray-500 dark:text-slate-300 text-xl font-bold">${staff.name.charAt(0)}</div>`;
                                     }}
                                 />
                             </div>
 
                             {/* Info */}
                             <div className="flex-1">
-                                <p className="font-bold text-gray-900 text-base">{staff.name}</p>
-                                <p className="text-sm text-gray-500">{staff.role}</p>
-                                <p className="text-sm text-gray-600 mt-1">
+                                <p className="font-bold text-gray-900 dark:text-white text-base">{staff.name}</p>
+                                <p className="text-sm text-gray-500 dark:text-slate-400">{staff.role}</p>
+                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
                                     <span className="font-semibold">Status:</span> {staff.statusLabel}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-gray-600 dark:text-slate-300">
                                     <span className="font-semibold">Current Case:</span> {staff.currentCase}
                                 </p>
                             </div>

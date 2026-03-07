@@ -54,31 +54,31 @@ const TodaySurgeriesModal = () => {
             </div>
 
             {/* Today's Surgery Schedule */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-5 py-3 border-b border-gray-100">
-                    <h3 className="font-bold text-gray-800">Today's Surgery Schedule</h3>
+            <div className="bg-white dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-600 shadow-sm overflow-hidden">
+                <div className="px-5 py-3 border-b border-gray-100 dark:border-slate-600">
+                    <h3 className="font-bold text-gray-800 dark:text-slate-100">Today's Surgery Schedule</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-blue-50">
+                        <thead className="bg-blue-50 dark:bg-blue-900/30">
                             <tr>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Time</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Patient</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Procedure</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Theatre</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Surgeon</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Status</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 uppercase">Actions</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Time</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Patient</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Procedure</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Theatre</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Surgeon</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Status</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-bold text-blue-700 dark:text-blue-400 uppercase">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-gray-50 dark:divide-slate-600">
                             {SAMPLE_SCHEDULE.map((row, idx) => (
-                                <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
-                                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{row.time}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-700">{row.patient}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-700">{row.procedure}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-700">{row.theatre}</td>
-                                    <td className="px-4 py-3 text-sm text-gray-700">{row.surgeon}</td>
+                                <tr key={idx} className="hover:bg-blue-50/30 dark:hover:bg-blue-900/20 transition-colors">
+                                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-slate-100">{row.time}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-slate-300">{row.patient}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-slate-300">{row.procedure}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-slate-300">{row.theatre}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-slate-300">{row.surgeon}</td>
                                     <td className="px-4 py-3">
                                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                                             <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
@@ -87,13 +87,13 @@ const TodaySurgeriesModal = () => {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-1.5">
-                                            <button className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors" title="View">
+                                            <button className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg transition-colors" title="View">
                                                 <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
                                             </button>
-                                            <button className="p-1.5 hover:bg-green-100 rounded-lg transition-colors" title="Edit">
+                                            <button className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900/40 rounded-lg transition-colors" title="Edit">
                                                 <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
@@ -110,33 +110,33 @@ const TodaySurgeriesModal = () => {
             {/* Bottom section: Procedure Types + Theatre Utilization */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Procedure Types */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                    <h3 className="font-bold text-gray-800 mb-4">Procedure Types</h3>
+                <div className="bg-white dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-600 shadow-sm p-5">
+                    <h3 className="font-bold text-gray-800 dark:text-slate-100 mb-4">Procedure Types</h3>
                     <div className="space-y-3">
                         {PROCEDURE_TYPES.map((proc, idx) => (
                             <div key={idx} className="flex items-center justify-between">
-                                <span className="text-sm text-gray-700">{proc.name}</span>
-                                <span className="text-sm font-bold text-gray-900">{proc.count}</span>
+                                <span className="text-sm text-gray-700 dark:text-slate-300">{proc.name}</span>
+                                <span className="text-sm font-bold text-gray-900 dark:text-white">{proc.count}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Theatre Utilization */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                    <h3 className="font-bold text-gray-800 mb-4">Theatre Utilization</h3>
+                <div className="bg-white dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-600 shadow-sm p-5">
+                    <h3 className="font-bold text-gray-800 dark:text-slate-100 mb-4">Theatre Utilization</h3>
                     <div className="space-y-4">
                         {THEATRE_UTILIZATION.map((theatre, idx) => (
                             <div key={idx}>
                                 <div className="flex items-center justify-between text-sm mb-1.5">
-                                    <span className="text-gray-700">{theatre.name}</span>
-                                    <span className="text-gray-500 font-medium">
+                                    <span className="text-gray-700 dark:text-slate-300">{theatre.name}</span>
+                                    <span className="text-gray-500 dark:text-slate-400 font-medium">
                                         {theatre.surgeries} {theatre.surgeries === 1 ? 'surgery' : 'surgeries'}
                                     </span>
                                 </div>
-                                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-700"
+                                        className={`h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-700`}
                                         style={{ width: `${(theatre.surgeries / theatre.max) * 100}%` }}
                                     />
                                 </div>
