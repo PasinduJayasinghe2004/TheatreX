@@ -11,6 +11,7 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import notificationService from '../services/notificationService.js';
 
 // ============================================================================
@@ -72,12 +73,14 @@ const getRelativeTime = (dateStr) => {
 // NotificationDropdown Component
 // ============================================================================
 const NotificationDropdown = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [shouldAnimate, setShouldAnimate] = useState(false);
+    const [markingAllRead, setMarkingAllRead] = useState(false);
     const prevCountRef = useRef(0);
     const dropdownRef = useRef(null);
     const pollRef = useRef(null);
@@ -164,6 +167,49 @@ const NotificationDropdown = () => {
     }, [isOpen]);
 
     // ──────────────────────────────────────────────────────────────
+    // Mark a single notification as read
+    // ──────────────────────────────────────────────────────────────
+    const handleMarkAsRead = useCallback(async (id) => {
+        try {
+            await notificationService.markAsRead(id);
+            setNotifications((prev) =>
+                prev.map((n) => (n.id === id ? { ...n, is_read: true, read_at: new Date().toISOString() } : n))
+            );
+            setUnreadCount((prev) => Math.max(0, prev - 1));
+        } catch (err) {
+            console.error('Error marking notification as read:', err);
+        }
+    }, []);
+
+    // ──────────────────────────────────────────────────────────────
+    // Mark ALL notifications as read
+    // ──────────────────────────────────────────────────────────────
+    const handleMarkAllAsRead = useCallback(async () => {
+        if (markingAllRead || unreadCount === 0) return;
+        setMarkingAllRead(true);
+        try {
+            await notificationService.markAllAsRead();
+            setNotifications((prev) =>
+                prev.map((n) => ({ ...n, is_read: true, read_at: n.read_at || new Date().toISOString() }))
+            );
+            setUnreadCount(0);
+            prevCountRef.current = 0;
+        } catch (err) {
+            console.error('Error marking all notifications as read:', err);
+        } finally {
+            setMarkingAllRead(false);
+        }
+    }, [markingAllRead, unreadCount]);
+
+    // ──────────────────────────────────────────────────────────────
+    // Navigate to full notifications page
+    // ──────────────────────────────────────────────────────────────
+    const handleViewAll = () => {
+        setIsOpen(false);
+        navigate('/notifications');
+    };
+
+    // ──────────────────────────────────────────────────────────────
     // Toggle dropdown
     // ──────────────────────────────────────────────────────────────
     const toggleDropdown = () => setIsOpen((prev) => !prev);
@@ -211,6 +257,24 @@ const NotificationDropdown = () => {
                                 </span>
                             )}
                         </div>
+                        {/* Mark all as read button */}
+                        {unreadCount > 0 && (
+                            <button
+                                onClick={handleMarkAllAsRead}
+                                disabled={markingAllRead}
+                                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                title="Mark all notifications as read"
+                            >
+                                {markingAllRead ? (
+                                    <span className="flex items-center gap-1">
+                                        <span className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                                        Marking…
+                                    </span>
+                                ) : (
+                                    'Mark all read'
+                                )}
+                            </button>
+                        )}
                     </div>
 
                     {/* Content */}
@@ -263,6 +327,7 @@ const NotificationDropdown = () => {
                                             key={notif.id}
                                             className={`flex gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer ${!notif.is_read ? 'bg-blue-50/40 dark:bg-blue-900/10' : ''
                                                 }`}
+                                            onClick={() => !notif.is_read && handleMarkAsRead(notif.id)}
                                         >
                                             {/* Type icon */}
                                             <div className={`shrink-0 w-8 h-8 rounded-lg ${config.bg} flex items-center justify-center mt-0.5`}>
@@ -301,6 +366,22 @@ const NotificationDropdown = () => {
                                                     )}
                                                 </div>
                                             </div>
+
+                                            {/* Mark as read button (single) */}
+                                            {!notif.is_read && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleMarkAsRead(notif.id);
+                                                    }}
+                                                    className="shrink-0 mt-1 p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded"
+                                                    title="Mark as read"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </button>
+                                            )}
                                         </li>
                                     );
                                 })}
@@ -311,7 +392,10 @@ const NotificationDropdown = () => {
                     {/* Footer */}
                     {notifications.length > 0 && (
                         <div className="border-t border-gray-100 dark:border-slate-700 px-4 py-2">
-                            <button className="w-full text-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                            <button
+                                onClick={handleViewAll}
+                                className="w-full text-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                            >
                                 View all notifications
                             </button>
                         </div>
