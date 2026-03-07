@@ -366,8 +366,8 @@ const Dashboard = () => {
     return (
         <Layout>
             <div className="min-h-screen bg-gray-50">
-                {/* ─── Sticky Summary Header ─── */}
-                <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm px-6 py-4" data-testid="dashboard-title">
+                {/* ─── Summary Header ─── */}
+                <div className="bg-white border-b border-gray-100 shadow-sm px-6 py-4" data-testid="dashboard-title">
                     <div className="flex items-stretch gap-4 flex-wrap">
                         {/* Summary Cards */}
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
@@ -426,7 +426,7 @@ const Dashboard = () => {
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
-                                + Add New Surgery
+                                Add New Surgery
                             </button>
                             <button
                                 onClick={() => navigate('/calendar')}

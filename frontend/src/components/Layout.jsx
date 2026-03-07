@@ -37,7 +37,13 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
                 )}
 
                 {/* Main Content Area */}
-                <main className="flex-1 p-6 min-h-[calc(100vh-4rem)]">
+                <main
+                    className={`
+                        flex-1 p-6 min-h-[calc(100vh-4rem)] 
+                        transition-all duration-300 ease-in-out
+                        ${showSidebar ? (isSidebarCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'}
+                    `}
+                >
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>

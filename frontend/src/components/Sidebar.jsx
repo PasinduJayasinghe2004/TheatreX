@@ -160,7 +160,8 @@ const Sidebar = ({ isCollapsed = false, onToggle }) => {
                 ${isCollapsed ? 'w-16' : 'w-64'} 
                 bg-white dark:bg-slate-900
                 border-r border-gray-200 dark:border-slate-700
-                min-h-screen sticky top-16 
+                fixed top-16 left-0 h-[calc(100vh-4rem)]
+                z-40
                 transition-all duration-300 ease-in-out
                 flex flex-col
             `}
