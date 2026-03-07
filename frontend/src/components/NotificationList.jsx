@@ -11,14 +11,16 @@ import notificationService from '../services/notificationService';
 import NotificationItem from './NotificationItem';
 import usePolling from '../hooks/usePolling';
 
-const NotificationList = ({ unreadOnly = false, onMarkRead, onPollingStatus }) => {
+const NotificationList = ({ unreadOnly = false, typeFilter = '', onMarkRead, onPollingStatus }) => {
     const [optimisticUpdates, setOptimisticUpdates] = useState({});
 
     // ── Fetch function given to usePolling ──────────────────────────
     const fetchNotifications = useCallback(async () => {
-        const res = await notificationService.getNotifications({ limit: 100 });
+        const params = { limit: 100 };
+        if (typeFilter) params.type = typeFilter;
+        const res = await notificationService.getNotifications(params);
         return res.data; // usePolling stores this in `data`
-    }, []);
+    }, [typeFilter]);
 
     // ── Poll every 30s ─────────────────────────────────────────────
     const {

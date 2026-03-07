@@ -2,6 +2,7 @@ import express from 'express';
 import {
     createNotification,
     getNotifications,
+    getNotificationTypes,
     pollNotifications,
     markAsRead,
     markAllAsRead,
@@ -27,6 +28,14 @@ router.post('/', createNotification);
  * @access  Private
  */
 router.get('/', getNotifications);
+
+/**
+ * @route   GET /api/notifications/types
+ * @desc    Return the list of valid notification types with labels
+ * @access  Private
+ * Created by: M4 (Oneli) - Day 17
+ */
+router.get('/types', getNotificationTypes);
 
 /**
  * @route   GET /api/notifications/poll

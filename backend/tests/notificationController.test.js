@@ -407,4 +407,90 @@ describe('Notification API Tests - Day 16', () => {
             expect(found).toBeFalsy();
         });
     });
+
+    // ========================================================================
+    // GET /api/notifications/types - Get Notification Types (Day 17 - M4)
+    // ========================================================================
+    describe('GET /api/notifications/types', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app).get('/api/notifications/types');
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return the five notification types with labels', async () => {
+            const res = await request(app)
+                .get('/api/notifications/types')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(Array.isArray(res.body.data)).toBe(true);
+            expect(res.body.data).toHaveLength(5);
+
+            const values = res.body.data.map(t => t.value);
+            expect(values).toContain('reminder');
+            expect(values).toContain('alert');
+            expect(values).toContain('info');
+            expect(values).toContain('warning');
+            expect(values).toContain('success');
+
+            // Each entry should have a label
+            res.body.data.forEach(t => {
+                expect(t).toHaveProperty('label');
+                expect(typeof t.label).toBe('string');
+            });
+        });
+    });
+
+    // ========================================================================
+    // GET /api/notifications?type= - Type Filter (Day 17 - M4)
+    // ========================================================================
+    describe('GET /api/notifications?type= (Type Filter)', () => {
+        // Create notifications of different types
+        beforeAll(async () => {
+            await request(app)
+                .post('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    user_id: coordinatorUserId || 1,
+                    title: 'Type Filter Test - Reminder',
+                    message: 'Reminder notification for type filter test',
+                    type: 'reminder'
+                });
+            await request(app)
+                .post('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .send({
+                    user_id: coordinatorUserId || 1,
+                    title: 'Type Filter Test - Warning',
+                    message: 'Warning notification for type filter test',
+                    type: 'warning'
+                });
+        }, 15000);
+
+        it('should filter notifications by type=reminder', async () => {
+            const res = await request(app)
+                .get('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .query({ type: 'reminder' });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(Array.isArray(res.body.data)).toBe(true);
+            // Every returned notification should have type=reminder
+            res.body.data.forEach(n => {
+                expect(n.type).toBe('reminder');
+            });
+        });
+
+        it('should return 400 for invalid type filter', async () => {
+            const res = await request(app)
+                .get('/api/notifications')
+                .set('Authorization', `Bearer ${coordinatorToken}`)
+                .query({ type: 'invalid_type' });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.success).toBe(false);
+        });
+    });
 });
