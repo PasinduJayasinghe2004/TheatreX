@@ -16,11 +16,8 @@
  * @param {React.ReactNode} icon - SVG or other icon element
  * @param {number|null} comparison - Comparison value from yesterday
  */
-const SummaryCard = ({ label, value, colour, icon, comparison, ...props }) => (
+const SummaryCard = ({ label, value, colour, icon, comparison, subtitle, ...props }) => (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-start gap-4 transition-all hover:shadow-md" {...props}>
-        <div className={`w-12 h-12 ${colour} rounded-xl flex items-center justify-center flex-shrink-0`}>
-            {icon}
-        </div>
         <div className="flex-1">
             <p className="text-sm text-gray-500 font-medium">{label}</p>
             <div className="flex items-baseline gap-2">
@@ -33,6 +30,10 @@ const SummaryCard = ({ label, value, colour, icon, comparison, ...props }) => (
                     comparison === null && <span className="text-xs text-gray-400">No comparison data</span>
                 )}
             </div>
+            {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+        </div>
+        <div className={`w-12 h-12 ${colour} rounded-xl flex items-center justify-center flex-shrink-0`}>
+            {icon}
         </div>
     </div>
 );
