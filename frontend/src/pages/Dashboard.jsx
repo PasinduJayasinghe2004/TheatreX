@@ -7,7 +7,7 @@
 //          live theatre status, and staff status sections.
 
 
-import { useState, useEffect, useCallback, useRef, memo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -388,7 +388,7 @@ const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [summary, setSummary] = useState(null);
     const [surgeries, setSurgeries] = useState([]);
-    const [liveSurgeries, setLiveSurgeries] = useState([]);
+    const [, setLiveSurgeries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeModal, setActiveModal] = useState(null);
@@ -561,7 +561,7 @@ const Dashboard = () => {
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                                 Welcome back, {user?.name?.split(' ')[0] || 'Doctor'} 👋
                             </h1>
-                            <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Here's what's happening in your theatres today</p>
+                            <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Here&apos;s what&apos;s happening in your theatres today</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="text-xs text-gray-400 dark:text-slate-500">
