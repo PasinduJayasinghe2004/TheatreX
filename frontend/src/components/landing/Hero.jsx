@@ -1,7 +1,21 @@
 import { ArrowRight, PlayCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import ScrollReveal from './ScrollReveal'
 
 export default function Hero() {
+    const navigate = useNavigate()
+
+    const handleGetStarted = (e) => {
+        e.preventDefault()
+        const landing = document.querySelector('.landing-page')
+        if (landing) {
+            landing.classList.add('landing-exit')
+            landing.addEventListener('animationend', () => navigate('/login'), { once: true })
+        } else {
+            navigate('/login')
+        }
+    }
+
     return (
         <section style={{ padding: '5rem 0 5rem 0', overflow: 'hidden' }}>
             <div className="container">
@@ -44,7 +58,7 @@ export default function Hero() {
                             Real-time theatre monitoring, intelligent staff scheduling, and comprehensive analytics all in one powerful platform. Optimize your surgical operations for maximum efficiency.
                         </p>
                         <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button className="btn btn-primary">
+                            <button className="btn btn-primary" onClick={handleGetStarted}>
                                 Get started <ArrowRight size={18} />
                             </button>
                             <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB', color: '#111827' }}>
