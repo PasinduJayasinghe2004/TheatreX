@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import theatrexLogo from '../../assets/theatrex-logo.svg'
 
-export default function LandingNavbar() {
+export default function LandingNavbar({ onRequestDemo }) {
     const [isOpen, setIsOpen] = useState(false)
     const [revealed, setRevealed] = useState(false)
     const [scrolled, setScrolled] = useState(false)
@@ -60,7 +60,7 @@ export default function LandingNavbar() {
 
                 {/* CTA */}
                 <div className="quick-nav__cta desktop-menu" style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="btn btn-primary" style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem' }}>
+                    <button className="btn btn-primary" style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem' }} onClick={onRequestDemo}>
                         Request Demo
                     </button>
                     <a
@@ -88,7 +88,7 @@ export default function LandingNavbar() {
                             {link.label}
                         </a>
                     ))}
-                    <button className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem 1rem', fontSize: '0.9rem' }}>
+                    <button className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem 1rem', fontSize: '0.9rem' }} onClick={() => { onRequestDemo(); setIsOpen(false) }}>
                         Request Demo
                     </button>
                     <a

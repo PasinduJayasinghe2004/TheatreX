@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import '../components/landing/landing-page.css';
 import LandingNavbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
@@ -10,13 +11,16 @@ import Contact from '../components/landing/Contact';
 import Footer from '../components/landing/Footer';
 import OxygenBubbles from '../components/landing/OxygenBubbles';
 import ScrollIntro from '../components/landing/ScrollIntro';
+import DemoRequestModal from '../components/landing/DemoRequestModal';
 
 const LandingPage = () => {
+    const [showDemoModal, setShowDemoModal] = useState(false);
+
     return (
         <div className="landing-page">
             <ScrollIntro />
             <OxygenBubbles />
-            <LandingNavbar />
+            <LandingNavbar onRequestDemo={() => setShowDemoModal(true)} />
             <main style={{ position: 'relative', zIndex: 1 }}>
                 <Hero />
                 <Features />
@@ -27,6 +31,8 @@ const LandingPage = () => {
                 <Contact />
             </main>
             <Footer />
+
+            <DemoRequestModal isOpen={showDemoModal} onClose={() => setShowDemoModal(false)} />
         </div>
     );
 };

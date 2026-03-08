@@ -101,9 +101,12 @@ const SAMPLE_STAFF = [
 
 const SAMPLE_SURGERIES = [
     { id: 's1', time: '08:30', patient: 'John Cena', procedure: 'Hip Replacement', theatre: 'Theatre 2', surgeon: 'Dr.Johnson', status: 'scheduled' },
+    { id: 's6', time: '09:00', patient: 'Ellen Ripley', procedure: 'Knee Arthroscopy', theatre: 'Theatre 1', surgeon: 'Dr.Karavita', status: 'scheduled' },
     { id: 's2', time: '10:30', patient: 'Sarah Connor', procedure: 'Cataract Surgery', theatre: 'Theatre 4', surgeon: 'Dr.Peter', status: 'scheduled' },
     { id: 's3', time: '11:00', patient: 'Martin Smith', procedure: 'Cardiac Bypass', theatre: 'Theatre 1', surgeon: 'Dr.Sam', status: 'scheduled' },
+    { id: 's7', time: '13:15', patient: 'Bruce Wayne', procedure: 'Spinal Fusion', theatre: 'Theatre 3', surgeon: 'Dr.Jayasinghe', status: 'scheduled' },
     { id: 's4', time: '14:00', patient: 'Kristina Rose', procedure: 'Appendectomy', theatre: 'Theatre 3', surgeon: 'Dr.Lee', status: 'scheduled' },
+    { id: 's8', time: '15:45', patient: 'Diana Prince', procedure: 'Thyroidectomy', theatre: 'Theatre 2', surgeon: 'Dr.Oneli', status: 'scheduled' },
     { id: 's5', time: '16:30', patient: 'Jimmy Anderson', procedure: 'Gallbladder Removal', theatre: 'Theatre 2', surgeon: 'Dr.Gopal', status: 'scheduled' },
 ];
 
