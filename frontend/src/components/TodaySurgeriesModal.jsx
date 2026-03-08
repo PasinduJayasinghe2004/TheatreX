@@ -56,7 +56,7 @@ const TodaySurgeriesModal = () => {
             {/* Today's Surgery Schedule */}
             <div className="bg-white dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-600 shadow-sm overflow-hidden">
                 <div className="px-5 py-3 border-b border-gray-100 dark:border-slate-600">
-                    <h3 className="font-bold text-gray-800 dark:text-slate-100">Today's Surgery Schedule</h3>
+                    <h3 className="font-bold text-gray-800 dark:text-slate-100">Today&apos;s Surgery Schedule</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
