@@ -6,7 +6,8 @@ import {
     pollNotifications,
     markAsRead,
     markAllAsRead,
-    getUnreadCount
+    getUnreadCount,
+    cleanupNotifications
 } from '../controllers/notificationController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -65,5 +66,12 @@ router.put('/:id/read', markAsRead);
  * @access  Private
  */
 router.put('/read-all', markAllAsRead);
+
+/**
+ * @route   PUT /api/notifications/cleanup
+ * @desc    Manually cleanup old read notifications
+ * @access  Private (Admin/Coordinator)
+ */
+router.put('/cleanup', cleanupNotifications);
 
 export default router;

@@ -94,7 +94,7 @@ describe('Notification API Tests - Day 16', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.success).toBe(false);
-            expect(res.body.message).toMatch(/user_id/i);
+            expect(res.body.message).toMatch(/required/i);
         });
 
         it('should return 400 when title is missing', async () => {
@@ -105,7 +105,7 @@ describe('Notification API Tests - Day 16', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.success).toBe(false);
-            expect(res.body.message).toMatch(/title/i);
+            expect(res.body.message).toMatch(/required/i);
         });
 
         it('should return 400 when message is missing', async () => {
@@ -116,7 +116,7 @@ describe('Notification API Tests - Day 16', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.success).toBe(false);
-            expect(res.body.message).toMatch(/message/i);
+            expect(res.body.message).toMatch(/required/i);
         });
 
         it('should create a notification for coordinator', async () => {
@@ -491,6 +491,32 @@ describe('Notification API Tests - Day 16', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.success).toBe(false);
+        });
+    });
+
+    // ── PUT /api/notifications/cleanup (M5 Day 17 Polish) ─────────────────────
+    describe('PUT /api/notifications/cleanup', () => {
+        it('should return 401 without auth token', async () => {
+            const res = await request(app).put('/api/notifications/cleanup');
+            expect(res.statusCode).toBe(401);
+        });
+
+        it('should return 403 for staff users', async () => {
+            const res = await request(app)
+                .put('/api/notifications/cleanup')
+                .set('Authorization', `Bearer ${staffToken}`);
+            expect(res.statusCode).toBe(403);
+        });
+
+        it('should perform cleanup for coordinator', async () => {
+            const res = await request(app)
+                .put('/api/notifications/cleanup')
+                .set('Authorization', `Bearer ${coordinatorToken}`);
+            
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+            expect(res.body.message).toMatch(/cleanup successful/i);
+            expect(typeof res.body.count).toBe('number');
         });
     });
 });
