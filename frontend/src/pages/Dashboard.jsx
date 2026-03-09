@@ -20,6 +20,7 @@ import StaffOnDutyModal from '../components/StaffOnDutyModal';
 import AverageDurationModal from '../components/AverageDurationModal';
 import { useAuth } from '../context/AuthContext';
 import { getDashboardStats, getDashboardSummary } from '../services/dashboardService';
+import { getSurgeriesPerDay } from '../services/analyticsService';
 import surgeryService from '../services/surgeryService';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -394,6 +395,7 @@ const Dashboard = () => {
     const [, setLiveSurgeries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [weeklyChartData, setWeeklyChartData] = useState(WEEKLY_CHART_DATA);
     const [activeModal, setActiveModal] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [alerts, setAlerts] = useState(INITIAL_ALERTS);
@@ -454,6 +456,19 @@ const Dashboard = () => {
                 console.warn('Surgeries data unavailable, using sample data:', surgeryErr.message);
                 setSurgeries([]);
                 setLiveSurgeries([]);
+            }
+
+            // Fetch surgeries per day for chart - M1 Day 18
+            try {
+                const chartResponse = await getSurgeriesPerDay();
+                if (chartResponse?.success && chartResponse.data?.length > 0) {
+                    setWeeklyChartData(chartResponse.data.map(d => ({
+                        day: d.day,
+                        surgeries: d.count
+                    })));
+                }
+            } catch (chartErr) {
+                console.warn('Chart data unavailable, using sample data:', chartErr.message);
             }
 
         } catch (err) {
@@ -978,7 +993,7 @@ const Dashboard = () => {
                             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Surgeries This Week</h2>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={WEEKLY_CHART_DATA} barCategoryGap="20%">
+                                    <BarChart data={weeklyChartData} barCategoryGap="20%">
                                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                                         <XAxis dataKey="day" tick={{ fontSize: 13, fill: '#6b7280' }} />
                                         <YAxis tick={{ fontSize: 13, fill: '#6b7280' }} />
