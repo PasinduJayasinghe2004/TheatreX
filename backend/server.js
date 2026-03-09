@@ -38,6 +38,7 @@ import anaesthetistRoutes from './routes/anaesthetistRoutes.js'; // M6 - Day 13
 import patientRoutes from './routes/patientRoutes.js'; // M2 - Day 15
 import notificationRoutes from './routes/notificationRoutes.js'; // M5/M6 - Day 16
 import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 13
+import analyticsRoutes from './routes/analyticsRoutes.js'; // M1 - Day 18
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
 // Load environment variables
@@ -73,6 +74,7 @@ app.use('/api/anaesthetists', anaesthetistRoutes); // Anaesthetist routes - M6 D
 app.use('/api/patients', patientRoutes); // Patient routes - M2 Day 15
 app.use('/api/notifications', notificationRoutes); // Notification routes - M5/M6 Day 16
 app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 13
+app.use('/api/analytics', analyticsRoutes); // Analytics routes - M1 Day 18
 
 // Health check route
 app.get('/api/health', (req, res) => {

@@ -26,6 +26,7 @@ import AnaesthetistsPage from '../pages/AnaesthetistsPage'; // M6 - Day 13
 import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
 import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
+import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
 import LandingPage from '../pages/LandingPage';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
@@ -187,6 +188,13 @@ const AppRoutes = () => {
             <Route path="/notifications" element={
                 <ProtectedRoute>
                     <NotificationsPage />
+                </ProtectedRoute>
+            } />
+
+            {/* Analytics Page - M1 (Pasindu) Day 18 */}
+            <Route path="/analytics" element={
+                <ProtectedRoute>
+                    <AnalyticsPage />
                 </ProtectedRoute>
             } />
 
