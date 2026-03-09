@@ -284,7 +284,7 @@ export default function DemoRequestModal({ isOpen, onClose }) {
                             </button>
 
                             <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: '-0.25rem' }}>
-                                We'll respond within 24 hours. No spam, ever.
+                                We&apos;ll respond within 24 hours. No spam, ever.
                             </p>
                         </form>
                     </div>
