@@ -98,6 +98,20 @@ const notificationService = {
             const message = error.response?.data?.message || 'Error polling notifications.';
             throw new Error(message);
         }
+    },
+
+    /**
+     * Manually cleanup old read notifications
+     * @returns {Promise<Object>} API response
+     */
+    cleanupNotifications: async () => {
+        try {
+            const response = await api.put('/notifications/cleanup');
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error cleaning up notifications.';
+            throw new Error(message);
+        }
     }
 };
 

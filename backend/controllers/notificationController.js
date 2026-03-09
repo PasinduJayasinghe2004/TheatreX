@@ -276,6 +276,42 @@ export const getUnreadCount = async (req, res) => {
 };
 
 /**
+ * Manually trigger cleanup of old notifications
+ * @route PUT /api/notifications/cleanup
+ * @access Private/Admin/Coordinator
+ */
+export const cleanupNotifications = async (req, res) => {
+    try {
+        // Only admins/coordinators may cleanup
+        if (!ADMIN_ROLES.includes(req.user?.role)) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied. Only admins and coordinators can perform cleanup.'
+            });
+        }
+
+        const query = `
+            DELETE FROM notifications 
+            WHERE is_read = TRUE 
+            AND created_at < (CURRENT_TIMESTAMP - INTERVAL '30 days')
+        `;
+        const { rowCount } = await pool.query(query);
+
+        res.status(200).json({
+            success: true,
+            message: `Cleanup successful. Removed ${rowCount} old notifications.`,
+            count: rowCount
+        });
+    } catch (error) {
+        console.error('Error cleaning up notifications:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
+
+/**
  * Return the list of valid notification types with labels
  * @route GET /api/notifications/types
  * @access Private

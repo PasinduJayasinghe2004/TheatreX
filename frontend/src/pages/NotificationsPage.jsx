@@ -10,6 +10,8 @@
 import { useState, useRef, useCallback } from 'react';
 import Layout from '../components/Layout';
 import NotificationList from '../components/NotificationList';
+import notificationService from '../services/notificationService';
+import { useAuth } from '../context/AuthContext';
 import TYPE_CONFIG, { NOTIFICATION_TYPE_KEYS } from '../constants/notificationTypes.js';
 
 const NotificationsPage = () => {
@@ -20,8 +22,12 @@ const NotificationsPage = () => {
         lastPolledAt: null
     });
 
+    const { user } = useAuth();
+
     // ── Type filter state (Day 17 - M4) ─────────────────────────────
     const [activeType, setActiveType] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isCleaning, setIsCleaning] = useState(false);
 
     const handlePollingStatus = useCallback((status) => {
         pollingRef.current = status;
@@ -46,6 +52,21 @@ const NotificationsPage = () => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     };
 
+    const handleCleanup = async () => {
+        if (!window.confirm('Are you sure you want to delete all read notifications older than 30 days?')) return;
+
+        setIsCleaning(true);
+        try {
+            const res = await notificationService.cleanupNotifications();
+            alert(res.message);
+            handleRefresh();
+        } catch (err) {
+            alert(err.message || 'Error cleaning up notifications');
+        } finally {
+            setIsCleaning(false);
+        }
+    };
+
     return (
         <Layout>
             <div className="p-6 max-w-4xl mx-auto">
@@ -55,6 +76,35 @@ const NotificationsPage = () => {
                         <h1 className="text-2xl font-bold text-gray-900 font-outfit">Notifications</h1>
                         <p className="text-sm text-gray-500 mt-1">Stay updated with surgery reminders and system alerts</p>
                     </div>
+
+                    {(user?.role === 'admin' || user?.role === 'coordinator') && (
+                        <button
+                            onClick={handleCleanup}
+                            disabled={isCleaning}
+                            className={`inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors ${isCleaning ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            {isCleaning ? 'Cleaning...' : 'Cleanup Old'}
+                        </button>
+                    )}
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative mb-6">
+                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </span>
+                    <input
+                        type="text"
+                        placeholder="Search notifications by title or message..."
+                        className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
 
                 {/* Polling controls bar */}
@@ -154,6 +204,7 @@ const NotificationsPage = () => {
 
                     <NotificationList
                         typeFilter={activeType}
+                        searchQuery={searchQuery}
                         onPollingStatus={handlePollingStatus}
                     />
                 </div>
