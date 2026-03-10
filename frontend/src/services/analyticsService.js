@@ -23,6 +23,21 @@ export const getSurgeriesPerDay = async () => {
     }
 };
 
+/**
+ * Get surgery counts grouped by status
+ * @returns {Promise} Surgery status counts data
+ */
+export const getSurgeryStatusCounts = async () => {
+    try {
+        const response = await api.get('/api/analytics/surgery-status-counts');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching surgery status counts:', error);
+        throw error;
+    }
+};
+
 export default {
-    getSurgeriesPerDay
+    getSurgeriesPerDay,
+    getSurgeryStatusCounts
 };
