@@ -67,9 +67,25 @@ export const getStaffCountsByRole = async () => {
     }
 };
 
+/**
+ * Get theatre utilization percentages for the last 7 days
+ * @returns {Promise} Theatre utilization data
+ * Created by: M5 (Inthusha) - Day 18
+ */
+export const getTheatreUtilization = async () => {
+    try {
+        const response = await api.get('/api/analytics/theatre-utilization');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching theatre utilization:', error);
+        throw error;
+    }
+};
+
 export default {
     getSurgeriesPerDay,
     getSurgeryStatusCounts,
     getPatientDemographics,
-    getStaffCountsByRole
+    getStaffCountsByRole,
+    getTheatreUtilization
 };

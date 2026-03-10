@@ -12,7 +12,8 @@ import {
     getSurgeriesPerDay,
     getSurgeryStatusCounts,
     getPatientDemographics,
-    getStaffCountsByRole
+    getStaffCountsByRole,
+    getTheatreUtilization
 } from '../controllers/analyticsController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -56,5 +57,15 @@ router.get('/patient-demographics', protect, getPatientDemographics);
 // Created by: M4 (Oneli) - Day 18
 // ============================================================================
 router.get('/staff-counts', protect, getStaffCountsByRole);
+
+// ============================================================================
+// Theatre Utilization Route
+// ============================================================================
+// @route   GET /api/analytics/theatre-utilization
+// @desc    Get theatre utilization percentage for the last 7 days
+// @access  Protected (all authenticated users)
+// Created by: M5 (Inthusha) - Day 18
+// ============================================================================
+router.get('/theatre-utilization', protect, getTheatreUtilization);
 
 export default router;

@@ -11,6 +11,7 @@
 // EXPORTS:
 // - getPatientDemographics: GET /api/analytics/patient-demographics
 // - getStaffCountsByRole: GET /api/analytics/staff-counts
+// - getTheatreUtilization: GET /api/analytics/theatre-utilization
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -280,6 +281,56 @@ export const getStaffCountsByRole = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching staff counts',
+            error: error.message
+        });
+    }
+};
+// ============================================================================
+// GET THEATRE UTILIZATION
+// ============================================================================
+// @desc    Get theatre utilization percentage for the last 7 days
+// @route   GET /api/analytics/theatre-utilization
+// @access  Protected
+// Created by: M5 (Inthusha) - Day 18
+// ============================================================================
+export const getTheatreUtilization = async (req, res) => {
+    try {
+        // Query to get total surgery minutes per theatre for the last 7 days
+        // Utilization % = (Total Surgery Minutes / Potential Minutes) * 100
+        // Potential minutes = 7 days * 24 hours * 60 minutes = 10,080 mins
+        const query = `
+            SELECT
+                t.id,
+                t.name,
+                t.theatre_type,
+                COALESCE(SUM(s.duration_minutes), 0)::int AS total_minutes,
+                ROUND(
+                    (COALESCE(SUM(s.duration_minutes), 0)::numeric / 10080.0) * 100,
+                    1
+                )::float AS utilization_percentage
+            FROM theatres t
+            LEFT JOIN surgeries s
+                ON s.theatre_id = t.id
+               AND s.status = 'completed'
+               AND s.scheduled_date >= CURRENT_DATE - INTERVAL '6 days'
+               AND s.scheduled_date <= CURRENT_DATE
+            WHERE t.is_active = true
+            GROUP BY t.id, t.name, t.theatre_type
+            ORDER BY utilization_percentage DESC, t.name ASC
+        `;
+
+        const result = await pool.query(query);
+
+        res.status(200).json({
+            success: true,
+            data: result.rows
+        });
+
+    } catch (error) {
+        console.error('Error fetching theatre utilization:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching theatre utilization statistics',
             error: error.message
         });
     }
