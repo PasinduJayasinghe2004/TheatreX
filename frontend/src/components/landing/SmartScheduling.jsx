@@ -1,4 +1,4 @@
-import { Calendar as CalendarIcon, Clock, Users, ShieldCheck, ArrowRight } from 'lucide-react'
+import { AnimatedCalendarHeader, AnimatedSmallClock, AnimatedSmallUsers, AnimatedShieldCheck, AnimatedArrowRight } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 export default function SmartScheduling() {
@@ -17,7 +17,7 @@ export default function SmartScheduling() {
                         marginBottom: '2rem',
                         boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)'
                     }}>
-                        <CalendarIcon fill="currentColor" size={24} />
+                        <AnimatedCalendarHeader />
                         <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Smart Calendar Scheduling</h2>
                     </div>
                 </ScrollReveal>
@@ -35,7 +35,7 @@ export default function SmartScheduling() {
                             }}>
                                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
                                     <div style={{ padding: '0.5rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', height: 'fit-content' }}>
-                                        <Clock size={20} color="#2563EB" />
+                                        <AnimatedSmallClock />
                                     </div>
                                     <div>
                                         <h4 style={{ fontWeight: '700', fontSize: '1.1rem', color: '#111827' }}>Modify in Real-Time</h4>
@@ -57,7 +57,7 @@ export default function SmartScheduling() {
                             }}>
                                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
                                     <div style={{ padding: '0.5rem', backgroundColor: '#FDF2F8', borderRadius: '0.5rem', height: 'fit-content' }}>
-                                        <Users size={20} color="#DB2777" />
+                                        <AnimatedSmallUsers />
                                     </div>
                                     <div>
                                         <h4 style={{ fontWeight: '700', fontSize: '1.1rem', color: '#111827' }}>Staff Assignment</h4>
@@ -79,7 +79,7 @@ export default function SmartScheduling() {
                             }}>
                                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
                                     <div style={{ padding: '0.5rem', backgroundColor: '#ECFDF5', borderRadius: '0.5rem', height: 'fit-content' }}>
-                                        <ShieldCheck size={20} color="#059669" />
+                                        <AnimatedShieldCheck />
                                     </div>
                                     <div>
                                         <h4 style={{ fontWeight: '700', fontSize: '1.1rem', color: '#111827' }}>Resource Optimization</h4>
@@ -109,7 +109,7 @@ export default function SmartScheduling() {
                                     "Real-time resource availability tracking."
                                 ].map((item, i) => (
                                     <li key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', color: '#4B5563', fontSize: '0.95rem' }}>
-                                        <ArrowRight size={18} color="#9CA3AF" style={{ marginTop: '2px' }} />
+                                        <AnimatedArrowRight />
                                         {item}
                                     </li>
                                 ))}

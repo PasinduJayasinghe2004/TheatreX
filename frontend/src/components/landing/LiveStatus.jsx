@@ -1,4 +1,4 @@
-import { Zap } from 'lucide-react'
+import { AnimatedZap, AnimatedStatusDot, AnimatedInfoDot } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 export default function LiveStatus() {
@@ -17,7 +17,7 @@ export default function LiveStatus() {
                         marginBottom: '2rem',
                         boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)'
                     }}>
-                        <Zap fill="currentColor" size={24} />
+                        <AnimatedZap />
                         <h2 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>Live Theatre Status</h2>
                     </div>
                 </ScrollReveal>
@@ -36,7 +36,7 @@ export default function LiveStatus() {
                                 alignItems: 'center',
                                 gap: '1rem'
                             }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#EF4444' }}></div>
+                                <AnimatedStatusDot dotColor="#EF4444" status="in-use" />
                                 <div>
                                     <h4 style={{ fontWeight: '700', fontSize: '0.9rem', color: '#111827' }}>Theatre 1 • In Use</h4>
                                     <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>Cardiac Bypass • Dr. Reynolds • +0:22</p>
@@ -54,7 +54,7 @@ export default function LiveStatus() {
                                 alignItems: 'center',
                                 gap: '1rem'
                             }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#F59E0B' }}></div>
+                                <AnimatedStatusDot dotColor="#F59E0B" status="pre-op" />
                                 <div>
                                     <h4 style={{ fontWeight: '700', fontSize: '0.9rem', color: '#111827' }}>Theatre 2 • Pre-op</h4>
                                     <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>Hip Replacement • Team B • Starting in 10m</p>
@@ -72,7 +72,7 @@ export default function LiveStatus() {
                                 alignItems: 'center',
                                 gap: '1rem'
                             }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#3B82F6' }}></div>
+                                <AnimatedStatusDot dotColor="#3B82F6" status="cleaning" />
                                 <div>
                                     <h4 style={{ fontWeight: '700', fontSize: '0.9rem', color: '#111827' }}>Theatre 3 • Cleaning</h4>
                                     <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>Post-op sanitation in progress • Est. 15m</p>
@@ -90,7 +90,7 @@ export default function LiveStatus() {
                                 alignItems: 'center',
                                 gap: '1rem'
                             }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#10B981' }}></div>
+                                <AnimatedStatusDot dotColor="#10B981" status="available" />
                                 <div>
                                     <h4 style={{ fontWeight: '700', fontSize: '0.9rem', color: '#111827' }}>Theatre 4 • Available</h4>
                                     <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>Ready for next procedure</p>
@@ -117,18 +117,7 @@ export default function LiveStatus() {
                                     "Mobile notifications for theatre exchanges."
                                 ].map((item, i) => (
                                     <li key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', color: '#4B5563', fontSize: '0.95rem' }}>
-                                        <div style={{
-                                            minWidth: '20px',
-                                            height: '20px',
-                                            backgroundColor: '#DBEAFE',
-                                            borderRadius: '50%',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            marginTop: '2px'
-                                        }}>
-                                            <div style={{ width: '6px', height: '6px', backgroundColor: '#2563EB', borderRadius: '50%' }}></div>
-                                        </div>
+                                        <AnimatedInfoDot />
                                         {item}
                                     </li>
                                 ))}

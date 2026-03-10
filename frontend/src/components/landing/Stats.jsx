@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, Eye, TrendingUp, Infinity as InfIcon } from 'lucide-react'
+import { AnimatedStatClock, AnimatedStatEye, AnimatedStatTrendingUp, AnimatedStatInfinity, AnimatedCheckCircle, CountUp } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 export default function Stats() {
@@ -24,7 +24,7 @@ export default function Stats() {
                                     "Better patient care coordination"
                                 ].map((item, i) => (
                                     <li key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', color: '#374151', fontSize: '1rem', fontWeight: '500' }}>
-                                        <CheckCircle2 color="#2563EB" size={20} />
+                                        <AnimatedCheckCircle />
                                         {item}
                                     </li>
                                 ))}
@@ -39,10 +39,10 @@ export default function Stats() {
                         gap: '1.5rem'
                     }}>
                         {[
-                            { icon: <Clock size={32} />, value: "24/7", label: "System Uptime" },
-                            { icon: <Eye size={32} />, value: "100%", label: "Data Visibility" },
-                            { icon: <TrendingUp size={32} />, value: "50%", label: "Improved Efficiency" },
-                            { icon: <InfIcon size={32} />, value: "100%", label: "Data Security" }
+                            { icon: <AnimatedStatClock />, value: <><CountUp end={24} duration={1500} />/7</>, label: "System Uptime" },
+                            { icon: <AnimatedStatEye />, value: <><CountUp end={100} duration={2000} />%</>, label: "Data Visibility" },
+                            { icon: <AnimatedStatTrendingUp />, value: <><CountUp end={50} duration={1800} />%</>, label: "Improved Efficiency" },
+                            { icon: <AnimatedStatInfinity />, value: <><CountUp end={100} duration={2000} />%</>, label: "Data Security" }
                         ].map((stat, i) => (
                             <ScrollReveal key={i} animation="zoom-in" delay={i * 150} duration={600}>
                                 <div style={{
