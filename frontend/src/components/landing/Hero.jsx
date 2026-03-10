@@ -78,6 +78,7 @@ export default function Hero() {
                             <img
                                 src="/hero-surgery.jpg"
                                 alt="Surgeons implementing theatre operations"
+                                loading="lazy"
                                 style={{ width: '100%', height: 'auto', display: 'block' }}
                             />
                         </div>

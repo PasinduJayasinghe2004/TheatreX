@@ -7,14 +7,35 @@ const Contact = () => {
         email: '',
         message: ''
     })
+    const [submitted, setSubmitted] = useState(false)
+    const [sending, setSending] = useState(false)
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log('Form submitted:', formData)
+        setSending(true)
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            if (res.ok) {
+                setSubmitted(true)
+                setFormData({ name: '', email: '', message: '' })
+            } else {
+                // Fallback to mailto if API unavailable
+                window.location.href = `mailto:contact@theatrex.com?subject=Contact from ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${encodeURIComponent(formData.email)}`
+            }
+        } catch {
+            // Fallback to mailto if API unreachable
+            window.location.href = `mailto:contact@theatrex.com?subject=Contact from ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${encodeURIComponent(formData.email)}`
+        } finally {
+            setSending(false)
+        }
     }
 
     const inputStyle = {
@@ -66,6 +87,14 @@ const Contact = () => {
                         boxShadow: 'var(--shadow-md)',
                         border: '1px solid #E5E7EB'
                     }}>
+                        {submitted ? (
+                            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✓</div>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#111827', marginBottom: '0.5rem' }}>Message Sent!</h3>
+                                <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>Thank you for reaching out. We'll get back to you shortly.</p>
+                                <button className="btn btn-primary" onClick={() => setSubmitted(false)} style={{ padding: '0.75rem 1.5rem' }}>Send Another</button>
+                            </div>
+                        ) : (
                         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                             {/* Name Field */}
@@ -131,12 +160,13 @@ const Contact = () => {
                                 </div>
                             </div>
 
-                            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '1rem', fontSize: '1rem' }}>
+                            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '1rem', fontSize: '1rem', opacity: sending ? 0.7 : 1 }} disabled={sending}>
                                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                                Send Message
+                                {sending ? 'Sending...' : 'Send Message'}
                             </button>
 
                         </form>
+                        )}
                     </div>
                 </ScrollReveal>
             </div>

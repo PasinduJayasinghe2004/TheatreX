@@ -74,14 +74,20 @@ export default function LandingNavbar({ onRequestDemo }) {
                 </div>
 
                 {/* Mobile toggle */}
-                <button className="mobile-toggle" onClick={() => setIsOpen(!isOpen)}>
+                <button
+                    className="mobile-toggle"
+                    onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
+                    aria-controls="mobile-nav-menu"
+                    aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                >
                     {isOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
             </div>
 
             {/* Mobile dropdown */}
             {isOpen && (
-                <div className="quick-nav__mobile">
+                <div className="quick-nav__mobile" id="mobile-nav-menu" role="navigation" aria-label="Mobile navigation">
                     {navLinks.map((link, i) => (
                         <a key={i} href={link.href} className="quick-nav__mobile-link" onClick={() => setIsOpen(false)}>
                             {link.icon}

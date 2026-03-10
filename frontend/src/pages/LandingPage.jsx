@@ -8,6 +8,7 @@ import Stats from '../components/landing/Stats';
 import LiveStatus from '../components/landing/LiveStatus';
 import Team from '../components/landing/Team';
 import Contact from '../components/landing/Contact';
+import CTABanner from '../components/landing/CTABanner';
 import Footer from '../components/landing/Footer';
 import OxygenBubbles from '../components/landing/OxygenBubbles';
 import ScrollIntro from '../components/landing/ScrollIntro';
@@ -28,6 +29,7 @@ const LandingPage = () => {
                 <SmartScheduling />
                 <Stats />
                 <Team />
+                <CTABanner onRequestDemo={() => setShowDemoModal(true)} />
                 <Contact />
             </main>
             <Footer />

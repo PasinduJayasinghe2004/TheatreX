@@ -5,7 +5,7 @@ const size = 24
 
 export function AnimatedClock() {
     return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Real-time status">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="12" x2="12" y2="7">
                 <animateTransform
@@ -38,7 +38,7 @@ export function AnimatedClock() {
 
 export function AnimatedCalendar() {
     return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Smart scheduling">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
             <line x1="16" y1="2" x2="16" y2="6" />
             <line x1="8" y1="2" x2="8" y2="6" />
@@ -54,7 +54,7 @@ export function AnimatedCalendar() {
 
 export function AnimatedUsers() {
     return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Staff management">
             {/* Person 1 (center) */}
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
             <circle cx="9" cy="7" r="4" />
@@ -77,7 +77,7 @@ export function AnimatedUsers() {
 
 export function AnimatedBarChart() {
     return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Analytics">
             {/* Baseline */}
             <line x1="3" y1="22" x2="21" y2="22" strokeWidth="1.5" />
             {/* Bar 1 */}
@@ -101,7 +101,7 @@ export function AnimatedBarChart() {
 
 export function AnimatedActivity() {
     return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Upcoming surgeries">
             {/* Heartbeat / ECG line */}
             <polyline points="2 12 6 12 8 8 12 16 14 10 16 12 22 12">
                 <animate
@@ -132,7 +132,7 @@ export function AnimatedActivity() {
 
 export function AnimatedClipboard() {
     return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Status tracking">
             {/* Clipboard body */}
             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
             <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
@@ -169,7 +169,7 @@ const statColor = '#ffffff'
 
 export function AnimatedStatClock() {
     return (
-        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="System uptime">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="12" x2="12" y2="7">
                 <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="4s" repeatCount="indefinite" />
@@ -187,7 +187,7 @@ export function AnimatedStatClock() {
 
 export function AnimatedStatEye() {
     return (
-        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Data visibility">
             {/* Eye outline */}
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             {/* Iris */}
@@ -212,7 +212,7 @@ export function AnimatedStatEye() {
 
 export function AnimatedStatTrendingUp() {
     return (
-        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Improved efficiency">
             {/* Upward trend line */}
             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" strokeDasharray="40">
                 <animate attributeName="stroke-dashoffset" values="40;0" dur="1.5s" fill="freeze" repeatCount="indefinite" />
@@ -231,7 +231,7 @@ export function AnimatedStatTrendingUp() {
 
 export function AnimatedStatInfinity() {
     return (
-        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={statSize} height={statSize} viewBox="0 0 24 24" fill="none" stroke={statColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Data security">
             {/* Infinity path */}
             <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4 2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4z" strokeDasharray="52">
                 <animate attributeName="stroke-dashoffset" values="52;0;0;-52" dur="3s" repeatCount="indefinite" />
@@ -247,7 +247,7 @@ export function AnimatedStatInfinity() {
 
 export function AnimatedCheckCircle() {
     return (
-        <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Checkmark">
             {/* Circle draws itself */}
             <circle cx="12" cy="12" r="10" strokeDasharray="63">
                 <animate attributeName="stroke-dashoffset" values="63;0" dur="0.6s" fill="freeze" />
