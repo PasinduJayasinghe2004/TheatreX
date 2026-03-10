@@ -2,6 +2,7 @@
 // Analytics Page
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 18
+// Updated by: M2 (Chandeepa) - Day 18 (Status counts section + page layout)
 //
 // Displays analytics charts and statistics.
 // Uses Recharts for data visualization.
@@ -12,9 +13,10 @@ import Layout from '../components/Layout';
 import {
     LineChart, Line, BarChart, Bar,
     XAxis, YAxis, CartesianGrid, Tooltip,
-    ResponsiveContainer, Area, AreaChart
+    ResponsiveContainer, Area, AreaChart,
+    PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { getSurgeriesPerDay } from '../services/analyticsService';
+import { getSurgeriesPerDay, getSurgeryStatusCounts } from '../services/analyticsService';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Custom Tooltip Component
@@ -40,9 +42,18 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const AnalyticsPage = () => {
     const [chartData, setChartData] = useState([]);
+    const [statusData, setStatusData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('area'); // 'area' | 'bar' | 'line'
+
+    // Status color mapping
+    const STATUS_CONFIG = {
+        scheduled: { color: '#3b82f6', bg: 'bg-blue-50 dark:bg-blue-900/30', text: 'text-blue-600 dark:text-blue-400', border: 'border-blue-200 dark:border-blue-700', label: 'Scheduled', icon: '📅' },
+        in_progress: { color: '#f59e0b', bg: 'bg-amber-50 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-700', label: 'In Progress', icon: '⏳' },
+        completed: { color: '#10b981', bg: 'bg-emerald-50 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400', border: 'border-emerald-200 dark:border-emerald-700', label: 'Completed', icon: '✅' },
+        cancelled: { color: '#ef4444', bg: 'bg-red-50 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400', border: 'border-red-200 dark:border-red-700', label: 'Cancelled', icon: '❌' },
+    };
 
     useEffect(() => {
         fetchAnalyticsData();
@@ -52,9 +63,17 @@ const AnalyticsPage = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await getSurgeriesPerDay();
-            if (response?.success) {
-                setChartData(response.data);
+
+            const [perDayRes, statusRes] = await Promise.all([
+                getSurgeriesPerDay(),
+                getSurgeryStatusCounts()
+            ]);
+
+            if (perDayRes?.success) {
+                setChartData(perDayRes.data);
+            }
+            if (statusRes?.success) {
+                setStatusData(statusRes.data);
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
@@ -117,7 +136,7 @@ const AnalyticsPage = () => {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">📊 Analytics</h1>
-                        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Surgery statistics for the last 7 days</p>
+                        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Surgery statistics and status breakdown</p>
                     </div>
                     <button
                         onClick={fetchAnalyticsData}
@@ -323,6 +342,87 @@ const AnalyticsPage = () => {
                         </div>
                     )}
                 </div>
+
+                {/* ─── Surgery Status Breakdown Section ─── M2 (Chandeepa) Day 18 */}
+                {statusData && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        {/* Status Cards */}
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Surgery Status Breakdown</h2>
+                            <div className="grid grid-cols-2 gap-3">
+                                {statusData.breakdown.map((item) => {
+                                    const config = STATUS_CONFIG[item.status] || STATUS_CONFIG.scheduled;
+                                    return (
+                                        <div
+                                            key={item.status}
+                                            className={`${config.bg} border ${config.border} rounded-xl p-4 transition-all hover:scale-[1.02]`}
+                                        >
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="text-lg">{config.icon}</span>
+                                                <span className="text-sm font-semibold text-gray-700 dark:text-slate-300">{config.label}</span>
+                                            </div>
+                                            <p className={`text-3xl font-bold ${config.text}`}>{item.count}</p>
+                                            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{item.percentage}% of total</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-gray-600 dark:text-slate-400">Total Surgeries</span>
+                                <span className="text-xl font-bold text-gray-900 dark:text-white">{statusData.total}</span>
+                            </div>
+                        </div>
+
+                        {/* Pie Chart */}
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Status Distribution</h2>
+                            <div className="h-72">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={statusData.breakdown.filter(d => d.count > 0)}
+                                            dataKey="count"
+                                            nameKey="status"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={90}
+                                            innerRadius={50}
+                                            paddingAngle={3}
+                                            label={({ status, percentage }) =>
+                                                `${(STATUS_CONFIG[status]?.label || status)} ${percentage}%`
+                                            }
+                                        >
+                                            {statusData.breakdown.filter(d => d.count > 0).map((entry) => (
+                                                <Cell
+                                                    key={entry.status}
+                                                    fill={STATUS_CONFIG[entry.status]?.color || '#94a3b8'}
+                                                />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip
+                                            formatter={(value, name) => [
+                                                `${value} surgeries`,
+                                                STATUS_CONFIG[name]?.label || name
+                                            ]}
+                                            contentStyle={{
+                                                backgroundColor: 'var(--tooltip-bg, #fff)',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '0.75rem',
+                                                padding: '8px 12px'
+                                            }}
+                                        />
+                                        <Legend
+                                            formatter={(value) => STATUS_CONFIG[value]?.label || value}
+                                            wrapperStyle={{ fontSize: '13px' }}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </Layout>
     );

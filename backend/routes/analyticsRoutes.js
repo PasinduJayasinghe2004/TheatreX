@@ -8,7 +8,7 @@
 // ============================================================================
 
 import express from 'express';
-import { getSurgeriesPerDay } from '../controllers/analyticsController.js';
+import { getSurgeriesPerDay, getSurgeryStatusCounts } from '../controllers/analyticsController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -21,5 +21,15 @@ const router = express.Router();
 // @access  Protected (all authenticated users)
 // ============================================================================
 router.get('/surgeries-per-day', protect, getSurgeriesPerDay);
+
+// ============================================================================
+// Surgery Status Counts Route
+// ============================================================================
+// @route   GET /api/analytics/surgery-status-counts
+// @desc    Get count of surgeries grouped by status
+// @access  Protected (all authenticated users)
+// Created by: M2 (Chandeepa) - Day 18
+// ============================================================================
+router.get('/surgery-status-counts', protect, getSurgeryStatusCounts);
 
 export default router;
