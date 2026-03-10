@@ -2,36 +2,37 @@ const team = [
     {
         name: 'Oneli Vilara',
         role: 'Leader Of TheatreX and FullStack Developer',
+        bio: 'Driving the vision and architecture behind TheatreX, ensuring every module works seamlessly together.',
         social: { linkedin: 'https://www.linkedin.com/in/oneliv?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app', email: 'oneli.20240199@iit.ac.lk' }
     },
     {
         name: 'Pasindu Jayasinghe',
         role: 'Full Stack developer',
-
+        bio: 'Building robust backend services and responsive frontends with a focus on performance and scalability.',
         social: { linkedin: 'https://linkedin.com/in/pasindu-jayasinghe-376209353?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app', email: 'pasindujayasinghe@gmail.com' }
     },
     {
         name: 'Chandeepa Priyadarshana',
         role: 'Full Stack developer / UI UX Designer',
-
+        bio: 'Crafting intuitive user experiences and polished interfaces that make complex healthcare workflows simple.',
         social: { linkedin: 'https://www.linkedin.com/in/chandeepa-priyadarshana-323228193?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app', email: 'chandeepa.20241753@iit.ac.lk' }
     },
     {
         name: 'Janani Karavita',
         role: 'FullStack Developer',
-
+        bio: 'Specializing in data-driven features, from analytics dashboards to real-time notification systems.',
         social: { linkedin: 'https://www.linkedin.com/in/janani-navindula-285953216?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app', email: 'janani.20241833@iit.ac.lk' }
     },
     {
         name: 'Dinil Dilmith',
         role: 'FullStack Developer',
-
+        bio: 'Implementing core scheduling logic and ensuring reliable data flow across the entire platform.',
         social: { linkedin: 'https://www.linkedin.com/in/dinil-dilmith-130864362/', email: 'dinil.20231618@iit.ac.lk' }
     },
     {
         name: 'Inthusha Ravindra',
         role: 'FullStack Developer',
-
+        bio: 'Focused on testing, quality assurance, and building resilient features that hospitals can depend on.',
         social: { linkedin: 'https://www.linkedin.com/in/inthusha-raveendran-bab6aa365/', email: 'inthusha.20241647@iit.ac.lk' }
     }
 ]
@@ -63,15 +64,21 @@ const Team = () => {
                                 padding: '2rem',
                                 boxShadow: 'var(--shadow-md)',
                                 border: '1px solid #E5E7EB',
-                                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                position: 'relative',
+                                overflow: 'hidden'
                             }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-5px)'
                                     e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+                                    e.currentTarget.querySelector('.team-bio').style.maxHeight = '80px'
+                                    e.currentTarget.querySelector('.team-bio').style.opacity = '1'
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)'
                                     e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+                                    e.currentTarget.querySelector('.team-bio').style.maxHeight = '0'
+                                    e.currentTarget.querySelector('.team-bio').style.opacity = '0'
                                 }}
                             >
                                 <h3 style={{
@@ -98,6 +105,27 @@ const Team = () => {
                                 }}>
                                     {member.description}
                                 </p>
+
+                                {/* Bio revealed on hover */}
+                                <div className="team-bio" style={{
+                                    maxHeight: '0',
+                                    opacity: 0,
+                                    overflow: 'hidden',
+                                    transition: 'max-height 0.4s ease, opacity 0.3s ease',
+                                    marginBottom: '0.5rem'
+                                }}>
+                                    <p style={{
+                                        color: '#6B7280',
+                                        fontSize: '0.9rem',
+                                        lineHeight: '1.6',
+                                        padding: '0.75rem',
+                                        backgroundColor: '#F9FAFB',
+                                        borderRadius: '0.5rem',
+                                        borderLeft: '3px solid var(--primary)'
+                                    }}>
+                                        {member.bio}
+                                    </p>
+                                </div>
 
                                 <div style={{ display: 'flex', gap: '1rem' }}>
                                     <a href={member.social.linkedin} style={{
