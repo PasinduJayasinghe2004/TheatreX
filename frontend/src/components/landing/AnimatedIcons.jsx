@@ -440,3 +440,101 @@ export function AnimatedInfoDot() {
         </svg>
     )
 }
+
+/* ─── Problem → Solution Animated Arrow ─── */
+
+export function AnimatedTransformArrow() {
+    return (
+        <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12">
+                <animate attributeName="x1" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
+            </line>
+            <polyline points="12 5 19 12 12 19">
+                <animateTransform attributeName="transform" type="translate" values="0,0;3,0;0,0" dur="1.2s" repeatCount="indefinite" />
+            </polyline>
+            {/* trailing glow */}
+            <line x1="5" y1="12" x2="19" y2="12" stroke="#fff" strokeWidth="4" opacity="0.15">
+                <animate attributeName="x1" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
+            </line>
+        </svg>
+    )
+}
+
+/* ─── How It Works Step Icons (white, 28px, for colored circle backgrounds) ─── */
+
+export function AnimatedCalendarPlus() {
+    return (
+        <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+            {/* Plus sign draws in */}
+            <line x1="12" y1="14" x2="12" y2="18" strokeDasharray="4">
+                <animate attributeName="stroke-dashoffset" values="4;0" dur="0.5s" begin="0.3s" fill="freeze" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite" />
+            </line>
+            <line x1="10" y1="16" x2="14" y2="16" strokeDasharray="4">
+                <animate attributeName="stroke-dashoffset" values="4;0" dur="0.5s" begin="0.5s" fill="freeze" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite" />
+            </line>
+        </svg>
+    )
+}
+
+export function AnimatedBellRing() {
+    return (
+        <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9">
+                <animateTransform attributeName="transform" type="rotate" values="0 12 2;8 12 2;-8 12 2;5 12 2;-5 12 2;0 12 2" dur="1.5s" begin="0s" repeatCount="indefinite" />
+            </path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            {/* Ring waves */}
+            <path d="M2 8c0 0-1-3 1-5" stroke="#fff" strokeWidth="1.5" opacity="0">
+                <animate attributeName="opacity" values="0;0.6;0" dur="1.5s" repeatCount="indefinite" />
+            </path>
+            <path d="M22 8c0 0 1-3-1-5" stroke="#fff" strokeWidth="1.5" opacity="0">
+                <animate attributeName="opacity" values="0;0.6;0" dur="1.5s" begin="0.2s" repeatCount="indefinite" />
+            </path>
+        </svg>
+    )
+}
+
+export function AnimatedMonitor() {
+    return (
+        <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+            {/* Heartbeat line on screen */}
+            <polyline points="6 10 9 10 10.5 7 12.5 13 14 9 15.5 10 18 10" stroke="#fff" strokeWidth="1.5" fill="none">
+                <animate attributeName="stroke-dasharray" values="0 30;30 0" dur="1.8s" repeatCount="indefinite" />
+            </polyline>
+        </svg>
+    )
+}
+
+export function AnimatedBarChartStep() {
+    return (
+        <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="22" x2="21" y2="22" strokeWidth="1.5" />
+            <rect x="5" y="22" width="3" rx="0.5" fill="#fff" stroke="none" opacity="0.85">
+                <animate attributeName="y" values="22;12;12;22" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="height" values="0;10;10;0" dur="2.5s" repeatCount="indefinite" />
+            </rect>
+            <rect x="10.5" y="22" width="3" rx="0.5" fill="#fff" stroke="none" opacity="0.7">
+                <animate attributeName="y" values="22;7;7;22" dur="2.5s" begin="0.3s" repeatCount="indefinite" />
+                <animate attributeName="height" values="0;15;15;0" dur="2.5s" begin="0.3s" repeatCount="indefinite" />
+            </rect>
+            <rect x="16" y="22" width="3" rx="0.5" fill="#fff" stroke="none" opacity="0.9">
+                <animate attributeName="y" values="22;15;15;22" dur="2.5s" begin="0.6s" repeatCount="indefinite" />
+                <animate attributeName="height" values="0;7;7;0" dur="2.5s" begin="0.6s" repeatCount="indefinite" />
+            </rect>
+            {/* Rising arrow overlay */}
+            <polyline points="5 18 12 10 19 6" stroke="#fff" strokeWidth="1.5" fill="none" opacity="0">
+                <animate attributeName="opacity" values="0;0;0.5;0.5;0" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="stroke-dasharray" values="0 30;0 30;30 0;30 0;0 30" dur="2.5s" repeatCount="indefinite" />
+            </polyline>
+        </svg>
+    )
+}

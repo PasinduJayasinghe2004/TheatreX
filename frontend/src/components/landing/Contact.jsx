@@ -41,11 +41,11 @@ const Contact = () => {
     const inputStyle = {
         width: '100%',
         padding: '0.75rem 1rem 0.75rem 3rem',
-        borderRadius: 'var(--radius-md)',
+        borderRadius: '0.5rem',
         border: '1px solid #E5E7EB',
         outline: 'none',
         fontSize: '0.95rem',
-        color: 'var(--text-main)',
+        color: '#111827',
         backgroundColor: '#fff',
         transition: 'border-color 0.2s',
     }
@@ -54,7 +54,7 @@ const Contact = () => {
         display: 'block',
         fontWeight: '600',
         marginBottom: '0.5rem',
-        color: 'var(--text-main)',
+        color: '#111827',
         fontSize: '0.95rem'
     }
 
@@ -83,8 +83,8 @@ const Contact = () => {
                         margin: '0 auto',
                         backgroundColor: '#fff',
                         padding: '3rem',
-                        borderRadius: 'var(--radius-lg)',
-                        boxShadow: 'var(--shadow-md)',
+                        borderRadius: '1rem',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                         border: '1px solid #E5E7EB'
                     }}>
                         {submitted ? (
@@ -112,7 +112,7 @@ const Contact = () => {
                                         value={formData.name}
                                         onChange={handleChange}
                                         style={inputStyle}
-                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onFocus={(e) => e.target.style.borderColor = '#2563EB'}
                                         onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
                                     />
                                 </div>
@@ -133,7 +133,7 @@ const Contact = () => {
                                         value={formData.email}
                                         onChange={handleChange}
                                         style={inputStyle}
-                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onFocus={(e) => e.target.style.borderColor = '#2563EB'}
                                         onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
                                     />
                                 </div>
@@ -154,7 +154,7 @@ const Contact = () => {
                                         onChange={handleChange}
                                         rows="5"
                                         style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onFocus={(e) => e.target.style.borderColor = '#2563EB'}
                                         onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
                                     ></textarea>
                                 </div>

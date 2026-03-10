@@ -2,7 +2,9 @@ import { useState } from 'react';
 import '../components/landing/landing-page.css';
 import LandingNavbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
+import ProblemSolution from '../components/landing/ProblemSolution';
 import Features from '../components/landing/Features';
+import HowItWorks from '../components/landing/HowItWorks';
 import SmartScheduling from '../components/landing/SmartScheduling';
 import Stats from '../components/landing/Stats';
 import LiveStatus from '../components/landing/LiveStatus';
@@ -24,12 +26,14 @@ const LandingPage = () => {
             <LandingNavbar onRequestDemo={() => setShowDemoModal(true)} />
             <main style={{ position: 'relative', zIndex: 1 }}>
                 <Hero />
+                <ProblemSolution />
                 <Features />
+                <HowItWorks />
                 <LiveStatus />
                 <SmartScheduling />
                 <Stats />
-                <Team />
                 <CTABanner onRequestDemo={() => setShowDemoModal(true)} />
+                <Team />
                 <Contact />
             </main>
             <Footer />

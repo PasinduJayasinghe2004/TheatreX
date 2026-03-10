@@ -16,6 +16,29 @@ html:has(.landing-page) {
     color: #111827;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+
+    /* Force light-mode variables inside landing page (override dark mode) */
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-light: #EFF6FF;
+    --secondary: #3B82F6;
+    --accent: #60A5FA;
+    --text-main: #111827;
+    --text-muted: #6B7280;
+    --text-light: #9CA3AF;
+    --text-white: #FFFFFF;
+    --bg-white: #FFFFFF;
+    --bg-gray: #F9FAFB;
+    --bg-dark: #0F172A;
+    --container-padding: 2rem;
+    --max-width: 1200px;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 /* ── Landing Page Exit Transition (Fade + Scale Cinematic) ── */

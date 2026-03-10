@@ -28,7 +28,7 @@ export default function LiveStatus() {
 
                         <ScrollReveal animation="fade-right" delay={100}>
                             <div style={{
-                                backgroundColor: '#FEF2F2',
+                                backgroundColor: '#fff',
                                 border: '1px solid #FEE2E2',
                                 padding: '1.25rem',
                                 borderRadius: '0.75rem',
@@ -46,7 +46,7 @@ export default function LiveStatus() {
 
                         <ScrollReveal animation="fade-right" delay={200}>
                             <div style={{
-                                backgroundColor: '#FFFBEB',
+                                backgroundColor: '#fff',
                                 border: '1px solid #FEF3C7',
                                 padding: '1.25rem',
                                 borderRadius: '0.75rem',
@@ -64,7 +64,7 @@ export default function LiveStatus() {
 
                         <ScrollReveal animation="fade-right" delay={300}>
                             <div style={{
-                                backgroundColor: '#EFF6FF',
+                                backgroundColor: '#fff',
                                 border: '1px solid #DBEAFE',
                                 padding: '1.25rem',
                                 borderRadius: '0.75rem',
@@ -82,7 +82,7 @@ export default function LiveStatus() {
 
                         <ScrollReveal animation="fade-right" delay={400}>
                             <div style={{
-                                backgroundColor: '#ECFDF5',
+                                backgroundColor: '#fff',
                                 border: '1px solid #D1FAE5',
                                 padding: '1.25rem',
                                 borderRadius: '0.75rem',

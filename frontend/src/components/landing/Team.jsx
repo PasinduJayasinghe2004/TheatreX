@@ -60,9 +60,9 @@ const Team = () => {
                         <ScrollReveal key={index} animation="fade-up" delay={index * 120} duration={600}>
                             <div style={{
                                 backgroundColor: '#fff',
-                                borderRadius: 'var(--radius-lg)',
+                                borderRadius: '1rem',
                                 padding: '2rem',
-                                boxShadow: 'var(--shadow-md)',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                                 border: '1px solid #E5E7EB',
                                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                                 position: 'relative',
@@ -70,13 +70,13 @@ const Team = () => {
                             }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-5px)'
-                                    e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+                                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
                                     e.currentTarget.querySelector('.team-bio').style.maxHeight = '80px'
                                     e.currentTarget.querySelector('.team-bio').style.opacity = '1'
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)'
-                                    e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+                                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
                                     e.currentTarget.querySelector('.team-bio').style.maxHeight = '0'
                                     e.currentTarget.querySelector('.team-bio').style.opacity = '0'
                                 }}
@@ -84,13 +84,13 @@ const Team = () => {
                                 <h3 style={{
                                     fontSize: '1.25rem',
                                     fontWeight: '700',
-                                    color: 'var(--text-main)',
+                                    color: '#111827',
                                     marginBottom: '0.25rem'
                                 }}>
                                     {member.name}
                                 </h3>
                                 <div style={{
-                                    color: 'var(--primary)',
+                                    color: '#2563EB',
                                     fontWeight: '600',
                                     fontSize: '0.9rem',
                                     marginBottom: '1rem'
@@ -98,7 +98,7 @@ const Team = () => {
                                     {member.role}
                                 </div>
                                 <p style={{
-                                    color: 'var(--text-muted)',
+                                    color: '#6B7280',
                                     lineHeight: '1.6',
                                     marginBottom: '1.5rem',
                                     fontSize: '0.95rem'
@@ -121,7 +121,7 @@ const Team = () => {
                                         padding: '0.75rem',
                                         backgroundColor: '#F9FAFB',
                                         borderRadius: '0.5rem',
-                                        borderLeft: '3px solid var(--primary)'
+                                        borderLeft: '3px solid #2563EB'
                                     }}>
                                         {member.bio}
                                     </p>
