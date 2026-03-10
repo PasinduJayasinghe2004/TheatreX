@@ -9,9 +9,8 @@
 // Provides aggregated data for the analytics dashboard.
 //
 // EXPORTS:
-// - getSurgeriesPerDay: GET /api/analytics/surgeries-per-day
-// - getSurgeryStatusCounts: GET /api/analytics/surgery-status-counts
 // - getPatientDemographics: GET /api/analytics/patient-demographics
+// - getStaffCountsByRole: GET /api/analytics/staff-counts
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -226,6 +225,61 @@ export const getPatientDemographics = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching patient demographics',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET STAFF COUNTS BY ROLE
+// ============================================================================
+// @desc    Get count of staff members grouped by role
+// @route   GET /api/analytics/staff-counts
+// @access  Protected
+// Created by: M4 (Oneli) - Day 18
+// ============================================================================
+export const getStaffCountsByRole = async (req, res) => {
+    try {
+        const surgeonsQuery = 'SELECT COUNT(*)::int AS count FROM surgeons WHERE is_active = true';
+        const nursesQuery = 'SELECT COUNT(*)::int AS count FROM nurses WHERE is_active = true';
+        const anaesthetistsQuery = 'SELECT COUNT(*)::int AS count FROM anaesthetists WHERE is_active = true';
+        const techniciansQuery = 'SELECT COUNT(*)::int AS count FROM technicians WHERE is_active = true';
+
+        const [surgeonsResult, nursesResult, anaesthetistsResult, techniciansResult] = await Promise.all([
+            pool.query(surgeonsQuery),
+            pool.query(nursesQuery),
+            pool.query(anaesthetistsQuery),
+            pool.query(techniciansQuery)
+        ]);
+
+        const counts = {
+            surgeons: surgeonsResult.rows[0].count,
+            nurses: nursesResult.rows[0].count,
+            anaesthetists: anaesthetistsResult.rows[0].count,
+            technicians: techniciansResult.rows[0].count
+        };
+
+        const total = Object.values(counts).reduce((sum, c) => sum + c, 0);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                counts,
+                total,
+                breakdown: [
+                    { role: 'Surgeons', count: counts.surgeons, color: '#3b82f6' },
+                    { role: 'Nurses', count: counts.nurses, color: '#10b981' },
+                    { role: 'Anaesthetists', count: counts.anaesthetists, color: '#f59e0b' },
+                    { role: 'Technicians', count: counts.technicians, color: '#8b5cf6' }
+                ]
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching staff counts:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching staff counts',
             error: error.message
         });
     }

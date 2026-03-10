@@ -8,7 +8,12 @@
 // ============================================================================
 
 import express from 'express';
-import { getSurgeriesPerDay, getSurgeryStatusCounts, getPatientDemographics } from '../controllers/analyticsController.js';
+import {
+    getSurgeriesPerDay,
+    getSurgeryStatusCounts,
+    getPatientDemographics,
+    getStaffCountsByRole
+} from '../controllers/analyticsController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -41,5 +46,15 @@ router.get('/surgery-status-counts', protect, getSurgeryStatusCounts);
 // Created by: M3 (Janani) - Day 18
 // ============================================================================
 router.get('/patient-demographics', protect, getPatientDemographics);
+
+// ============================================================================
+// Staff Counts Route
+// ============================================================================
+// @route   GET /api/analytics/staff-counts
+// @desc    Get count of staff members grouped by role
+// @access  Protected (all authenticated users)
+// Created by: M4 (Oneli) - Day 18
+// ============================================================================
+router.get('/staff-counts', protect, getStaffCountsByRole);
 
 export default router;
