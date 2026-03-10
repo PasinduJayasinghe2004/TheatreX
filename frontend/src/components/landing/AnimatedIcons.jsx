@@ -416,7 +416,7 @@ export function AnimatedStatusDot({ dotColor, status }) {
         <svg width={12} height={12} viewBox="0 0 16 16" style={{ overflow: 'visible' }}>
             {/* Pulsing ring */}
             <circle cx="8" cy="8" r="6" fill="none" stroke={dotColor} strokeWidth="1.5" opacity="0">
-                <animate attributeName="r" values="6;{maxR}" dur={dur} repeatCount="indefinite" />
+                <animate attributeName="r" values={`6;${maxR}`} dur={dur} repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.6;0" dur={dur} repeatCount="indefinite" />
             </circle>
             {/* Core dot */}

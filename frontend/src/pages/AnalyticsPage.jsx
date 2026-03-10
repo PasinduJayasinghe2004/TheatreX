@@ -18,12 +18,14 @@ import {
     PieChart, Pie, Cell, Legend
 } from 'recharts';
 import {
-    getSurgeriesPerDay,
     getSurgeryStatusCounts,
     getPatientDemographics,
-    getStaffCountsByRole
+    getStaffCountsByRole,
+    getTheatreUtilization,
+    getSurgeriesPerDay
 } from '../services/analyticsService';
 import StaffDistribution from '../components/analytics/StaffDistribution';
+import TheatreUtilizationStats from '../components/analytics/TheatreUtilizationStats';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Custom Tooltip Component
@@ -52,6 +54,7 @@ const AnalyticsPage = () => {
     const [statusData, setStatusData] = useState(null);
     const [demographicsData, setDemographicsData] = useState(null);
     const [staffData, setStaffData] = useState(null);
+    const [utilizationData, setUtilizationData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('area'); // 'area' | 'bar' | 'line'
@@ -73,11 +76,12 @@ const AnalyticsPage = () => {
             setLoading(true);
             setError(null);
 
-            const [perDayRes, statusRes, demoRes, staffRes] = await Promise.all([
+            const [perDayRes, statusRes, demoRes, staffRes, utilizationRes] = await Promise.all([
                 getSurgeriesPerDay(),
                 getSurgeryStatusCounts(),
                 getPatientDemographics(),
-                getStaffCountsByRole()
+                getStaffCountsByRole(),
+                getTheatreUtilization()
             ]);
 
             if (perDayRes?.success) {
@@ -91,6 +95,9 @@ const AnalyticsPage = () => {
             }
             if (staffRes?.success) {
                 setStaffData(staffRes.data);
+            }
+            if (utilizationRes?.success) {
+                setUtilizationData(utilizationRes.data);
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
@@ -519,6 +526,13 @@ const AnalyticsPage = () => {
                             data={staffData.breakdown}
                             total={staffData.total}
                         />
+                    </div>
+                )}
+
+                {/* ─── Theatre Utilization Section ─── M5 (Inthusha) Day 18 */}
+                {utilizationData && (
+                    <div className="grid grid-cols-1 gap-6">
+                        <TheatreUtilizationStats data={utilizationData} />
                     </div>
                 )}
 
