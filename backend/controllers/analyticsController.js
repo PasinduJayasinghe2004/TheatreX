@@ -2,12 +2,14 @@
 // Analytics Controller
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 18
+// Updated by: M2 (Chandeepa) - Day 18
 //
 // Handles analytics and statistics endpoints.
 // Provides aggregated data for the analytics dashboard.
 //
 // EXPORTS:
 // - getSurgeriesPerDay: GET /api/analytics/surgeries-per-day
+// - getSurgeryStatusCounts: GET /api/analytics/surgery-status-counts
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -56,6 +58,66 @@ export const getSurgeriesPerDay = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgeries per day statistics',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET SURGERY STATUS COUNTS
+// ============================================================================
+// @desc    Get count of surgeries grouped by status
+// @route   GET /api/analytics/surgery-status-counts
+// @access  Protected
+// Created by: M2 (Chandeepa) - Day 18
+// ============================================================================
+export const getSurgeryStatusCounts = async (req, res) => {
+    try {
+        const query = `
+            SELECT
+                status,
+                COUNT(*)::int AS count
+            FROM surgeries
+            GROUP BY status
+            ORDER BY count DESC
+        `;
+
+        const result = await pool.query(query);
+
+        // Build a complete status map with 0-defaults for missing statuses
+        const statusDefaults = {
+            scheduled: 0,
+            in_progress: 0,
+            completed: 0,
+            cancelled: 0
+        };
+
+        for (const row of result.rows) {
+            if (row.status in statusDefaults) {
+                statusDefaults[row.status] = row.count;
+            }
+        }
+
+        const total = Object.values(statusDefaults).reduce((sum, c) => sum + c, 0);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                counts: statusDefaults,
+                total,
+                breakdown: Object.entries(statusDefaults).map(([status, count]) => ({
+                    status,
+                    count,
+                    percentage: total > 0 ? parseFloat(((count / total) * 100).toFixed(1)) : 0
+                }))
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching surgery status counts:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching surgery status counts',
             error: error.message
         });
     }
