@@ -3,6 +3,7 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 18
 // Updated by: M2 (Chandeepa) - Day 18
+// Updated by: M3 (Janani) - Day 18 (Patient demographics API)
 //
 // Handles analytics and statistics endpoints.
 // Provides aggregated data for the analytics dashboard.
@@ -10,6 +11,7 @@
 // EXPORTS:
 // - getSurgeriesPerDay: GET /api/analytics/surgeries-per-day
 // - getSurgeryStatusCounts: GET /api/analytics/surgery-status-counts
+// - getPatientDemographics: GET /api/analytics/patient-demographics
 // ============================================================================
 
 import { pool } from '../config/database.js';
@@ -118,6 +120,112 @@ export const getSurgeryStatusCounts = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgery status counts',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET PATIENT DEMOGRAPHICS
+// ============================================================================
+// @desc    Get patient demographic breakdown (gender, blood type, age groups)
+// @route   GET /api/analytics/patient-demographics
+// @access  Protected
+// Created by: M3 (Janani) - Day 18
+// ============================================================================
+export const getPatientDemographics = async (req, res) => {
+    try {
+        // Gender distribution
+        const genderQuery = `
+            SELECT
+                gender,
+                COUNT(*)::int AS count
+            FROM patients
+            WHERE is_active = true
+            GROUP BY gender
+            ORDER BY count DESC
+        `;
+
+        // Blood type distribution
+        const bloodTypeQuery = `
+            SELECT
+                COALESCE(blood_type, 'Unknown') AS blood_type,
+                COUNT(*)::int AS count
+            FROM patients
+            WHERE is_active = true
+            GROUP BY blood_type
+            ORDER BY count DESC
+        `;
+
+        // Age group distribution
+        const ageGroupQuery = `
+            SELECT
+                CASE
+                    WHEN age IS NULL THEN 'Unknown'
+                    WHEN age < 18 THEN '0-17'
+                    WHEN age BETWEEN 18 AND 30 THEN '18-30'
+                    WHEN age BETWEEN 31 AND 45 THEN '31-45'
+                    WHEN age BETWEEN 46 AND 60 THEN '46-60'
+                    ELSE '60+'
+                END AS age_group,
+                COUNT(*)::int AS count
+            FROM patients
+            WHERE is_active = true
+            GROUP BY age_group
+            ORDER BY
+                CASE age_group
+                    WHEN '0-17' THEN 1
+                    WHEN '18-30' THEN 2
+                    WHEN '31-45' THEN 3
+                    WHEN '46-60' THEN 4
+                    WHEN '60+' THEN 5
+                    ELSE 6
+                END
+        `;
+
+        // Total active patients
+        const totalQuery = `
+            SELECT COUNT(*)::int AS total
+            FROM patients
+            WHERE is_active = true
+        `;
+
+        const [genderResult, bloodTypeResult, ageGroupResult, totalResult] = await Promise.all([
+            pool.query(genderQuery),
+            pool.query(bloodTypeQuery),
+            pool.query(ageGroupQuery),
+            pool.query(totalQuery)
+        ]);
+
+        const total = totalResult.rows[0]?.total || 0;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                total,
+                gender: genderResult.rows.map(row => ({
+                    gender: row.gender,
+                    count: row.count,
+                    percentage: total > 0 ? parseFloat(((row.count / total) * 100).toFixed(1)) : 0
+                })),
+                bloodType: bloodTypeResult.rows.map(row => ({
+                    bloodType: row.blood_type,
+                    count: row.count,
+                    percentage: total > 0 ? parseFloat(((row.count / total) * 100).toFixed(1)) : 0
+                })),
+                ageGroups: ageGroupResult.rows.map(row => ({
+                    ageGroup: row.age_group,
+                    count: row.count,
+                    percentage: total > 0 ? parseFloat(((row.count / total) * 100).toFixed(1)) : 0
+                }))
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching patient demographics:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching patient demographics',
             error: error.message
         });
     }

@@ -37,7 +37,23 @@ export const getSurgeryStatusCounts = async () => {
     }
 };
 
+/**
+ * Get patient demographics breakdown (gender, blood type, age groups)
+ * @returns {Promise} Patient demographics data
+ * Created by: M3 (Janani) - Day 18
+ */
+export const getPatientDemographics = async () => {
+    try {
+        const response = await api.get('/api/analytics/patient-demographics');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching patient demographics:', error);
+        throw error;
+    }
+};
+
 export default {
     getSurgeriesPerDay,
-    getSurgeryStatusCounts
+    getSurgeryStatusCounts,
+    getPatientDemographics
 };

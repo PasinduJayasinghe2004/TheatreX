@@ -3,6 +3,7 @@
 // ============================================================================
 // Created by: M1 (Pasindu) - Day 18
 // Updated by: M2 (Chandeepa) - Day 18 (Status counts section + page layout)
+// Updated by: M3 (Janani) - Day 18 (Patient demographics stats cards)
 //
 // Displays analytics charts and statistics.
 // Uses Recharts for data visualization.
@@ -16,7 +17,7 @@ import {
     ResponsiveContainer, Area, AreaChart,
     PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { getSurgeriesPerDay, getSurgeryStatusCounts } from '../services/analyticsService';
+import { getSurgeriesPerDay, getSurgeryStatusCounts, getPatientDemographics } from '../services/analyticsService';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Custom Tooltip Component
@@ -43,6 +44,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 const AnalyticsPage = () => {
     const [chartData, setChartData] = useState([]);
     const [statusData, setStatusData] = useState(null);
+    const [demographicsData, setDemographicsData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('area'); // 'area' | 'bar' | 'line'
@@ -64,9 +66,10 @@ const AnalyticsPage = () => {
             setLoading(true);
             setError(null);
 
-            const [perDayRes, statusRes] = await Promise.all([
+            const [perDayRes, statusRes, demoRes] = await Promise.all([
                 getSurgeriesPerDay(),
-                getSurgeryStatusCounts()
+                getSurgeryStatusCounts(),
+                getPatientDemographics()
             ]);
 
             if (perDayRes?.success) {
@@ -74,6 +77,9 @@ const AnalyticsPage = () => {
             }
             if (statusRes?.success) {
                 setStatusData(statusRes.data);
+            }
+            if (demoRes?.success) {
+                setDemographicsData(demoRes.data);
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
@@ -342,6 +348,81 @@ const AnalyticsPage = () => {
                         </div>
                     )}
                 </div>
+
+                {/* ─── Patient Demographics Section ─── M3 (Janani) Day 18 */}
+                {demographicsData && (
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">👥 Patient Demographics</h2>
+
+                        {/* Top-level summary cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                            <div className="bg-violet-50 dark:bg-violet-900/30 border border-violet-200 dark:border-violet-700 rounded-xl p-4 text-center">
+                                <p className="text-sm font-semibold text-gray-600 dark:text-slate-400">Total Patients</p>
+                                <p className="text-3xl font-bold text-violet-600 dark:text-violet-400 mt-1">{demographicsData.total}</p>
+                            </div>
+                            {demographicsData.gender.map((g) => (
+                                <div
+                                    key={g.gender}
+                                    className={`border rounded-xl p-4 text-center ${
+                                        g.gender === 'male'
+                                            ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-200 dark:border-sky-700'
+                                            : g.gender === 'female'
+                                            ? 'bg-pink-50 dark:bg-pink-900/30 border-pink-200 dark:border-pink-700'
+                                            : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600'
+                                    }`}
+                                >
+                                    <p className="text-sm font-semibold text-gray-600 dark:text-slate-400 capitalize">{g.gender}</p>
+                                    <p className={`text-3xl font-bold mt-1 ${
+                                        g.gender === 'male'
+                                            ? 'text-sky-600 dark:text-sky-400'
+                                            : g.gender === 'female'
+                                            ? 'text-pink-600 dark:text-pink-400'
+                                            : 'text-gray-700 dark:text-gray-300'
+                                    }`}>{g.count}</p>
+                                    <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{g.percentage}%</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Age group and blood type breakdown */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Age Groups */}
+                            <div>
+                                <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-3">Age Distribution</h3>
+                                <div className="space-y-2">
+                                    {demographicsData.ageGroups.map((ag) => (
+                                        <div key={ag.ageGroup} className="flex items-center gap-3">
+                                            <span className="text-sm font-medium text-gray-600 dark:text-slate-400 w-16">{ag.ageGroup}</span>
+                                            <div className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-5 overflow-hidden">
+                                                <div
+                                                    className="bg-gradient-to-r from-violet-500 to-purple-500 h-full rounded-full transition-all duration-500"
+                                                    style={{ width: `${Math.max(ag.percentage, 2)}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-sm font-semibold text-gray-700 dark:text-slate-300 w-14 text-right">{ag.count} ({ag.percentage}%)</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Blood Types */}
+                            <div>
+                                <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-3">Blood Type Distribution</h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {demographicsData.bloodType.map((bt) => (
+                                        <div
+                                            key={bt.bloodType}
+                                            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-center"
+                                        >
+                                            <p className="text-lg font-bold text-red-600 dark:text-red-400">{bt.bloodType}</p>
+                                            <p className="text-xs text-gray-500 dark:text-slate-400">{bt.count} patients ({bt.percentage}%)</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* ─── Surgery Status Breakdown Section ─── M2 (Chandeepa) Day 18 */}
                 {statusData && (
