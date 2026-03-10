@@ -18,7 +18,7 @@ const getLevelColor = (percent) => {
   return '#10b981'; // Optimal/Low (Emerald)
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const item = payload[0].payload;
     return (
