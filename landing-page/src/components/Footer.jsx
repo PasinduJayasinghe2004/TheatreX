@@ -46,12 +46,12 @@ export default function Footer() {
             </div> */}
 
             {/* Main Footer */}
-            <div style={{ backgroundColor: '#0F172A', color: '#94A3B8', paddingTop: '8rem', paddingBottom: '4rem', position: 'relative', zIndex: 2 }}>
+            <div style={{ backgroundColor: '#0A0A0A', color: '#9CA3AF', paddingTop: '6rem', paddingBottom: '4rem', position: 'relative', zIndex: 2 }}>
                 <div className="container">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '4rem', marginBottom: '4rem' }}>
 
                         <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: 'white' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: '#3B82F6' }}>
                                 <Activity color="#3B82F6" size={24} />
                                 <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>TheatreX</span>
                             </div>
@@ -61,7 +61,7 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h4 style={{ color: 'white', fontWeight: '600', marginBottom: '1.25rem' }}>Product</h4>
+                            <h4 style={{ color: '#fff', fontWeight: '600', marginBottom: '1.25rem' }}>Product</h4>
                             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 <li><a href="#">Features</a></li>
                                 <li><a href="#">Pricing</a></li>
@@ -71,7 +71,7 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h4 style={{ color: 'white', fontWeight: '600', marginBottom: '1.25rem' }}>Company</h4>
+                            <h4 style={{ color: '#fff', fontWeight: '600', marginBottom: '1.25rem' }}>Company</h4>
                             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 <li><a href="#">About</a></li>
                                 <li><a href="#">Careers</a></li>
@@ -81,7 +81,7 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h4 style={{ color: 'white', fontWeight: '600', marginBottom: '1.25rem' }}>Legal</h4>
+                            <h4 style={{ color: '#fff', fontWeight: '600', marginBottom: '1.25rem' }}>Legal</h4>
                             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 <li><a href="#">Privacy</a></li>
                                 <li><a href="#">Terms</a></li>
@@ -92,7 +92,7 @@ export default function Footer() {
                     </div>
 
                     <div style={{
-                        borderTop: '1px solid #1E293B',
+                        borderTop: '1px solid #1F2937',
                         paddingTop: '2rem',
                         display: 'flex',
                         justifyContent: 'space-between',

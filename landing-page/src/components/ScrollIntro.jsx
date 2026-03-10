@@ -11,7 +11,6 @@ export default function ScrollIntro() {
 
     useEffect(() => {
         const container = containerRef.current
-        const sticky = stickyRef.current
         const image = imageRef.current
         const overlay = overlayRef.current
         const title = titleRef.current

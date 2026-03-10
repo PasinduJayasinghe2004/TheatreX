@@ -1,4 +1,5 @@
-import { XCircle, CheckCircle2, ArrowRight } from 'lucide-react'
+import { XCircle, CheckCircle2 } from 'lucide-react'
+import { AnimatedTransformArrow } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 const problems = [
@@ -37,11 +38,16 @@ export default function ProblemSolution() {
                     {/* Problem Column */}
                     <ScrollReveal animation="fade-right" duration={600}>
                         <div style={{
-                            backgroundColor: '#FEF2F2',
+                            backgroundColor: '#fff',
                             border: '1px solid #FECACA',
                             borderRadius: '1rem',
                             padding: '2rem',
-                        }}>
+                            transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                            cursor: 'default',
+                        }}
+                            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(220, 38, 38, 0.1)'; e.currentTarget.style.borderColor = '#FCA5A5'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#FECACA'; }}
+                        >
                             <h3 style={{
                                 fontSize: '1.25rem',
                                 fontWeight: '700',
@@ -72,7 +78,7 @@ export default function ProblemSolution() {
                         </div>
                     </ScrollReveal>
 
-                    {/* Arrow */}
+                    {/* Animated Arrow */}
                     <ScrollReveal animation="zoom-in" delay={300}>
                         <div style={{
                             display: 'flex',
@@ -85,13 +91,13 @@ export default function ProblemSolution() {
                                 width: '3.5rem',
                                 height: '3.5rem',
                                 borderRadius: '50%',
-                                backgroundColor: 'var(--primary)',
+                                backgroundColor: '#2563EB',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
                             }}>
-                                <ArrowRight size={22} color="#fff" />
+                                <AnimatedTransformArrow />
                             </div>
                         </div>
                     </ScrollReveal>
@@ -99,11 +105,16 @@ export default function ProblemSolution() {
                     {/* Solution Column */}
                     <ScrollReveal animation="fade-left" duration={600}>
                         <div style={{
-                            backgroundColor: '#F0FDF4',
+                            backgroundColor: '#fff',
                             border: '1px solid #BBF7D0',
                             borderRadius: '1rem',
                             padding: '2rem',
-                        }}>
+                            transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                            cursor: 'default',
+                        }}
+                            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(22, 163, 74, 0.1)'; e.currentTarget.style.borderColor = '#86EFAC'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#BBF7D0'; }}
+                        >
                             <h3 style={{
                                 fontSize: '1.25rem',
                                 fontWeight: '700',

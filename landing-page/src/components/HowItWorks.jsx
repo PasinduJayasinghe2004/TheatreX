@@ -1,30 +1,30 @@
-import { CalendarPlus, BellRing, Monitor, BarChart2 } from 'lucide-react'
+import { AnimatedCalendarPlus, AnimatedBellRing, AnimatedMonitor, AnimatedBarChartStep } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 const steps = [
     {
-        icon: <CalendarPlus size={28} color="#fff" />,
+        icon: <AnimatedCalendarPlus />,
         number: '01',
         title: 'Schedule a Surgery',
         desc: 'Create a booking with patient details, required staff, and preferred time slot. The system auto-checks for conflicts.',
         color: '#2563EB',
     },
     {
-        icon: <BellRing size={28} color="#fff" />,
+        icon: <AnimatedBellRing />,
         number: '02',
         title: 'Staff Get Notified',
         desc: 'Surgeons, nurses, and anaesthetists receive instant notifications with all details about their upcoming assignments.',
         color: '#7C3AED',
     },
     {
-        icon: <Monitor size={28} color="#fff" />,
+        icon: <AnimatedMonitor />,
         number: '03',
         title: 'Track in Real-Time',
         desc: 'Monitor theatre status live — see which rooms are in use, in cleaning, or available. Know exactly where things stand.',
         color: '#059669',
     },
     {
-        icon: <BarChart2 size={28} color="#fff" />,
+        icon: <AnimatedBarChartStep />,
         number: '04',
         title: 'Review Analytics',
         desc: 'After procedures, review utilization rates, turnaround times, and efficiency metrics to optimize future operations.',
@@ -56,7 +56,7 @@ export default function HowItWorks() {
                                 padding: '2rem 1.5rem',
                                 position: 'relative',
                             }}>
-                                {/* Step number badge */}
+                                {/* Step circle */}
                                 <div style={{
                                     width: '4rem',
                                     height: '4rem',
