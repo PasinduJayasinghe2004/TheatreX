@@ -1,34 +1,34 @@
-import { Clock, Calendar, Users, BarChart2, Activity, ClipboardList } from 'lucide-react'
+import { AnimatedClock, AnimatedCalendar, AnimatedUsers, AnimatedBarChart, AnimatedActivity, AnimatedClipboard } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 const features = [
     {
-        icon: <Clock size={24} color="#2563EB" />,
+        icon: <AnimatedClock />,
         title: "Real-Time Theatre Status",
         desc: "Get live updates on theatre occupancy, cleaning status, and operational bottlenecks."
     },
     {
-        icon: <Calendar size={24} color="#2563EB" />,
+        icon: <AnimatedCalendar />,
         title: "Smart Scheduling",
         desc: "Intelligent calendar management that suggests optimal slot assignments and minimizes downtime."
     },
     {
-        icon: <Users size={24} color="#2563EB" />,
+        icon: <AnimatedUsers />,
         title: "Staff Management",
         desc: "Live surgeon availability, shift tracking, and assignment tools to ensure optimal coverage."
     },
     {
-        icon: <BarChart2 size={24} color="#2563EB" />,
+        icon: <AnimatedBarChart />,
         title: "Analytics & Insights",
         desc: "Comprehensive dashboards tracking utilization, procedure times, and operational efficiency metrics."
     },
     {
-        icon: <Activity size={24} color="#2563EB" />,
+        icon: <AnimatedActivity />,
         title: "Upcoming Surgeries",
         desc: "Track scheduled procedures with detailed patient info, required equipment, and team readiness."
     },
     {
-        icon: <ClipboardList size={24} color="#2563EB" />,
+        icon: <AnimatedClipboard />,
         title: "Status Tracking",
         desc: "Track cleaning stages, sterilization status, and room readiness at a glance."
     }
