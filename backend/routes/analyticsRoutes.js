@@ -8,7 +8,7 @@
 // ============================================================================
 
 import express from 'express';
-import { getSurgeriesPerDay, getSurgeryStatusCounts } from '../controllers/analyticsController.js';
+import { getSurgeriesPerDay, getSurgeryStatusCounts, getPatientDemographics } from '../controllers/analyticsController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -31,5 +31,15 @@ router.get('/surgeries-per-day', protect, getSurgeriesPerDay);
 // Created by: M2 (Chandeepa) - Day 18
 // ============================================================================
 router.get('/surgery-status-counts', protect, getSurgeryStatusCounts);
+
+// ============================================================================
+// Patient Demographics Route
+// ============================================================================
+// @route   GET /api/analytics/patient-demographics
+// @desc    Get patient demographic breakdown (gender, blood type, age groups)
+// @access  Protected (all authenticated users)
+// Created by: M3 (Janani) - Day 18
+// ============================================================================
+router.get('/patient-demographics', protect, getPatientDemographics);
 
 export default router;
