@@ -4,10 +4,14 @@
    Scoped under .landing-page to avoid conflicts
    ======================================== */
 
+/* ── Smooth scroll on html when landing page is active ── */
+html:has(.landing-page) {
+    scroll-behavior: smooth;
+}
+
 /* ── Global reset scoped to the landing page ── */
 .landing-page {
     background: #EDF2FA;
-    scroll-behavior: smooth;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: #111827;
     line-height: 1.5;
