@@ -21,7 +21,8 @@ import {
     getSurgeryStatusCounts,
     getPatientDemographics,
     getStaffCountsByRole,
-    getTheatreUtilization
+    getTheatreUtilization,
+    getSurgeriesPerDay
 } from '../services/analyticsService';
 import StaffDistribution from '../components/analytics/StaffDistribution';
 import TheatreUtilizationStats from '../components/analytics/TheatreUtilizationStats';
