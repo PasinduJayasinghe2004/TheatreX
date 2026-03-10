@@ -17,7 +17,13 @@ import {
     ResponsiveContainer, Area, AreaChart,
     PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { getSurgeriesPerDay, getSurgeryStatusCounts, getPatientDemographics } from '../services/analyticsService';
+import {
+    getSurgeriesPerDay,
+    getSurgeryStatusCounts,
+    getPatientDemographics,
+    getStaffCountsByRole
+} from '../services/analyticsService';
+import StaffDistribution from '../components/analytics/StaffDistribution';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Custom Tooltip Component
@@ -45,6 +51,7 @@ const AnalyticsPage = () => {
     const [chartData, setChartData] = useState([]);
     const [statusData, setStatusData] = useState(null);
     const [demographicsData, setDemographicsData] = useState(null);
+    const [staffData, setStaffData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('area'); // 'area' | 'bar' | 'line'
@@ -66,10 +73,11 @@ const AnalyticsPage = () => {
             setLoading(true);
             setError(null);
 
-            const [perDayRes, statusRes, demoRes] = await Promise.all([
+            const [perDayRes, statusRes, demoRes, staffRes] = await Promise.all([
                 getSurgeriesPerDay(),
                 getSurgeryStatusCounts(),
-                getPatientDemographics()
+                getPatientDemographics(),
+                getStaffCountsByRole()
             ]);
 
             if (perDayRes?.success) {
@@ -80,6 +88,9 @@ const AnalyticsPage = () => {
             }
             if (demoRes?.success) {
                 setDemographicsData(demoRes.data);
+            }
+            if (staffRes?.success) {
+                setStaffData(staffRes.data);
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
@@ -224,8 +235,8 @@ const AnalyticsPage = () => {
                                     key={type.key}
                                     onClick={() => setChartType(type.key)}
                                     className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${chartType === type.key
-                                            ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-400'
-                                            : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200'
+                                        ? 'bg-white dark:bg-slate-600 shadow-sm text-blue-600 dark:text-blue-400'
+                                        : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200'
                                         }`}
                                 >
                                     {type.label}
@@ -331,14 +342,14 @@ const AnalyticsPage = () => {
                                     <div
                                         key={idx}
                                         className={`text-center p-3 rounded-xl border transition-all ${entry.count === maxCount && maxCount > 0
-                                                ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700'
-                                                : 'bg-gray-50 dark:bg-slate-700/50 border-gray-100 dark:border-slate-600'
+                                            ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700'
+                                            : 'bg-gray-50 dark:bg-slate-700/50 border-gray-100 dark:border-slate-600'
                                             }`}
                                     >
                                         <p className="text-xs font-semibold text-gray-500 dark:text-slate-400">{entry.day}</p>
                                         <p className={`text-xl font-bold mt-1 ${entry.count === maxCount && maxCount > 0
-                                                ? 'text-blue-600 dark:text-blue-400'
-                                                : 'text-gray-800 dark:text-slate-200'
+                                            ? 'text-blue-600 dark:text-blue-400'
+                                            : 'text-gray-800 dark:text-slate-200'
                                             }`}>
                                             {entry.count}
                                         </p>
@@ -363,22 +374,20 @@ const AnalyticsPage = () => {
                             {demographicsData.gender.map((g) => (
                                 <div
                                     key={g.gender}
-                                    className={`border rounded-xl p-4 text-center ${
-                                        g.gender === 'male'
-                                            ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-200 dark:border-sky-700'
-                                            : g.gender === 'female'
+                                    className={`border rounded-xl p-4 text-center ${g.gender === 'male'
+                                        ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-200 dark:border-sky-700'
+                                        : g.gender === 'female'
                                             ? 'bg-pink-50 dark:bg-pink-900/30 border-pink-200 dark:border-pink-700'
                                             : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600'
-                                    }`}
+                                        }`}
                                 >
                                     <p className="text-sm font-semibold text-gray-600 dark:text-slate-400 capitalize">{g.gender}</p>
-                                    <p className={`text-3xl font-bold mt-1 ${
-                                        g.gender === 'male'
-                                            ? 'text-sky-600 dark:text-sky-400'
-                                            : g.gender === 'female'
+                                    <p className={`text-3xl font-bold mt-1 ${g.gender === 'male'
+                                        ? 'text-sky-600 dark:text-sky-400'
+                                        : g.gender === 'female'
                                             ? 'text-pink-600 dark:text-pink-400'
                                             : 'text-gray-700 dark:text-gray-300'
-                                    }`}>{g.count}</p>
+                                        }`}>{g.count}</p>
                                     <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{g.percentage}%</p>
                                 </div>
                             ))}
@@ -501,6 +510,15 @@ const AnalyticsPage = () => {
                                 </ResponsiveContainer>
                             </div>
                         </div>
+                    </div>
+                )}
+                {/* ─── Staff Distribution Section ─── M4 (Oneli) Day 18 */}
+                {staffData && (
+                    <div className="grid grid-cols-1 gap-6">
+                        <StaffDistribution
+                            data={staffData.breakdown}
+                            total={staffData.total}
+                        />
                     </div>
                 )}
 

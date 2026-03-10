@@ -52,8 +52,24 @@ export const getPatientDemographics = async () => {
     }
 };
 
+/**
+ * Get staff counts grouped by role
+ * @returns {Promise} Staff counts data
+ * Created by: M4 (Oneli) - Day 18
+ */
+export const getStaffCountsByRole = async () => {
+    try {
+        const response = await api.get('/api/analytics/staff-counts');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching staff counts:', error);
+        throw error;
+    }
+};
+
 export default {
     getSurgeriesPerDay,
     getSurgeryStatusCounts,
-    getPatientDemographics
+    getPatientDemographics,
+    getStaffCountsByRole
 };
