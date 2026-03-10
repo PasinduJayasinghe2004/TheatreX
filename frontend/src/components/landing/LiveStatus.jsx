@@ -3,7 +3,7 @@ import ScrollReveal from './ScrollReveal'
 
 export default function LiveStatus() {
     return (
-        <section id="live-status" style={{ padding: '5rem 0' }}>
+        <section id="live-status" style={{ padding: '6rem 0' }}>
             <div className="container">
                 <ScrollReveal animation="fade-down" duration={600}>
                     <div style={{

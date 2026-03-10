@@ -67,7 +67,7 @@ export default function LandingNavbar({ onRequestDemo }) {
                         href="/login"
                         onClick={handleLogin}
                         className="btn btn-outline-primary"
-                        style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem', border: '1px solid #00b4ff', color: '#00b4ff', background: 'transparent' }}
+                        style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem', border: '1px solid #2563EB', color: '#2563EB', background: 'transparent' }}
                     >
                         Login
                     </a>
@@ -101,7 +101,7 @@ export default function LandingNavbar({ onRequestDemo }) {
                         href="/login"
                         onClick={handleLogin}
                         className="btn btn-outline-primary"
-                        style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem 1rem', fontSize: '0.9rem', border: '1px solid #00b4ff', color: '#00b4ff', background: 'transparent', textAlign: 'center', display: 'block' }}
+                        style={{ width: '100%', marginTop: '0.5rem', padding: '0.6rem 1rem', fontSize: '0.9rem', border: '1px solid #2563EB', color: '#2563EB', background: 'transparent', textAlign: 'center', display: 'block' }}
                     >
                         Login
                     </a>
@@ -117,10 +117,9 @@ export default function LandingNavbar({ onRequestDemo }) {
                     width: 100%;
                     z-index: 1000;
                     padding: 0.6rem 1.5rem;
-                    background: rgba(15, 23, 42, 0.78);
-                    backdrop-filter: blur(18px);
-                    -webkit-backdrop-filter: blur(18px);
-                    border-bottom: 1px solid rgba(0, 180, 255, 0.18);
+                    background: transparent;
+                    border-bottom: none;
+                    border-radius: 0;
                     transform: translateY(-110%);
                     opacity: 0;
                     pointer-events: none;
@@ -128,19 +127,41 @@ export default function LandingNavbar({ onRequestDemo }) {
                         transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
                         opacity   0.4s ease,
                         background 0.35s ease,
-                        box-shadow 0.35s ease;
+                        box-shadow 0.35s ease,
+                        border-radius 0.45s ease,
+                        width 0.45s ease,
+                        left 0.45s ease,
+                        top 0.45s ease,
+                        border 0.45s ease;
                 }
 
                 .nav-revealed {
                     transform: translateY(0);
                     opacity: 1;
                     pointer-events: auto;
+                    background: rgba(255, 255, 255, 0.65);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
                 }
 
                 .nav-scrolled {
-                    background: rgba(10, 16, 36, 0.96) !important;
-                    box-shadow: 0 4px 32px rgba(0, 140, 255, 0.2);
-                    border-bottom-color: rgba(0, 180, 255, 0.35) !important;
+                    top: 0.75rem;
+                    left: 50%;
+                    right: auto;
+                    transform: translateX(-50%) !important;
+                    width: min(92%, 1100px);
+                    border-radius: 1rem;
+                    background: rgba(255, 255, 255, 0.55) !important;
+                    backdrop-filter: blur(24px);
+                    -webkit-backdrop-filter: blur(24px);
+                    box-shadow:
+                        0 4px 24px rgba(0, 0, 0, 0.06),
+                        0 1px 2px rgba(0, 0, 0, 0.04),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+                    border: 1px solid rgba(255, 255, 255, 0.45);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+                    padding: 0.5rem 1.5rem;
                 }
                 .quick-nav__inner {
                     max-width: 1200px;
@@ -158,7 +179,7 @@ export default function LandingNavbar({ onRequestDemo }) {
                     text-decoration: none;
                     font-weight: 700;
                     font-size: 1.15rem;
-                    color: #fff !important;
+                    color: #111827 !important;
                     flex-shrink: 0;
                 }
                 .quick-nav__links {
@@ -175,22 +196,21 @@ export default function LandingNavbar({ onRequestDemo }) {
                     border-radius: 999px;
                     font-size: 0.85rem;
                     font-weight: 500;
-                    color: rgba(255, 255, 255, 0.8) !important;
+                    color: #4B5563 !important;
                     text-decoration: none;
                     transition: all 0.2s ease;
                     white-space: nowrap;
                 }
                 .quick-nav__link:hover {
-                    color: #fff;
-                    background: rgba(0, 180, 255, 0.15);
-                    box-shadow: 0 0 12px rgba(0, 180, 255, 0.2);
+                    color: #2563EB !important;
+                    background: rgba(37, 99, 235, 0.08);
                 }
                 .quick-nav__cta {
                     flex-shrink: 0;
                 }
                 .mobile-toggle {
                     display: none !important;
-                    color: #fff;
+                    color: #111827;
                     background: none;
                     border: none;
                     cursor: pointer;
@@ -209,20 +229,24 @@ export default function LandingNavbar({ onRequestDemo }) {
                     gap: 0.5rem;
                     padding: 0.6rem 0.75rem;
                     border-radius: 0.5rem;
-                    color: rgba(255, 255, 255, 0.8) !important;
+                    color: #4B5563 !important;
                     text-decoration: none;
                     font-size: 0.9rem;
                     font-weight: 500;
                     transition: background 0.2s;
                 }
                 .quick-nav__mobile-link:hover {
-                    background: rgba(0, 180, 255, 0.12);
-                    color: #fff;
+                    background: rgba(37, 99, 235, 0.06);
+                    color: #2563EB !important;
                 }
                 @media (max-width: 768px) {
                     .desktop-menu { display: none !important; }
                     .mobile-toggle { display: block !important; }
                     .quick-nav__mobile { display: flex; }
+                    .nav-scrolled {
+                        width: min(96%, 1100px);
+                        border-radius: 0.75rem;
+                    }
                 }
             `}</style>
         </nav>

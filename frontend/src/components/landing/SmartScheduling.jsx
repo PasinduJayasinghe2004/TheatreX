@@ -3,7 +3,7 @@ import ScrollReveal from './ScrollReveal'
 
 export default function SmartScheduling() {
     return (
-        <section id="scheduling" style={{ padding: '0 0 5rem 0' }}>
+        <section id="scheduling" style={{ padding: '0 0 6rem 0' }}>
             <div className="container">
                 <ScrollReveal animation="fade-down" duration={600}>
                     <div style={{

@@ -17,7 +17,7 @@ export default function Hero() {
     }
 
     return (
-        <section style={{ padding: '5rem 0 5rem 0', overflow: 'hidden' }}>
+        <section style={{ padding: '6rem 0', overflow: 'hidden' }}>
             <div className="container">
                 <div style={{
                     display: 'grid',

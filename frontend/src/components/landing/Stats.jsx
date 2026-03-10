@@ -3,7 +3,7 @@ import ScrollReveal from './ScrollReveal'
 
 export default function Stats() {
     return (
-        <section style={{ padding: '0 0 8rem 0' }}>
+        <section style={{ padding: '0 0 6rem 0' }}>
             <div className="container">
                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 0.8fr) 1.2fr', gap: '4rem', alignItems: 'center' }}>
 

@@ -56,12 +56,13 @@ export default function Features() {
                                 backgroundColor: '#fff',
                                 padding: '2rem',
                                 borderRadius: '1rem',
-                                border: '1px solid #F3F4F6',
-                                transition: 'transform 0.2s',
+                                border: '1px solid #E5E7EB',
+                                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
+                                transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
                                 cursor: 'default'
                             }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(37, 99, 235, 0.1)'; e.currentTarget.style.borderColor = '#BFDBFE'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.06)'; e.currentTarget.style.borderColor = '#E5E7EB'; }}
                             >
                                 <div style={{
                                     width: '3rem',

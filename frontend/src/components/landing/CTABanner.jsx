@@ -2,7 +2,7 @@ import ScrollReveal from './ScrollReveal'
 
 export default function CTABanner({ onRequestDemo }) {
     return (
-        <section style={{ padding: '5rem 0' }}>
+        <section style={{ padding: '4rem 0' }}>
             <div className="container">
                 <ScrollReveal animation="zoom-in" duration={700}>
                     <div style={{
