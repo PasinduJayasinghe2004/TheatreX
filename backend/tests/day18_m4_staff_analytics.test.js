@@ -9,6 +9,7 @@
 
 import request from 'supertest';
 import app from '../server.js';
+import { pool } from '../config/database.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -113,5 +114,9 @@ describe('Staff Analytics API - M4 Day 18', () => {
             expect(roles).toContain('Anaesthetists');
             expect(roles).toContain('Technicians');
         });
+    });
+
+    afterAll(async () => {
+        await pool.end();
     });
 });
