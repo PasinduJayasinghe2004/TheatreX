@@ -38,11 +38,7 @@ const CustomTooltip = ({ active, payload }) => {
   }
   return null;
 };
-
-const TheatreUtilizationStats = ({ data }) => {
-  if (!data || data.length === 0) return null;
-
-  // Sort by utilization percentage for the list view
+const TheatreUtilizationStats = ({ data = [] }) => {
   const sortedData = [...data].sort((a, b) => b.utilization_percentage - a.utilization_percentage);
 
   return (
