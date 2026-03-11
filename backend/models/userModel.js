@@ -9,11 +9,15 @@
  */
 
 import { pool } from '../config/database.js';
+import { createNursesTable } from './nurseModel.js';
+import { createNotificationsTable } from './notificationModel.js';
+import { createAnaesthetistsTable } from './anaesthetistModel.js';
+import { createSurgeonsTable } from './surgeonModel.js';
+import { createSurgeryNursesTable } from './surgeryNurseModel.js';
 import { createSurgeriesTable } from './surgeryModel.js';
 import { createTheatresTable } from './theatreModel.js';
 import { createPatientsTable } from './patientModel.js';
 import { createTechniciansTable } from './technicianModel.js';
-import { createNursesTable } from './nurseModel.js';
 
 /**
  * Create shared trigger function for auto-updating updated_at timestamps
@@ -148,6 +152,10 @@ const initializeTables = async () => {
         await createPatientsTable();  // pasindu - Day 2
         await createTechniciansTable(); // M6 - Day 2
         await createNursesTable();    // M4 - Day 2
+        await createNotificationsTable(); // M5/M6 - Day 16
+        await createAnaesthetistsTable(); // M5 - Day 2
+        await createSurgeonsTable(); // Janani (M3) - Day 2
+        await createSurgeryNursesTable(); // M2 - Day 9
         console.log('✅ All tables initialized successfully');
     } catch (error) {
         console.error('❌ Error initializing tables:', error.message);

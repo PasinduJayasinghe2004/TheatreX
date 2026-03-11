@@ -47,14 +47,27 @@ const createNursesTable = async () => {
     CREATE INDEX IF NOT EXISTS idx_nurses_specialization ON nurses (specialization);
     `;
 
+  const addProfilePictureColumn = `
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'nurses' AND column_name = 'profile_picture'
+        ) THEN
+            ALTER TABLE nurses ADD COLUMN profile_picture VARCHAR(500);
+        END IF;
+    END
+    $$;
+  `;
+
   const createTrigger = `
     DO $$
     BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_nurses_updated_at') THEN
             CREATE TRIGGER update_nurses_updated_at
-                BEFORE UPDATE ON nurses
-                FOR EACH ROW
-                EXECUTE FUNCTION update_updated_at_column();
+            BEFORE UPDATE ON nurses
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
         END IF;
     END
     $$;
@@ -63,6 +76,7 @@ const createNursesTable = async () => {
   try {
     await pool.query(createTableQuery);
     await pool.query(createIndexes);
+    await pool.query(addProfilePictureColumn);
     await pool.query(createTrigger);
     console.log('✅ Nurses table created/verified successfully');
   } catch (error) {

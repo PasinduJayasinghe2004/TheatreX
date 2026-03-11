@@ -18,14 +18,7 @@ import { fileURLToPath } from 'url';
 import cron from 'node-cron';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
-import { createNotificationsTable } from './models/notificationModel.js';
-import { createAnaesthetistsTable } from './models/anaesthetistModel.js';
-import { createSurgeonsTable } from './models/surgeonModel.js';
-import { createNursesTable } from './models/nurseModel.js';
-import { createTechniciansTable } from './models/technicianModel.js';
-import { createTheatresTable } from './models/theatreModel.js'; // M2 - Day 8
 import { createSurgeryNursesTable } from './models/surgeryNurseModel.js'; // M2 - Day 9
-import { createPatientsTable } from './models/patientModel.js'; // M1 - Day 15
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
@@ -148,14 +141,6 @@ const startServer = async () => {
             console.warn('Database connection failed. Running in limited mode.');
         } else {
             await initializeTables();
-            await createNotificationsTable();
-            await createAnaesthetistsTable();
-            await createSurgeonsTable();
-            await createNursesTable();
-            await createTechniciansTable();
-            await createTheatresTable(); // M2 - Day 8
-            await createSurgeryNursesTable(); // M2 - Day 9
-            await createPatientsTable(); // M1 - Day 15
         }
 
         // Start surgery reminder cron job (runs every 60 seconds) - M4 Day 16
