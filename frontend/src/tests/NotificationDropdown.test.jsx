@@ -16,6 +16,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import NotificationDropdown from '../components/NotificationDropdown';
 import notificationService from '../services/notificationService.js';
 
@@ -39,7 +40,11 @@ describe('NotificationDropdown (M6 Day 16)', () => {
         notificationService.getNotifications.mockResolvedValue({ success: true, data: [] });
     });
 
-    const renderComponent = () => render(<NotificationDropdown />);
+    const renderComponent = () => render(
+        <BrowserRouter>
+            <NotificationDropdown />
+        </BrowserRouter>
+    );
 
     // ── Bell button ──────────────────────────────────────────────────────────
     it('should render the bell button', async () => {
@@ -203,6 +208,121 @@ describe('NotificationDropdown (M6 Day 16)', () => {
         fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
         await waitFor(() => {
             expect(screen.getByText('3 new')).toBeInTheDocument();
+        });
+    });
+
+    // ========================================================================
+    // Day 17 – Mark All as Read (M2)
+    // ========================================================================
+
+    // ── "Mark all read" button visible when unread > 0 ──────────────────────
+    it('should show "Mark all read" button when there are unread notifications', async () => {
+        notificationService.getUnreadCount.mockResolvedValue({ success: true, data: { unread_count: 2 } });
+        notificationService.getNotifications.mockResolvedValue({
+            success: true,
+            data: [
+                { id: 1, type: 'info', title: 'Notif 1', message: 'Msg', is_read: false, created_at: new Date().toISOString() },
+                { id: 2, type: 'alert', title: 'Notif 2', message: 'Msg', is_read: false, created_at: new Date().toISOString() },
+            ]
+        });
+        renderComponent();
+        fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+        await waitFor(() => {
+            expect(screen.getByText('Mark all read')).toBeInTheDocument();
+        });
+    });
+
+    // ── "Mark all read" button hidden when unread = 0 ────────────────────────
+    it('should NOT show "Mark all read" button when unread count is 0', async () => {
+        notificationService.getUnreadCount.mockResolvedValue({ success: true, data: { unread_count: 0 } });
+        notificationService.getNotifications.mockResolvedValue({
+            success: true,
+            data: [
+                { id: 1, type: 'info', title: 'Read Notif', message: 'Msg', is_read: true, created_at: new Date().toISOString() },
+            ]
+        });
+        renderComponent();
+        fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+        await waitFor(() => {
+            expect(screen.getByText('Read Notif')).toBeInTheDocument();
+        });
+        expect(screen.queryByText('Mark all read')).not.toBeInTheDocument();
+    });
+
+    // ── Clicking "Mark all read" calls service and clears unread ─────────────
+    it('should call markAllAsRead and clear unread count when button is clicked', async () => {
+        notificationService.getUnreadCount.mockResolvedValue({ success: true, data: { unread_count: 2 } });
+        notificationService.getNotifications.mockResolvedValue({
+            success: true,
+            data: [
+                { id: 1, type: 'reminder', title: 'Reminder 1', message: 'Body', is_read: false, created_at: new Date().toISOString() },
+                { id: 2, type: 'info', title: 'Info 1', message: 'Body', is_read: false, created_at: new Date().toISOString() },
+            ]
+        });
+        notificationService.markAllAsRead.mockResolvedValue({ success: true, count: 2 });
+
+        renderComponent();
+        fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText('Mark all read')).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByText('Mark all read'));
+
+        await waitFor(() => {
+            expect(notificationService.markAllAsRead).toHaveBeenCalledTimes(1);
+        });
+
+        // After marking all read, the "Mark all read" button should disappear
+        await waitFor(() => {
+            expect(screen.queryByText('Mark all read')).not.toBeInTheDocument();
+        });
+    });
+
+    // ── Mark single notification as read via checkmark button ────────────────
+    it('should call markAsRead when the checkmark button on an unread item is clicked', async () => {
+        notificationService.getUnreadCount.mockResolvedValue({ success: true, data: { unread_count: 1 } });
+        notificationService.getNotifications.mockResolvedValue({
+            success: true,
+            data: [
+                { id: 50, type: 'warning', title: 'Urgent Warning', message: 'Details', is_read: false, created_at: new Date().toISOString() },
+            ]
+        });
+        notificationService.markAsRead.mockResolvedValue({ success: true, data: { id: 50, is_read: true } });
+
+        renderComponent();
+        fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText('Urgent Warning')).toBeInTheDocument();
+        });
+
+        const markReadBtn = screen.getByTitle('Mark as read');
+        fireEvent.click(markReadBtn);
+
+        await waitFor(() => {
+            expect(notificationService.markAsRead).toHaveBeenCalledWith(50);
+        });
+    });
+
+    // ── "View all notifications" navigates to /notifications ─────────────────
+    it('should navigate to /notifications when "View all notifications" is clicked', async () => {
+        notificationService.getNotifications.mockResolvedValue({
+            success: true,
+            data: [
+                { id: 1, type: 'success', title: 'Done', message: 'Ok', is_read: true, created_at: new Date().toISOString() },
+            ]
+        });
+        renderComponent();
+        fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
+        await waitFor(() => {
+            expect(screen.getByText(/view all notifications/i)).toBeInTheDocument();
+        });
+        fireEvent.click(screen.getByText(/view all notifications/i));
+        // Dropdown should close after navigating
+        await waitFor(() => {
+            expect(screen.queryByText('Notifications')).not.toBeInTheDocument();
         });
     });
 });

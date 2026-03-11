@@ -11,43 +11,9 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import notificationService from '../services/notificationService.js';
-
-// ============================================================================
-// Type Config: icon SVG paths + colors for each notification type
-// ============================================================================
-const TYPE_CONFIG = {
-    reminder: {
-        icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-        bg: 'bg-blue-100 dark:bg-blue-900/40',
-        text: 'text-blue-600 dark:text-blue-400',
-        dot: 'bg-blue-500'
-    },
-    alert: {
-        icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z',
-        bg: 'bg-red-100 dark:bg-red-900/40',
-        text: 'text-red-600 dark:text-red-400',
-        dot: 'bg-red-500'
-    },
-    info: {
-        icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-        bg: 'bg-gray-100 dark:bg-slate-700/40',
-        text: 'text-gray-600 dark:text-gray-400',
-        dot: 'bg-gray-500'
-    },
-    warning: {
-        icon: 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-        bg: 'bg-amber-100 dark:bg-amber-900/40',
-        text: 'text-amber-600 dark:text-amber-400',
-        dot: 'bg-amber-500'
-    },
-    success: {
-        icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-        bg: 'bg-green-100 dark:bg-green-900/40',
-        text: 'text-green-600 dark:text-green-400',
-        dot: 'bg-green-500'
-    }
-};
+import TYPE_CONFIG from '../constants/notificationTypes.js';
 
 // ============================================================================
 // Relative time helper
@@ -72,12 +38,14 @@ const getRelativeTime = (dateStr) => {
 // NotificationDropdown Component
 // ============================================================================
 const NotificationDropdown = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [shouldAnimate, setShouldAnimate] = useState(false);
+    const [markingAllRead, setMarkingAllRead] = useState(false);
     const prevCountRef = useRef(0);
     const dropdownRef = useRef(null);
     const pollRef = useRef(null);
@@ -164,6 +132,49 @@ const NotificationDropdown = () => {
     }, [isOpen]);
 
     // ──────────────────────────────────────────────────────────────
+    // Mark a single notification as read
+    // ──────────────────────────────────────────────────────────────
+    const handleMarkAsRead = useCallback(async (id) => {
+        try {
+            await notificationService.markAsRead(id);
+            setNotifications((prev) =>
+                prev.map((n) => (n.id === id ? { ...n, is_read: true, read_at: new Date().toISOString() } : n))
+            );
+            setUnreadCount((prev) => Math.max(0, prev - 1));
+        } catch (err) {
+            console.error('Error marking notification as read:', err);
+        }
+    }, []);
+
+    // ──────────────────────────────────────────────────────────────
+    // Mark ALL notifications as read
+    // ──────────────────────────────────────────────────────────────
+    const handleMarkAllAsRead = useCallback(async () => {
+        if (markingAllRead || unreadCount === 0) return;
+        setMarkingAllRead(true);
+        try {
+            await notificationService.markAllAsRead();
+            setNotifications((prev) =>
+                prev.map((n) => ({ ...n, is_read: true, read_at: n.read_at || new Date().toISOString() }))
+            );
+            setUnreadCount(0);
+            prevCountRef.current = 0;
+        } catch (err) {
+            console.error('Error marking all notifications as read:', err);
+        } finally {
+            setMarkingAllRead(false);
+        }
+    }, [markingAllRead, unreadCount]);
+
+    // ──────────────────────────────────────────────────────────────
+    // Navigate to full notifications page
+    // ──────────────────────────────────────────────────────────────
+    const handleViewAll = () => {
+        setIsOpen(false);
+        navigate('/notifications');
+    };
+
+    // ──────────────────────────────────────────────────────────────
     // Toggle dropdown
     // ──────────────────────────────────────────────────────────────
     const toggleDropdown = () => setIsOpen((prev) => !prev);
@@ -211,6 +222,24 @@ const NotificationDropdown = () => {
                                 </span>
                             )}
                         </div>
+                        {/* Mark all as read button */}
+                        {unreadCount > 0 && (
+                            <button
+                                onClick={handleMarkAllAsRead}
+                                disabled={markingAllRead}
+                                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                title="Mark all notifications as read"
+                            >
+                                {markingAllRead ? (
+                                    <span className="flex items-center gap-1">
+                                        <span className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                                        Marking…
+                                    </span>
+                                ) : (
+                                    'Mark all read'
+                                )}
+                            </button>
+                        )}
                     </div>
 
                     {/* Content */}
@@ -263,6 +292,7 @@ const NotificationDropdown = () => {
                                             key={notif.id}
                                             className={`flex gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer ${!notif.is_read ? 'bg-blue-50/40 dark:bg-blue-900/10' : ''
                                                 }`}
+                                            onClick={() => !notif.is_read && handleMarkAsRead(notif.id)}
                                         >
                                             {/* Type icon */}
                                             <div className={`shrink-0 w-8 h-8 rounded-lg ${config.bg} flex items-center justify-center mt-0.5`}>
@@ -275,8 +305,8 @@ const NotificationDropdown = () => {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-start justify-between gap-2">
                                                     <p className={`text-sm leading-snug ${!notif.is_read
-                                                            ? 'font-semibold text-gray-900 dark:text-slate-100'
-                                                            : 'font-medium text-gray-700 dark:text-slate-300'
+                                                        ? 'font-semibold text-gray-900 dark:text-slate-100'
+                                                        : 'font-medium text-gray-700 dark:text-slate-300'
                                                         }`}>
                                                         {notif.title}
                                                     </p>
@@ -301,6 +331,22 @@ const NotificationDropdown = () => {
                                                     )}
                                                 </div>
                                             </div>
+
+                                            {/* Mark as read button (single) */}
+                                            {!notif.is_read && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleMarkAsRead(notif.id);
+                                                    }}
+                                                    className="shrink-0 mt-1 p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded"
+                                                    title="Mark as read"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </button>
+                                            )}
                                         </li>
                                     );
                                 })}
@@ -311,7 +357,10 @@ const NotificationDropdown = () => {
                     {/* Footer */}
                     {notifications.length > 0 && (
                         <div className="border-t border-gray-100 dark:border-slate-700 px-4 py-2">
-                            <button className="w-full text-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                            <button
+                                onClick={handleViewAll}
+                                className="w-full text-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                            >
                                 View all notifications
                             </button>
                         </div>

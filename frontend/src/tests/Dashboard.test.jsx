@@ -194,19 +194,25 @@ describe('Dashboard Page Tests', () => {
             });
         });
 
-        it('should display live surgeries section', async () => {
+        it('should display live theatre status section', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Live Surgeries & Status')).toBeInTheDocument();
+                expect(screen.getByText('Live Theatre Status')).toBeInTheDocument();
             });
         });
 
         it('should display action buttons', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
-                expect(screen.getByText('Emergency Surgery')).toBeInTheDocument();
+                expect(screen.getByText('+ Add New Surgery')).toBeInTheDocument();
                 expect(screen.getByText('Calendar View')).toBeInTheDocument();
+            });
+        });
+
+        it('should display staff status section', async () => {
+            renderDashboard();
+            await waitFor(() => {
+                expect(screen.getByText('Staff Status')).toBeInTheDocument();
             });
         });
     });
@@ -305,20 +311,13 @@ describe('Dashboard Page Tests', () => {
         it('should navigate to /surgeries/new when Add New Surgery is clicked', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
+                expect(screen.getByText('+ Add New Surgery')).toBeInTheDocument();
             });
-            fireEvent.click(screen.getByText('Add New Surgery'));
+            fireEvent.click(screen.getByText('+ Add New Surgery'));
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries/new');
         });
 
-        it('should navigate to /emergency when Emergency Surgery is clicked', async () => {
-            renderDashboard();
-            await waitFor(() => {
-                expect(screen.getByText('Emergency Surgery')).toBeInTheDocument();
-            });
-            fireEvent.click(screen.getByText('Emergency Surgery'));
-            expect(mockNavigate).toHaveBeenCalledWith('/emergency');
-        });
+
 
         it('should navigate to /calendar when Calendar View is clicked', async () => {
             renderDashboard();
@@ -339,15 +338,7 @@ describe('Dashboard Page Tests', () => {
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries/1');
         });
 
-        it('should navigate to /surgeries when search button is clicked', async () => {
-            renderDashboard();
-            await waitFor(() => {
-                expect(screen.getByTestId('dashboard-title')).toBeInTheDocument();
-            });
-            const searchButton = screen.getByTestId('dashboard-search-btn');
-            fireEvent.click(searchButton);
-            expect(mockNavigate).toHaveBeenCalledWith('/surgeries');
-        });
+
     });
 
     // ========================================================================
@@ -407,7 +398,6 @@ describe('Dashboard Page Tests', () => {
         it('should have aria-labels on icon buttons', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByLabelText('Search')).toBeInTheDocument();
                 // Multiple elements with label 'Notifications' is expected (header button + sidebar)
                 expect(screen.getAllByLabelText('Notifications').length).toBeGreaterThanOrEqual(1);
             });

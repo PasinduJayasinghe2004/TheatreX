@@ -21,27 +21,17 @@ export default function OxygenBubbles() {
         window.addEventListener('resize', resize)
 
         // ── ECG wave shape (normalised 0-1 input → y offset) ──
-        // Produces a realistic ECG PQRST waveform within one cycle
         function ecgShape(t) {
-            // P wave
             if (t < 0.12) return 0.06 * Math.sin(Math.PI * t / 0.12)
-            // PR segment
             if (t < 0.18) return 0
-            // Q dip
             if (t < 0.22) return -0.08 * Math.sin(Math.PI * (t - 0.18) / 0.04)
-            // R spike (tall)
             if (t < 0.30) return Math.sin(Math.PI * (t - 0.22) / 0.08)
-            // S dip
             if (t < 0.36) return -0.18 * Math.sin(Math.PI * (t - 0.30) / 0.06)
-            // ST segment
             if (t < 0.50) return 0
-            // T wave
             if (t < 0.66) return 0.14 * Math.sin(Math.PI * (t - 0.50) / 0.16)
-            // baseline
             return 0
         }
 
-        // ── Pulse line config ──
         const WAVE_COUNT = 5
         const waves = []
 
@@ -50,12 +40,12 @@ export default function OxygenBubbles() {
             const h = canvas.height
             for (let i = 0; i < WAVE_COUNT; i++) {
                 waves.push({
-                    y: h * (0.15 + (i / (WAVE_COUNT - 1)) * 0.7),          // spread vertically
-                    amplitude: 28 + Math.random() * 18,                      // R-spike height px
-                    speed: 0.0006 + Math.random() * 0.0003,                  // scroll speed
-                    cycleWidth: 220 + Math.random() * 80,                    // px per heartbeat
-                    phase: Math.random() * 1000,                             // initial offset
-                    opacity: 0.18 + Math.random() * 0.14,                    // base opacity
+                    y: h * (0.15 + (i / (WAVE_COUNT - 1)) * 0.7),
+                    amplitude: 28 + Math.random() * 18,
+                    speed: 0.0006 + Math.random() * 0.0003,
+                    cycleWidth: 220 + Math.random() * 80,
+                    phase: Math.random() * 1000,
+                    opacity: 0.18 + Math.random() * 0.14,
                     lineWidth: 1.2 + Math.random() * 0.8,
                     glowSize: 8 + Math.random() * 8,
                 })
@@ -71,11 +61,10 @@ export default function OxygenBubbles() {
 
             for (const w of waves) {
                 const offset = time * w.speed + w.phase
-                const pulseGlow = 0.5 + 0.5 * Math.sin(time * 0.002 + w.phase) // gentle pulsing glow
+                const pulseGlow = 0.5 + 0.5 * Math.sin(time * 0.002 + w.phase)
 
                 ctx.save()
 
-                // Glow
                 ctx.shadowColor = `rgba(59, 130, 246, ${w.opacity * pulseGlow})`
                 ctx.shadowBlur = w.glowSize * pulseGlow
 
@@ -86,14 +75,12 @@ export default function OxygenBubbles() {
 
                 ctx.beginPath()
 
-                const step = 2 // px per sample — smooth enough
+                const step = 2
                 for (let px = -10; px <= canvas.width + 10; px += step) {
-                    // Where in the repeating ECG cycle is this pixel?
                     const t = ((px + offset * w.cycleWidth) % w.cycleWidth + w.cycleWidth) % w.cycleWidth / w.cycleWidth
 
                     let yOff = ecgShape(t) * w.amplitude
 
-                    // Mouse distortion — bulge wave away from cursor
                     const dx = px - mouse.x
                     const dy = w.y + yOff - mouse.y
                     const dist = Math.sqrt(dx * dx + dy * dy)
@@ -109,12 +96,10 @@ export default function OxygenBubbles() {
 
                 ctx.stroke()
 
-                // Draw a brighter "scan dot" at the leading edge of the latest heartbeat
                 const scanX = ((offset * w.cycleWidth) % canvas.width + canvas.width) % canvas.width
                 const scanT = ((scanX + offset * w.cycleWidth) % w.cycleWidth + w.cycleWidth) % w.cycleWidth / w.cycleWidth
                 let scanY = w.y + ecgShape(scanT) * w.amplitude
 
-                // Mouse distortion on dot too
                 const sdx = scanX - mouse.x
                 const sdy = scanY - mouse.y
                 const sDist = Math.sqrt(sdx * sdx + sdy * sdy)

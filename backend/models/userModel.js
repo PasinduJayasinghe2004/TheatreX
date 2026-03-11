@@ -71,6 +71,9 @@ const createUsersTable = async () => {
       -- Optional contact information
       phone VARCHAR(20),
       
+      -- Profile image URL/path
+      profile_image VARCHAR(255),
+      
       -- Account status: true = active, false = deactivated
       is_active BOOLEAN DEFAULT TRUE,
       
@@ -102,6 +105,19 @@ const createUsersTable = async () => {
 
     try {
         await pool.query(createTableQuery);
+
+        // Add profile_image column if it doesn't exist
+        await pool.query(`
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                               WHERE table_name='users' AND column_name='profile_image') THEN
+                    ALTER TABLE users ADD COLUMN profile_image VARCHAR(255);
+                END IF;
+            END
+            $$;
+        `);
+
         await pool.query(createIndexes);
         await pool.query(createTrigger);
         console.log('✅ Users table created/verified successfully');

@@ -323,7 +323,7 @@ const CoordinatorDashboard = () => {
             <div className="min-h-screen bg-gray-50">
 
                 {/* Page Header */}
-                <div className="bg-white border-b border-gray-100 px-8 py-5">
+                <div className="bg-white border border-gray-100 px-8 py-5 rounded-3xl mx-8 mt-6 mb-2">
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">Coordinator Dashboard</h1>

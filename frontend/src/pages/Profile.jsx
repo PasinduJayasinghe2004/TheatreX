@@ -7,17 +7,21 @@
 // Allows users to update their name, phone, and password
 // ============================================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 import Layout from '../components/Layout';
 import axios from 'axios';
+import { Camera, User } from 'lucide-react';
 
 const Profile = () => {
     const { user, token } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const fileInputRef = useRef(null);
+    const backendUrl = 'http://localhost:5000';
 
     // Form state
     const [formData, setFormData] = useState({
@@ -107,6 +111,84 @@ const Profile = () => {
         }
     };
 
+    // Handle profile image upload
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setMessage({ type: 'error', text: 'Please select an image file.' });
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            setMessage({ type: 'error', text: 'Image size should be less than 5MB.' });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            setUploading(true);
+            setMessage({ type: '', text: '' });
+
+            // 1. Upload the image
+            const uploadRes = await axios.post(
+                `${backendUrl}/api/auth/profile-image`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (uploadRes.data.success) {
+                const imageUrl = uploadRes.data.imageUrl;
+
+                // 2. Update the user profile with the new image URL
+                const updateRes = await axios.put(
+                    `${backendUrl}/api/auth/profile`,
+                    { profile_image: imageUrl },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+
+                if (updateRes.data.success) {
+                    setMessage({ type: 'success', text: 'Profile picture updated successfully!' });
+
+                    // Update local storage
+                    const updatedUser = { ...user, profile_image: imageUrl };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                    // Reload after a short delay
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            }
+        } catch (error) {
+            console.error('Upload Error:', error);
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.message || 'Error uploading image'
+            });
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
+    };
+
     // Cancel editing
     const handleCancel = () => {
         setIsEditing(false);
@@ -135,8 +217,52 @@ const Profile = () => {
                 <div className="max-w-3xl mx-auto">
                     {/* Header */}
                     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <h1 className="text-3xl font-bold text-gray-800 mb-2">Profile</h1>
-                        <p className="text-gray-600">Manage your account information</p>
+                        <div className="flex flex-col md:flex-row items-center gap-6">
+                            {/* Profile Image Circle */}
+                            <div className="relative group">
+                                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100 shadow-inner bg-gray-100 flex items-center justify-center">
+                                    {user.profile_image ? (
+                                        <img
+                                            src={`${backendUrl}${user.profile_image}`}
+                                            alt={user.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <User className="text-gray-400" size={48} />
+                                    )}
+
+                                    {uploading && (
+                                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-full">
+                                            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={triggerFileInput}
+                                    className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-transform hover:scale-110"
+                                    title="Update profile picture"
+                                >
+                                    <Camera size={16} />
+                                </button>
+
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                />
+                            </div>
+
+                            <div className="flex-1 text-center md:text-left">
+                                <h1 className="text-3xl font-bold text-gray-800 mb-1">{user.name}</h1>
+                                <p className="text-gray-600 mb-2">{user.email}</p>
+                                <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeColor(user.role)}`}>
+                                    {getRoleDisplayName(user.role)}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Message */}

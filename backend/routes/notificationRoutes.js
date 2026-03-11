@@ -2,9 +2,12 @@ import express from 'express';
 import {
     createNotification,
     getNotifications,
+    getNotificationTypes,
+    pollNotifications,
     markAsRead,
     markAllAsRead,
-    getUnreadCount
+    getUnreadCount,
+    cleanupNotifications
 } from '../controllers/notificationController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -28,6 +31,22 @@ router.post('/', createNotification);
 router.get('/', getNotifications);
 
 /**
+ * @route   GET /api/notifications/types
+ * @desc    Return the list of valid notification types with labels
+ * @access  Private
+ * Created by: M4 (Oneli) - Day 17
+ */
+router.get('/types', getNotificationTypes);
+
+/**
+ * @route   GET /api/notifications/poll
+ * @desc    Poll for new notifications since a timestamp (lightweight delta endpoint)
+ * @access  Private
+ * Created by: M3 (Janani) - Day 17
+ */
+router.get('/poll', pollNotifications);
+
+/**
  * @route   GET /api/notifications/unread-count
  * @desc    Get unread notification count
  * @access  Private
@@ -47,5 +66,12 @@ router.put('/:id/read', markAsRead);
  * @access  Private
  */
 router.put('/read-all', markAllAsRead);
+
+/**
+ * @route   PUT /api/notifications/cleanup
+ * @desc    Manually cleanup old read notifications
+ * @access  Private (Admin/Coordinator)
+ */
+router.put('/cleanup', cleanupNotifications);
 
 export default router;

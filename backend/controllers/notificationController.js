@@ -1,8 +1,6 @@
 import { Notification } from '../models/notificationModel.js';
 import { pool } from '../config/database.js';
-
-// Valid notification types (must stay in sync with DB CHECK constraint)
-const VALID_TYPES = ['reminder', 'alert', 'info', 'warning', 'success'];
+import { NOTIFICATION_TYPES, VALID_TYPE_VALUES as VALID_TYPES } from '../constants/notificationTypes.js';
 
 // Roles allowed to create notifications on behalf of users
 const ADMIN_ROLES = ['admin', 'coordinator'];
@@ -202,6 +200,54 @@ export const markAllAsRead = async (req, res) => {
 };
 
 /**
+ * Poll for new notifications since a given timestamp
+ * @route GET /api/notifications/poll
+ * @access Private
+ * @query since - ISO-8601 timestamp (returns notifications created after this time)
+ * Created by: M3 (Janani) - Day 17
+ */
+export const pollNotifications = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const since = req.query.since;
+
+        if (!since) {
+            return res.status(400).json({
+                success: false,
+                message: 'Query parameter "since" (ISO-8601 timestamp) is required.'
+            });
+        }
+
+        // Validate timestamp
+        const sinceDate = new Date(since);
+        if (isNaN(sinceDate.getTime())) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid "since" timestamp. Provide a valid ISO-8601 date string.'
+            });
+        }
+
+        const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+        const newNotifications = await Notification.getNewSince(userId, sinceDate.toISOString(), limit);
+        const unreadCount = await Notification.getUnreadCount(userId);
+
+        res.status(200).json({
+            success: true,
+            data: newNotifications,
+            count: newNotifications.length,
+            unreadCount,
+            polledAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Error polling notifications:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
+
+/**
  * Get unread count for current user
  * @route GET /api/notifications/unread-count
  * @access Private
@@ -227,4 +273,53 @@ export const getUnreadCount = async (req, res) => {
             message: 'Internal server error.'
         });
     }
+};
+
+/**
+ * Manually trigger cleanup of old notifications
+ * @route PUT /api/notifications/cleanup
+ * @access Private/Admin/Coordinator
+ */
+export const cleanupNotifications = async (req, res) => {
+    try {
+        // Only admins/coordinators may cleanup
+        if (!ADMIN_ROLES.includes(req.user?.role)) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied. Only admins and coordinators can perform cleanup.'
+            });
+        }
+
+        const query = `
+            DELETE FROM notifications 
+            WHERE is_read = TRUE 
+            AND created_at < (CURRENT_TIMESTAMP - INTERVAL '30 days')
+        `;
+        const { rowCount } = await pool.query(query);
+
+        res.status(200).json({
+            success: true,
+            message: `Cleanup successful. Removed ${rowCount} old notifications.`,
+            count: rowCount
+        });
+    } catch (error) {
+        console.error('Error cleaning up notifications:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
+
+/**
+ * Return the list of valid notification types with labels
+ * @route GET /api/notifications/types
+ * @access Private
+ * Created by: M4 (Oneli) - Day 17
+ */
+export const getNotificationTypes = (_req, res) => {
+    res.status(200).json({
+        success: true,
+        data: NOTIFICATION_TYPES
+    });
 };

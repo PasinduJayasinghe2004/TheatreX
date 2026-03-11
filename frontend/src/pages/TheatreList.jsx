@@ -171,7 +171,7 @@ const TheatreList = () => {
                         {ALL_THEATRE_STATUSES.map(status => (
                             <div
                                 key={status}
-                                className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-between"
+                                className="bg-white rounded-3xl border border-gray-200 p-4 flex items-center justify-between"
                             >
                                 <div>
                                     <p className="text-2xl font-bold text-gray-900">

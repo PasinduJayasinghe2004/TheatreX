@@ -2,8 +2,20 @@ import { ArrowRight, PlayCircle } from 'lucide-react'
 import ScrollReveal from './ScrollReveal'
 
 export default function Hero() {
+
+    const handleGetStarted = (e) => {
+        e.preventDefault()
+        const landing = document.querySelector('.landing-page')
+        if (landing) {
+            landing.classList.add('landing-exit')
+            landing.addEventListener('animationend', () => { window.location.href = '/login' }, { once: true })
+        } else {
+            window.location.href = '/login'
+        }
+    }
+
     return (
-        <section style={{ padding: '5rem 0 5rem 0', overflow: 'hidden' }}>
+        <section style={{ padding: '6rem 0', overflow: 'hidden' }}>
             <div className="container">
                 <div style={{
                     display: 'grid',
@@ -44,10 +56,10 @@ export default function Hero() {
                             Real-time theatre monitoring, intelligent staff scheduling, and comprehensive analytics all in one powerful platform. Optimize your surgical operations for maximum efficiency.
                         </p>
                         <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button className="btn btn-primary">
+                            <button className="btn btn-primary" onClick={handleGetStarted}>
                                 Get started <ArrowRight size={18} />
                             </button>
-                            <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB' }}>
+                            <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB', color: '#111827' }}>
                                 <PlayCircle size={18} style={{ marginRight: '0.5rem' }} /> Live demo
                             </button>
                         </div>
@@ -64,6 +76,7 @@ export default function Hero() {
                             <img
                                 src="/hero-surgery.jpg"
                                 alt="Surgeons implementing theatre operations"
+                                loading="lazy"
                                 style={{ width: '100%', height: 'auto', display: 'block' }}
                             />
                         </div>

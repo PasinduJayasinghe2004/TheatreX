@@ -19,6 +19,34 @@ import express from 'express';
 import { register, login, getProfile, updateProfile, forgotPassword, resetPassword, refreshTokenHandler } from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../middleware/validateUser.js';
 import { protect } from '../middleware/authMiddleware.js';
+import multer from 'multer';
+import path from 'path';
+
+// Configure multer for profile image storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/profile_images/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png|webp/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only images (jpeg, jpg, png, webp) are allowed'));
+    }
+});
 
 // Create a new router instance
 const router = express.Router();
@@ -73,6 +101,27 @@ router.get('/profile', protect, getProfile);
 // Returns: { success, message, user }
 // ============================================================================
 router.put('/profile', protect, updateProfile);
+
+// ============================================================================
+// ROUTE: POST /api/auth/profile-image
+// ============================================================================
+// Upload profile image
+// Created by: AI - Profile Image Task
+// Middleware: protect, multer
+// Returns: { success, message, imageUrl }
+// ============================================================================
+router.post('/profile-image', protect, upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No image uploaded' });
+    }
+
+    const imageUrl = `/uploads/profile_images/${req.file.filename}`;
+    res.status(200).json({
+        success: true,
+        message: 'Image uploaded successfully',
+        imageUrl: imageUrl
+    });
+});
 
 // ============================================================================
 // ROUTE: POST /api/auth/forgot-password

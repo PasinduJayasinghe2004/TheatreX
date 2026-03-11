@@ -1,34 +1,34 @@
-import { Clock, Calendar, Users, BarChart2, Activity, ClipboardList } from 'lucide-react'
+import { AnimatedClock, AnimatedCalendar, AnimatedUsers, AnimatedBarChart, AnimatedActivity, AnimatedClipboard } from './AnimatedIcons'
 import ScrollReveal from './ScrollReveal'
 
 const features = [
     {
-        icon: <Clock size={24} color="#2563EB" />,
+        icon: <AnimatedClock />,
         title: "Real-Time Theatre Status",
         desc: "Get live updates on theatre occupancy, cleaning status, and operational bottlenecks."
     },
     {
-        icon: <Calendar size={24} color="#2563EB" />,
+        icon: <AnimatedCalendar />,
         title: "Smart Scheduling",
         desc: "Intelligent calendar management that suggests optimal slot assignments and minimizes downtime."
     },
     {
-        icon: <Users size={24} color="#2563EB" />,
+        icon: <AnimatedUsers />,
         title: "Staff Management",
         desc: "Live surgeon availability, shift tracking, and assignment tools to ensure optimal coverage."
     },
     {
-        icon: <BarChart2 size={24} color="#2563EB" />,
+        icon: <AnimatedBarChart />,
         title: "Analytics & Insights",
         desc: "Comprehensive dashboards tracking utilization, procedure times, and operational efficiency metrics."
     },
     {
-        icon: <Activity size={24} color="#2563EB" />,
+        icon: <AnimatedActivity />,
         title: "Upcoming Surgeries",
         desc: "Track scheduled procedures with detailed patient info, required equipment, and team readiness."
     },
     {
-        icon: <ClipboardList size={24} color="#2563EB" />,
+        icon: <AnimatedClipboard />,
         title: "Status Tracking",
         desc: "Track cleaning stages, sterilization status, and room readiness at a glance."
     }
@@ -56,12 +56,13 @@ export default function Features() {
                                 backgroundColor: '#fff',
                                 padding: '2rem',
                                 borderRadius: '1rem',
-                                border: '1px solid #F3F4F6',
-                                transition: 'transform 0.2s',
+                                border: '1px solid #E5E7EB',
+                                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
+                                transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
                                 cursor: 'default'
                             }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(37, 99, 235, 0.1)'; e.currentTarget.style.borderColor = '#BFDBFE'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.06)'; e.currentTarget.style.borderColor = '#E5E7EB'; }}
                             >
                                 <div style={{
                                     width: '3rem',
