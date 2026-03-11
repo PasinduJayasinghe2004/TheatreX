@@ -9,6 +9,7 @@
 
 import request from 'supertest';
 import app from '../server.js';
+import { pool } from '../config/database.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -61,5 +62,9 @@ describe('Analytics API - Theatre Utilization (M5 Day 18)', () => {
                 expect(item.utilization_percentage).toBeLessThanOrEqual(100);
             }
         });
+    });
+
+    afterAll(async () => {
+        await pool.end();
     });
 });
