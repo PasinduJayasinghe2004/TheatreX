@@ -56,7 +56,7 @@ export const calculateAutoProgress = (scheduledTime, durationMinutes, referenceD
 
     // Elapsed time in minutes (can be negative if surgery hasn't started yet)
     const elapsedMs = referenceDate.getTime() - startTime.getTime();
-    const elapsedMinutes = Math.max(0, Math.round(elapsedMs / 60000));
+    const elapsedMinutes = Math.max(0, Math.floor(elapsedMs / 60000));
 
     // Calculate progress percentage (0-100, capped at 100)
     const rawProgress = (elapsedMinutes / durationMinutes) * 100;
