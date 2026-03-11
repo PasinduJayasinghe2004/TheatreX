@@ -9,6 +9,7 @@
 
 import request from 'supertest';
 import app from '../server.js';
+import { pool } from '../config/database.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -115,5 +116,9 @@ describe('Analytics API - M1 Day 18', () => {
                 expect(dates[i]).toBeGreaterThanOrEqual(dates[i - 1]);
             }
         });
+    });
+
+    afterAll(async () => {
+        await pool.end();
     });
 });
