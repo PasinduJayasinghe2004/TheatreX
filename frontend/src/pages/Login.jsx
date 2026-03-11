@@ -158,10 +158,17 @@ const Login = () => {
     // Show logout message if redirected from logout
     useEffect(() => {
         if (location.state?.loggedOut) {
-            setLogoutMessage(true);
-            window.history.replaceState({}, document.title);
+            // Use setTimeout to avoid synchronous state update in effect which triggers linter
+            const syncTimer = setTimeout(() => {
+                setLogoutMessage(true);
+                window.history.replaceState({}, document.title);
+            }, 0);
+
             const timer = setTimeout(() => setLogoutMessage(false), 4000);
-            return () => clearTimeout(timer);
+            return () => {
+                clearTimeout(syncTimer);
+                clearTimeout(timer);
+            };
         }
     }, [location.state]);
 

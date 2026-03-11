@@ -435,7 +435,9 @@ const Dashboard = () => {
                     setSummary(summaryResponse.data);
                 }
             } catch (statsErr) {
-                console.warn('Dashboard stats/summary unavailable, using defaults:', statsErr.message);
+                console.warn('Dashboard stats/summary unavailable:', statsErr.message);
+                setError('Failed to load dashboard statistics. Please check your connection.');
+                return; // Stop further execution if stats fail
             }
 
             // Fetch today's surgeries
@@ -447,15 +449,16 @@ const Dashboard = () => {
                 });
                 if (surgeriesResponse.success) {
                     setSurgeries(surgeriesResponse.data || []);
-                    // Filter live/in-progress surgeries
                     setLiveSurgeries(
                         (surgeriesResponse.data || []).filter(s => s.status === 'in_progress')
                     );
+                } else {
+                    throw new Error(surgeriesResponse.message || 'Failed to fetch surgeries');
                 }
             } catch (surgeryErr) {
-                console.warn('Surgeries data unavailable, using sample data:', surgeryErr.message);
-                setSurgeries([]);
-                setLiveSurgeries([]);
+                console.warn('Surgeries data unavailable:', surgeryErr.message);
+                setError('Failed to load today\'s surgery schedule.');
+                return;
             }
 
             // Fetch surgeries per day for chart - M1 Day 18
@@ -637,8 +640,8 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('surgeries')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Today's Surgeries"
-                                    value={summary?.today_stats?.total_surgeries ?? 12}
-                                    comparison={summary?.today_stats?.yesterday_comparison ?? 2}
+                                    value={summary?.today_stats?.total_surgeries ?? '--'}
+                                    comparison={summary?.today_stats?.yesterday_comparison ?? null}
                                     colour="bg-blue-50"
                                     icon={
                                         <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -652,7 +655,7 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('staff')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Staff on Duty"
-                                    value={summary?.today_stats?.staff_on_duty?.total ?? 24}
+                                    value={summary?.today_stats?.staff_on_duty?.total ?? '--'}
                                     subtitle="6 surgeons, 18 nurses"
                                     colour="bg-indigo-50"
                                     icon={
@@ -667,7 +670,7 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('duration')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Avg Duration"
-                                    value={stats?.avgDuration || 125}
+                                    value={stats?.avgDuration ?? '--'}
                                     subtitle="minutes per surgery"
                                     colour="bg-amber-50"
                                     icon={

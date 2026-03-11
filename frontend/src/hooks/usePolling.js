@@ -66,72 +66,44 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
         }
     }, []);
 
-    // Start / stop the interval
-    useEffect(() => {
-        if (!enabled) {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
-            return;
-        }
-
-        // Fetch immediately if requested
-        if (immediate) {
-            executeFetch(true);
-        }
-
-        timerRef.current = setInterval(() => {
-            executeFetch(false);
-        }, interval);
-
-        return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
-        };
-    }, [enabled, interval, immediate, executeFetch]);
-
-    // Manual refresh (resets loading state)
-    const refresh = useCallback(() => {
-        executeFetch(true);
-    }, [executeFetch]);
-
     // Pause / resume helpers (swap `enabled` from outside or use these)
     const [paused, setPaused] = useState(false);
 
     const pause = useCallback(() => {
         setPaused(true);
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-        }
     }, []);
 
     const resume = useCallback(() => {
         setPaused(false);
     }, []);
 
-    // Restart interval when un-paused
+    // ── Manage polling interval ──────────────────────────────────
     useEffect(() => {
-        if (paused || !enabled) return;
+        let timer = null;
 
-        // Re-fetch once to get fresh data, then set interval
-        executeFetch(false);
+        // Skip if disabled or explicitly paused
+        if (!enabled || paused) {
+            return;
+        }
 
-        timerRef.current = setInterval(() => {
+        // Fetch immediately on mount or when resumed/re-enabled
+        if (immediate) {
+            executeFetch(true);
+        }
+
+        timer = setInterval(() => {
             executeFetch(false);
         }, interval);
 
         return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
+            if (timer) clearInterval(timer);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [paused]);
+    }, [enabled, paused, interval, immediate, executeFetch]);
+
+    // Manual refresh (resets loading state)
+    const refresh = useCallback(() => {
+        executeFetch(true);
+    }, [executeFetch]);
 
     return { data, loading, error, lastPolledAt, refresh, pause, resume, paused };
 };

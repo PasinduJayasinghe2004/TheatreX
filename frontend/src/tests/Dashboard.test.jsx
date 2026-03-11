@@ -204,7 +204,7 @@ describe('Dashboard Page Tests', () => {
         it('should display action buttons', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('+ Add New Surgery')).toBeInTheDocument();
+                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
                 expect(screen.getByText('Calendar View')).toBeInTheDocument();
             });
         });
@@ -311,9 +311,9 @@ describe('Dashboard Page Tests', () => {
         it('should navigate to /surgeries/new when Add New Surgery is clicked', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('+ Add New Surgery')).toBeInTheDocument();
+                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
             });
-            fireEvent.click(screen.getByText('+ Add New Surgery'));
+            fireEvent.click(screen.getByText('Add New Surgery'));
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries/new');
         });
 
