@@ -29,18 +29,39 @@ export const clerkProtect = async (req, res, next) => {
 
             const { userId } = decodedRequest.auth;
 
-            // Fetch user from local database using Clerk ID
-            // Assuming we added clerk_id to the users table
-            const { rows: users } = await pool.query(
+            // Fetch user from local database using Clerk ID or session email
+            let { rows: users } = await pool.query(
                 'SELECT id, name, email, role, phone, is_active FROM users WHERE clerk_id = $1 OR email = $2',
                 [userId, decodedRequest.auth.sessionClaims?.email]
             );
 
+            // AUTO-PROVISION: If user exists in Clerk but not in local DB, create them
+            // This is essential for local dev where webhooks aren't easily reachable
             if (users.length === 0) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'User not found in local database. Please sync via webhooks.'
-                });
+                try {
+                    console.log(`🔍 User ${userId} not found in DB, auto-provisioning...`);
+                    const clerkUser = await clerkClient.users.getUser(userId);
+                    const email = clerkUser.emailAddresses[0]?.emailAddress;
+                    const name = `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Clerk User';
+                    const role = clerkUser.publicMetadata?.role || 'coordinator';
+
+                    const { rows: newUser } = await pool.query(
+                        `INSERT INTO users (clerk_id, email, name, role, is_active) 
+                         VALUES ($1, $2, $3, $4, $5)
+                         ON CONFLICT (email) DO UPDATE SET clerk_id = $1
+                         RETURNING id, name, email, role, phone, is_active`,
+                        [userId, email, name, role, true]
+                    );
+                    users = newUser;
+                    console.log(`✅ Auto-provisioned user ${email} (${role})`);
+                } catch (provisionErr) {
+                    console.error('Auto-provisioning failed:', provisionErr.message);
+                    return res.status(401).json({
+                        success: false,
+                        message: 'User found in Clerk but local profile creation failed.',
+                        error: provisionErr.message
+                    });
+                }
             }
 
             req.user = users[0];
