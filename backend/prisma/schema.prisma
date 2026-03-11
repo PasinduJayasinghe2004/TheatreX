@@ -21,6 +21,7 @@ model User {
   role      String?  @default("staff") // 'admin', 'doctor', 'nurse', 'staff', 'patient'
   phone     String?
   is_active Boolean? @default(true)
+  clerk_id  String?  @unique
   created_at DateTime @default(now())
   
   // Relations

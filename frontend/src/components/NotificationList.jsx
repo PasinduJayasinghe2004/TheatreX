@@ -6,7 +6,7 @@
 // Updated by: M3 (Janani) - Day 17 — added 30s polling via usePolling hook
 // ============================================================================
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import notificationService from '../services/notificationService';
 import NotificationItem from './NotificationItem';
 import usePolling from '../hooks/usePolling';
@@ -35,12 +35,12 @@ const NotificationList = ({ unreadOnly = false, typeFilter = '', searchQuery = '
         paused
     } = usePolling(fetchNotifications, { interval: 30000 });
 
-    // Expose polling status to parent (NotificationsPage)
-    if (onPollingStatus) {
-        // Using a ref-like callback to avoid infinite re-renders
-        // Parent can read these values via the callback
-        onPollingStatus({ lastPolledAt, refresh, pause, resume, paused });
-    }
+    // ── Expose polling status to parent ───────────────────────────
+    useEffect(() => {
+        if (onPollingStatus) {
+            onPollingStatus({ lastPolledAt, refresh, pause, resume, paused });
+        }
+    }, [onPollingStatus, lastPolledAt, refresh, pause, resume, paused]);
 
     // ── Mark single notification as read (optimistic) ──────────────
     const handleMarkAsRead = async (id) => {
