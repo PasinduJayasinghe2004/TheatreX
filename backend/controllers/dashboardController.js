@@ -145,7 +145,7 @@ export const getDashboardSummary = async (req, res) => {
             SELECT COUNT(*) as count
             FROM surgeries
             WHERE status = 'in_progress'
-            AND (scheduled_time + (duration_minutes || ' minutes')::interval) < CURRENT_TIME
+            AND (scheduled_date + scheduled_time + (duration_minutes || ' minutes')::interval) < CURRENT_TIMESTAMP
         `;
 
         // 3. Today's total surgeries

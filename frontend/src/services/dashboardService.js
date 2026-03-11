@@ -7,7 +7,7 @@
 // Provides functions to fetch dashboard data from the backend.
 // ============================================================================
 
-import api from './authService';
+import { api } from './authService';
 
 /**
  * Get dashboard statistics

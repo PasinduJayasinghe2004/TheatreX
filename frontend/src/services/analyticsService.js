@@ -7,7 +7,7 @@
 // Provides functions to fetch analytics data from the backend.
 // ============================================================================
 
-import api from './authService';
+import { api } from './authService';
 
 /**
  * Get surgeries per day for the last 7 days
