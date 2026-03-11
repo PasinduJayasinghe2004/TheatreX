@@ -41,6 +41,8 @@ import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 13
 import analyticsRoutes from './routes/analyticsRoutes.js'; // M1 - Day 18
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
+import clerkWebhooks from './routes/clerkWebhooks.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -50,9 +52,13 @@ const app = express();
 // Middleware
 app.use(cors());
 
+// Clerk Webhooks (Needs raw body for signature verification)
+app.use('/api/webhooks/clerk', clerkWebhooks);
+
 // Parse incoming JSON payloads in request body
 // Makes req.body available for JSON data
 app.use(express.json());
+
 
 // Parse URL-encoded data (form submissions)
 // extended: true allows for rich objects and arrays to be encoded

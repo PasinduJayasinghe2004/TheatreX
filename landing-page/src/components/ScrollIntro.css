@@ -1,186 +1,209 @@
 /* ─── Scroll Intro Container ─────────────────────────────────── */
 .scroll-intro-container {
-  position: relative;
-  height: 220vh; /* tall enough to scroll through */
-  z-index: 0;
+    position: relative;
+    height: 220vh;
+    /* tall enough to scroll through */
+    z-index: 0;
 }
 
 /* ─── Sticky panel ───────────────────────────────────────────── */
 .scroll-intro-sticky {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ─── Background Image ───────────────────────────────────────── */
 .scroll-intro-image-wrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
 }
 
 .scroll-intro-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform-origin: center center;
-  transform: scale(1);
-  will-change: transform;
-  transition: transform 0.05s linear;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    transform: scale(1);
+    will-change: transform;
+    transition: transform 0.05s linear;
 }
 
 /* ─── Dark Overlay ───────────────────────────────────────────── */
 .scroll-intro-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(5, 10, 20, 0.55);
-  transition: background-color 0.05s linear;
+    position: absolute;
+    inset: 0;
+    background-color: rgba(5, 10, 20, 0.55);
+    transition: background-color 0.05s linear;
 }
 
 /* ─── Ambient Blue Glow ──────────────────────────────────────── */
 .scroll-intro-glow {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 50% 60%, rgba(37, 99, 235, 0.2) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(96, 165, 250, 0.12) 0%, transparent 60%);
-  pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 50% at 50% 60%, rgba(37, 99, 235, 0.2) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(96, 165, 250, 0.12) 0%, transparent 60%);
+    pointer-events: none;
 }
 
 /* ─── Content ────────────────────────────────────────────────── */
 .scroll-intro-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3.5rem;
-  text-align: center;
-  padding: 2rem;
-  width: 100%;
-  height: 100%;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3.5rem;
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
 }
 
 /* ─── Title Group ────────────────────────────────────────────── */
 .scroll-intro-title-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  will-change: opacity, transform;
-  transition: opacity 0.05s linear, transform 0.05s linear;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    will-change: opacity, transform;
+    transition: opacity 0.05s linear, transform 0.05s linear;
 }
 
 .scroll-intro-eyebrow {
-  display: inline-block;
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(96, 165, 250, 0.85);
-  padding: 0.35rem 1.1rem;
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  border-radius: 999px;
-  backdrop-filter: blur(6px);
-  background: rgba(37, 99, 235, 0.12);
-  animation: fadeInDown 1s ease both;
+    display: inline-block;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(96, 165, 250, 0.85);
+    padding: 0.35rem 1.1rem;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    background: rgba(37, 99, 235, 0.12);
+    animation: fadeInDown 1s ease both;
 }
 
 .scroll-intro-title {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
-  font-size: clamp(5rem, 14vw, 11rem);
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  text-shadow:
-    0 0 80px rgba(37, 99, 235, 0.55),
-    0 0 30px rgba(96, 165, 250, 0.35),
-    0 4px 40px rgba(0, 0, 0, 0.5);
-  animation: fadeInUp 1s ease 0.2s both;
+    font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+    font-size: clamp(5rem, 14vw, 11rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-shadow:
+        0 0 80px rgba(37, 99, 235, 0.55),
+        0 0 30px rgba(96, 165, 250, 0.35),
+        0 4px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 1s ease 0.2s both;
 }
 
 .scroll-intro-tagline {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: clamp(0.9rem, 2vw, 1.15rem);
-  font-weight: 400;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-  animation: fadeInUp 1s ease 0.5s both;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.15rem);
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    animation: fadeInUp 1s ease 0.5s both;
 }
 
 /* ─── Scroll Hint ─────────────────────────────────────────────── */
 .scroll-intro-hint {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  animation: fadeInUp 1s ease 1s both;
-  will-change: opacity;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    animation: fadeInUp 1s ease 1s both;
+    will-change: opacity;
 }
 
 .scroll-hint-text {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .scroll-hint-mouse {
-  width: 24px;
-  height: 38px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  padding-top: 6px;
+    width: 24px;
+    height: 38px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    padding-top: 6px;
 }
 
 .scroll-hint-wheel {
-  width: 4px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 2px;
-  animation: scrollWheel 1.8s ease-in-out infinite;
+    width: 4px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 2px;
+    animation: scrollWheel 1.8s ease-in-out infinite;
 }
 
 /* ─── Keyframes ──────────────────────────────────────────────── */
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes scrollWheel {
-  0%   { opacity: 1; transform: translateY(0); }
-  60%  { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 0; transform: translateY(10px); }
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    60% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 }
 
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .scroll-intro-tagline {
-    letter-spacing: 0.1em;
-  }
-  .scroll-intro-eyebrow {
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-  }
+    .scroll-intro-tagline {
+        letter-spacing: 0.1em;
+    }
+
+    .scroll-intro-eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+    }
 }

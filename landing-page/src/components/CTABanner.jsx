@@ -1,98 +1,87 @@
-import { ArrowRight, Sparkles } from 'lucide-react'
 import ScrollReveal from './ScrollReveal'
 
-export default function CTABanner() {
+export default function CTABanner({ onRequestDemo }) {
     return (
-        <section style={{ padding: '3rem 0 6rem 0' }}>
+        <section style={{ padding: '4rem 0' }}>
             <div className="container">
-                <ScrollReveal animation="fade-up" duration={600}>
+                <ScrollReveal animation="zoom-in" duration={700}>
                     <div style={{
-                        background: 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)',
+                        background: 'linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #60A5FA 100%)',
                         borderRadius: '1.5rem',
-                        padding: '4rem 3rem',
+                        padding: '4rem 2rem',
                         textAlign: 'center',
+                        color: 'white',
                         position: 'relative',
                         overflow: 'hidden',
+                        boxShadow: '0 25px 50px -12px rgba(37, 99, 235, 0.35)'
                     }}>
-                        {/* Decorative circles */}
+                        {/* Background decorative elements */}
                         <div style={{
-                            position: 'absolute',
-                            top: '-3rem',
-                            right: '-3rem',
-                            width: '12rem',
-                            height: '12rem',
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(255,255,255,0.08)',
+                            position: 'absolute', top: '-40px', right: '-40px',
+                            width: '200px', height: '200px', borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.08)'
                         }} />
                         <div style={{
-                            position: 'absolute',
-                            bottom: '-2rem',
-                            left: '-2rem',
-                            width: '8rem',
-                            height: '8rem',
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(255,255,255,0.05)',
+                            position: 'absolute', bottom: '-60px', left: '-30px',
+                            width: '250px', height: '250px', borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.05)'
                         }} />
 
                         <div style={{ position: 'relative', zIndex: 1 }}>
-                            <div style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                backgroundColor: 'rgba(255,255,255,0.15)',
-                                color: '#fff',
-                                padding: '0.35rem 1rem',
-                                borderRadius: '999px',
-                                fontSize: '0.85rem',
-                                fontWeight: '600',
-                                marginBottom: '1.5rem',
-                            }}>
-                                <Sparkles size={16} />
-                                Ready to Transform?
-                            </div>
-
                             <h2 style={{
-                                fontSize: '2.25rem',
+                                fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
                                 fontWeight: '800',
-                                color: '#fff',
                                 marginBottom: '1rem',
-                                lineHeight: '1.2',
-                                letterSpacing: '-0.02em',
+                                lineHeight: '1.2'
                             }}>
-                                Modernize Your Theatre Management
+                                Ready to Transform Your Theatre Operations?
                             </h2>
                             <p style={{
-                                color: 'rgba(255,255,255,0.8)',
-                                fontSize: '1.1rem',
-                                maxWidth: '550px',
-                                margin: '0 auto 2rem auto',
-                                lineHeight: '1.6',
+                                fontSize: '1.15rem',
+                                opacity: 0.9,
+                                maxWidth: '600px',
+                                margin: '0 auto 2.5rem auto',
+                                lineHeight: '1.6'
                             }}>
-                                Join hospitals that have eliminated double bookings, reduced idle time, and improved patient care with TheatreX.
+                                Join hospitals already using TheatreX to improve scheduling efficiency, reduce downtime, and deliver better patient outcomes.
                             </p>
-
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                                 <button
                                     className="btn"
+                                    onClick={onRequestDemo}
                                     style={{
                                         backgroundColor: '#fff',
-                                        color: '#2563EB',
+                                        color: '#1E40AF',
                                         fontWeight: '700',
-                                        boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+                                        padding: '0.9rem 2rem',
+                                        fontSize: '1rem',
+                                        borderRadius: '9999px',
+                                        transition: 'transform 0.2s, box-shadow 0.2s',
+                                        boxShadow: '0 4px 14px rgba(0,0,0,0.15)'
                                     }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.2)' }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,0.15)' }}
                                 >
-                                    Get Started Free <ArrowRight size={18} />
+                                    Request a Demo
                                 </button>
-                                <button
+                                <a
+                                    href="#contact"
                                     className="btn"
                                     style={{
                                         backgroundColor: 'transparent',
-                                        border: '2px solid rgba(255,255,255,0.4)',
                                         color: '#fff',
+                                        fontWeight: '600',
+                                        padding: '0.9rem 2rem',
+                                        fontSize: '1rem',
+                                        borderRadius: '9999px',
+                                        border: '2px solid rgba(255,255,255,0.5)',
+                                        transition: 'background-color 0.2s, border-color 0.2s'
                                     }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)' }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)' }}
                                 >
-                                    View Live Demo
-                                </button>
+                                    Contact Us
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -435,7 +435,9 @@ const Dashboard = () => {
                     setSummary(summaryResponse.data);
                 }
             } catch (statsErr) {
-                console.warn('Dashboard stats/summary unavailable, using defaults:', statsErr.message);
+                console.warn('Dashboard stats/summary unavailable:', statsErr.message);
+                setError('Failed to load dashboard statistics. Please check your connection.');
+                return; // Stop further execution if stats fail
             }
 
             // Fetch today's surgeries
@@ -447,15 +449,16 @@ const Dashboard = () => {
                 });
                 if (surgeriesResponse.success) {
                     setSurgeries(surgeriesResponse.data || []);
-                    // Filter live/in-progress surgeries
                     setLiveSurgeries(
                         (surgeriesResponse.data || []).filter(s => s.status === 'in_progress')
                     );
+                } else {
+                    throw new Error(surgeriesResponse.message || 'Failed to fetch surgeries');
                 }
             } catch (surgeryErr) {
-                console.warn('Surgeries data unavailable, using sample data:', surgeryErr.message);
-                setSurgeries([]);
-                setLiveSurgeries([]);
+                console.warn('Surgeries data unavailable:', surgeryErr.message);
+                setError('Failed to load today\'s surgery schedule.');
+                return;
             }
 
             // Fetch surgeries per day for chart - M1 Day 18

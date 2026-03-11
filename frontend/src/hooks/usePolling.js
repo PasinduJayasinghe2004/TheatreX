@@ -66,12 +66,7 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
         }
     }, []);
 
-    // Manual refresh (resets loading state)
-    const refresh = useCallback(() => {
-        executeFetch(true);
-    }, [executeFetch]);
 
-    // Pause / resume helpers
     const [paused, setPaused] = useState(false);
 
     const pause = useCallback(() => {
@@ -83,31 +78,22 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
         executeFetch(false);
     }, [executeFetch]);
 
-    // Single unified polling interval effect
-    useEffect(() => {
-        if (!enabled || paused) {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
-            return;
         }
 
+        // Fetch immediately on mount or when resumed/re-enabled
         if (immediate) {
             executeFetch(true);
         }
 
-        timerRef.current = setInterval(() => {
+        timer = setInterval(() => {
             executeFetch(false);
         }, interval);
 
         return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
+            if (timer) clearInterval(timer);
         };
     }, [enabled, paused, interval, immediate, executeFetch]);
+
 
     return { data, loading, error, lastPolledAt, refresh, pause, resume, paused };
 };

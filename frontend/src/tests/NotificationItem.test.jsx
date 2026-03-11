@@ -162,7 +162,7 @@ describe('NotificationItem (M6 Day 16)', () => {
         expect(iconWrapper).not.toBeNull();
     });
 
-    it('should apply success (emerald) type styles', () => {
+    it('should apply success type styles', () => {
         const { container } = render(
             <NotificationItem
                 notification={makeNotification({ type: 'success' })}
