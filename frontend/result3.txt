@@ -1,0 +1,1386 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mC:/Users/Dinil Dilmith/Desktop/SDGP-Project/frontend[39m
+
+[90mstderr[2m | src/tests/usePolling.test.js[2m > [22m[2musePolling hook[2m > [22m[2mshould call fetchFn immediately on mount when immediate=true (default)[22m[39m
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/TheatreService.test.js [2m ([22m[2m43 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+ [32m✓[39m src/tests/usePolling.test.js [2m ([22m[2m10 tests[22m[2m)[22m[90m 63[2mms[22m[39m
+[90mstderr[2m | src/tests/CoordinatorDashboard.test.jsx[2m > [22m[2mCoordinatorDashboard Page Tests - M6 Day 12[2m > [22m[2mLoading State[2m > [22m[2mshould show loading spinner while fetching overview[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/day17_m6_notification_e2e.test.jsx[2m > [22m[2mE2E Flow 1 – Mark Single Read (Dropdown)[2m > [22m[2mshows badge with count, then count drops after marking one read[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/NotificationDropdown.test.jsx[2m > [22m[2mNotificationDropdown (M6 Day 16)[2m > [22m[2mshould render the bell button[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/NotificationDropdown.test.jsx[2m > [22m[2mNotificationDropdown (M6 Day 16)[2m > [22m[2mshould NOT show dropdown panel initially[22m[39m
+An update to NotificationDropdown inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/SurgeryForm.test.jsx[2m > [22m[2mSurgeryForm Modal Component Tests[2m > [22m[2mModal Rendering[2m > [22m[2mshould render modal with title[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ [32m✓[39m src/tests/NotificationItem.test.jsx [2m ([22m[2m17 tests[22m[2m)[22m[90m 188[2mms[22m[39m
+[90mstderr[2m | src/tests/TheatreAssignmentDropdown.test.jsx[2m > [22m[2mTheatreAssignmentDropdown Component Tests - M6 Day 12[2m > [22m[2mHeader[2m > [22m[2mshould display "Assign Surgery" title[22m[39m
+An update to TheatreAssignmentDropdown inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TheatreAssignmentDropdown inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/TheatreAssignmentDropdown.test.jsx[2m > [22m[2mTheatreAssignmentDropdown Component Tests - M6 Day 12[2m > [22m[2mHeader[2m > [22m[2mshould display the target theatre name[22m[39m
+An update to TheatreAssignmentDropdown inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TheatreAssignmentDropdown inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/tests/TheatreStatusBadge.test.jsx [2m ([22m[2m34 tests[22m[2m)[22m[90m 118[2mms[22m[39m
+ [32m✓[39m src/tests/NotificationList.test.jsx [2m ([22m[2m10 tests[22m[2m)[22m[33m 427[2mms[22m[39m
+ [32m✓[39m src/tests/SurgeryProgressBar.test.jsx [2m ([22m[2m12 tests[22m[2m)[22m[90m 227[2mms[22m[39m
+ [32m✓[39m src/tests/TheatreAssignmentDropdown.test.jsx [2m ([22m[2m15 tests[22m[2m)[22m[33m 443[2mms[22m[39m
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mLoading State[2m > [22m[2mshould show a loading spinner while data is being fetched[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould show a loading spinner before data arrives[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/AnaesthetistsPage.test.jsx[2m > [22m[2mAnaesthetistsPage Tests (Day 14)[2m > [22m[2mshould show loading skeletons while fetching[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ [32m✓[39m src/tests/NotificationDropdown.test.jsx [2m ([22m[2m19 tests[22m[2m)[22m[33m 616[2mms[22m[39m
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render login form with email and password fields[22m[39m
+ℹ️ No existing user session found
+
+[90mstderr[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render login form with email and password fields[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render link to register page[22m[39m
+ℹ️ No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Validation[2m > [22m[2mshould show validation errors for empty fields[22m[39m
+ℹ️ No existing user session found
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mLoading State[2m > [22m[2mshould show loading indicator while fetching data[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Validation[2m > [22m[2mshould validate email format[22m[39m
+ℹ️ No existing user session found
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mLoading State[2m > [22m[2mshould show loading indicator while fetching data[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould display summary counts[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/SurgeryCard.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 384[2mms[22m[39m
+[90mstderr[2m | src/tests/SurgeryCard.test.jsx[2m > [22m[2mSurgeryCard Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render surgery type as title[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mSuccess State[2m > [22m[2mshould display all theatre names[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould show surgery info for theatres with a current surgery[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould display "No surgery in progress" for idle theatres[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display patient name[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mSuccess State[2m > [22m[2mshould call getAllTheatres on mount[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display patient age[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mEmpty State[2m > [22m[2mshould show "No Theatres Found" when the list is empty[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould show an error message when the API fails[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display all surgery cards[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mEmpty State[2m > [22m[2mshould show "No Theatres Found" when the list is empty[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould submit form with valid credentials[22m[39m
+ℹ️ No existing user session found
+✅ Login successful: test@example.com
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould show loading state during submission[22m[39m
+ℹ️ No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle API errors gracefully[22m[39m
+ℹ️ No existing user session found
+
+[90mstderr[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle API errors gracefully[22m[39m
+❌ Login error: Invalid credentials
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould have Refresh and Pause buttons[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display patient gender[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould toggle to Resume when Pause is clicked[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mEmpty State[2m > [22m[2mshould show "0 theatres found" count when list is empty[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/day17_m6_notification_e2e.test.jsx [2m ([22m[2m25 tests[22m[2m)[22m[33m 1055[2mms[22m[39m
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mEmpty State[2m > [22m[2mshould display "No theatres have been configured yet." when no filter is active[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display surgeon name[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle network errors gracefully[22m[39m
+ℹ️ No existing user session found
+
+[90mstderr[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle network errors gracefully[22m[39m
+❌ Login error: Network connection failed
+❌ Login error: Cannot read properties of undefined (reading 'success')
+
+ [32m✓[39m src/tests/Login.test.jsx [2m ([22m[2m9 tests[22m[2m)[22m[33m 845[2mms[22m[39m
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould toggle to Resume when Pause is clicked[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2mshould show error heading when API throws[22m[39m
+Error fetching theatres: Error: Network timeout
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\TheatreList.test.jsx:235:61
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39m
+    at startTests [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:116:7
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display surgery description[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould have Create Surgery button[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2mshould show error heading when API throws[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mEmpty State[2m > [22m[2mshould show empty state when no surgeries exist[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2mshould display the error message text[22m[39m
+Error fetching theatres: Error: Network timeout
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\TheatreList.test.jsx:244:61
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:64:5)[39m
+[90m    at listOnTimeout (node:internal/timers:567:9)[39m
+[90m    at processTimers (node:internal/timers:541:7)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display surgery notes[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/LiveStatusPage.test.jsx[2m > [22m[2mLiveStatusPage[2m > [22m[2mshould call getLiveStatus again when Refresh is clicked[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/LiveStatusPage.test.jsx [2m ([22m[2m9 tests[22m[2m)[22m[33m 854[2mms[22m[39m
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mLoading State[2m > [22m[2mshould show loading indicator while fetching data[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display page title after loading[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2mshould show "Try Again" button on error[22m[39m
+Error fetching theatres: Error: Server error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\TheatreList.test.jsx:253:61
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39m
+    at startTests [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:116:7
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mEmpty State[2m > [22m[2mshould show correct count for single surgery[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display duration[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/SurgeryForm.test.jsx [2m ([22m[2m26 tests[22m[2m)[22m[33m 1167[2mms[22m[39m
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2m"Try Again" button should re-trigger the API call[22m[39m
+Error fetching theatres: Error: First failure
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\TheatreList.test.jsx:263:40
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runFiles [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:958:5[90m)[39m
+    at startTests [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:967:3[90m)[39m
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4mvitest[24m/dist/chunks/runtime-runBaseTests.oAvMKtQC.js:116:7
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display status badge[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mEmpty State[2m > [22m[2mshould show correct count for single surgery[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2m"Try Again" button should re-trigger the API call[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show error message when API fails[22m[39m
+Error fetching surgeries: Error: Network error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\SurgeryList.test.jsx:180:17
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:64:5)[39m
+[90m    at listOnTimeout (node:internal/timers:567:9)[39m
+[90m    at processTimers (node:internal/timers:541:7)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display stats cards[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show error message when API fails[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mError State[2m > [22m[2m"Try Again" button should re-trigger the API call[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display priority badge[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show Try Again button on error[22m[39m
+Error fetching surgeries: Error: Server error
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\SurgeryList.test.jsx:193:17
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:64:5)[39m
+[90m    at listOnTimeout (node:internal/timers:567:9)[39m
+[90m    at processTimers (node:internal/timers:541:7)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/AnaesthetistsPage.test.jsx [2m ([22m[2m14 tests[22m[2m)[22m[33m 989[2mms[22m[39m
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display correct surgery count[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould have back button[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mError State[2m > [22m[2mshould handle API returning success: false[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mFilter Behaviour[2m > [22m[2mshould show "All Statuses" select option by default[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display staff comparison data when available[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould have Edit and Delete buttons[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/CoordinatorDashboard.test.jsx [2m ([22m[2m33 tests[22m[2m)[22m[33m 1508[2mms[22m[39m
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mStatus Badge Styling[2m > [22m[2mshould show emerald styling for completed status[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryList.test.jsx[2m > [22m[2mSurgeryList Page Tests[2m > [22m[2mAPI Calls[2m > [22m[2mshould call getAllSurgeries on mount[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/SurgeryList.test.jsx [2m ([22m[2m13 tests[22m[2m)[22m[33m 1033[2mms[22m[39m
+[90mstderr[2m | VirtualConsole.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\virtual-console.js:29:45)[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | VirtualConsole.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\virtual-console.js:29:45)[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mFilter Behaviour[2m > [22m[2mshould re-fetch when a status filter is selected[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display upcoming surgeries table[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mStatus Badge Styling[2m > [22m[2mshould show blue styling for in_progress status[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mFilter Behaviour[2m > [22m[2mshould re-fetch when a type filter is selected[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mFilter Behaviour[2m > [22m[2mshould re-fetch when a type filter is selected[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould not show in_progress surgeries in upcoming table[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mStatus Badge Styling[2m > [22m[2mshould show red styling for cancelled status[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display live theatre status section[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mFilter Behaviour[2m > [22m[2mshould call getAllTheatres with status filter param[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mPriority Badge Styling[2m > [22m[2mshould show correct styling for emergency priority[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mPriority Badge Styling[2m > [22m[2mshould show correct styling for urgent priority[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display action buttons[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mCount Display[2m > [22m[2mshould say "1 theatre found" (singular) for one theatre[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show error message when API fails[22m[39m
+Error fetching surgery: Error: Failed to fetch surgery
+    at [90mC:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\[39msrc\tests\SurgeryDetail.test.jsx:258:17
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+    at [90mfile:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:60:26
+    at runTest [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:781:17[90m)[39m
+[90m    at runNextTicks (node:internal/process/task_queues:64:5)[39m
+[90m    at listOnTimeout (node:internal/timers:567:9)[39m
+[90m    at processTimers (node:internal/timers:541:7)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///C:/Users/Dinil%20Dilmith/Desktop/SDGP-Project/frontend/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:909:15[90m)[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show error message when API fails[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mError State[2m > [22m[2mshould show 404 message for non-existent surgery[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[2m > [22m[2mTheatreList Page – M6 Day 10[2m > [22m[2mCount Display[2m > [22m[2mshould say "3 theatres found" (plural) for multiple theatres[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/TheatreList.test.jsx[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/TheatreList.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 1387[2mms[22m[39m
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mSuccess State[2m > [22m[2mshould display staff status section[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle surgery without surgeon[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mMissing Data State[2m > [22m[2mshould show -- for avgDuration when not provided[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle surgery without notes[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/NotificationsPage.test.jsx[2m > [22m[2mNotificationsPage with Polling Controls (M3 Day 17)[2m > [22m[2mshould render the page title and subtitle[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+Cannot update a component (`NotificationsPage`) while rendering a different component (`NotificationList`). To locate the bad setState() call inside `NotificationList`, follow the stack trace as described in https://react.dev/link/setstate-in-render
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mMissing Data State[2m > [22m[2mshould show no comparison data when yesterdayComparison is null[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle surgery without description[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mDate and Time Formatting[2m > [22m[2mshould display formatted date[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[2m > [22m[2mSurgeryDetail Page Tests[2m > [22m[2mDate and Time Formatting[2m > [22m[2mshould display formatted time[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+ [32m✓[39m src/tests/SurgeryDetail.test.jsx [2m ([22m[2m26 tests[22m[2m)[22m[33m 1411[2mms[22m[39m
+[90mstderr[2m | src/tests/SurgeryDetail.test.jsx[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | VirtualConsole.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\virtual-console.js:29:45)[22m[39m
+Error: AggregateError
+    at Object.dispatchError (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\xhr-utils.js:63:19)
+    at Request.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\xhr\XMLHttpRequest-impl.js:655:18)
+    at Request.emit (node:events:520:35)
+    at ClientRequest.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\helpers\http-request.js:127:14)
+    at ClientRequest.emit (node:events:508:28)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:508:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3) [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mError Resiliency[2m > [22m[2mshould gracefully handle stats API failure without crashing[22m[39m
+Dashboard stats/summary unavailable, using defaults: Network error
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mError Resiliency[2m > [22m[2mshould gracefully handle surgeries API failure without crashing[22m[39m
+Surgeries data unavailable, using sample data: Surgery API error
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/Register.test.jsx[2m > [22m[2mRegister Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render register form with all fields[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to /surgeries/new when Add New Surgery is clicked[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/tests/Register.test.jsx [2m ([22m[2m5 tests[22m[2m)[22m[90m 184[2mms[22m[39m
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to /calendar when Calendar View is clicked[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/tests/DurationDisplay.test.jsx [2m ([22m[2m7 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mNavigation[2m > [22m[2mshould navigate to surgery detail when view button is clicked[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mDelete Surgery[2m > [22m[2mshould call deleteSurgery and remove surgery on confirm[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/tests/Profile.test.jsx [2m ([22m[2m3 tests[22m[2m)[22m[90m 47[2mms[22m[39m
+[90mstderr[2m | src/tests/Profile.test.jsx[2m > [22m[2mProfile Component[2m > [22m[2mrenders profile page correctly[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | src/tests/Profile.test.jsx[2m > [22m[2mProfile Component[2m > [22m[2mhandles profile update submission[22m[39m
+Error: Not implemented: HTMLFormElement.prototype.requestSubmit
+    at module.exports (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLFormElementImpl.requestSubmit (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\nodes\HTMLFormElement-impl.js:122:5)
+    at HTMLFormElementImpl._doRequestSubmit (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\nodes\HTMLFormElement-impl.js:92:10)
+    at HTMLButtonElementImpl._activationBehavior (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\nodes\HTMLButtonElement-impl.js:23:14)
+    at HTMLButtonElementImpl._dispatch (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:252:26)
+    at HTMLButtonElementImpl.dispatchEvent (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\events\EventTarget-impl.js:104:17)
+    at HTMLButtonElement.dispatchEvent (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\jsdom\lib\jsdom\living\generated\EventTarget.js:241:34)
+    at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\@testing-library\dom\dist\events.js:19:20
+    at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\@testing-library\react\dist\pure.js:108:16
+    at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\frontend\node_modules\@testing-library\react\dist\act-compat.js:48:24 [90mundefined[39m
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mDelete Surgery[2m > [22m[2mshould call deleteSurgery and remove surgery on confirm[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+[90mstderr[2m | src/tests/EmergencyBooking.test.jsx[2m > [22m[2mEmergencyBooking Component[2m > [22m[2mrenders the emergency booking form correctly[22m[39m
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+An update to EmergencyBooking inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to EmergencyBooking inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/EmergencyBooking.test.jsx[2m > [22m[2mEmergencyBooking Component[2m > [22m[2mdefaults priority to EMERGENCY[22m[39m
+An update to EmergencyBooking inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to EmergencyBooking inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mDelete Surgery[2m > [22m[2mshould not call deleteSurgery when confirmation is cancelled[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/tests/NotificationsPage.test.jsx [2m ([22m[2m9 tests[22m[2m)[22m[33m 438[2mms[22m[39m
+[90mstderr[2m | src/tests/Dashboard.test.jsx[2m > [22m[2mDashboard Page Tests[2m > [22m[2mAccessibility[2m > [22m[2mshould have aria-labels on icon buttons[22m[39m
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ [32m✓[39m src/tests/EmergencyBooking.test.jsx [2m ([22m[2m4 tests[22m[2m)[22m[90m 228[2mms[22m[39m
+ [32m✓[39m src/tests/Dashboard.test.jsx [2m ([22m[2m20 tests[22m[2m)[22m[33m 1281[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+[2m      Tests [22m [1m[32m407 passed[39m[22m[90m (407)[39m
+[2m   Start at [22m 21:53:17
+[2m   Duration [22m 5.06s[2m (transform 3.47s, setup 12.68s, collect 10.10s, tests 14.98s, environment 26.01s, prepare 8.48s)[22m
+

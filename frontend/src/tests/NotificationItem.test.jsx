@@ -147,7 +147,7 @@ describe('NotificationItem (M6 Day 16)', () => {
                 onMarkRead={vi.fn()}
             />
         );
-        const iconWrapper = container.querySelector('.bg-blue-50');
+        const iconWrapper = container.querySelector('.bg-blue-100');
         expect(iconWrapper).not.toBeNull();
     });
 
@@ -158,7 +158,7 @@ describe('NotificationItem (M6 Day 16)', () => {
                 onMarkRead={vi.fn()}
             />
         );
-        const iconWrapper = container.querySelector('.bg-red-50');
+        const iconWrapper = container.querySelector('.bg-red-100');
         expect(iconWrapper).not.toBeNull();
     });
 
@@ -169,7 +169,7 @@ describe('NotificationItem (M6 Day 16)', () => {
                 onMarkRead={vi.fn()}
             />
         );
-        const iconWrapper = container.querySelector('.bg-emerald-50');
+        const iconWrapper = container.querySelector('.bg-green-100');
         expect(iconWrapper).not.toBeNull();
     });
 
@@ -180,7 +180,7 @@ describe('NotificationItem (M6 Day 16)', () => {
                 onMarkRead={vi.fn()}
             />
         );
-        const iconWrapper = container.querySelector('.bg-gray-50');
+        const iconWrapper = container.querySelector('.bg-gray-100');
         expect(iconWrapper).not.toBeNull();
     });
 

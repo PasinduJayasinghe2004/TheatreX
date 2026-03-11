@@ -66,9 +66,26 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
         }
     }, []);
 
-    // Start / stop the interval
+    // Manual refresh (resets loading state)
+    const refresh = useCallback(() => {
+        executeFetch(true);
+    }, [executeFetch]);
+
+    // Pause / resume helpers
+    const [paused, setPaused] = useState(false);
+
+    const pause = useCallback(() => {
+        setPaused(true);
+    }, []);
+
+    const resume = useCallback(() => {
+        setPaused(false);
+        executeFetch(false);
+    }, [executeFetch]);
+
+    // Single unified polling interval effect
     useEffect(() => {
-        if (!enabled) {
+        if (!enabled || paused) {
             if (timerRef.current) {
                 clearInterval(timerRef.current);
                 timerRef.current = null;
@@ -76,7 +93,6 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
             return;
         }
 
-        // Fetch immediately if requested
         if (immediate) {
             executeFetch(true);
         }
@@ -91,47 +107,7 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
                 timerRef.current = null;
             }
         };
-    }, [enabled, interval, immediate, executeFetch]);
-
-    // Manual refresh (resets loading state)
-    const refresh = useCallback(() => {
-        executeFetch(true);
-    }, [executeFetch]);
-
-    // Pause / resume helpers (swap `enabled` from outside or use these)
-    const [paused, setPaused] = useState(false);
-
-    const pause = useCallback(() => {
-        setPaused(true);
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-        }
-    }, []);
-
-    const resume = useCallback(() => {
-        setPaused(false);
-    }, []);
-
-    // Restart interval when un-paused
-    useEffect(() => {
-        if (paused || !enabled) return;
-
-        // Re-fetch once to get fresh data, then set interval
-        executeFetch(false);
-
-        timerRef.current = setInterval(() => {
-            executeFetch(false);
-        }, interval);
-
-        return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-                timerRef.current = null;
-            }
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [paused]);
+    }, [enabled, paused, interval, immediate, executeFetch]);
 
     return { data, loading, error, lastPolledAt, refresh, pause, resume, paused };
 };

@@ -1,0 +1,265 @@
+(node:23792) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23792) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Skipping test: No token obtained. Ensure test user exists.".
+
+    [0m [90m 39 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 40 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 41 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Ensure test user exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 42 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 43 |[39m             }
+     [90m 44 |[39m[0m
+
+      at console.warn (node_modules/@jest/console/build/BufferedConsole.js:191:10)
+      at Object.<anonymous> (tests/day18_m5_theatre_utilization.test.js:41:25)
+
+FAIL tests/day18_m5_theatre_utilization.test.js (30.804 s)
+  ● Console
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+  ● Analytics API - Theatre Utilization (M5 Day 18) › GET /api/analytics/theatre-utilization › should return 200 and available/active theatres with utilization data
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 36 |[39m
+     [90m 37 |[39m     describe([32m'GET /api/analytics/theatre-utilization'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 38 |[39m         it([32m'should return 200 and available/active theatres with utilization data'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 39 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 40 |[39m             [36mif[39m ([33m![39mtoken) {
+     [90m 41 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Ensure test user exists.'[39m)[33m;[39m[0m
+
+      at tests/day18_m5_theatre_utilization.test.js:38:9
+      at tests/day18_m5_theatre_utilization.test.js:37:5
+      at tests/day18_m5_theatre_utilization.test.js:28:1
+
+(node:23792) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+FAIL tests/day18_m4_staff_analytics.test.js (120.403 s)
+  ● Console
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+    console.warn
+      Skipping test: No token obtained. Check if test user exists.
+
+    [0m [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 45 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Check if test user exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 46 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 47 |[39m             }
+     [90m 48 |[39m[0m
+
+      at Object.<anonymous> (tests/day18_m4_staff_analytics.test.js:45:25)
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › should return 200 and staff counts for authenticated user
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 40 |[39m     describe([32m'GET /api/analytics/staff-counts'[39m[33m,[39m () [33m=>[39m {
+     [90m 41 |[39m
+    [31m[1m>[22m[39m[90m 42 |[39m         it([32m'should return 200 and staff counts for authenticated user'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) {
+     [90m 45 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Check if test user exists.'[39m)[33m;[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:42:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › counts object should contain all staff categories
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 60 |[39m         })[33m;[39m
+     [90m 61 |[39m
+    [31m[1m>[22m[39m[90m 62 |[39m         it([32m'counts object should contain all staff categories'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 63 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 64 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 65 |[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:62:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › total should match the sum of individual counts
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 80 |[39m         })[33m;[39m
+     [90m 81 |[39m
+    [31m[1m>[22m[39m[90m 82 |[39m         it([32m'total should match the sum of individual counts'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 83 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 84 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 85 |[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:82:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › breakdown should have correct structure for charts
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 93 |[39m         })[33m;[39m
+     [90m 94 |[39m
+    [31m[1m>[22m[39m[90m 95 |[39m         it([32m'breakdown should have correct structure for charts'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 96 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 97 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 98 |[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:95:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+(node:23792) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.

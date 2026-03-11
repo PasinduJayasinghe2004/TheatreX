@@ -91,7 +91,7 @@ const Contact = () => {
                             <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
                                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✓</div>
                                 <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#111827', marginBottom: '0.5rem' }}>Message Sent!</h3>
-                                <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>Thank you for reaching out. We'll get back to you shortly.</p>
+                                <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>Thank you for reaching out. We&apos;ll get back to you shortly.</p>
                                 <button className="btn btn-primary" onClick={() => setSubmitted(false)} style={{ padding: '0.75rem 1.5rem' }}>Send Another</button>
                             </div>
                         ) : (

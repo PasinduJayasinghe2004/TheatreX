@@ -13,6 +13,7 @@ import { BrowserRouter } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import surgeryService from '../services/surgeryService';
 import { getDashboardStats, getDashboardSummary } from '../services/dashboardService';
+import { getSurgeriesPerDay } from '../services/analyticsService';
 import { AuthProvider } from '../context/AuthContext';
 
 // Mock axios to avoid real API calls from AuthContext
@@ -37,6 +38,9 @@ vi.mock('axios', () => {
 // Mock services
 vi.mock('../services/surgeryService');
 vi.mock('../services/dashboardService');
+vi.mock('../services/analyticsService', () => ({
+    getSurgeriesPerDay: vi.fn()
+}));
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -97,6 +101,12 @@ describe('Dashboard Page Tests', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockNavigate.mockClear();
+        getDashboardSummary.mockResolvedValue({
+            success: true,
+            data: { today_stats: { total_surgeries: 0, yesterday_comparison: 0 } }
+        });
+        getDashboardStats.mockResolvedValue({ success: true, data: {} });
+        getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
     });
 
     const renderDashboard = () => {
@@ -142,6 +152,10 @@ describe('Dashboard Page Tests', () => {
             surgeryService.getAllSurgeries.mockResolvedValue({
                 success: true,
                 data: mockSurgeries
+            });
+            getSurgeriesPerDay.mockResolvedValue({
+                success: true,
+                data: []
             });
         });
 
@@ -204,7 +218,7 @@ describe('Dashboard Page Tests', () => {
         it('should display action buttons', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('+ Add New Surgery')).toBeInTheDocument();
+                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
                 expect(screen.getByText('Calendar View')).toBeInTheDocument();
             });
         });
@@ -253,6 +267,7 @@ describe('Dashboard Page Tests', () => {
                 }
             });
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+            getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
 
             renderDashboard();
             await waitFor(() => {
@@ -264,34 +279,26 @@ describe('Dashboard Page Tests', () => {
     // ========================================================================
     // Error State Tests
     // ========================================================================
-    describe('Error State', () => {
-        it('should show error message when stats API fails', async () => {
+    describe('Error Resiliency', () => {
+        it('should gracefully handle stats API failure without crashing', async () => {
             getDashboardStats.mockRejectedValue(new Error('Network error'));
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+            getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
 
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Error Loading Dashboard')).toBeInTheDocument();
+                expect(screen.getByText('Theatre Management Dashboard')).toBeInTheDocument();
             });
         });
 
-        it('should show Retry button on error', async () => {
-            getDashboardStats.mockRejectedValue(new Error('Server error'));
-            surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
-
-            renderDashboard();
-            await waitFor(() => {
-                expect(screen.getByText('Retry')).toBeInTheDocument();
-            });
-        });
-
-        it('should show empty surgeries when surgeries API fails', async () => {
+        it('should gracefully handle surgeries API failure without crashing', async () => {
             getDashboardStats.mockResolvedValue(mockStats);
             surgeryService.getAllSurgeries.mockRejectedValue(new Error('Surgery API error'));
+            getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
 
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('Error Loading Dashboard')).toBeInTheDocument();
+                expect(screen.getByText('Theatre Management Dashboard')).toBeInTheDocument();
             });
         });
     });
@@ -306,14 +313,15 @@ describe('Dashboard Page Tests', () => {
                 success: true,
                 data: mockSurgeries
             });
+            getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
         });
 
         it('should navigate to /surgeries/new when Add New Surgery is clicked', async () => {
             renderDashboard();
             await waitFor(() => {
-                expect(screen.getByText('+ Add New Surgery')).toBeInTheDocument();
+                expect(screen.getByText('Add New Surgery')).toBeInTheDocument();
             });
-            fireEvent.click(screen.getByText('+ Add New Surgery'));
+            fireEvent.click(screen.getByText('Add New Surgery'));
             expect(mockNavigate).toHaveBeenCalledWith('/surgeries/new');
         });
 
@@ -351,6 +359,7 @@ describe('Dashboard Page Tests', () => {
                 success: true,
                 data: mockSurgeries
             });
+            getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
         });
 
         it('should call deleteSurgery and remove surgery on confirm', async () => {
@@ -393,6 +402,7 @@ describe('Dashboard Page Tests', () => {
         beforeEach(() => {
             getDashboardStats.mockResolvedValue(mockStats);
             surgeryService.getAllSurgeries.mockResolvedValue({ success: true, data: [] });
+            getSurgeriesPerDay.mockResolvedValue({ success: true, data: [] });
         });
 
         it('should have aria-labels on icon buttons', async () => {

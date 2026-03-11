@@ -637,8 +637,8 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('surgeries')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Today's Surgeries"
-                                    value={summary?.today_stats?.total_surgeries ?? 12}
-                                    comparison={summary?.today_stats?.yesterday_comparison ?? 2}
+                                    value={summary?.today_stats?.total_surgeries ?? '--'}
+                                    comparison={summary?.today_stats?.yesterday_comparison ?? null}
                                     colour="bg-blue-50"
                                     icon={
                                         <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -652,7 +652,7 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('staff')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Staff on Duty"
-                                    value={summary?.today_stats?.staff_on_duty?.total ?? 24}
+                                    value={summary?.today_stats?.staff_on_duty?.total ?? '--'}
                                     subtitle="6 surgeons, 18 nurses"
                                     colour="bg-indigo-50"
                                     icon={
@@ -667,7 +667,7 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('duration')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Avg Duration"
-                                    value={stats?.avgDuration || 125}
+                                    value={stats?.avgDuration ?? '--'}
                                     subtitle="minutes per surgery"
                                     colour="bg-amber-50"
                                     icon={

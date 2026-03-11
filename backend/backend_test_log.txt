@@ -1,0 +1,1013 @@
+
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js day18
+
+(node:12836) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30808) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29148) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12836) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(node:26724) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30100) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30808) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(node:29148) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(node:26724) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(node:30100) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+FAIL tests/day18_m5_theatre_utilization.test.js (11.123 s)
+  ● Analytics API - Theatre Utilization (M5 Day 18) › GET /api/analytics/theatre-utilization › should return 200 and available/active theatres with utilization data
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 36 |[39m
+     [90m 37 |[39m     describe([32m'GET /api/analytics/theatre-utilization'[39m[33m,[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 38 |[39m         it([32m'should return 200 and available/active theatres with utilization data'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 39 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 40 |[39m             [36mif[39m ([33m![39mtoken) {
+     [90m 41 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Ensure test user exists.'[39m)[33m;[39m[0m
+
+      at tests/day18_m5_theatre_utilization.test.js:38:9
+      at tests/day18_m5_theatre_utilization.test.js:37:5
+      at tests/day18_m5_theatre_utilization.test.js:28:1
+
+
+  ● Test suite failed to run
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 65 |[39m     })[33m;[39m
+     [90m 66 |[39m
+    [31m[1m>[22m[39m[90m 67 |[39m     afterAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m     [31m[1m^[22m[39m
+     [90m 68 |[39m         [36mawait[39m pool[33m.[39mend()[33m;[39m
+     [90m 69 |[39m     })[33m;[39m
+     [90m 70 |[39m })[33m;[39m[0m
+
+      at tests/day18_m5_theatre_utilization.test.js:67:5
+      at tests/day18_m5_theatre_utilization.test.js:28:1
+
+FAIL tests/day18_m2_status_counts.test.js (21.144 s)
+  ● Surgery Status Counts Analytics - M2 Day 18 › GET /api/analytics/surgery-status-counts › should return 200 with status counts data for authenticated user
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 40 |[39m     describe([32m'GET /api/analytics/surgery-status-counts'[39m[33m,[39m () [33m=>[39m {
+     [90m 41 |[39m
+    [31m[1m>[22m[39m[90m 42 |[39m         it([32m'should return 200 with status counts data for authenticated user'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 45 |[39m[0m
+
+      at tests/day18_m2_status_counts.test.js:42:9
+      at tests/day18_m2_status_counts.test.js:40:5
+      at tests/day18_m2_status_counts.test.js:28:1
+
+  ● Surgery Status Counts Analytics - M2 Day 18 › GET /api/analytics/surgery-status-counts › response should contain counts, total, and breakdown fields
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 53 |[39m         })[33m;[39m
+     [90m 54 |[39m
+    [31m[1m>[22m[39m[90m 55 |[39m         it([32m'response should contain counts, total, and breakdown fields'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 56 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 57 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 58 |[39m[0m
+
+      at tests/day18_m2_status_counts.test.js:55:9
+      at tests/day18_m2_status_counts.test.js:40:5
+      at tests/day18_m2_status_counts.test.js:28:1
+
+  ● Surgery Status Counts Analytics - M2 Day 18 › GET /api/analytics/surgery-status-counts › counts should have scheduled, in_progress, completed, and cancelled
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 70 |[39m         })[33m;[39m
+     [90m 71 |[39m
+    [31m[1m>[22m[39m[90m 72 |[39m         it([32m'counts should have scheduled, in_progress, completed, and cancelled'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 73 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 74 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 75 |[39m[0m
+
+      at tests/day18_m2_status_counts.test.js:72:9
+      at tests/day18_m2_status_counts.test.js:40:5
+      at tests/day18_m2_status_counts.test.js:28:1
+
+
+  ● Test suite failed to run
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 87 |[39m     })[33m;[39m
+     [90m 88 |[39m
+    [31m[1m>[22m[39m[90m 89 |[39m     afterAll([36masync[39m () [33m=>[39m {
+     [90m    |[39m     [31m[1m^[22m[39m
+     [90m 90 |[39m         [36mawait[39m pool[33m.[39mend()[33m;[39m
+     [90m 91 |[39m     })[33m;[39m
+     [90m 92 |[39m })[33m;[39m[0m
+
+      at tests/day18_m2_status_counts.test.js:89:5
+      at tests/day18_m2_status_counts.test.js:28:1
+
+FAIL tests/day18_m4_staff_analytics.test.js (26.111 s)
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › should return 200 and staff counts for authenticated user
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 40 |[39m     describe([32m'GET /api/analytics/staff-counts'[39m[33m,[39m () [33m=>[39m {
+     [90m 41 |[39m
+    [31m[1m>[22m[39m[90m 42 |[39m         it([32m'should return 200 and staff counts for authenticated user'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) {
+     [90m 45 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Check if test user exists.'[39m)[33m;[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:42:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › counts object should contain all staff categories
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 60 |[39m         })[33m;[39m
+     [90m 61 |[39m
+    [31m[1m>[22m[39m[90m 62 |[39m         it([32m'counts object should contain all staff categories'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 63 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 64 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 65 |[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:62:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › total should match the sum of individual counts
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 80 |[39m         })[33m;[39m
+     [90m 81 |[39m
+    [31m[1m>[22m[39m[90m 82 |[39m         it([32m'total should match the sum of individual counts'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 83 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 84 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 85 |[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:82:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+  ● Staff Analytics API - M4 Day 18 › GET /api/analytics/staff-counts › breakdown should have correct structure for charts
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 93 |[39m         })[33m;[39m
+     [90m 94 |[39m
+    [31m[1m>[22m[39m[90m 95 |[39m         it([32m'breakdown should have correct structure for charts'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 96 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 97 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 98 |[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:95:9
+      at tests/day18_m4_staff_analytics.test.js:40:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+
+  ● Test suite failed to run
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 117 |[39m     })[33m;[39m
+     [90m 118 |[39m
+    [31m[1m>[22m[39m[90m 119 |[39m     afterAll([36masync[39m () [33m=>[39m {
+     [90m     |[39m     [31m[1m^[22m[39m
+     [90m 120 |[39m         [36mawait[39m pool[33m.[39mend()[33m;[39m
+     [90m 121 |[39m     })[33m;[39m
+     [90m 122 |[39m })[33m;[39m[0m
+
+      at tests/day18_m4_staff_analytics.test.js:119:5
+      at tests/day18_m4_staff_analytics.test.js:28:1
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Skipping test: No token obtained. Check if test user exists.".
+
+    [0m [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 45 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Check if test user exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 46 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 47 |[39m             }
+     [90m 48 |[39m[0m
+
+      at console.warn (node_modules/@jest/console/build/BufferedConsole.js:191:10)
+      at Object.<anonymous> (tests/day18_m4_staff_analytics.test.js:45:25)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Skipping test: No token obtained. Ensure test user exists.".
+
+    [0m [90m 39 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 40 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 41 |[39m                 console[33m.[39mwarn([32m'Skipping test: No token obtained. Ensure test user exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 42 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 43 |[39m             }
+     [90m 44 |[39m[0m
+
+      at console.warn (node_modules/@jest/console/build/BufferedConsole.js:191:10)
+      at Object.<anonymous> (tests/day18_m5_theatre_utilization.test.js:41:25)
+
+FAIL tests/day18_m1_analytics.test.js (31.14 s)
+  ● Console
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+  ● Analytics API - M1 Day 18 › GET /api/analytics/surgeries-per-day › should return 200 and an array of 7 day entries for authenticated user
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 40 |[39m     describe([32m'GET /api/analytics/surgeries-per-day'[39m[33m,[39m () [33m=>[39m {
+     [90m 41 |[39m
+    [31m[1m>[22m[39m[90m 42 |[39m         it([32m'should return 200 and an array of 7 day entries for authenticated user'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 45 |[39m[0m
+
+      at tests/day18_m1_analytics.test.js:42:9
+      at tests/day18_m1_analytics.test.js:40:5
+      at tests/day18_m1_analytics.test.js:28:1
+
+  ● Analytics API - M1 Day 18 › GET /api/analytics/surgeries-per-day › each entry should have date, day, and count fields
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 54 |[39m         })[33m;[39m
+     [90m 55 |[39m
+    [31m[1m>[22m[39m[90m 56 |[39m         it([32m'each entry should have date, day, and count fields'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 57 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 58 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 59 |[39m[0m
+
+      at tests/day18_m1_analytics.test.js:56:9
+      at tests/day18_m1_analytics.test.js:40:5
+      at tests/day18_m1_analytics.test.js:28:1
+
+  ● Analytics API - M1 Day 18 › GET /api/analytics/surgeries-per-day › count values should be non-negative integers
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 72 |[39m         })[33m;[39m
+     [90m 73 |[39m
+    [31m[1m>[22m[39m[90m 74 |[39m         it([32m'count values should be non-negative integers'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 75 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 76 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 77 |[39m[0m
+
+      at tests/day18_m1_analytics.test.js:74:9
+      at tests/day18_m1_analytics.test.js:40:5
+      at tests/day18_m1_analytics.test.js:28:1
+
+  ● Analytics API - M1 Day 18 › GET /api/analytics/surgeries-per-day › day field should be a 3-letter day abbreviation
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 87 |[39m         })[33m;[39m
+     [90m 88 |[39m
+    [31m[1m>[22m[39m[90m 89 |[39m         it([32m'day field should be a 3-letter day abbreviation'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 90 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 91 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 92 |[39m[0m
+
+      at tests/day18_m1_analytics.test.js:89:9
+      at tests/day18_m1_analytics.test.js:40:5
+      at tests/day18_m1_analytics.test.js:28:1
+
+  ● Analytics API - M1 Day 18 › GET /api/analytics/surgeries-per-day › dates should be in ascending order
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 103 |[39m         })[33m;[39m
+     [90m 104 |[39m
+    [31m[1m>[22m[39m[90m 105 |[39m         it([32m'dates should be in ascending order'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 106 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 107 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 108 |[39m[0m
+
+      at tests/day18_m1_analytics.test.js:105:9
+      at tests/day18_m1_analytics.test.js:40:5
+      at tests/day18_m1_analytics.test.js:28:1
+
+
+  ● Test suite failed to run
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 119 |[39m     })[33m;[39m
+     [90m 120 |[39m
+    [31m[1m>[22m[39m[90m 121 |[39m     afterAll([36masync[39m () [33m=>[39m {
+     [90m     |[39m     [31m[1m^[22m[39m
+     [90m 122 |[39m         [36mawait[39m pool[33m.[39mend()[33m;[39m
+     [90m 123 |[39m     })[33m;[39m
+     [90m 124 |[39m })[33m;[39m[0m
+
+      at tests/day18_m1_analytics.test.js:121:5
+      at tests/day18_m1_analytics.test.js:28:1
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+
+  ●  Cannot log after tests are done. Did you forget to wait for something async in your test?
+    Attempted to log "Login error: Error: Connection terminated due to connection timeout
+        at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+      [cause]: Error: Connection terminated unexpectedly
+          at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+          at Object.onceWrapper (node:events:622:28)
+          at Connection.emit (node:events:508:28)
+          at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+          at Socket.emit (node:events:508:28)
+          at TCP.<anonymous> (node:net:346:12)
+    }".
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at node_modules/pg-pool/index.js:45:11
+      at login (controllers/authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (node_modules/pg/lib/client.js:177:73)
+      at Socket.<anonymous> (node_modules/pg/lib/connection.js:61:12)
+      }".
+      at console.error (node_modules/@jest/console/build/BufferedConsole.js:127:10)
+      at login (controllers/authController.js:252:17)
+
+FAIL tests/day18_m3_demographics.test.js (46.175 s)
+  ● Console
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+    console.error
+      Login error: Error: Connection terminated due to connection timeout
+          at C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at login (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\controllers\authController.js:183:33) {
+        [cause]: Error: Connection terminated unexpectedly
+            at Connection.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+            at Object.onceWrapper (node:events:622:28)
+            at Connection.emit (node:events:508:28)
+            at Socket.<anonymous> (C:\Users\Dinil Dilmith\Desktop\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+            at Socket.emit (node:events:508:28)
+            at TCP.<anonymous> (node:net:346:12)
+      }
+
+    [0m [90m 250 |[39m
+     [90m 251 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 252 |[39m         console[33m.[39merror([32m'Login error:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 253 |[39m         res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 254 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 255 |[39m             message[33m:[39m [32m'Error during login'[39m[33m,[39m[0m
+
+      at login (controllers/authController.js:252:17)
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › should return 200 with demographics data for authenticated user
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 40 |[39m     describe([32m'GET /api/analytics/patient-demographics'[39m[33m,[39m () [33m=>[39m {
+     [90m 41 |[39m
+    [31m[1m>[22m[39m[90m 42 |[39m         it([32m'should return 200 with demographics data for authenticated user'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 43 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 44 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 45 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:42:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › response should contain total, gender, bloodType, and ageGroups fields
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 53 |[39m         })[33m;[39m
+     [90m 54 |[39m
+    [31m[1m>[22m[39m[90m 55 |[39m         it([32m'response should contain total, gender, bloodType, and ageGroups fields'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 56 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 57 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 58 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:55:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › gender array should have valid entries with gender, count, and percentage
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 71 |[39m         })[33m;[39m
+     [90m 72 |[39m
+    [31m[1m>[22m[39m[90m 73 |[39m         it([32m'gender array should have valid entries with gender, count, and percentage'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 74 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 75 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 76 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:73:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › bloodType array should have valid entries with bloodType, count, and percentage
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 93 |[39m         })[33m;[39m
+     [90m 94 |[39m
+    [31m[1m>[22m[39m[90m 95 |[39m         it([32m'bloodType array should have valid entries with bloodType, count, and percentage'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m    |[39m         [31m[1m^[22m[39m
+     [90m 96 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 97 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 98 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:95:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › ageGroups array should have valid entries with ageGroup, count, and percentage
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 112 |[39m         })[33m;[39m
+     [90m 113 |[39m
+    [31m[1m>[22m[39m[90m 114 |[39m         it([32m'ageGroups array should have valid entries with ageGroup, count, and percentage'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 115 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 116 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 117 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:114:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › percentages within gender should sum close to 100 when patients exist
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 132 |[39m         })[33m;[39m
+     [90m 133 |[39m
+    [31m[1m>[22m[39m[90m 134 |[39m         it([32m'percentages within gender should sum close to 100 when patients exist'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 135 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 136 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 137 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:134:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › gender counts should sum to total patients
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 151 |[39m         })[33m;[39m
+     [90m 152 |[39m
+    [31m[1m>[22m[39m[90m 153 |[39m         it([32m'gender counts should sum to total patients'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 154 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 155 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 156 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:153:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+  ● Patient Demographics Analytics - M3 Day 18 › GET /api/analytics/patient-demographics › should be accessible by nurse role
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 166 |[39m         })[33m;[39m
+     [90m 167 |[39m
+    [31m[1m>[22m[39m[90m 168 |[39m         it([32m'should be accessible by nurse role'[39m[33m,[39m [36masync[39m () [33m=>[39m {
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 169 |[39m             [36mconst[39m token [33m=[39m [36mawait[39m getToken([32m'nurse'[39m)[33m;[39m
+     [90m 170 |[39m             [36mif[39m ([33m![39mtoken) [36mreturn[39m[33m;[39m
+     [90m 171 |[39m[0m
+
+      at tests/day18_m3_demographics.test.js:168:9
+      at tests/day18_m3_demographics.test.js:40:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+
+  ● Test suite failed to run
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+    [0m [90m 179 |[39m     })[33m;[39m
+     [90m 180 |[39m
+    [31m[1m>[22m[39m[90m 181 |[39m     afterAll([36masync[39m () [33m=>[39m {
+     [90m     |[39m     [31m[1m^[22m[39m
+     [90m 182 |[39m         [36mawait[39m pool[33m.[39mend()[33m;[39m
+     [90m 183 |[39m     })[33m;[39m
+     [90m 184 |[39m })[33m;[39m[0m
+
+      at tests/day18_m3_demographics.test.js:181:5
+      at tests/day18_m3_demographics.test.js:28:1
+
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+Test Suites: 5 failed, 5 total
+Tests:       21 failed, 5 passed, 26 total
+Snapshots:   0 total
+Time:        46.948 s, estimated 47 s
+Ran all test suites matching /day18/i.
