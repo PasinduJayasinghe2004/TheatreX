@@ -57,7 +57,7 @@ const AnalyticsPage = () => {
     const [utilizationData, setUtilizationData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [chartType, setChartType] = useState('area'); // 'area' | 'bar' | 'line'
+    const [chartType, setChartType] = useState('line'); // 'area' | 'bar' | 'line'
 
     // Status color mapping
     const STATUS_CONFIG = {

@@ -241,24 +241,29 @@ export const getPatientDemographics = async (req, res) => {
 // ============================================================================
 export const getStaffCountsByRole = async (req, res) => {
     try {
-        const surgeonsQuery = 'SELECT COUNT(*)::int AS count FROM surgeons WHERE is_active = true';
-        const nursesQuery = 'SELECT COUNT(*)::int AS count FROM nurses WHERE is_active = true';
-        const anaesthetistsQuery = 'SELECT COUNT(*)::int AS count FROM anaesthetists WHERE is_active = true';
-        const techniciansQuery = 'SELECT COUNT(*)::int AS count FROM technicians WHERE is_active = true';
+        const query = `
+            SELECT 'surgeons' as role, COUNT(*)::int AS count FROM surgeons WHERE is_active = true
+            UNION ALL
+            SELECT 'nurses', COUNT(*)::int FROM nurses WHERE is_active = true
+            UNION ALL
+            SELECT 'anaesthetists', COUNT(*)::int FROM anaesthetists WHERE is_active = true
+            UNION ALL
+            SELECT 'technicians', COUNT(*)::int FROM technicians WHERE is_active = true
+        `;
 
-        const [surgeonsResult, nursesResult, anaesthetistsResult, techniciansResult] = await Promise.all([
-            pool.query(surgeonsQuery),
-            pool.query(nursesQuery),
-            pool.query(anaesthetistsQuery),
-            pool.query(techniciansQuery)
-        ]);
+        const result = await pool.query(query);
 
         const counts = {
-            surgeons: surgeonsResult.rows[0].count,
-            nurses: nursesResult.rows[0].count,
-            anaesthetists: anaesthetistsResult.rows[0].count,
-            technicians: techniciansResult.rows[0].count
+            surgeons: 0,
+            nurses: 0,
+            anaesthetists: 0,
+            technicians: 0
         };
+
+        // Map results to the counts object
+        result.rows.forEach(row => {
+            counts[row.role] = row.count;
+        });
 
         const total = Object.values(counts).reduce((sum, c) => sum + c, 0);
 
