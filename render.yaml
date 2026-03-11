@@ -28,7 +28,6 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
-    staticPublishDir: dist
     envVars:
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false
