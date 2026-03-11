@@ -9,6 +9,7 @@
 
 import request from 'supertest';
 import app from '../server.js';
+import { pool } from '../config/database.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -175,5 +176,9 @@ describe('Patient Demographics Analytics - M3 Day 18', () => {
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
         });
+    });
+
+    afterAll(async () => {
+        await pool.end();
     });
 });
