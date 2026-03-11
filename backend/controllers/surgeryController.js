@@ -65,6 +65,7 @@ export const createSurgery = async (req, res) => {
             // Status and Priority
             status = 'scheduled',
             priority = 'routine',
+            progress_percent = 0,
             // Additional
             notes
         } = req.body;
@@ -86,8 +87,9 @@ export const createSurgery = async (req, res) => {
                 anaesthetist_id,
                 status,
                 priority,
+                progress_percent,
                 notes
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
             RETURNING *
         `;
 
@@ -106,6 +108,7 @@ export const createSurgery = async (req, res) => {
             anaesthetist_id || null, // M3 Day 9
             status,
             priority,
+            progress_percent || 0,
             notes || null
         ];
 
