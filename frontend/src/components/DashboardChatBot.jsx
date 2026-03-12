@@ -321,14 +321,20 @@ export default function DashboardChatBot() {
                     }
                     const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
                     if (linkMatch) {
+                        const target = linkMatch[2];
+                        const label = linkMatch[1];
+                        // Only allow safe internal routes: must start with '/' and contain no ':' (protocol indicator)
+                        if (!target.startsWith('/') || target.includes(':')) {
+                            return <span key={pi}>{label}</span>;
+                        }
                         return (
                             <a
                                 key={pi}
-                                href={linkMatch[2]}
-                                onClick={(e) => { e.preventDefault(); navigate(linkMatch[2]); }}
+                                href={target}
+                                onClick={(e) => { e.preventDefault(); navigate(target); }}
                                 className="dcb-link"
                             >
-                                {linkMatch[1]}
+                                {label}
                             </a>
                         );
                     }
@@ -384,7 +390,7 @@ export default function DashboardChatBot() {
                                 <div className="dcb-msg-avatar"><Bot size={13} /></div>
                             )}
                             <div className={`dcb-bubble dcb-bubble-${msg.from}`}>
-                                {renderText(msg.text)}
+                                {msg.from === 'bot' ? renderText(msg.text) : msg.text}
                             </div>
                             {msg.from === 'user' && (
                                 <div className="dcb-msg-avatar dcb-msg-avatar-user"><User size={13} /></div>
