@@ -198,7 +198,7 @@ export default function DashboardChatBot() {
             if (!surgeries.length) return "No surgeries scheduled for today.";
 
             const lines = surgeries.slice(0, 8).map(s => {
-                const time = s.scheduledTime ? new Date(s.scheduledTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD';
+                const time = s.scheduled_time ? s.scheduled_time.slice(0, 5) : 'TBD';
                 const statusIcon = s.status === 'completed' ? '✅' : s.status === 'in-progress' ? '🔵' : '⏳';
                 return `${statusIcon} ${time} — ${s.procedure || s.type || 'Surgery'} (${s.status || 'scheduled'})`;
             });
