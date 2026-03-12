@@ -1,25 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, X, Send, Bot, User, Sparkles, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Sparkles, Mic, MicOff, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import surgeryService from '../services/surgeryService';
-import theatreService from '../services/theatreService';
-import dashboardService from '../services/dashboardService';
+import chatbotService from '../services/chatbotService';
 import './DashboardChatBot.css';
 
-// ─── Intent detection ─────────────────────────────────────
-
-const INTENTS = [
-    { id: 'theatre_status', keywords: ['theatre', 'theater', 'room', 'status', 'free', 'available', 'in use', 'occupied', 'live'] },
-    { id: 'surgery_list', keywords: ['surgery', 'surgeries', 'today', 'scheduled', 'upcoming', 'procedure', 'list'] },
-    { id: 'stats', keywords: ['stats', 'statistics', 'dashboard', 'summary', 'overview', 'numbers', 'how many'] },
-    { id: 'surgeon_avail', keywords: ['surgeon', 'doctor', 'available', 'who', 'surgeon available'] },
-    { id: 'navigate', keywords: ['go to', 'open', 'show me', 'navigate', 'take me', 'page'] },
-    { id: 'schedule', keywords: ['schedule', 'book', 'create surgery', 'new surgery', 'emergency'] },
-    { id: 'help', keywords: ['help', 'what can you', 'commands', 'how to', 'guide'] },
-    { id: 'greet', keywords: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'] },
-    { id: 'thanks', keywords: ['thank', 'thanks', 'bye', 'goodbye', 'cheers'] },
-];
+// ─── Navigation detection (kept client-side for instant nav) ──
 
 const NAV_ROUTES = {
     'dashboard': '/dashboard',
@@ -41,25 +27,10 @@ const NAV_ROUTES = {
     'new surgery': '/surgeries/new',
 };
 
-function detectIntent(input) {
-    const lower = input.toLowerCase().trim();
-    let best = null;
-    let bestScore = 0;
-    for (const intent of INTENTS) {
-        let score = 0;
-        for (const kw of intent.keywords) {
-            if (lower.includes(kw)) score += kw.split(' ').length;
-        }
-        if (score > bestScore) {
-            bestScore = score;
-            best = intent.id;
-        }
-    }
-    return best || 'unknown';
-}
-
 function detectNavTarget(input) {
     const lower = input.toLowerCase();
+    const navKeywords = ['go to', 'open', 'navigate', 'take me'];
+    if (!navKeywords.some(kw => lower.includes(kw))) return null;
     for (const [key, route] of Object.entries(NAV_ROUTES)) {
         if (lower.includes(key)) return { name: key, route };
     }
@@ -72,7 +43,7 @@ const QUICK_ACTIONS = [
     { label: 'Theatre status', msg: 'What is the current theatre status?' },
     { label: "Today's surgeries", msg: "Show today's surgeries" },
     { label: 'Dashboard stats', msg: 'Show dashboard stats' },
-    { label: 'Help', msg: 'What can you do?' },
+    { label: 'Help', msg: 'What can you help me with?' },
 ];
 
 // ─── Component ────────────────────────────────────────────
@@ -85,6 +56,7 @@ export default function DashboardChatBot() {
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isListening, setIsListening] = useState(false);
+    const [historyLoaded, setHistoryLoaded] = useState(false);
     const [voiceSupported] = useState(
         () => !!(window.SpeechRecognition || window.webkitSpeechRecognition)
     );
@@ -93,13 +65,29 @@ export default function DashboardChatBot() {
     const recognitionRef = useRef(null);
     const sendMessageRef = useRef(null);
 
-    // Initial greeting
+    // Load conversation history on first open
     useEffect(() => {
-        const name = user?.firstName || 'there';
-        setMessages([
-            { from: 'bot', text: `Hi ${name}! 👋 I'm your TheatreX assistant. I can check theatre status, look up surgeries, show stats, and help you navigate.${voiceSupported ? ' You can also tap the 🎤 mic to use voice commands!' : ''} What do you need?` }
-        ]);
-    }, [user?.firstName, voiceSupported]);
+        if (!isOpen || historyLoaded) return;
+        (async () => {
+            try {
+                const data = await chatbotService.getHistory(30);
+                if (data.success && data.messages?.length) {
+                    setMessages(data.messages);
+                } else {
+                    const name = user?.firstName || 'there';
+                    setMessages([
+                        { from: 'bot', text: `Hi ${name}! 👋 I'm your **TheatreX AI assistant** powered by Gemini. I can answer questions about theatres, surgeries, scheduling, analytics, and more. Ask me anything!${voiceSupported ? ' You can also tap the 🎤 mic to use voice.' : ''}` }
+                    ]);
+                }
+            } catch {
+                const name = user?.firstName || 'there';
+                setMessages([
+                    { from: 'bot', text: `Hi ${name}! 👋 I'm your TheatreX AI assistant. Ask me anything about theatres, surgeries, or scheduling!` }
+                ]);
+            }
+            setHistoryLoaded(true);
+        })();
+    }, [isOpen, historyLoaded, user?.firstName, voiceSupported]);
 
     // ─── Voice recognition setup ──────────────────────────
 
@@ -164,125 +152,38 @@ export default function DashboardChatBot() {
 
     // ─── Handlers per intent ──────────────────────────────
 
-    const handleTheatreStatus = useCallback(async () => {
-        try {
-            const data = await theatreService.getLiveStatus();
-            const theatres = Array.isArray(data) ? data : data?.theatres || [];
-            if (!theatres.length) return 'No theatre data available right now.';
-
-            const lines = theatres.map(t => {
-                const status = (t.status || 'unknown').replace(/-/g, ' ');
-                const icon = status.includes('in use') || status.includes('in-use') ? '🔴'
-                    : status.includes('available') ? '🟢'
-                    : status.includes('cleaning') ? '🟡'
-                    : '🟠';
-                let extra = '';
-                if (t.currentSurgery?.procedure) extra = ` — ${t.currentSurgery.procedure}`;
-                else if (t.procedure) extra = ` — ${t.procedure}`;
-                return `${icon} **${t.name || `Theatre ${t.id}`}**: ${status}${extra}`;
-            });
-            return `**Live Theatre Status:**\n${lines.join('\n')}`;
-        } catch {
-            return "I couldn't fetch theatre status right now. Try the [Live Status](/live-status) page directly.";
+    // Navigation is still handled client-side for instant response
+    const handleNavigation = useCallback((text) => {
+        const target = detectNavTarget(text);
+        if (target) {
+            setTimeout(() => navigate(target.route), 800);
+            return `Navigating to **${target.name}**... 🚀`;
         }
-    }, []);
+        return null;
+    }, [navigate]);
 
-    const handleSurgeryList = useCallback(async () => {
-        try {
-            const today = new Date().toISOString().split('T')[0];
-            const data = await surgeryService.getAllSurgeries({ date: today });
-            const surgeries = Array.isArray(data) ? data : data?.surgeries || [];
-            if (!surgeries.length) return "No surgeries scheduled for today.";
-
-            const lines = surgeries.slice(0, 8).map(s => {
-                const time = s.scheduledTime ? new Date(s.scheduledTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD';
-                const statusIcon = s.status === 'completed' ? '✅' : s.status === 'in-progress' ? '🔵' : '⏳';
-                return `${statusIcon} ${time} — ${s.procedure || s.type || 'Surgery'} (${s.status || 'scheduled'})`;
-            });
-            const more = surgeries.length > 8 ? `\n...and ${surgeries.length - 8} more` : '';
-            return `**Today's Surgeries (${surgeries.length}):**\n${lines.join('\n')}${more}`;
-        } catch {
-            return "Couldn't load today's surgeries. Check the [Surgeries](/surgeries) page.";
-        }
-    }, []);
-
-    const handleStats = useCallback(async () => {
-        try {
-            const data = await dashboardService.getDashboardStats();
-            const stats = data?.stats || data || {};
-            const lines = [];
-            if (stats.totalSurgeries != null) lines.push(`📋 Total surgeries: **${stats.totalSurgeries}**`);
-            if (stats.todaySurgeries != null) lines.push(`📅 Today: **${stats.todaySurgeries}**`);
-            if (stats.completedToday != null) lines.push(`✅ Completed today: **${stats.completedToday}**`);
-            if (stats.inProgress != null) lines.push(`🔵 In progress: **${stats.inProgress}**`);
-            if (stats.totalTheatres != null) lines.push(`🏥 Theatres: **${stats.totalTheatres}**`);
-            if (stats.availableTheatres != null) lines.push(`🟢 Available theatres: **${stats.availableTheatres}**`);
-            if (stats.staffOnDuty != null) lines.push(`👥 Staff on duty: **${stats.staffOnDuty}**`);
-            if (!lines.length) return "Stats loaded but no data was returned. Check the [Dashboard](/dashboard).";
-            return `**Dashboard Stats:**\n${lines.join('\n')}`;
-        } catch {
-            return "Couldn't fetch dashboard stats. Head to the [Dashboard](/dashboard) for details.";
-        }
-    }, []);
-
-    const handleSurgeonAvail = useCallback(async () => {
-        try {
-            const data = await surgeryService.getSurgeons();
-            const surgeons = Array.isArray(data) ? data : data?.surgeons || [];
-            if (!surgeons.length) return "No surgeon data available.";
-            const avail = surgeons.filter(s => s.isAvailable !== false);
-            return `**Surgeons:** ${surgeons.length} total, **${avail.length}** currently available.\nCheck [Surgeons page](/staff/surgeons) for full details.`;
-        } catch {
-            return "Couldn't fetch surgeon data right now.";
-        }
-    }, []);
-
-    // ─── Process message ─────────────────────────────────
+    // ─── Process message (AI-powered) ─────────────────────
 
     const processMessage = useCallback(async (text) => {
-        const intent = detectIntent(text);
+        // Check for client-side navigation first (instant, no API call)
+        const navResult = handleNavigation(text);
+        if (navResult) return navResult;
 
-        switch (intent) {
-            case 'theatre_status':
-                return await handleTheatreStatus();
-
-            case 'surgery_list':
-                return await handleSurgeryList();
-
-            case 'stats':
-                return await handleStats();
-
-            case 'surgeon_avail':
-                return await handleSurgeonAvail();
-
-            case 'navigate': {
-                const target = detectNavTarget(text);
-                if (target) {
-                    setTimeout(() => navigate(target.route), 800);
-                    return `Navigating to **${target.name}**... 🚀`;
-                }
-                return "Which page would you like? Try: dashboard, surgeries, theatres, calendar, analytics, live status, patients, surgeons, nurses, notifications, profile, or coordinator.";
+        // Send to Gemini via backend
+        try {
+            const data = await chatbotService.sendMessage(text);
+            if (data.success) {
+                return data.reply;
             }
-
-            case 'schedule':
-                setTimeout(() => navigate('/surgeries/new'), 800);
-                return "Opening the **new surgery** form for you... 🚀";
-
-            case 'help':
-                return `Here's what I can do:\n\n🏥 **"Theatre status"** — Live status of all theatres\n📋 **"Today's surgeries"** — List of today's procedures\n📊 **"Dashboard stats"** — Key numbers at a glance\n👨‍⚕️ **"Surgeon availability"** — Who's available\n🧭 **"Go to [page]"** — Navigate anywhere (e.g. "go to calendar")\n📝 **"Schedule surgery"** — Open booking form\n🎤 **Voice commands** — Tap the mic and speak any command\n\nType or speak naturally — I'll figure out what you need!`;
-
-            case 'greet': {
-                const name = user?.firstName || 'there';
-                return `Hello ${name}! 👋 How can I help you today? Type **help** to see what I can do.`;
+            return data.message || "Sorry, I couldn't process that. Please try again.";
+        } catch (err) {
+            const msg = err.response?.data?.message;
+            if (msg?.includes('API_KEY') || msg?.includes('not configured')) {
+                return "⚠️ AI service is not configured yet. Please ask your admin to set the **GEMINI_API_KEY** environment variable.";
             }
-
-            case 'thanks':
-                return "You're welcome! Let me know if you need anything else. 😊";
-
-            default:
-                return "I'm not sure what you mean. Try asking about **theatre status**, **today's surgeries**, **stats**, or type **help** to see all commands.";
+            return "I'm having trouble connecting right now. Please try again in a moment.";
         }
-    }, [handleTheatreStatus, handleSurgeryList, handleStats, handleSurgeonAvail, navigate, user?.firstName]);
+    }, [handleNavigation]);
 
     // ─── Send ─────────────────────────────────────────────
 
@@ -361,16 +262,30 @@ export default function DashboardChatBot() {
                             <Bot size={18} />
                         </div>
                         <div>
-                            <div className="dcb-header-name">TheatreX Assistant</div>
+                            <div className="dcb-header-name">TheatreX AI Assistant</div>
                             <div className="dcb-header-status">
                                 <span className="dcb-status-dot" />
-                                Online — live data
+                                Gemini Flash — AI powered
                             </div>
                         </div>
                     </div>
-                    <button className="dcb-close" onClick={() => { recognitionRef.current?.stop(); setIsListening(false); setIsOpen(false); }} aria-label="Close">
-                        <X size={16} />
-                    </button>
+                    <div className="dcb-header-actions">
+                        <button
+                            className="dcb-clear"
+                            onClick={async () => {
+                                try { await chatbotService.clearHistory(); } catch {}
+                                const name = user?.firstName || 'there';
+                                setMessages([{ from: 'bot', text: `Chat cleared! How can I help you, ${name}?` }]);
+                            }}
+                            aria-label="Clear chat"
+                            title="Clear conversation"
+                        >
+                            <Trash2 size={14} />
+                        </button>
+                        <button className="dcb-close" onClick={() => { recognitionRef.current?.stop(); setIsListening(false); setIsOpen(false); }} aria-label="Close">
+                            <X size={16} />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Messages */}

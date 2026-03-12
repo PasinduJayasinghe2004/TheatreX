@@ -32,6 +32,7 @@ import patientRoutes from './routes/patientRoutes.js'; // M2 - Day 15
 import notificationRoutes from './routes/notificationRoutes.js'; // M5/M6 - Day 16
 import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 13
 import analyticsRoutes from './routes/analyticsRoutes.js'; // M1 - Day 18
+import chatbotRoutes from './routes/chatbotRoutes.js'; // AI Chatbot - Gemini Flash
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
 import clerkWebhooks from './routes/clerkWebhooks.js';
@@ -74,6 +75,7 @@ app.use('/api/patients', patientRoutes); // Patient routes - M2 Day 15
 app.use('/api/notifications', notificationRoutes); // Notification routes - M5/M6 Day 16
 app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 13
 app.use('/api/analytics', analyticsRoutes); // Analytics routes - M1 Day 18
+app.use('/api/chatbot', chatbotRoutes); // AI Chatbot routes - Gemini Flash
 
 // Health check route
 app.get('/api/health', (req, res) => {
