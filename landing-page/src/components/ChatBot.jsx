@@ -92,6 +92,13 @@ export default function ChatBot() {
     const [isTyping, setIsTyping] = useState(false)
     const messagesEndRef = useRef(null)
     const inputRef = useRef(null)
+    const typingTimeoutRef = useRef(null)
+
+    useEffect(() => {
+        return () => {
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+        }
+    }, [])
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -111,10 +118,11 @@ export default function ChatBot() {
 
         // Simulate typing delay
         const delay = 400 + Math.random() * 600
-        setTimeout(() => {
+        typingTimeoutRef.current = setTimeout(() => {
             const answer = findAnswer(text)
             setMessages(prev => [...prev, { from: 'bot', text: answer }])
             setIsTyping(false)
+            typingTimeoutRef.current = null
         }, delay)
     }
 
