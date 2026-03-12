@@ -141,6 +141,28 @@
 .dcb-close:hover {
     background: rgba(255,255,255,0.3);
 }
+.dcb-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dcb-clear {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.dcb-clear:hover {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+}
 
 /* Messages area */
 .dcb-messages {
