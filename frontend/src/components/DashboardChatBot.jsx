@@ -122,9 +122,15 @@ export default function DashboardChatBot() {
         recognition.onstart = () => setIsListening(true);
 
         recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
+            const result = event.results?.[0]?.[0];
+            const transcript = result?.transcript || '';
             if (transcript.trim()) {
-                sendMessageRef.current?.(transcript);
+                setInput(transcript);
+                // Small delay so user sees what was transcribed
+                setTimeout(() => {
+                    setInput('');
+                    sendMessageRef.current?.(transcript);
+                }, 300);
             }
         };
 
@@ -337,7 +343,7 @@ export default function DashboardChatBot() {
             {/* Toggle button */}
             <button
                 className={`dcb-toggle ${isOpen ? 'dcb-toggle-open' : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => { if (isOpen) { recognitionRef.current?.stop(); setIsListening(false); } setIsOpen(!isOpen); }}
                 aria-label={isOpen ? 'Close assistant' : 'Open assistant'}
             >
                 <span className="dcb-toggle-icon">
@@ -362,7 +368,7 @@ export default function DashboardChatBot() {
                             </div>
                         </div>
                     </div>
-                    <button className="dcb-close" onClick={() => setIsOpen(false)} aria-label="Close">
+                    <button className="dcb-close" onClick={() => { recognitionRef.current?.stop(); setIsListening(false); setIsOpen(false); }} aria-label="Close">
                         <X size={16} />
                     </button>
                 </div>
