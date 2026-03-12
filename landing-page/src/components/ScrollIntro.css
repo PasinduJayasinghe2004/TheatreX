@@ -26,14 +26,9 @@
 }
 
 .scroll-intro-image {
-    position: absolute;
-    inset: 0;
     width: 100%;
     height: 100%;
-    background-image: url('/Gemini.png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    object-fit: cover;
     transform-origin: center center;
     transform: scale(1);
     will-change: transform;
@@ -203,26 +198,6 @@
 
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 640px) {
-    .scroll-intro-container {
-        height: 180vh;
-    }
-
-    .scroll-intro-sticky {
-        height: 100vh;
-        height: 100dvh; /* dynamic viewport height – handles mobile address bar */
-    }
-
-    .scroll-intro-image-wrap {
-        position: absolute;
-        inset: 0;
-    }
-
-    .scroll-intro-image {
-        inset: -5%;
-        width: 110%;
-        height: 110%;
-    }
-
     .scroll-intro-tagline {
         letter-spacing: 0.1em;
     }
@@ -230,9 +205,5 @@
     .scroll-intro-eyebrow {
         font-size: 0.7rem;
         letter-spacing: 0.15em;
-    }
-
-    .scroll-intro-content {
-        padding: 1.5rem;
     }
 }

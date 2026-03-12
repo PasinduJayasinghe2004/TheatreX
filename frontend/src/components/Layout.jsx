@@ -2,7 +2,6 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import DashboardChatBot from './DashboardChatBot';
 
 /**
  * Layout Component
@@ -50,9 +49,6 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
                     </div>
                 </main>
             </div>
-
-            {/* Smart Assistant ChatBot */}
-            <DashboardChatBot />
         </div>
     );
 };

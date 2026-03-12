@@ -56,11 +56,11 @@ export default function ScrollIntro() {
             <div ref={stickyRef} className="scroll-intro-sticky">
                 {/* Background image */}
                 <div className="scroll-intro-image-wrap">
-                    <div
+                    <img
                         ref={imageRef}
+                        src="/Gemini.png"
+                        alt="Surgical theatre"
                         className="scroll-intro-image"
-                        role="img"
-                        aria-label="Surgical theatre"
                     />
                 </div>
 
