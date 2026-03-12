@@ -137,7 +137,7 @@ export const sendChatMessage = async (req, res) => {
 
         // Call Gemini
         const model = genAI.getGenerativeModel({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-2.5-flash',
             systemInstruction: systemPrompt,
         });
 
