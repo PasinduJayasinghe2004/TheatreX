@@ -190,7 +190,10 @@ export default function DashboardChatBot() {
     const handleSurgeryList = useCallback(async () => {
         try {
             const today = new Date().toISOString().split('T')[0];
-            const data = await surgeryService.getAllSurgeries({ date: today });
+            const data = await surgeryService.getAllSurgeries({
+                startDate: today,
+                endDate: today,
+            });
             const surgeries = Array.isArray(data) ? data : data?.surgeries || [];
             if (!surgeries.length) return "No surgeries scheduled for today.";
 
