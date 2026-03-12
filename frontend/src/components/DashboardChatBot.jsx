@@ -199,7 +199,7 @@ export default function DashboardChatBot() {
 
             const lines = surgeries.slice(0, 8).map(s => {
                 const time = s.scheduled_time ? s.scheduled_time.slice(0, 5) : 'TBD';
-                const statusIcon = s.status === 'completed' ? '✅' : s.status === 'in-progress' ? '🔵' : '⏳';
+                const statusIcon = s.status === 'completed' ? '✅' : s.status === 'in_progress' ? '🔵' : '⏳';
                 return `${statusIcon} ${time} — ${s.procedure || s.type || 'Surgery'} (${s.status || 'scheduled'})`;
             });
             const more = surgeries.length > 8 ? `\n...and ${surgeries.length - 8} more` : '';
