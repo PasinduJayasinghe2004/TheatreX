@@ -171,11 +171,12 @@ export default function DashboardChatBot() {
             if (!theatres.length) return 'No theatre data available right now.';
 
             const lines = theatres.map(t => {
-                const status = (t.status || 'unknown').replace(/-/g, ' ');
-                const icon = status.includes('in use') || status.includes('in-use') ? '🔴'
+                const status = (t.status || 'unknown').replace(/[-_]/g, ' ');
+                const icon = status.includes('in use') ? '🔴'
                     : status.includes('available') ? '🟢'
                     : status.includes('cleaning') ? '🟡'
-                    : '🟠';
+                    : status.includes('maintenance') ? '🟠'
+                    : '⚪';
                 let extra = '';
                 if (t.currentSurgery?.procedure) extra = ` — ${t.currentSurgery.procedure}`;
                 else if (t.procedure) extra = ` — ${t.procedure}`;
