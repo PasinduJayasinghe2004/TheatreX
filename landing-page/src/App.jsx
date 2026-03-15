@@ -15,6 +15,7 @@ import Footer from './components/Footer'
 import OxygenBubbles from './components/OxygenBubbles'
 import ScrollIntro from './components/ScrollIntro'
 import DemoRequestModal from './components/DemoRequestModal'
+import ChatBot from './components/ChatBot'
 
 function App() {
   const [showDemoModal, setShowDemoModal] = useState(false)
@@ -39,6 +40,7 @@ function App() {
       <Footer />
 
       <DemoRequestModal isOpen={showDemoModal} onClose={() => setShowDemoModal(false)} />
+      <ChatBot />
     </div>
   )
 }

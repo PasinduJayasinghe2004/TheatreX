@@ -7,7 +7,7 @@
 // Provides functions to fetch analytics data from the backend.
 // ============================================================================
 
-import api from './authService';
+import { api } from './authService';
 
 /**
  * Get surgeries per day for the last 7 days
@@ -15,7 +15,7 @@ import api from './authService';
  */
 export const getSurgeriesPerDay = async () => {
     try {
-        const response = await api.get('/api/analytics/surgeries-per-day');
+        const response = await api.get('/analytics/surgeries-per-day');
         return response.data;
     } catch (error) {
         console.error('Error fetching surgeries per day:', error);
@@ -25,11 +25,22 @@ export const getSurgeriesPerDay = async () => {
 
 /**
  * Get surgery counts grouped by status
+ * @param {string} [startDate] Optional start date (YYYY-MM-DD)
+ * @param {string} [endDate] Optional end date (YYYY-MM-DD)
  * @returns {Promise} Surgery status counts data
  */
-export const getSurgeryStatusCounts = async () => {
+export const getSurgeryStatusCounts = async (startDate, endDate) => {
     try {
-        const response = await api.get('/api/analytics/surgery-status-counts');
+        let url = '/analytics/surgery-status-counts';
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
+        
+        const response = await api.get(url);
         return response.data;
     } catch (error) {
         console.error('Error fetching surgery status counts:', error);
@@ -44,7 +55,7 @@ export const getSurgeryStatusCounts = async () => {
  */
 export const getPatientDemographics = async () => {
     try {
-        const response = await api.get('/api/analytics/patient-demographics');
+        const response = await api.get('/analytics/patient-demographics');
         return response.data;
     } catch (error) {
         console.error('Error fetching patient demographics:', error);
@@ -59,7 +70,7 @@ export const getPatientDemographics = async () => {
  */
 export const getStaffCountsByRole = async () => {
     try {
-        const response = await api.get('/api/analytics/staff-counts');
+        const response = await api.get('/analytics/staff-counts');
         return response.data;
     } catch (error) {
         console.error('Error fetching staff counts:', error);
@@ -74,7 +85,7 @@ export const getStaffCountsByRole = async () => {
  */
 export const getTheatreUtilization = async () => {
     try {
-        const response = await api.get('/api/analytics/theatre-utilization');
+        const response = await api.get('/analytics/theatre-utilization');
         return response.data;
     } catch (error) {
         console.error('Error fetching theatre utilization:', error);

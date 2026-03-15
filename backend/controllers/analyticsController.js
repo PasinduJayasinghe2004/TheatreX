@@ -75,16 +75,32 @@ export const getSurgeriesPerDay = async (req, res) => {
 // ============================================================================
 export const getSurgeryStatusCounts = async (req, res) => {
     try {
+        const { startDate, endDate } = req.query;
+        let dateFilter = '';
+        const params = [];
+
+        if (startDate && endDate) {
+            dateFilter = 'WHERE scheduled_date >= $1 AND scheduled_date <= $2';
+            params.push(startDate, endDate);
+        } else if (startDate) {
+            dateFilter = 'WHERE scheduled_date >= $1';
+            params.push(startDate);
+        } else if (endDate) {
+            dateFilter = 'WHERE scheduled_date <= $1';
+            params.push(endDate);
+        }
+
         const query = `
             SELECT
                 status,
                 COUNT(*)::int AS count
             FROM surgeries
+            ${dateFilter}
             GROUP BY status
             ORDER BY count DESC
         `;
 
-        const result = await pool.query(query);
+        const result = await pool.query(query, params);
 
         // Build a complete status map with 0-defaults for missing statuses
         const statusDefaults = {
