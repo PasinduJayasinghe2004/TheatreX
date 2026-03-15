@@ -25,11 +25,22 @@ export const getSurgeriesPerDay = async () => {
 
 /**
  * Get surgery counts grouped by status
+ * @param {string} [startDate] Optional start date (YYYY-MM-DD)
+ * @param {string} [endDate] Optional end date (YYYY-MM-DD)
  * @returns {Promise} Surgery status counts data
  */
-export const getSurgeryStatusCounts = async () => {
+export const getSurgeryStatusCounts = async (startDate, endDate) => {
     try {
-        const response = await api.get('/analytics/surgery-status-counts');
+        let url = '/analytics/surgery-status-counts';
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
+        
+        const response = await api.get(url);
         return response.data;
     } catch (error) {
         console.error('Error fetching surgery status counts:', error);
