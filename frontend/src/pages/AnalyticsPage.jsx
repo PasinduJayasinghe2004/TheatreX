@@ -9,7 +9,7 @@
 // Uses Recharts for data visualization.
 // ============================================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import {
     LineChart, Line, BarChart, Bar,
@@ -71,11 +71,7 @@ const AnalyticsPage = () => {
         cancelled: { color: '#ef4444', bg: 'bg-red-50 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400', border: 'border-red-200 dark:border-red-700', label: 'Cancelled', icon: '❌' },
     };
 
-    useEffect(() => {
-        fetchAnalyticsData();
-    }, []);
-
-    const fetchAnalyticsData = async () => {
+    const fetchAnalyticsData = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -109,9 +105,13 @@ const AnalyticsPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [statusStartDate, statusEndDate]);
 
-    const fetchStatusDataOnly = async () => {
+    useEffect(() => {
+        fetchAnalyticsData();
+    }, [fetchAnalyticsData]);
+
+    const fetchStatusDataOnly = useCallback(async () => {
         try {
             const statusRes = await getSurgeryStatusCounts(statusStartDate, statusEndDate);
             if (statusRes?.success) {
@@ -120,7 +120,7 @@ const AnalyticsPage = () => {
         } catch (err) {
             console.error('Error fetching surgery status counts:', err);
         }
-    };
+    }, [statusStartDate, statusEndDate]);
 
     // Refetch status data when dates change
     useEffect(() => {
@@ -129,7 +129,7 @@ const AnalyticsPage = () => {
         if (!loading) {
             fetchStatusDataOnly();
         }
-    }, [statusStartDate, statusEndDate]);
+    }, [fetchStatusDataOnly, loading]);
 
     // Computed stats from chart data
     const totalSurgeries = chartData.reduce((sum, d) => sum + d.count, 0);
