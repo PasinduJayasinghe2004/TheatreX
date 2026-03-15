@@ -38,7 +38,6 @@ const usePolling = (fetchFn, { interval = 30000, enabled = true, immediate = tru
     // Refs to avoid stale closures
     const fetchFnRef = useRef(fetchFn);
     const inFlightRef = useRef(false);
-    const timerRef = useRef(null);
 
     // Keep the fetchFn ref current
     useEffect(() => {

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, X, Send, Bot, User, Sparkles, Mic, MicOff, Trash2 } from 'lucide-react';
+import { X, Send, Bot, User, Sparkles, Mic, MicOff, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import chatbotService from '../services/chatbotService';
 import './DashboardChatBot.css';
@@ -273,7 +273,7 @@ export default function DashboardChatBot() {
                         <button
                             className="dcb-clear"
                             onClick={async () => {
-                                try { await chatbotService.clearHistory(); } catch {}
+                                try { await chatbotService.clearHistory(); } catch (err) { console.error('Failed to clear history:', err); }
                                 const name = user?.firstName || 'there';
                                 setMessages([{ from: 'bot', text: `Chat cleared! How can I help you, ${name}?` }]);
                             }}
