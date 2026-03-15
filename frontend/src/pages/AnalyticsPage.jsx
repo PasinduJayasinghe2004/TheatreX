@@ -59,6 +59,10 @@ const AnalyticsPage = () => {
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('line'); // 'area' | 'bar' | 'line'
 
+    // Date filters for status breakdown
+    const [statusStartDate, setStatusStartDate] = useState('');
+    const [statusEndDate, setStatusEndDate] = useState('');
+
     // Status color mapping
     const STATUS_CONFIG = {
         scheduled: { color: '#3b82f6', bg: 'bg-blue-50 dark:bg-blue-900/30', text: 'text-blue-600 dark:text-blue-400', border: 'border-blue-200 dark:border-blue-700', label: 'Scheduled', icon: '📅' },
@@ -78,7 +82,7 @@ const AnalyticsPage = () => {
 
             const [perDayRes, statusRes, demoRes, staffRes, utilizationRes] = await Promise.all([
                 getSurgeriesPerDay(),
-                getSurgeryStatusCounts(),
+                getSurgeryStatusCounts(statusStartDate, statusEndDate),
                 getPatientDemographics(),
                 getStaffCountsByRole(),
                 getTheatreUtilization()
@@ -106,6 +110,26 @@ const AnalyticsPage = () => {
             setLoading(false);
         }
     };
+
+    const fetchStatusDataOnly = async () => {
+        try {
+            const statusRes = await getSurgeryStatusCounts(statusStartDate, statusEndDate);
+            if (statusRes?.success) {
+                setStatusData(statusRes.data);
+            }
+        } catch (err) {
+            console.error('Error fetching surgery status counts:', err);
+        }
+    };
+
+    // Refetch status data when dates change
+    useEffect(() => {
+        // Only trigger if we already finished initial load (not loading)
+        // to avoid double fetching on mount
+        if (!loading) {
+            fetchStatusDataOnly();
+        }
+    }, [statusStartDate, statusEndDate]);
 
     // Computed stats from chart data
     const totalSurgeries = chartData.reduce((sum, d) => sum + d.count, 0);
@@ -445,9 +469,38 @@ const AnalyticsPage = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                         {/* Status Cards */}
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
-                            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Surgery Status Breakdown</h2>
-                            <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6 flex flex-col">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Surgery Status Breakdown</h2>
+                                
+                                {/* Date Range Filter */}
+                                <div className="flex items-center gap-2 text-sm bg-gray-50 dark:bg-slate-700/50 p-1.5 rounded-lg border border-gray-200 dark:border-slate-600">
+                                    <input
+                                        type="date"
+                                        value={statusStartDate}
+                                        onChange={(e) => setStatusStartDate(e.target.value)}
+                                        className="bg-transparent border-none text-gray-700 dark:text-slate-300 outline-none text-xs w-[110px]"
+                                    />
+                                    <span className="text-gray-400">to</span>
+                                    <input
+                                        type="date"
+                                        value={statusEndDate}
+                                        onChange={(e) => setStatusEndDate(e.target.value)}
+                                        className="bg-transparent border-none text-gray-700 dark:text-slate-300 outline-none text-xs w-[110px]"
+                                    />
+                                    {(statusStartDate || statusEndDate) && (
+                                        <button 
+                                            onClick={() => { setStatusStartDate(''); setStatusEndDate(''); }}
+                                            className="text-gray-400 hover:text-red-500 p-0.5 rounded"
+                                            title="Clear dates"
+                                        >
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3 flex-1">
                                 {statusData.breakdown.map((item) => {
                                     const config = STATUS_CONFIG[item.status] || STATUS_CONFIG.scheduled;
                                     return (
