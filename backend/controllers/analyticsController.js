@@ -173,20 +173,23 @@ export const getPatientDemographics = async (req, res) => {
             ORDER BY count DESC
         `;
 
-        // Age group distribution
+        // Age group distribution (computed from date_of_birth)
         const ageGroupQuery = `
-            SELECT
-                CASE
-                    WHEN age IS NULL THEN 'Unknown'
-                    WHEN age < 18 THEN '0-17'
-                    WHEN age BETWEEN 18 AND 30 THEN '18-30'
-                    WHEN age BETWEEN 31 AND 45 THEN '31-45'
-                    WHEN age BETWEEN 46 AND 60 THEN '46-60'
-                    ELSE '60+'
-                END AS age_group,
-                COUNT(*)::int AS count
-            FROM patients
-            WHERE is_active = true
+            WITH age_data AS (
+                SELECT
+                    CASE
+                        WHEN date_of_birth IS NULL THEN 'Unknown'
+                        WHEN EXTRACT(YEAR FROM AGE(date_of_birth))::int < 18 THEN '0-17'
+                        WHEN EXTRACT(YEAR FROM AGE(date_of_birth))::int BETWEEN 18 AND 30 THEN '18-30'
+                        WHEN EXTRACT(YEAR FROM AGE(date_of_birth))::int BETWEEN 31 AND 45 THEN '31-45'
+                        WHEN EXTRACT(YEAR FROM AGE(date_of_birth))::int BETWEEN 46 AND 60 THEN '46-60'
+                        ELSE '60+'
+                    END AS age_group
+                FROM patients
+                WHERE is_active = true
+            )
+            SELECT age_group, COUNT(*)::int AS count
+            FROM age_data
             GROUP BY age_group
             ORDER BY
                 CASE age_group
