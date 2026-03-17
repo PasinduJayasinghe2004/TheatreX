@@ -13,7 +13,8 @@ import {
     getSurgeryStatusCounts,
     getPatientDemographics,
     getStaffCountsByRole,
-    getTheatreUtilization
+    getTheatreUtilization,
+    getSurgeryDurationStats
 } from '../controllers/analyticsController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -67,5 +68,15 @@ router.get('/staff-counts', protect, getStaffCountsByRole);
 // Created by: M5 (Inthusha) - Day 18
 // ============================================================================
 router.get('/theatre-utilization', protect, getTheatreUtilization);
+
+// ============================================================================
+// Surgery Duration Stats Route
+// ============================================================================
+// @route   GET /api/analytics/surgery-duration-stats
+// @desc    Get surgery duration distribution (histogram buckets) + summary stats
+// @access  Protected (all authenticated users)
+// Created by: M4 (Oneli) - Day 19
+// ============================================================================
+router.get('/surgery-duration-stats', protect, getSurgeryDurationStats);
 
 export default router;

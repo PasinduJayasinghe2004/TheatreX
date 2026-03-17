@@ -93,10 +93,26 @@ export const getTheatreUtilization = async () => {
     }
 };
 
+/**
+ * Get surgery duration distribution (histogram buckets) and summary stats
+ * @returns {Promise} Surgery duration stats data
+ * Created by: M4 (Oneli) - Day 19
+ */
+export const getSurgeryDurationStats = async () => {
+    try {
+        const response = await api.get('/analytics/surgery-duration-stats');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching surgery duration stats:', error);
+        throw error;
+    }
+};
+
 export default {
     getSurgeriesPerDay,
     getSurgeryStatusCounts,
     getPatientDemographics,
     getStaffCountsByRole,
-    getTheatreUtilization
+    getTheatreUtilization,
+    getSurgeryDurationStats
 };

@@ -23,10 +23,12 @@ import {
     getPatientDemographics,
     getStaffCountsByRole,
     getTheatreUtilization,
-    getSurgeriesPerDay
+    getSurgeriesPerDay,
+    getSurgeryDurationStats
 } from '../services/analyticsService';
 import StaffDistribution from '../components/analytics/StaffDistribution';
 import PatientDemographicsBarChart from '../components/analytics/PatientDemographicsBarChart';
+import DurationHistogram from '../components/analytics/DurationHistogram';
 import TheatreUtilizationStats from '../components/analytics/TheatreUtilizationStats';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -57,6 +59,7 @@ const AnalyticsPage = () => {
     const [demographicsData, setDemographicsData] = useState(null);
     const [staffData, setStaffData] = useState(null);
     const [utilizationData, setUtilizationData] = useState(null);
+    const [durationData, setDurationData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('line'); // 'area' | 'bar' | 'line'
@@ -78,12 +81,13 @@ const AnalyticsPage = () => {
             setLoading(true);
             setError(null);
 
-            const [perDayRes, statusRes, demoRes, staffRes, utilizationRes] = await Promise.all([
+            const [perDayRes, statusRes, demoRes, staffRes, utilizationRes, durationRes] = await Promise.all([
                 getSurgeriesPerDay(),
                 getSurgeryStatusCounts(statusStartDate, statusEndDate),
                 getPatientDemographics(),
                 getStaffCountsByRole(),
-                getTheatreUtilization()
+                getTheatreUtilization(),
+                getSurgeryDurationStats()
             ]);
 
             if (perDayRes?.success) {
@@ -100,6 +104,9 @@ const AnalyticsPage = () => {
             }
             if (utilizationRes?.success) {
                 setUtilizationData(utilizationRes.data);
+            }
+            if (durationRes?.success) {
+                setDurationData(durationRes.data);
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
@@ -592,6 +599,16 @@ const AnalyticsPage = () => {
                 {utilizationData && (
                     <div className="grid grid-cols-1 gap-6">
                         <TheatreUtilizationStats data={utilizationData} />
+                    </div>
+                )}
+
+                {/* ─── Surgery Duration Histogram ─── M4 (Oneli) Day 19 */}
+                {durationData && (
+                    <div className="grid grid-cols-1 gap-6">
+                        <DurationHistogram
+                            buckets={durationData.buckets}
+                            stats={durationData.stats}
+                        />
                     </div>
                 )}
 
