@@ -4,6 +4,7 @@
 // Created by: M1 (Pasindu) - Day 18
 // Updated by: M2 (Chandeepa) - Day 18 (Status counts section + page layout)
 // Updated by: M3 (Janani) - Day 18 (Patient demographics stats cards)
+// Updated by: Copilot - Day 19 (Patient demographics bar chart)
 //
 // Displays analytics charts and statistics.
 // Uses Recharts for data visualization.
@@ -25,6 +26,7 @@ import {
     getSurgeriesPerDay
 } from '../services/analyticsService';
 import StaffDistribution from '../components/analytics/StaffDistribution';
+import PatientDemographicsBarChart from '../components/analytics/PatientDemographicsBarChart';
 import TheatreUtilizationStats from '../components/analytics/TheatreUtilizationStats';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -422,6 +424,10 @@ const AnalyticsPage = () => {
                                     <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{g.percentage}%</p>
                                 </div>
                             ))}
+                        </div>
+
+                        <div className="mb-6">
+                            <PatientDemographicsBarChart demographicsData={demographicsData} />
                         </div>
 
                         {/* Age group and blood type breakdown */}
