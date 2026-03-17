@@ -29,6 +29,7 @@ import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
 import LandingPage from '../pages/LandingPage';
+import NotFound from '../pages/NotFound';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -43,12 +44,7 @@ const AdminPanel = () => (
     </div>
 );
 
-const NotFound = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
-        <p className="mt-4">The page you&apos;re looking for doesn&apos;t exist.</p>
-    </div>
-);
+// NotFound component is now imported from '../pages/NotFound'
 
 // Main Routes Component
 const AppRoutes = () => {
