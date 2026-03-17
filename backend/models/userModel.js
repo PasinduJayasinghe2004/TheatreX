@@ -49,7 +49,7 @@ const createUpdateTimestampFunction = async () => {
  * - id: Auto-incrementing primary key (SERIAL)
  * - name: User's full name (required)
  * - email: Unique email address for login (required, indexed)
- * - password: Hashed password (required, will use bcrypt in Day 3)
+ * - password: Hashed password (nullable for Clerk/OAuth users)
  * - role: User's role in the system (VARCHAR with CHECK constraint)
  * - phone: Contact phone number (optional)
  * - is_active: Account status flag (default: true)
@@ -65,7 +65,7 @@ const createUsersTable = async () => {
       -- User information fields
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
-      password VARCHAR(255) NOT NULL,
+      password VARCHAR(255),
       
       -- Role-based access control
       -- Defines what permissions and features the user has access to
@@ -120,6 +120,23 @@ const createUsersTable = async () => {
                 END IF;
             END
             $$;
+        `);
+
+        // Add clerk_id column if it doesn't exist (for Clerk integration)
+        await pool.query(`
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                               WHERE table_name='users' AND column_name='clerk_id') THEN
+                    ALTER TABLE users ADD COLUMN clerk_id VARCHAR(255) UNIQUE;
+                END IF;
+            END
+            $$;
+        `);
+
+        // Make password column nullable (for Clerk/OAuth users who have no local password)
+        await pool.query(`
+            ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
         `);
 
         await pool.query(createIndexes);

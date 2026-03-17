@@ -26,12 +26,29 @@ const api = axios.create({
 });
 
 // ============================================================================
-// REQUEST INTERCEPTOR: Attach Access Token
+// REQUEST INTERCEPTOR: Attach Fresh Clerk Token
 // ============================================================================
-// Automatically adds the JWT access token to every outgoing request
+// Fetches a fresh Clerk session token for every outgoing request.
+// Clerk tokens are short-lived (~60s), so we must get a new one each time.
+// Falls back to localStorage if Clerk isn't loaded yet.
 // ============================================================================
 api.interceptors.request.use(
-    (config) => {
+    async (config) => {
+        try {
+            // Try to get a fresh token from Clerk's active session
+            const clerk = window.Clerk;
+            if (clerk && clerk.session) {
+                const freshToken = await clerk.session.getToken();
+                if (freshToken) {
+                    config.headers.Authorization = `Bearer ${freshToken}`;
+                    return config;
+                }
+            }
+        } catch (err) {
+            console.warn('Could not fetch fresh Clerk token, falling back to stored token:', err.message);
+        }
+
+        // Fallback: use stored token from localStorage
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -44,12 +61,12 @@ api.interceptors.request.use(
 );
 
 // ============================================================================
-// RESPONSE INTERCEPTOR: Handle 401 Errors + Auto-Refresh
+// RESPONSE INTERCEPTOR: Handle 401 Errors + Clerk Token Refresh
 // ============================================================================
-// Created by: M5 (Inthusha) - Day 4
+// Updated: Migrated from legacy JWT refresh to Clerk session token refresh.
 //
 // When a request fails with 401 (Unauthorized):
-// 1. Attempts to refresh the access token using the stored refresh token
+// 1. Attempts to get a fresh Clerk session token via window.Clerk
 // 2. If refresh succeeds, retries the original request with the new token
 // 3. If refresh fails, clears auth data and redirects to login
 //
@@ -80,11 +97,9 @@ api.interceptors.response.use(
         const originalRequest = error.config;
 
         // Only handle 401 errors that haven't been retried yet
-        // Skip refresh for the refresh endpoint itself (avoid infinite loop)
         if (
             error.response?.status === 401 &&
             !originalRequest._retry &&
-            !originalRequest.url?.includes('/auth/refresh') &&
             !originalRequest.url?.includes('/auth/login')
         ) {
             // If already refreshing, queue this request
@@ -104,20 +119,15 @@ api.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const storedRefreshToken = localStorage.getItem('refreshToken');
-
-                if (!storedRefreshToken) {
-                    throw new Error('No refresh token available');
+                // Use Clerk's global instance to get a fresh session token
+                const clerk = window.Clerk;
+                if (!clerk || !clerk.session) {
+                    throw new Error('No active Clerk session');
                 }
 
-                // Call refresh endpoint
-                const response = await axios.post(`${API_URL}/auth/refresh`, {
-                    refreshToken: storedRefreshToken
-                });
+                const newToken = await clerk.session.getToken();
 
-                if (response.data.success && response.data.token) {
-                    const newToken = response.data.token;
-
+                if (newToken) {
                     // Store new access token
                     localStorage.setItem('token', newToken);
 
@@ -127,18 +137,17 @@ api.interceptors.response.use(
                     // Process queued requests
                     processQueue(null, newToken);
 
-                    console.log('✅ Access token refreshed successfully');
+                    console.log('✅ Clerk token refreshed successfully');
 
                     // Retry the original request
                     return api(originalRequest);
                 } else {
-                    throw new Error('Token refresh failed');
+                    throw new Error('Clerk token refresh failed');
                 }
             } catch (refreshError) {
                 // Refresh failed - clear auth data
                 processQueue(refreshError, null);
                 localStorage.removeItem('token');
-                localStorage.removeItem('refreshToken');
                 localStorage.removeItem('user');
 
                 console.error('❌ Token refresh failed, logging out');
