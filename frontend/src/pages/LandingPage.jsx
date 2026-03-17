@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import '../components/landing-page.css'
 import LandingNavbar from '../components/LandingNavbar'
 import Hero from '../components/LandingHero'
@@ -18,7 +20,13 @@ import DemoRequestModal from '../components/DemoRequestModal'
 import ChatBot from '../components/ChatBot'
 
 function LandingPage() {
+  const { isAuthenticated, loading } = useAuth()
   const [showDemoModal, setShowDemoModal] = useState(false)
+
+  // Redirect to dashboard if already authenticated
+  if (!loading && isAuthenticated) {
+    return <Navigate to="/dashboard" replace />
+  }
 
   return (
     <div className="landing-page">
