@@ -8,9 +8,11 @@ export default function Hero() {
         const landing = document.querySelector('.landing-page')
         if (landing) {
             landing.classList.add('landing-exit')
-            landing.addEventListener('animationend', () => { window.location.href = '/login' }, { once: true })
+            landing.addEventListener('animationend', () => { 
+                window.location.href = 'http://localhost:5173/login' 
+            }, { once: true })
         } else {
-            window.location.href = '/login'
+            window.location.href = 'http://localhost:5173/login'
         }
     }
 
