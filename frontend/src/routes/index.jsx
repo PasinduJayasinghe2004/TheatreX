@@ -28,6 +28,7 @@ import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
 import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
+import LandingPage from '../pages/LandingPage';
 import NotFound from '../pages/NotFound';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
@@ -216,10 +217,8 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Default redirect to Dashboard or Login */}
-            <Route path="/" element={
-                isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
-            } />
+            {/* Default route: Landing Page */}
+            <Route path="/" element={<LandingPage />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
