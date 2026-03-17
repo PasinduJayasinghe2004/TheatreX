@@ -140,8 +140,8 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
     };
 
     // Common input class
-    const inputCls = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors';
-    const labelCls = 'block text-sm font-medium text-gray-700 mb-1';
+    const inputCls = 'w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors';
+    const labelCls = 'block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1';
 
     return (
         /* Backdrop */
@@ -149,9 +149,9 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
             onClick={(e) => { if (e.target === e.currentTarget) onClose?.(); }}
         >
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-700">
                     <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isEditMode ? 'bg-blue-100' : 'bg-emerald-100'}`}>
                             {isEditMode
@@ -160,13 +160,13 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
                             }
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900">{isEditMode ? 'Edit Patient' : 'Add New Patient'}</h2>
-                            <p className="text-sm text-gray-500">{isEditMode ? 'Update the patient\'s details below' : 'Fill in the patient\'s details below'}</p>
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-slate-100">{isEditMode ? 'Edit Patient' : 'Add New Patient'}</h2>
+                            <p className="text-sm text-gray-500 dark:text-slate-400">{isEditMode ? 'Update the patient\'s details below' : 'Fill in the patient\'s details below'}</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                         aria-label="Close"
                     >
                         <X className="w-5 h-5" />
@@ -192,7 +192,7 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
                     {/* ── Personal Information ────────────────── */}
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Personal Information</p>
+                    <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider">Personal Information</p>
 
                     {/* Name + DOB */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -262,7 +262,7 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
                     </div>
 
                     {/* ── Contact Information ─────────────────── */}
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider pt-2">Contact Information</p>
+                    <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider pt-2">Contact Information</p>
 
                     {/* Phone + Email */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -310,7 +310,7 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
                     </div>
 
                     {/* ── Emergency Contact ───────────────────── */}
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider pt-2">Emergency Contact</p>
+                    <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider pt-2">Emergency Contact</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
@@ -352,7 +352,7 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
                     </div>
 
                     {/* ── Medical Information ─────────────────── */}
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider pt-2">Medical Information</p>
+                    <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider pt-2">Medical Information</p>
 
                     <div>
                         <label className={labelCls}>Medical History</label>
@@ -395,12 +395,12 @@ const PatientForm = ({ patient, onSuccess, onClose }) => {
                     </div>
 
                     {/* Footer Buttons */}
-                    <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+                    <div className="flex justify-end gap-3 pt-2 border-t border-gray-100 dark:border-slate-700">
                         <button
                             type="button"
                             onClick={onClose}
                             disabled={loading}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
                         >
                             Cancel
                         </button>

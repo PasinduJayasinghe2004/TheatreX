@@ -511,9 +511,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     };
 
     // Input styles
-    const inputClass = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all";
-    const labelClass = "block text-sm font-medium text-blue-600 mb-1.5";
-    const selectClass = "w-full px-3 py-2.5 border border-gray-200 rounded-lg text-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none bg-white bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg%20xmlns%3d%22http%3a%2f%2fwww.w3.org%2f2000%2fsvg%22%20viewBox%3d%220%200%2020%2020%22%20fill%3d%22%236b7280%22%3e%3cpath%20fill-rule%3d%22evenodd%22%20d%3d%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3d%22evenodd%22%2f%3e%3c%2fsvg%3e')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25rem]";
+    const inputClass = "w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all";
+    const labelClass = "block text-sm font-medium text-blue-600 dark:text-blue-400 mb-1.5";
+    const selectClass = "w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-500 dark:text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none bg-white dark:bg-slate-700 bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg%20xmlns%3d%22http%3a%2f%2fwww.w3.org%2f2000%2fsvg%22%20viewBox%3d%220%200%2020%2020%22%20fill%3d%22%236b7280%22%3e%3cpath%20fill-rule%3d%22evenodd%22%20d%3d%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3d%22evenodd%22%2f%3e%3c%2fsvg%3e')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25rem]";
 
     const formContent = (
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -583,7 +583,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 : 'bg-gray-50 border-gray-200'
                 }`}>
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700">Patient Details</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-200">Patient Details</h3>
                     {formData.priority === 'emergency' && (
                         <span className="text-xs bg-red-500 text-white px-2 py-1 rounded-full font-medium">
                             Emergency - Manual Entry Available
@@ -611,8 +611,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 </div>
 
                 {/* Manual Patient Entry */}
-                <div className="border-t border-gray-300 pt-3 mt-3">
-                    <p className="text-xs text-gray-600 mb-3">
+                <div className="border-t border-gray-300 dark:border-slate-600 pt-3 mt-3">
+                    <p className="text-xs text-gray-600 dark:text-slate-400 mb-3">
                         <strong>Or enter patient details manually</strong> (for emergency cases or new patients)
                     </p>
                     <div className="grid grid-cols-3 gap-3">
@@ -774,7 +774,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                         Enter date, time &amp; duration to see available nurses...
                     </div>
                 ) : (
-                    <div className="border border-gray-200 rounded-lg max-h-36 overflow-y-auto">
+                    <div className="border border-gray-200 dark:border-slate-600 rounded-lg max-h-36 overflow-y-auto">
                         {nurses.length === 0 ? (
                             <div className="px-3 py-2 text-sm text-gray-400">No nurses found</div>
                         ) : (
@@ -797,7 +797,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                                             checked={isSelected}
                                             onChange={() => handleNurseToggle(nurse.id)}
                                             disabled={isUnavailable || (isMaxReached && !isSelected)}
-                                            className="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            className="mr-2 rounded border-gray-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500"
                                         />
                                         <span className={`flex-1 ${isUnavailable ? 'line-through text-gray-400' : 'text-gray-700'}`}>
                                             {nurse.name}
@@ -927,7 +927,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                     type="button"
                     onClick={handleClose}
                     disabled={loading}
-                    className="px-8 py-2.5 text-gray-600 font-medium rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+                    className="px-8 py-2.5 text-gray-600 dark:text-slate-300 font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                 >
                     Cancel
                 </button>
@@ -946,16 +946,16 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
     if (isModal) {
         return (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-transparent dark:border-slate-700">
                     {/* Modal Header */}
-                    <div className="flex items-center justify-between p-5 border-b">
-                        <h2 className="text-xl font-semibold text-gray-800">Schedule Surgery</h2>
+                    <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-slate-700">
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-slate-100">Schedule Surgery</h2>
                         <button
                             onClick={handleClose}
-                            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                             aria-label="Close"
                         >
-                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
@@ -972,18 +972,18 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
 
     // Full page version (for /create-surgery route)
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
             <div className="max-w-lg mx-auto">
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-transparent dark:border-slate-700">
                     {/* Header */}
-                    <div className="flex items-center justify-between p-5 border-b">
-                        <h2 className="text-xl font-semibold text-gray-800">Schedule Surgery</h2>
+                    <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-slate-700">
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-slate-100">Schedule Surgery</h2>
                         <button
                             onClick={handleClose}
-                            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                             aria-label="Close"
                         >
-                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>

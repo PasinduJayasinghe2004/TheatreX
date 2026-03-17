@@ -84,11 +84,11 @@ const STATUS_BORDER = {
 // ── Summary card config ─────────────────────────────────────────────────────
 
 const summaryCards = (s) => [
-    { label: 'Available', value: s.available, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-    { label: 'In Use', value: s.in_use, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-    { label: 'Maintenance', value: s.maintenance, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-    { label: 'Cleaning', value: s.cleaning, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
-    { label: 'Overdue', value: s.overdue, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' }
+    { label: 'Available', value: s.available, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-900/50' },
+    { label: 'In Use', value: s.in_use, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/30', border: 'border-blue-200 dark:border-blue-900/50' },
+    { label: 'Maintenance', value: s.maintenance, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-900/50' },
+    { label: 'Cleaning', value: s.cleaning, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-950/30', border: 'border-purple-200 dark:border-purple-900/50' },
+    { label: 'Overdue', value: s.overdue, color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-900/50' }
 ];
 
 // ── Component ───────────────────────────────────────────────────────────────
@@ -125,7 +125,7 @@ const LiveStatusPage = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 py-8 px-4">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
                 <div className="max-w-7xl mx-auto">
 
                     {/* ── Page Header ─────────────────────────────────────────── */}
@@ -152,7 +152,7 @@ const LiveStatusPage = () => {
                             <button
                                 onClick={refresh}
                                 disabled={loading}
-                                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                                 Refresh
@@ -191,28 +191,28 @@ const LiveStatusPage = () => {
                     {/* ── Extended Stats (M5 Day 11) ─────────────────────────── */}
                     {extendedStats && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                            <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between shadow-sm">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                                    <div className="p-2 bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg">
                                         <Timer className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-900">Current Utilization Rate</p>
-                                        <p className="text-xs text-gray-500">Based on {extendedStats.total_theatres} active theatres</p>
+                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">Current Utilization Rate</p>
+                                        <p className="text-xs text-gray-500 dark:text-slate-400">Based on {extendedStats.total_theatres} active theatres</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-2xl font-bold text-blue-600">{extendedStats.utilization.utilization_rate}%</p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between shadow-sm">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                    <div className="p-2 bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-lg">
                                         <Activity className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-900">Avg. Surgery Progress</p>
-                                        <p className="text-xs text-gray-500">Across all in-progress procedures</p>
+                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">Avg. Surgery Progress</p>
+                                        <p className="text-xs text-gray-500 dark:text-slate-400">Across all in-progress procedures</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -254,7 +254,7 @@ const LiveStatusPage = () => {
                                     <Link
                                         key={theatre.id}
                                         to={`/theatres/${theatre.id}`}
-                                        className={`bg-white rounded-xl border border-gray-200 border-l-4 ${border} shadow-sm hover:shadow-md transition-shadow p-5 block`}
+                                        className={`bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 border-l-4 ${border} shadow-sm hover:shadow-md transition-shadow p-5 block`}
                                     >
                                         {/* Theatre header */}
                                         <div className="flex items-start justify-between mb-3">
@@ -332,7 +332,7 @@ const LiveStatusPage = () => {
                                             </div>
                                         ) : (
                                             /* No current surgery */
-                                            <div className="rounded-lg bg-gray-50 border border-gray-100 p-3 text-center text-xs text-gray-400">
+                                            <div className="rounded-lg bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 p-3 text-center text-xs text-gray-400 dark:text-slate-500">
                                                 No surgery in progress
                                             </div>
                                         )}
@@ -344,7 +344,7 @@ const LiveStatusPage = () => {
 
                     {/* ── Empty State ─────────────────────────────────────────── */}
                     {!loading && theatres.length === 0 && !error && (
-                        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
                             <Zap className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                             <h3 className="text-lg font-semibold text-gray-700">No Active Theatres</h3>
                             <p className="text-sm text-gray-500 mt-1">No active theatres found in the system.</p>

@@ -50,7 +50,7 @@ const TheatreStatusLegend = ({
                 const inner = (
                     <>
                         <span className={`rounded-full ${color.dot} ${s.dot} shrink-0`} />
-                        <span className={`${s.text} font-medium ${isActive ? color.text : 'text-gray-600'}`}>
+                        <span className={`${s.text} font-medium ${isActive ? color.text : 'text-gray-600 dark:text-slate-400'}`}>
                             {label}
                         </span>
                     </>
@@ -67,7 +67,7 @@ const TheatreStatusLegend = ({
                                 transition-all duration-150
                                 ${isActive
                                     ? `${color.bg} ${color.border} ${color.text} ring-2 ${color.ringColor}`
-                                    : 'bg-white border-gray-200 hover:bg-gray-50'
+                                    : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'
                                 }
                             `}
                             aria-pressed={isActive}
@@ -95,8 +95,8 @@ const TheatreStatusLegend = ({
                     onClick={() => onStatusClick(null)}
                     className={`
                         inline-flex items-center ${s.gap} ${s.padding} rounded-full
-                        border border-gray-300 bg-gray-50 text-gray-500
-                        hover:bg-gray-100 transition-colors ${s.text} font-medium
+                        border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400
+                        hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${s.text} font-medium
                     `}
                     aria-label="Clear status filter"
                 >

@@ -24,10 +24,10 @@ import theatreService from '../services/theatreService';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG = {
-    available: { label: 'Available', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500', card: 'border-l-emerald-400' },
-    in_use: { label: 'In Use', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500', card: 'border-l-blue-400' },
-    maintenance: { label: 'Maintenance', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', dot: 'bg-amber-500', card: 'border-l-amber-400' },
-    cleaning: { label: 'Cleaning', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', dot: 'bg-purple-500', card: 'border-l-purple-400' },
+    available: { label: 'Available', bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-300', border: 'border-emerald-200 dark:border-emerald-900/50', dot: 'bg-emerald-500', card: 'border-l-emerald-400' },
+    in_use: { label: 'In Use', bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-300', border: 'border-blue-200 dark:border-blue-900/50', dot: 'bg-blue-500', card: 'border-l-blue-400' },
+    maintenance: { label: 'Maintenance', bg: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-200 dark:border-amber-900/50', dot: 'bg-amber-500', card: 'border-l-amber-400' },
+    cleaning: { label: 'Cleaning', bg: 'bg-purple-50 dark:bg-purple-950/30', text: 'text-purple-700 dark:text-purple-300', border: 'border-purple-200 dark:border-purple-900/50', dot: 'bg-purple-500', card: 'border-l-purple-400' },
 };
 
 const StatusBadge = ({ status }) => {
@@ -93,14 +93,14 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
 
     return (
         <div
-            className={`bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow border-l-4 ${cardBorderClass} flex flex-col`}
+            className={`bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow border-l-4 ${cardBorderClass} flex flex-col`}
         >
             {/* Card Header */}
             <div className="p-5 flex-1">
                 <div className="flex items-start justify-between mb-3">
                     <div>
-                        <h3 className="font-semibold text-gray-900 text-base">{name}</h3>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-base">{name}</h3>
+                        <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
                             {theatre_type ? theatre_type.charAt(0).toUpperCase() + theatre_type.slice(1) : 'General'}
                             {location && ` · ${location}`}
                             {capacity && ` · Cap: ${capacity}`}
@@ -112,19 +112,19 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
                 {/* Current Surgery */}
                 {current_surgery ? (
                     <div className="mt-4 space-y-3">
-                        <div className="bg-gray-50 rounded-xl p-3 space-y-1">
-                            <p className="text-sm font-semibold text-gray-800 truncate">
+                        <div className="bg-gray-50 dark:bg-slate-700/60 rounded-xl p-3 space-y-1">
+                            <p className="text-sm font-semibold text-gray-800 dark:text-slate-100 truncate">
                                 {current_surgery.surgery_type || 'Surgery'}
                             </p>
-                            <p className="text-xs text-gray-500 truncate">
+                            <p className="text-xs text-gray-500 dark:text-slate-400 truncate">
                                 Patient: {current_surgery.patient_name || 'N/A'}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-slate-400">
                                 Started: {formatTime(current_surgery.scheduled_time)}
                                 &nbsp;·&nbsp;Duration: {current_surgery.duration_minutes}min
                             </p>
                             {current_surgery.priority === 'emergency' && (
-                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 border border-red-200 rounded-full px-2 py-0.5 mt-1">
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-full px-2 py-0.5 mt-1">
                                     🚨 Emergency
                                 </span>
                             )}
@@ -133,31 +133,31 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
                         {/* Progress bar */}
                         <div>
                             <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="text-gray-500">
+                                <span className="text-gray-500 dark:text-slate-400">
                                     {isOverdue
                                         ? `Overdue by ${formatMinutes(current_surgery.elapsed_minutes - current_surgery.duration_minutes)}`
                                         : `${formatMinutes(current_surgery.elapsed_minutes)} elapsed · ${formatMinutes(current_surgery.remaining_minutes)} left`
                                     }
                                 </span>
-                                <span className={`font-semibold ${isOverdue ? 'text-red-600' : 'text-gray-700'}`}>
+                                <span className={`font-semibold ${isOverdue ? 'text-red-600 dark:text-red-300' : 'text-gray-700 dark:text-slate-200'}`}>
                                     {progressPercent}%
                                 </span>
                             </div>
-                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                                 <div
                                     className={`h-full rounded-full transition-all duration-500 ${progressBarColour}`}
                                     style={{ width: `${Math.min(progressPercent, 100)}%` }}
                                 />
                             </div>
                             {current_surgery.estimated_end_time && (
-                                <p className="text-xs text-gray-400 mt-1">
+                                <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
                                     Est. end: {formatTime(current_surgery.estimated_end_time)}
                                 </p>
                             )}
                         </div>
                     </div>
                 ) : (
-                    <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
+                    <div className="mt-4 flex items-center gap-2 text-sm text-gray-400 dark:text-slate-500">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -169,8 +169,8 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
 
             {/* Quick Actions (Dashboard Enhancement) */}
             {(quickActions.length > 0 || canAssign) && (
-                <div className="px-5 py-3 border-t border-gray-50 bg-gray-50/30">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Quick Toggle</p>
+                <div className="px-5 py-3 border-t border-gray-50 dark:border-slate-700 bg-gray-50/30 dark:bg-slate-700/30">
+                    <p className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Quick Toggle</p>
                     <div className="flex flex-wrap gap-2">
                         {quickActions.map(action => (
                             <button
@@ -184,7 +184,7 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
                         {canAssign && (
                             <button
                                 onClick={() => onAssignSurgery(id)}
-                                className="flex-1 text-[11px] font-bold px-2 py-1.5 rounded-lg border transition-all hover:scale-[1.02] active:scale-[0.98] bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                                className="flex-1 text-[11px] font-bold px-2 py-1.5 rounded-lg border transition-all hover:scale-[1.02] active:scale-[0.98] bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 border-blue-200 dark:border-blue-900/50"
                             >
                                 Assign Surgery
                             </button>
@@ -205,16 +205,16 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
             )}
 
             {/* Card Footer Actions */}
-            <div className="px-5 pb-4 flex gap-2 border-t border-gray-50 pt-3">
+            <div className="px-5 pb-4 flex gap-2 border-t border-gray-50 dark:border-slate-700 pt-3">
                 <button
                     onClick={() => onViewDetail(id)}
-                    className="flex-1 text-xs font-medium px-3 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                    className="flex-1 text-xs font-medium px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors"
                 >
                     View Detail
                 </button>
                 <button
                     onClick={onViewLive}
-                    className="flex-1 text-xs font-medium px-3 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
+                    className="flex-1 text-xs font-medium px-3 py-2 rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors"
                 >
                     Live Status
                 </button>
@@ -286,10 +286,10 @@ const CoordinatorDashboard = () => {
     if (loading) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-                        <p className="mt-4 text-gray-500">Loading coordinator overview…</p>
+                        <p className="mt-4 text-gray-500 dark:text-slate-400">Loading coordinator overview…</p>
                     </div>
                 </div>
             </Layout>
@@ -300,11 +300,11 @@ const CoordinatorDashboard = () => {
     if (error) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
                     <div className="text-center">
                         <div className="text-5xl mb-4">⚠️</div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Failed to Load</h2>
-                        <p className="text-gray-500 mb-4">{error}</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Failed to Load</h2>
+                        <p className="text-gray-500 dark:text-slate-400 mb-4">{error}</p>
                         <button
                             onClick={() => fetchOverview()}
                             className="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
@@ -320,17 +320,17 @@ const CoordinatorDashboard = () => {
     // ── Render ────────────────────────────────────────────────────────────────
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
 
                 {/* Page Header */}
-                <div className="bg-white border border-gray-100 px-8 py-5 rounded-3xl mx-8 mt-6 mb-2">
+                <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 px-8 py-5 rounded-3xl mx-8 mt-6 mb-2">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Coordinator Dashboard</h1>
-                            <p className="text-sm text-gray-500 mt-0.5">
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Coordinator Dashboard</h1>
+                            <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
                                 All-theatre overview &amp; real-time surgery monitoring
                                 {lastRefresh && (
-                                    <span className="ml-2 text-gray-400">
+                                    <span className="ml-2 text-gray-400 dark:text-slate-500">
                                         · Last updated {lastRefresh.toLocaleTimeString()}
                                     </span>
                                 )}
@@ -371,9 +371,9 @@ const CoordinatorDashboard = () => {
                         <SummaryCard
                             label="Total Theatres"
                             value={summary.total ?? '--'}
-                            colour="bg-gray-100"
+                            colour="bg-gray-100 dark:bg-slate-700"
                             icon={
-                                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 text-gray-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
@@ -382,7 +382,7 @@ const CoordinatorDashboard = () => {
                         <SummaryCard
                             label="Available"
                             value={summary.available ?? '--'}
-                            colour="bg-emerald-100"
+                            colour="bg-emerald-100 dark:bg-emerald-950/30"
                             icon={
                                 <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -392,7 +392,7 @@ const CoordinatorDashboard = () => {
                         <SummaryCard
                             label="In Use"
                             value={summary.in_use ?? '--'}
-                            colour="bg-blue-100"
+                            colour="bg-blue-100 dark:bg-blue-950/30"
                             icon={
                                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -403,7 +403,7 @@ const CoordinatorDashboard = () => {
                         <SummaryCard
                             label="Maintenance"
                             value={summary.maintenance ?? '--'}
-                            colour="bg-amber-100"
+                            colour="bg-amber-100 dark:bg-amber-950/30"
                             icon={
                                 <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -414,7 +414,7 @@ const CoordinatorDashboard = () => {
                         <SummaryCard
                             label="Utilization"
                             value={`${summary.utilization_rate ?? 0}%`}
-                            colour="bg-indigo-100"
+                            colour="bg-indigo-100 dark:bg-indigo-950/30"
                             icon={
                                 <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -425,10 +425,10 @@ const CoordinatorDashboard = () => {
                         <SummaryCard
                             label="Overdue"
                             value={summary.overdue_count ?? 0}
-                            colour={summary.overdue_count > 0 ? 'bg-red-100' : 'bg-gray-100'}
+                            colour={summary.overdue_count > 0 ? 'bg-red-100 dark:bg-red-950/30' : 'bg-gray-100 dark:bg-slate-700'}
                             icon={
                                 <svg
-                                    className={`w-6 h-6 ${summary.overdue_count > 0 ? 'text-red-600' : 'text-gray-400'}`}
+                                    className={`w-6 h-6 ${summary.overdue_count > 0 ? 'text-red-600 dark:text-red-300' : 'text-gray-400 dark:text-slate-400'}`}
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -440,7 +440,7 @@ const CoordinatorDashboard = () => {
 
                     {/* Filter Bar */}
                     <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium text-gray-500 mr-2">Filter:</span>
+                        <span className="text-sm font-medium text-gray-500 dark:text-slate-400 mr-2">Filter:</span>
                         {[null, 'available', 'in_use', 'maintenance', 'cleaning'].map(s => {
                             const label = s === null ? 'All' : STATUS_CONFIG[s]?.label ?? s;
                             const active = statusFilter === s;
@@ -450,7 +450,7 @@ const CoordinatorDashboard = () => {
                                     onClick={() => setStatusFilter(s)}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${active
                                         ? 'bg-blue-600 text-white border-blue-600'
-                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'
                                         }`}
                                 >
                                     {label}
@@ -463,7 +463,7 @@ const CoordinatorDashboard = () => {
 
                     {/* Theatre Grid */}
                     {filteredTheatres.length === 0 ? (
-                        <div className="text-center py-20 text-gray-400">
+                        <div className="text-center py-20 text-gray-400 dark:text-slate-500">
                             <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -489,8 +489,8 @@ const CoordinatorDashboard = () => {
                     )}
 
                     {/* Quick Actions Footer */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                        <h2 className="text-base font-semibold text-gray-800 mb-4">Quick Actions</h2>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+                        <h2 className="text-base font-semibold text-gray-800 dark:text-white mb-4">Quick Actions</h2>
                         <div className="flex flex-wrap gap-3">
                             <button
                                 onClick={() => navigate('/surgeries/new')}
@@ -513,7 +513,7 @@ const CoordinatorDashboard = () => {
                             </button>
                             <button
                                 onClick={() => navigate('/theatres')}
-                                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors shadow-sm"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -523,7 +523,7 @@ const CoordinatorDashboard = () => {
                             </button>
                             <button
                                 onClick={() => navigate('/calendar')}
-                                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm"
+                                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors shadow-sm"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

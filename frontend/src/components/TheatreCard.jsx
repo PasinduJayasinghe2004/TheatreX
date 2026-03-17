@@ -58,16 +58,16 @@ const TheatreCard = ({ theatre, onStatusChange, onMaintenanceToggle, userRole, i
     const borderColor = STATUS_BORDER[theatre.status] || 'border-l-gray-300';
 
     return (
-        <div className={`bg-white rounded-xl border border-gray-200 border-l-4 ${borderColor} shadow-sm hover:shadow-md transition-shadow overflow-hidden`}>
+        <div className={`bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 border-l-4 ${borderColor} shadow-sm hover:shadow-md transition-shadow overflow-hidden`}>
             {/* Card Header */}
             <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
                     <div>
-                        <Link to={`/theatres/${theatre.id}`} className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                        <Link to={`/theatres/${theatre.id}`} className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                             {theatre.name}
                         </Link>
                         {theatre.location && (
-                            <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+                            <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500 dark:text-slate-400">
                                 <MapPin className="w-3.5 h-3.5" />
                                 <span>{theatre.location}</span>
                             </div>
@@ -78,17 +78,17 @@ const TheatreCard = ({ theatre, onStatusChange, onMaintenanceToggle, userRole, i
 
                 {/* Theatre Info */}
                 <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Monitor className="w-4 h-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
+                        <Monitor className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                         <span>{THEATRE_TYPE_LABELS[theatre.theatre_type] || theatre.theatre_type}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Users className="w-4 h-4 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
+                        <Users className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                         <span>Capacity: {theatre.capacity}</span>
                     </div>
                     {theatre.equipment && (
-                        <div className="col-span-2 flex items-center gap-2 text-sm text-gray-600">
-                            <Wrench className="w-4 h-4 text-gray-400" />
+                        <div className="col-span-2 flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400">
+                            <Wrench className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                             <span className="truncate">{theatre.equipment}</span>
                         </div>
                     )}
@@ -122,7 +122,7 @@ const TheatreCard = ({ theatre, onStatusChange, onMaintenanceToggle, userRole, i
                 {/* View Details Link - M2 Day 10 */}
                 <Link
                     to={`/theatres/${theatre.id}`}
-                    className="mt-4 flex items-center justify-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                    className="mt-4 flex items-center justify-center gap-1 text-sm text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 font-medium transition-colors"
                 >
                     View Details <ChevronRight className="w-4 h-4" />
                 </Link>
@@ -138,7 +138,7 @@ const TheatreCard = ({ theatre, onStatusChange, onMaintenanceToggle, userRole, i
 
             {/* Status Toggle Actions */}
             {canChangeStatus && actions.length > 0 && (
-                <div className="border-t border-gray-100 px-5 py-3 bg-gray-50 flex gap-2">
+                <div className="border-t border-gray-100 dark:border-slate-700 px-5 py-3 bg-gray-50 dark:bg-slate-700/60 flex gap-2">
                     {actions.map(action => (
                         <button
                             key={action.status}

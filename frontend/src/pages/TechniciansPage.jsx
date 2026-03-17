@@ -35,26 +35,26 @@ const SHIFT_COLORS = {
     morning: 'bg-yellow-100 text-yellow-700',
     afternoon: 'bg-orange-100 text-orange-700',
     night: 'bg-indigo-100 text-indigo-700',
-    flexible: 'bg-gray-100 text-gray-600',
+    flexible: 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400',
 };
 
 // ── TechnicianCard ───────────────────────────────────────────────────────────
 
 const TechnicianCard = ({ tech, canManage, onEdit, onDelete }) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
         {/* Header: avatar + name + availability */}
         <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-3 min-w-0">
                 {/* Avatar */}
-                <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-teal-600 font-semibold text-sm">
+                <div className="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950 flex items-center justify-center flex-shrink-0">
+                    <span className="text-teal-600 dark:text-teal-400 font-semibold text-sm">
                         {tech.name?.trim().charAt(0).toUpperCase() ?? 'T'}
                     </span>
                 </div>
                 <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 truncate">{tech.name}</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{tech.name}</h3>
                     {tech.license_number && (
-                        <p className="text-xs text-gray-400 truncate">#{tech.license_number}</p>
+                        <p className="text-xs text-gray-400 dark:text-slate-500 truncate">#{tech.license_number}</p>
                     )}
                 </div>
             </div>
@@ -72,30 +72,30 @@ const TechnicianCard = ({ tech, canManage, onEdit, onDelete }) => (
         </div>
 
         {/* Details */}
-        <div className="space-y-1.5 text-sm text-gray-600">
+        <div className="space-y-1.5 text-sm text-gray-600 dark:text-slate-400">
             <div className="flex items-center gap-2 min-w-0">
-                <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <Mail className="w-4 h-4 text-gray-400 dark:text-slate-500 flex-shrink-0" />
                 <span className="truncate">{tech.email}</span>
             </div>
             {tech.phone && (
                 <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <Phone className="w-4 h-4 text-gray-400 dark:text-slate-500 flex-shrink-0" />
                     <span>{tech.phone}</span>
                 </div>
             )}
             {tech.specialization && (
                 <div className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <Briefcase className="w-4 h-4 text-gray-400 dark:text-slate-500 flex-shrink-0" />
                     <span className="truncate">{tech.specialization}</span>
                 </div>
             )}
         </div>
 
         {/* Footer: shift + experience + actions */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100 dark:border-slate-700">
             <div className="flex items-center gap-2 flex-wrap">
                 {tech.shift_preference && (
-                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${SHIFT_COLORS[tech.shift_preference] ?? 'bg-gray-100 text-gray-600'}`}>
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${SHIFT_COLORS[tech.shift_preference] ?? 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400'}`}>
                         <Clock className="w-3 h-3" />
                         {SHIFT_LABELS[tech.shift_preference] ?? tech.shift_preference}
                     </span>
@@ -136,19 +136,19 @@ const DeleteConfirmModal = ({ tech, onConfirm, onCancel, loading }) => (
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
         onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
     >
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-6 h-6 text-red-500" />
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center mx-auto mb-4\">
+                <AlertTriangle className="w-6 h-6 text-red-500 dark:text-red-400\" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">Delete Technician</h3>
-            <p className="text-sm text-gray-500 mb-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1\">Delete Technician</h3>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mb-6\">
                 Are you sure you want to delete <strong>{tech.name}</strong>? This action can be undone by an admin.
             </p>
             <div className="flex justify-center gap-3">
                 <button
                     onClick={onCancel}
                     disabled={loading}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
                 >
                     Cancel
                 </button>
@@ -262,13 +262,13 @@ const TechniciansPage = () => {
     // ── render ─────────────────────────────────────────────────────────────
     return (
         <Layout>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
                 {/* Page Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             Technicians
                             {!loading && (
                                 <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold bg-teal-100 text-teal-700">
@@ -276,7 +276,7 @@ const TechniciansPage = () => {
                                 </span>
                             )}
                         </h1>
-                        <p className="text-sm text-gray-500 mt-0.5">Manage technical staff assignments and availability</p>
+                        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Manage technical staff assignments and availability</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -284,7 +284,7 @@ const TechniciansPage = () => {
                             onClick={fetchTechnicians}
                             disabled={loading}
                             title="Refresh list"
-                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-40"
+                            className="p-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-40"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                         </button>
@@ -303,28 +303,28 @@ const TechniciansPage = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6 flex flex-col sm:flex-row gap-3">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4 mb-6 flex flex-col sm:flex-row gap-3">
                     {/* Search */}
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" />
                         <input
                             id="technician-search"
                             type="text"
                             placeholder="Search name, email or specialization…"
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                            className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                         />
                     </div>
 
                     {/* Specialization filter */}
                     <div className="relative sm:w-48">
-                        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" />
                         <select
                             id="technician-filter-spec"
                             value={filterSpecialization}
                             onChange={e => setFilterSpecialization(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors appearance-none"
+                            className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors appearance-none"
                         >
                             <option value="">All Specializations</option>
                             {specializations.map(s => (
@@ -338,7 +338,7 @@ const TechniciansPage = () => {
                         id="technician-filter-avail"
                         value={filterAvailability}
                         onChange={e => setFilterAvailability(e.target.value)}
-                        className="sm:w-40 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                        className="sm:w-40 px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                     >
                         <option value="all">All Status</option>
                         <option value="available">Available</option>
@@ -351,17 +351,17 @@ const TechniciansPage = () => {
                     /* Loading skeleton */
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse">
+                            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 animate-pulse">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                                    <div className="w-10 h-10 bg-gray-200 dark:bg-slate-700 rounded-full" />
                                     <div className="flex-1 space-y-1.5">
-                                        <div className="h-3 bg-gray-200 rounded w-3/4" />
-                                        <div className="h-2.5 bg-gray-100 rounded w-1/2" />
+                                        <div className="h-3 bg-gray-200 dark:bg-slate-700 rounded w-3/4" />
+                                        <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="h-2.5 bg-gray-100 rounded" />
-                                    <div className="h-2.5 bg-gray-100 rounded w-4/5" />
+                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded" />
+                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-4/5" />
                                 </div>
                             </div>
                         ))}
@@ -369,11 +369,11 @@ const TechniciansPage = () => {
                 ) : error ? (
                     /* Error state */
                     <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <div className="w-14 h-14 bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center mb-4">
                             <XCircle className="w-7 h-7 text-red-500" />
                         </div>
-                        <h3 className="text-base font-semibold text-gray-900 mb-1">Failed to load technicians</h3>
-                        <p className="text-sm text-gray-500 mb-4 max-w-xs">{error}</p>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">Failed to load technicians</h3>
+                        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4 max-w-xs">{error}</p>
                         <button
                             onClick={fetchTechnicians}
                             className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors"
@@ -384,15 +384,15 @@ const TechniciansPage = () => {
                 ) : displayed.length === 0 ? (
                     /* Empty state */
                     <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="w-14 h-14 bg-teal-50 rounded-full flex items-center justify-center mb-4">
+                        <div className="w-14 h-14 bg-teal-50 dark:bg-teal-950/30 rounded-full flex items-center justify-center mb-4">
                             <UserPlus className="w-7 h-7 text-teal-400" />
                         </div>
-                        <h3 className="text-base font-semibold text-gray-900 mb-1">
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
                             {search || filterSpecialization || filterAvailability !== 'all'
                                 ? 'No technicians match your filters'
                                 : 'No technicians yet'}
                         </h3>
-                        <p className="text-sm text-gray-500 mb-4 max-w-xs">
+                        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4 max-w-xs">
                             {search || filterSpecialization || filterAvailability !== 'all'
                                 ? 'Try adjusting your filters or search query.'
                                 : canManage
@@ -412,7 +412,7 @@ const TechniciansPage = () => {
                 ) : (
                     /* Technician card grid */
                     <>
-                        <p className="text-xs text-gray-400 mb-3">
+                        <p className="text-xs text-gray-400 dark:text-slate-500 mb-3">
                             Showing {displayed.length} of {technicians.length} technician{technicians.length !== 1 ? 's' : ''}
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

@@ -222,7 +222,7 @@ const getProgressColor = (progress) => {
 const SPECIALTY_COLORS = {
     Cardiac: 'bg-red-50 text-red-600 border-red-200',
     Ortho: 'bg-blue-50 text-blue-600 border-blue-200',
-    General: 'bg-gray-100 text-gray-600 border-gray-200',
+    General: 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700',
     Neuro: 'bg-purple-50 text-purple-600 border-purple-200',
 };
 
@@ -321,7 +321,7 @@ const LiveTheatreCard = ({ theatre, isExpanded, onToggle, isGrid }) => {
                                         key={key}
                                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${done
                                             ? 'bg-green-50 text-green-700 border-green-200'
-                                            : 'bg-gray-50 text-gray-400 border-gray-200'
+                                            : 'bg-gray-50 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700'
                                             }`}
                                     >
                                         {done ? '✓' : '○'} {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -670,7 +670,7 @@ const Dashboard = () => {
                             <div onClick={() => setActiveModal('duration')} className="cursor-pointer">
                                 <SummaryCard
                                     label="Avg Duration"
-                                    value={stats?.avgDuration ?? '--'}
+                                    value={stats?.avgDuration ?? stats?.avg_duration ?? '--'}
                                     subtitle="minutes per surgery"
                                     colour="bg-amber-50"
                                     icon={

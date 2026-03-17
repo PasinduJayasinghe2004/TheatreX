@@ -40,17 +40,17 @@ const AvailBadge = ({ available }) =>
 
 /** Loading skeleton card */
 const SkeletonCard = () => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 animate-pulse">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 animate-pulse">
         <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0" />
+            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-slate-700 flex-shrink-0" />
             <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-2/3" />
-                <div className="h-3 bg-gray-100 rounded w-1/2" />
+                <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-2/3" />
+                <div className="h-3 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
             </div>
         </div>
         <div className="mt-4 space-y-2">
-            <div className="h-3 bg-gray-100 rounded w-3/4" />
-            <div className="h-3 bg-gray-100 rounded w-1/2" />
+            <div className="h-3 bg-gray-100 dark:bg-slate-600 rounded w-3/4" />
+            <div className="h-3 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
         </div>
     </div>
 );
@@ -72,13 +72,13 @@ const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
         : null;
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-4 relative group">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-4 relative group">
             {/* Actions overlay */}
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                <button onClick={() => onEdit(surgeon)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all focus:outline-none">
+                <button onClick={() => onEdit(surgeon)} className="p-1.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 shadow-sm transition-all focus:outline-none">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                 </button>
-                <button onClick={() => onDelete(surgeon.id)} className="p-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:border-red-200 shadow-sm transition-all focus:outline-none">
+                <button onClick={() => onDelete(surgeon.id)} className="p-1.5 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 shadow-sm transition-all focus:outline-none">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                 </button>
             </div>
@@ -90,13 +90,13 @@ const SurgeonCard = ({ surgeon, canEdit, onEdit, onDelete }) => {
                     {profilePic ? (
                         <img src={profilePic} alt={surgeon.name} className="w-12 h-12 rounded-full object-cover border border-gray-100 flex-shrink-0" />
                     ) : (
-                        <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                            <span className="text-sm font-bold text-indigo-700">{initials}</span>
+                        <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-bold text-indigo-700 dark:text-indigo-400">{initials}</span>
                         </div>
                     )}
                     <div>
-                        <h3 className="text-sm font-semibold text-gray-900 leading-tight">{surgeon.name}</h3>
-                        <p className="text-xs text-indigo-600 font-medium mt-0.5">{surgeon.specialization}</p>
+                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">{surgeon.name}</h3>
+                        <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mt-0.5">{surgeon.specialization}</p>
                     </div>
                 </div>
                 <AvailBadge available={surgeon.is_available} />
@@ -319,7 +319,7 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
                 {/* Header */}
                 <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -412,9 +412,9 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
                 </form>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                <div className="px-6 py-4 bg-gray-50 dark:bg-slate-700 border-t border-gray-100 dark:border-slate-600 flex items-center justify-end gap-3">
                     <button type="button" onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
+                        className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-500 rounded-lg transition-colors">
                         Cancel
                     </button>
                     <button type="submit" form="create-surgeon-form" disabled={submitting}
@@ -483,7 +483,7 @@ const EditSurgeonModal = ({ surgeon, onClose, onUpdated }) => {
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
                 {/* Header */}
                 <div className="bg-indigo-600 px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -574,9 +574,9 @@ const EditSurgeonModal = ({ surgeon, onClose, onUpdated }) => {
                 </form>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                <div className="px-6 py-4 bg-gray-50 dark:bg-slate-700 border-t border-gray-100 dark:border-slate-600 flex items-center justify-end gap-3">
                     <button type="button" onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
+                        className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-500 rounded-lg transition-colors">
                         Cancel
                     </button>
                     <button type="submit" form="edit-surgeon-form" disabled={submitting}
@@ -622,7 +622,7 @@ const DeleteSurgeonModal = ({ surgeon, onClose, onDeleted }) => {
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
                 {/* Header */}
                 <div className="bg-red-600 px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -659,16 +659,16 @@ const DeleteSurgeonModal = ({ surgeon, onClose, onDeleted }) => {
                     </div>
 
                     {error && (
-                        <div className="rounded-lg bg-red-50 border border-red-200 p-3">
-                            <p className="text-xs text-red-600">{error}</p>
+                        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 p-3">
+                            <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                <div className="px-6 py-4 bg-gray-50 dark:bg-slate-700 border-t border-gray-100 dark:border-slate-600 flex items-center justify-end gap-3">
                     <button type="button" onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-lg transition-colors">
+                        className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-500 rounded-lg transition-colors">
                         Cancel
                     </button>
                     <button
@@ -753,11 +753,11 @@ const SurgeonsPage = () => {
 
     return (
         <Layout>
-            <div className="p-6 max-w-7xl mx-auto">
+            <div className="p-6 max-w-7xl mx-auto min-h-screen dark:bg-slate-900">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 font-outfit">Surgeons</h1>
-                        <p className="text-sm text-gray-500 mt-1">Manage hospital surgeons and profile pictures</p>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white font-outfit">Surgeons</h1>
+                        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Manage hospital surgeons and profile pictures</p>
                     </div>
                     {canCreate && (
                         <button
@@ -776,10 +776,10 @@ const SurgeonsPage = () => {
                 {/* Filters */}
                 <div className="flex flex-wrap gap-3 mb-6">
                     <div className="relative flex-1 min-w-[300px]">
-                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                        <input placeholder="Search named, specialization..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        <input placeholder="Search named, specialization..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all" />
                     </div>
-                    <select value={available} onChange={e => setAvailable(e.target.value)} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 outline-none">
+                    <select value={available} onChange={e => setAvailable(e.target.value)} className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-100 outline-none">
                         <option value="">All Availability</option>
                         <option value="true">Available</option>
                         <option value="false">Unavailable</option>

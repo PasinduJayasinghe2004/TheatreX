@@ -64,6 +64,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Global reset scoped to the landing page ── */
+.landing-page {
+    background: #EDF2FA;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #111827;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Landing Page Exit Transition (Fade + Scale Cinematic) ── */
+.landing-page.landing-exit {
+    animation: landingExit 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    pointer-events: none;
+}
+
+@keyframes landingExit {
+    from {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.05);
+        filter: blur(6px);
+    }
+}
+
 button {
   cursor: pointer;
   border: none;

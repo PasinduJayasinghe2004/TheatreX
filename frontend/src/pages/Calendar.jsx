@@ -175,7 +175,7 @@ const Calendar = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 py-6 px-4">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-6 px-4">
                 <div className="max-w-7xl mx-auto">
 
                     {/* ── Page header ── */}
@@ -189,7 +189,7 @@ const Calendar = () => {
                         <button
                             onClick={handleRefresh}
                             disabled={loading}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 self-start"
+                            className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 self-start"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                             Refresh
@@ -197,7 +197,7 @@ const Calendar = () => {
                     </div>
 
                     {/* ── Legend ── */}
-                    <div className="mb-4 flex flex-col sm:flex-row gap-4 bg-white rounded-lg border border-gray-200 p-3">
+                    <div className="mb-4 flex flex-col sm:flex-row gap-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-3">
                         <div className="flex items-center gap-3 flex-wrap">
                             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status:</span>
                             {STATUS_LEGEND.map(({ label, color }) => (
@@ -242,11 +242,11 @@ const Calendar = () => {
                     )}
 
                     {/* ── Calendar container ── */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 theatre-calendar">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4 theatre-calendar">
                         <FullCalendar
                             ref={calendarRef}
                             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                            initialView="timeGridWeek"
+                            initialView="dayGridMonth"
                             headerToolbar={{
                                 left: 'today prev,next',
                                 center: 'title',
@@ -290,7 +290,7 @@ const Calendar = () => {
                     {/* ── Event detail popover ── */}
                     {selectedEvent && (
                         <div
-                            className="fixed z-50 w-72 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+                            className="fixed z-50 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden"
                             style={{ top: popoverPos.top, left: Math.min(popoverPos.left, window.innerWidth - 300) }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -359,7 +359,7 @@ const Calendar = () => {
                     {/* ── Loading overlay ── */}
                     {loading && (
                         <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-40 pointer-events-none">
-                            <div className="bg-white rounded-lg p-4 shadow-lg flex items-center gap-3">
+                            <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow-lg flex items-center gap-3">
                                 <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
                                 <span className="text-gray-700">Loading surgeries...</span>
                             </div>
