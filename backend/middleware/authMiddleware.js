@@ -19,23 +19,33 @@ export const protect = async (req, res, next) => {
         try {
             token = req.headers.authorization.split(' ')[1];
 
-            // Verify the token with Clerk
-            const decodedRequest = await clerkClient.authenticateRequest(req);
+            // Verify the Clerk JWT directly (more reliable than authenticateRequest
+            // for API-only backends where Express req lacks a full URL)
+            const decoded = await clerkClient.verifyToken(token);
 
-            if (decodedRequest.status === 'signed-out') {
+            if (!decoded || !decoded.sub) {
                 return res.status(401).json({
                     success: false,
                     message: 'Not authorized, token failed'
                 });
             }
 
-            const { userId } = decodedRequest.auth;
+            const userId = decoded.sub;
 
-            // Fetch user from local database using Clerk ID or session email
+            // Fetch user from local database using Clerk ID
             let { rows: users } = await pool.query(
-                'SELECT id, name, email, role, phone, is_active FROM users WHERE clerk_id = $1 OR email = $2',
-                [userId, decodedRequest.auth.sessionClaims?.email]
+                'SELECT id, name, email, role, phone, is_active FROM users WHERE clerk_id = $1',
+                [userId]
             );
+
+            // Also try by email if not found by clerk_id
+            if (users.length === 0 && decoded.email) {
+                const result = await pool.query(
+                    'SELECT id, name, email, role, phone, is_active FROM users WHERE email = $1',
+                    [decoded.email]
+                );
+                users = result.rows;
+            }
 
             // AUTO-PROVISION: If user exists in Clerk but not in local DB, create them
             // This is essential for local dev where webhooks aren't easily reachable
@@ -67,7 +77,7 @@ export const protect = async (req, res, next) => {
             }
 
             req.user = users[0];
-            req.auth = decodedRequest.auth;
+            req.auth = { userId, sessionClaims: decoded };
             next();
 
         } catch (error) {
