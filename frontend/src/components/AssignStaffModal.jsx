@@ -125,16 +125,16 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between bg-gray-50/50 dark:bg-slate-700/40">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">Assign Staff</h2>
-                        <p className="text-sm text-gray-500">{surgery?.surgery_type} - {surgery?.patient_name}</p>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Assign Staff</h2>
+                        <p className="text-sm text-gray-500 dark:text-slate-400">{surgery?.surgery_type} - {surgery?.patient_name}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-full transition-all"
+                        className="p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-white dark:hover:bg-slate-600 rounded-full transition-all"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -152,20 +152,20 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-12 space-y-4">
                             <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-                            <p className="text-gray-500 animate-pulse">Checking staff availability...</p>
+                            <p className="text-gray-500 dark:text-slate-400 animate-pulse">Checking staff availability...</p>
                         </div>
                     ) : (
                         <>
                             {/* Surgeon Selection */}
                             <div className="space-y-3">
-                                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-slate-300">
                                     <User className="w-4 h-4 text-blue-500" />
                                     Lead Surgeon
                                 </label>
                                 <select
                                     value={selectedSurgeon}
                                     onChange={(e) => setSelectedSurgeon(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                                 >
                                     <option value="">Select Surgeon (None)</option>
                                     {surgeons.map(s => (
@@ -178,14 +178,14 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
 
                             {/* Anaesthetist Selection */}
                             <div className="space-y-3">
-                                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-slate-300">
                                     <User className="w-4 h-4 text-purple-500" />
                                     Anaesthetist
                                 </label>
                                 <select
                                     value={selectedAnaesthetist}
                                     onChange={(e) => setSelectedAnaesthetist(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
                                 >
                                     <option value="">Select Anaesthetist (None)</option>
                                     {anaesthetists.map(a => (
@@ -198,12 +198,12 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
 
                             {/* Nurses Section */}
                             <div className="space-y-3">
-                                <label className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                                <label className="flex items-center justify-between text-sm font-semibold text-gray-700 dark:text-slate-300">
                                     <div className="flex items-center gap-2">
                                         <Users className="w-4 h-4 text-emerald-500" />
                                         Nurses (Up to 3)
                                     </div>
-                                    <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                    <span className="text-xs font-medium text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
                                         {selectedNurses.length}/3 selected
                                     </span>
                                 </label>
@@ -219,15 +219,15 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
                                                 className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${isSelected
                                                     ? 'bg-emerald-50 border-emerald-500 ring-4 ring-emerald-500/10'
                                                     : isBusy
-                                                        ? 'bg-gray-50 border-gray-100 opacity-50 cursor-not-allowed'
-                                                        : 'bg-white border-gray-200 hover:border-emerald-500/50 hover:bg-emerald-50/30'
+                                                        ? 'bg-gray-50 dark:bg-slate-700 border-gray-100 dark:border-slate-600 opacity-50 cursor-not-allowed'
+                                                        : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/20'
                                                     }`}
                                             >
                                                 <div className="min-w-0 pr-2">
-                                                    <p className={`text-sm font-medium ${isSelected ? 'text-emerald-900' : 'text-gray-900'} truncate`}>
+                                                    <p className={`text-sm font-medium ${isSelected ? 'text-emerald-900 dark:text-emerald-300' : 'text-gray-900 dark:text-slate-100'} truncate`}>
                                                         {n.name}
                                                     </p>
-                                                    <p className="text-[10px] text-gray-500 truncate">{n.specialization || 'General Nurse'}</p>
+                                                    <p className="text-[10px] text-gray-500 dark:text-slate-400 truncate">{n.specialization || 'General Nurse'}</p>
                                                 </div>
                                                 {isSelected ? (
                                                     <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
@@ -253,10 +253,10 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3 bg-gray-50/50">
+                <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 flex items-center justify-end gap-3 bg-gray-50/50 dark:bg-slate-700/40">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white rounded-xl transition-all"
+                        className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-white dark:hover:bg-slate-600 rounded-xl transition-all"
                     >
                         Cancel
                     </button>

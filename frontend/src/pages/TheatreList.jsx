@@ -153,15 +153,15 @@ const TheatreList = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 py-8 px-4">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="mb-8">
                         <div className="flex items-center gap-3 mb-1">
                             <Building2 className="w-8 h-8 text-blue-600" />
-                            <h1 className="text-3xl font-bold text-gray-900" data-testid="theatre-list-title">Theatres</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="theatre-list-title">Theatres</h1>
                         </div>
-                        <p className="mt-1 text-gray-600">
+                        <p className="mt-1 text-gray-600 dark:text-slate-400">
                             Manage and monitor operating theatre status
                         </p>
                     </div>
@@ -171,13 +171,13 @@ const TheatreList = () => {
                         {ALL_THEATRE_STATUSES.map(status => (
                             <div
                                 key={status}
-                                className="bg-white rounded-3xl border border-gray-200 p-4 flex items-center justify-between"
+                                className="bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-slate-700 p-4 flex items-center justify-between"
                             >
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-900">
+                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
                                         {statusCounts[status] || 0}
                                     </p>
-                                    <p className="text-sm text-gray-500">{THEATRE_STATUS_LABELS[status]}</p>
+                                    <p className="text-sm text-gray-500 dark:text-slate-400">{THEATRE_STATUS_LABELS[status]}</p>
                                 </div>
                                 <TheatreStatusBadge status={status} size="sm" />
                             </div>
@@ -199,11 +199,11 @@ const TheatreList = () => {
                     {/* Filters */}
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-6">
                         <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-gray-400" />
+                            <Filter className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                             <select
                                 value={filters.status || 'all'}
                                 onChange={handleStatusFilterChange}
-                                className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                             >
                                 <option value="all">All Statuses</option>
                                 {ALL_THEATRE_STATUSES.map(s => (
@@ -213,11 +213,11 @@ const TheatreList = () => {
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-gray-400" />
+                            <Filter className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                             <select
                                 value={filters.type || 'all'}
                                 onChange={handleTypeFilterChange}
-                                className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                             >
                                 <option value="all">All Types</option>
                                 {ALL_THEATRE_TYPES.map(t => (
@@ -226,7 +226,7 @@ const TheatreList = () => {
                             </select>
                         </div>
 
-                        <p className="text-sm text-gray-500 ml-auto">
+                        <p className="text-sm text-gray-500 dark:text-slate-400 ml-auto">
                             {theatres.length} {theatres.length === 1 ? 'theatre' : 'theatres'} found
                         </p>
                     </div>
@@ -259,13 +259,13 @@ const TheatreList = () => {
                     {!loading && !error && (
                         <>
                             {theatres.length === 0 ? (
-                                <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                                <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
                                     <div className="max-w-md mx-auto">
-                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <Building2 className="w-8 h-8 text-gray-400" />
+                                        <div className="w-16 h-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <Building2 className="w-8 h-8 text-gray-400 dark:text-slate-500" />
                                         </div>
-                                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Theatres Found</h3>
-                                        <p className="text-gray-600">
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Theatres Found</h3>
+                                        <p className="text-gray-600 dark:text-slate-400">
                                             {filters.status || filters.type
                                                 ? 'No theatres match the selected filters. Try adjusting your filters.'
                                                 : 'No theatres have been configured yet.'}

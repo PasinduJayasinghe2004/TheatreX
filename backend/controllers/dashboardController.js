@@ -55,22 +55,32 @@ export const getDashboardStats = async (req, res) => {
             GROUP BY status
         `;
 
+        // Query 5: Average surgery duration (minutes)
+        const avgDurationQuery = `
+            SELECT COALESCE(ROUND(AVG(duration_minutes))::int, 0) AS avg_duration
+            FROM surgeries
+            WHERE duration_minutes IS NOT NULL
+        `;
+
         // Execute all queries in parallel
         const [
             totalResult,
             upcomingResult,
             statusResult,
-            theatreResult
+            theatreResult,
+            avgDurationResult
         ] = await Promise.all([
             pool.query(totalSurgeriesQuery),
             pool.query(upcomingSurgeriesQuery),
             pool.query(surgeriesByStatusQuery),
-            pool.query(theatreStatusQuery)
+            pool.query(theatreStatusQuery),
+            pool.query(avgDurationQuery)
         ]);
 
         // Process results
         const totalSurgeries = parseInt(totalResult.rows[0]?.total || 0);
         const upcomingSurgeries = parseInt(upcomingResult.rows[0]?.upcoming || 0);
+        const avgDuration = parseInt(avgDurationResult.rows[0]?.avg_duration || 0);
 
         // Convert surgeries by status array to object
         const surgeriesByStatus = {
@@ -105,6 +115,7 @@ export const getDashboardStats = async (req, res) => {
             data: {
                 totalSurgeries,
                 upcomingSurgeries,
+                avgDuration,
                 surgeriesByStatus,
                 theatreStatusSummary,
                 totalTheatres

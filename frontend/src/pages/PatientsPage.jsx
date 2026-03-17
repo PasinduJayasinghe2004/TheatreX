@@ -52,7 +52,7 @@ const BLOOD_COLORS = {
 // ── PatientCard ─────────────────────────────────────────────────────────────
 
 const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col h-full">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group flex flex-col h-full">
         {/* clickable area */}
         <Link
             to={`/patients/${patient.id}`}
@@ -68,23 +68,23 @@ const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
                         </span>
                     </div>
                     <div className="min-w-0">
-                        <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-emerald-700 transition-colors">{patient.name}</h3>
+                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-emerald-700 transition-colors">{patient.name}</h3>
                         {patient.age != null && (
-                            <p className="text-xs text-gray-400">{patient.age} years old</p>
+                            <p className="text-xs text-gray-400 dark:text-slate-500">{patient.age} years old</p>
                         )}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1 flex-shrink-0">
                     {/* Gender badge */}
-                    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${GENDER_COLORS[patient.gender] ?? 'bg-gray-100 text-gray-600'}`}>
+                    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${GENDER_COLORS[patient.gender] ?? 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400'}`}>
                         {GENDER_LABELS[patient.gender] ?? patient.gender}
                     </span>
                 </div>
             </div>
 
             {/* Details */}
-            <div className="space-y-1.5 text-sm text-gray-600">
+            <div className="space-y-1.5 text-sm text-gray-600 dark:text-slate-400">
                 <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
                     <span>{patient.phone}</span>
@@ -106,7 +106,7 @@ const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
             {/* Badges footer */}
             <div className="flex items-center gap-2 flex-wrap mt-auto pt-1">
                 {patient.blood_type && (
-                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 text-gray-600'}`}>
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${BLOOD_COLORS[patient.blood_type] ?? 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400'}`}>
                         <Droplets className="w-3 h-3" />
                         {patient.blood_type}
                     </span>
@@ -122,7 +122,7 @@ const PatientCard = ({ patient, canManage, onEdit, onDelete }) => (
 
         {/* Action footer (separate from Link) */}
         {canManage && (
-            <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
+            <div className="px-5 py-3 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
                 <div className="flex items-center gap-1 text-xs text-gray-400 truncate">
                     {patient.emergency_contact_name && (
                         <>
@@ -258,7 +258,7 @@ const PatientsPage = () => {
     // ── render ──────────────────────────────────────────────────────────
     return (
         <Layout>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
                 {/* Page Header */}
@@ -280,7 +280,7 @@ const PatientsPage = () => {
                             onClick={fetchPatients}
                             disabled={loading}
                             title="Refresh list"
-                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-40"
+                            className="p-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-40"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                         </button>
@@ -299,7 +299,7 @@ const PatientsPage = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6 flex flex-col sm:flex-row gap-3">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4 mb-6 flex flex-col sm:flex-row gap-3">
                     {/* Search */}
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -320,7 +320,7 @@ const PatientsPage = () => {
                             id="patient-filter-gender"
                             value={filterGender}
                             onChange={e => setFilterGender(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors appearance-none"
+                            className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors appearance-none"
                         >
                             <option value="">All Genders</option>
                             <option value="male">Male</option>
@@ -334,7 +334,7 @@ const PatientsPage = () => {
                         id="patient-filter-blood"
                         value={filterBloodType}
                         onChange={e => setFilterBloodType(e.target.value)}
-                        className="sm:w-36 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                        className="sm:w-36 px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                     >
                         <option value="">All Blood Types</option>
                         {bloodTypes.map(bt => (
@@ -348,17 +348,17 @@ const PatientsPage = () => {
                     /* Loading skeleton */
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse">
+                            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 animate-pulse">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                                    <div className="w-10 h-10 bg-gray-200 dark:bg-slate-700 rounded-full" />
                                     <div className="flex-1 space-y-1.5">
-                                        <div className="h-3 bg-gray-200 rounded w-3/4" />
-                                        <div className="h-2.5 bg-gray-100 rounded w-1/2" />
+                                        <div className="h-3 bg-gray-200 dark:bg-slate-700 rounded w-3/4" />
+                                        <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="h-2.5 bg-gray-100 rounded" />
-                                    <div className="h-2.5 bg-gray-100 rounded w-4/5" />
+                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded" />
+                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-4/5" />
                                 </div>
                             </div>
                         ))}
@@ -450,18 +450,18 @@ const PatientsPage = () => {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
                     onClick={(e) => { if (e.target === e.currentTarget && !deleteLoading) setDeletingPatient(null); }}
                 >
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                                <Trash2 className="w-5 h-5 text-red-600" />
+                            <div className="w-10 h-10 bg-red-100 dark:bg-red-950/30 rounded-xl flex items-center justify-center">
+                                <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-gray-900">Delete Patient</h2>
-                                <p className="text-sm text-gray-500">This action can be reversed by an admin</p>
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Delete Patient</h2>
+                                <p className="text-sm text-gray-500 dark:text-slate-400">This action can be reversed by an admin</p>
                             </div>
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-6">
+                        <p className="text-sm text-gray-600 dark:text-slate-300 mb-6">
                             Are you sure you want to delete <strong>{deletingPatient.name}</strong>?
                             The patient record will be deactivated.
                         </p>
@@ -470,7 +470,7 @@ const PatientsPage = () => {
                             <button
                                 onClick={() => setDeletingPatient(null)}
                                 disabled={deleteLoading}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
                             >
                                 Cancel
                             </button>

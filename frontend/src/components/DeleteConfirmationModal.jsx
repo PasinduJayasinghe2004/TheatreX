@@ -26,14 +26,14 @@ const DeleteConfirmationModal = ({
             />
 
             {/* Modal Content */}
-            <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-700">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100">{title}</h3>
                     <button
                         onClick={onClose}
                         disabled={isLoading}
-                        className="p-1 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                        className="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 transition-colors disabled:opacity-50"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -47,17 +47,17 @@ const DeleteConfirmationModal = ({
                     {itemName && (
                         <p className="text-sm font-semibold text-red-600 mb-2">{itemName}</p>
                     )}
-                    <p className="text-gray-600 text-sm leading-relaxed">
+                    <p className="text-gray-600 dark:text-slate-300 text-sm leading-relaxed">
                         {message}
                     </p>
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-gray-50 flex items-center justify-end gap-3">
+                <div className="px-6 py-4 bg-gray-50 dark:bg-slate-900 flex items-center justify-end gap-3">
                     <button
                         onClick={onClose}
                         disabled={isLoading}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors disabled:opacity-50"
+                        className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-gray-800 dark:hover:text-slate-100 transition-colors disabled:opacity-50"
                     >
                         Cancel
                     </button>

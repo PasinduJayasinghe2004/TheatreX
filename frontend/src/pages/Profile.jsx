@@ -213,10 +213,10 @@ const Profile = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 py-8 px-4">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
                 <div className="max-w-3xl mx-auto">
                     {/* Header */}
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6 border border-transparent dark:border-slate-700">
                         <div className="flex flex-col md:flex-row items-center gap-6">
                             {/* Profile Image Circle */}
                             <div className="relative group">
@@ -256,8 +256,8 @@ const Profile = () => {
                             </div>
 
                             <div className="flex-1 text-center md:text-left">
-                                <h1 className="text-3xl font-bold text-gray-800 mb-1">{user.name}</h1>
-                                <p className="text-gray-600 mb-2">{user.email}</p>
+                                <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 mb-1">{user.name}</h1>
+                                <p className="text-gray-600 dark:text-slate-300 mb-2">{user.email}</p>
                                 <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeColor(user.role)}`}>
                                     {getRoleDisplayName(user.role)}
                                 </span>
@@ -276,9 +276,9 @@ const Profile = () => {
                     )}
 
                     {/* Profile Information */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-transparent dark:border-slate-700">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold text-gray-800">Account Information</h2>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-slate-100">Account Information</h2>
                             {!isEditing && (
                                 <button
                                     onClick={() => setIsEditing(true)}
@@ -293,29 +293,29 @@ const Profile = () => {
                             // View Mode
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-600 mb-1">Name</label>
-                                    <p className="text-lg text-gray-800">{user.name}</p>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-slate-400 mb-1">Name</label>
+                                    <p className="text-lg text-gray-800 dark:text-slate-100">{user.name}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
-                                    <p className="text-lg text-gray-800">{user.email}</p>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-slate-400 mb-1">Email</label>
+                                    <p className="text-lg text-gray-800 dark:text-slate-100">{user.email}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-600 mb-1">Phone</label>
-                                    <p className="text-lg text-gray-800">{user.phone || 'Not provided'}</p>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-slate-400 mb-1">Phone</label>
+                                    <p className="text-lg text-gray-800 dark:text-slate-100">{user.phone || 'Not provided'}</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-600 mb-1">Role</label>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-slate-400 mb-1">Role</label>
                                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeColor(user.role)}`}>
                                         {getRoleDisplayName(user.role)}
                                     </span>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-600 mb-1">Account Status</label>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-slate-400 mb-1">Account Status</label>
                                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                         }`}>
                                         {user.is_active ? 'Active' : 'Inactive'}
@@ -326,7 +326,7 @@ const Profile = () => {
                             // Edit Mode
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                                         Name
                                     </label>
                                     <input
@@ -334,25 +334,25 @@ const Profile = () => {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         required
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                                         Email (cannot be changed)
                                     </label>
                                     <input
                                         type="email"
                                         value={user.email}
                                         disabled
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                        className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 cursor-not-allowed"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                                         Phone
                                     </label>
                                     <input
@@ -360,17 +360,17 @@ const Profile = () => {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                 </div>
 
                                 <div className="border-t pt-4 mt-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Change Password</h3>
-                                    <p className="text-sm text-gray-600 mb-4">Leave blank to keep current password</p>
+                                    <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100 mb-4">Change Password</h3>
+                                    <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">Leave blank to keep current password</p>
 
                                     <div className="space-y-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                                                 New Password
                                             </label>
                                             <input
@@ -378,13 +378,13 @@ const Profile = () => {
                                                 name="password"
                                                 value={formData.password}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 minLength="8"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                                                 Confirm New Password
                                             </label>
                                             <input
@@ -392,7 +392,7 @@ const Profile = () => {
                                                 name="confirmPassword"
                                                 value={formData.confirmPassword}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 minLength="8"
                                             />
                                         </div>
@@ -411,7 +411,7 @@ const Profile = () => {
                                         type="button"
                                         onClick={handleCancel}
                                         disabled={loading}
-                                        className="flex-1 px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:cursor-not-allowed"
+                                        className="flex-1 px-6 py-2 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-slate-200 rounded-lg hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors disabled:cursor-not-allowed"
                                     >
                                         Cancel
                                     </button>
