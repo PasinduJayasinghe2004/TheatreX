@@ -32,11 +32,11 @@ export default function LandingNavbar({ onRequestDemo }) {
         const landing = document.querySelector('.landing-page')
         if (landing) {
             landing.classList.add('landing-exit')
-            landing.addEventListener('animationend', () => { 
-                window.location.href = 'http://localhost:5173/login' 
+            landing.addEventListener('animationend', () => {
+                window.location.href = '/login'
             }, { once: true })
         } else {
-            window.location.href = 'http://localhost:5173/login'
+            window.location.href = '/login'
         }
     }
 

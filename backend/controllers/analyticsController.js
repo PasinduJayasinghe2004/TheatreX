@@ -12,9 +12,102 @@
 // - getPatientDemographics: GET /api/analytics/patient-demographics
 // - getStaffCountsByRole: GET /api/analytics/staff-counts
 // - getTheatreUtilization: GET /api/analytics/theatre-utilization
+// - getSurgeryDurationStats: GET /api/analytics/surgery-duration-stats
 // ============================================================================
 
 import { pool } from '../config/database.js';
+
+// ============================================================================
+// GET SURGERY DURATION STATS
+// ============================================================================
+// @desc    Get surgery duration distribution (histogram buckets) + summary stats
+// @route   GET /api/analytics/surgery-duration-stats
+// @access  Protected
+// Created by: M4 (Oneli) - Day 19
+// ============================================================================
+export const getSurgeryDurationStats = async (req, res) => {
+    try {
+        // Bucket query – groups duration_minutes into histogram ranges
+        const bucketQuery = `
+            SELECT
+                CASE
+                    WHEN duration_minutes <= 30 THEN '0-30'
+                    WHEN duration_minutes <= 60 THEN '31-60'
+                    WHEN duration_minutes <= 90 THEN '61-90'
+                    WHEN duration_minutes <= 120 THEN '91-120'
+                    WHEN duration_minutes <= 180 THEN '121-180'
+                    ELSE '180+'
+                END AS range,
+                COUNT(*)::int AS count
+            FROM surgeries
+            WHERE duration_minutes IS NOT NULL
+            GROUP BY range
+            ORDER BY
+                CASE range
+                    WHEN '0-30'    THEN 1
+                    WHEN '31-60'   THEN 2
+                    WHEN '61-90'   THEN 3
+                    WHEN '91-120'  THEN 4
+                    WHEN '121-180' THEN 5
+                    ELSE 6
+                END
+        `;
+
+        // Aggregate stats query
+        const statsQuery = `
+            SELECT
+                COALESCE(ROUND(AVG(duration_minutes))::int, 0) AS avg_duration,
+                COALESCE(MIN(duration_minutes)::int, 0)        AS min_duration,
+                COALESCE(MAX(duration_minutes)::int, 0)        AS max_duration,
+                COUNT(*)::int                                   AS total_surgeries
+            FROM surgeries
+            WHERE duration_minutes IS NOT NULL
+        `;
+
+        const [bucketResult, statsResult] = await Promise.all([
+            pool.query(bucketQuery),
+            pool.query(statsQuery)
+        ]);
+
+        // Ensure all bucket ranges exist (fill missing ones with 0)
+        const allRanges = ['0-30', '31-60', '61-90', '91-120', '121-180', '180+'];
+        const bucketMap = {};
+        bucketResult.rows.forEach(row => { bucketMap[row.range] = row.count; });
+
+        const buckets = allRanges.map(range => ({
+            range,
+            count: bucketMap[range] || 0
+        }));
+
+        const stats = statsResult.rows[0] || {
+            avg_duration: 0,
+            min_duration: 0,
+            max_duration: 0,
+            total_surgeries: 0
+        };
+
+        res.status(200).json({
+            success: true,
+            data: {
+                buckets,
+                stats: {
+                    avgDuration: stats.avg_duration,
+                    minDuration: stats.min_duration,
+                    maxDuration: stats.max_duration,
+                    totalSurgeries: stats.total_surgeries
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching surgery duration stats:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching surgery duration statistics',
+            error: error.message
+        });
+    }
+};
 
 // ============================================================================
 // GET SURGERIES PER DAY (Last 7 Days)

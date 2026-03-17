@@ -1,5 +1,5 @@
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
@@ -28,11 +28,11 @@ import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
 import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
-import LandingPage from '../pages/LandingPage';
 import NotFound from '../pages/NotFound';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { useAuth } from '../context/AuthContext';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
@@ -48,11 +48,25 @@ const AdminPanel = () => (
 
 // Main Routes Component
 const AppRoutes = () => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
     return (
         <Routes>
             {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/login" element={
+                isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+            } />
+            <Route path="/register" element={
+                isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterForm />
+            } />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -202,8 +216,10 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Default Landing Page */}
-            <Route path="/" element={<LandingPage />} />
+            {/* Default redirect to Dashboard or Login */}
+            <Route path="/" element={
+                isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+            } />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
