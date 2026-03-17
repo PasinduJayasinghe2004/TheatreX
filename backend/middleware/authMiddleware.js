@@ -1,82 +1,84 @@
-// ============================================================================
-// Authentication Middleware
-// ============================================================================
-// Protects routes by verifying JWT tokens and enforcing role-based access
-// Created by: M4 (Oneli) - Day 4
-// Updated: Migrated from MySQL to PostgreSQL
-// 
-// EXPORTS:
-// - protect: Verifies valid JWT token in Authorization header
-// - authorize: Restricts access to specific user roles
-// ============================================================================
-
-import { verifyToken } from '../utils/jwtUtils.js';
+import { createClerkClient } from '@clerk/clerk-sdk-node';
 import { pool } from '../config/database.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 // ============================================================================
-// MIDDLEWARE: Protect Routes (Verify JWT)
-// ============================================================================
-// Usage: router.get('/profile', protect, getProfile);
-// 
-// 1. Checks for token in "Authorization: Bearer <token>" header
-// 2. Verifies token signature
-// 3. Decodes payload and fetches user from DB
-// 4. Attaches user object to req.user
+// MIDDLEWARE: Protect Routes (Verify Clerk JWT)
 // ============================================================================
 export const protect = async (req, res, next) => {
     let token;
 
-    // Check for Authorization header with Bearer scheme
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
     ) {
         try {
-            // Get token from header (remove "Bearer " prefix)
             token = req.headers.authorization.split(' ')[1];
 
-            // Verify token using utility
-            const decoded = verifyToken(token);
+            // Verify the token with Clerk
+            const decodedRequest = await clerkClient.authenticateRequest(req);
 
-            // Fetch user from database (exclude password)
-            // check if user still exists/is active
-            const { rows: users } = await pool.query(
-                'SELECT id, name, email, role, phone, is_active FROM users WHERE id = $1',
-                [decoded.id]
+            if (decodedRequest.status === 'signed-out') {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Not authorized, token failed'
+                });
+            }
+
+            const { userId } = decodedRequest.auth;
+
+            // Fetch user from local database using Clerk ID or session email
+            let { rows: users } = await pool.query(
+                'SELECT id, name, email, role, phone, is_active FROM users WHERE clerk_id = $1 OR email = $2',
+                [userId, decodedRequest.auth.sessionClaims?.email]
             );
 
+            // AUTO-PROVISION: If user exists in Clerk but not in local DB, create them
+            // This is essential for local dev where webhooks aren't easily reachable
             if (users.length === 0) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'User no longer exists'
-                });
+                try {
+                    console.log(`🔍 User ${userId} not found in DB, auto-provisioning...`);
+                    const clerkUser = await clerkClient.users.getUser(userId);
+                    const email = clerkUser.emailAddresses[0]?.emailAddress;
+                    const name = `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Clerk User';
+                    const role = clerkUser.publicMetadata?.role || 'coordinator';
+
+                    const { rows: newUser } = await pool.query(
+                        `INSERT INTO users (clerk_id, email, name, role, is_active) 
+                         VALUES ($1, $2, $3, $4, $5)
+                         ON CONFLICT (email) DO UPDATE SET clerk_id = $1
+                         RETURNING id, name, email, role, phone, is_active`,
+                        [userId, email, name, role, true]
+                    );
+                    users = newUser;
+                    console.log(`✅ Auto-provisioned user ${email} (${role})`);
+                } catch (provisionErr) {
+                    console.error('Auto-provisioning failed:', provisionErr.message);
+                    return res.status(401).json({
+                        success: false,
+                        message: 'User found in Clerk but local profile creation failed.',
+                        error: provisionErr.message
+                    });
+                }
             }
 
-            const user = users[0];
-
-            // Check if user is active
-            if (!user.is_active) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Account is deactivated'
-                });
-            }
-
-            // Attach user to request object
-            req.user = user;
+            req.user = users[0];
+            req.auth = decodedRequest.auth;
             next();
 
         } catch (error) {
-            console.error('Auth Middleware Error:', error.message);
+            console.error('Clerk Auth Error:', error.message);
             return res.status(401).json({
                 success: false,
-                message: 'Not authorized, token failed',
+                message: 'Not authorized, token validation failed',
                 error: error.message
             });
         }
-    }
-
-    if (!token) {
+    } else {
         return res.status(401).json({
             success: false,
             message: 'Not authorized, no token provided'
@@ -87,13 +89,8 @@ export const protect = async (req, res, next) => {
 // ============================================================================
 // MIDDLEWARE: Role-Based Access Control (RBAC)
 // ============================================================================
-// Usage: router.delete('/users/:id', protect, authorize('admin'), deleteUser);
-// 
-// @param {...String} roles - List of allowed roles (e.g., 'admin', 'surgeon')
-// ============================================================================
 export const authorize = (...roles) => {
     return (req, res, next) => {
-        // req.user is set by 'protect' middleware above
         if (!req.user) {
             return res.status(401).json({
                 success: false,
