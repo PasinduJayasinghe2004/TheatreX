@@ -452,3 +452,60 @@ export const getTheatreUtilization = async (req, res) => {
         });
     }
 };
+
+// ============================================================================
+// GET PEAK HOURS ANALYSIS
+// ============================================================================
+// @desc    Get surgery count per hour of the day
+// @route   GET /api/analytics/peak-hours
+// @access  Protected
+// Created by: M5 (Inthusha) - Day 19
+// ============================================================================
+export const getPeakHoursAnalysis = async (req, res) => {
+    try {
+        // Query to get surgery count for each of the 24 hours
+        // Uses generate_series to ensure all hours (0-23) are included
+        const query = `
+            SELECT
+                h.hour,
+                COALESCE(COUNT(s.id), 0)::int AS count
+            FROM generate_series(0, 23) AS h(hour)
+            LEFT JOIN surgeries s
+                ON EXTRACT(HOUR FROM s.scheduled_time) = h.hour
+            GROUP BY h.hour
+            ORDER BY h.hour ASC
+        `;
+
+        const result = await pool.query(query);
+
+        // Format data for Recharts: { hour: '00:00', count: 5 }
+        const formattedData = result.rows.map(row => ({
+            hour: `${row.hour.toString().padStart(2, '0')}:00`,
+            displayHour: row.hour > 12 ? `${row.hour - 12} PM` : row.hour === 12 ? '12 PM' : row.hour === 0 ? '12 AM' : `${row.hour} AM`,
+            count: row.count
+        }));
+
+        // Identify the peak hour
+        const peak = formattedData.reduce((prev, current) => (prev.count > current.count) ? prev : current, formattedData[0]);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                chartData: formattedData,
+                peak: {
+                    hour: peak.hour,
+                    displayHour: peak.displayHour,
+                    count: peak.count
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching peak hours analysis:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching peak hours statistics',
+            error: error.message
+        });
+    }
+};

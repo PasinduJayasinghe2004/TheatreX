@@ -14,7 +14,8 @@ import {
     getPatientDemographics,
     getStaffCountsByRole,
     getTheatreUtilization,
-    getSurgeryDurationStats
+    getSurgeryDurationStats,
+    getPeakHoursAnalysis
 } from '../controllers/analyticsController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -78,5 +79,15 @@ router.get('/theatre-utilization', protect, getTheatreUtilization);
 // Created by: M4 (Oneli) - Day 19
 // ============================================================================
 router.get('/surgery-duration-stats', protect, getSurgeryDurationStats);
+
+// ============================================================================
+// Peak Hours Analysis Route
+// ============================================================================
+// @route   GET /api/analytics/peak-hours
+// @desc    Get surgery count per hour of the day
+// @access  Protected (all authenticated users)
+// Created by: M5 (Inthusha) - Day 19
+// ============================================================================
+router.get('/peak-hours', protect, getPeakHoursAnalysis);
 
 export default router;
