@@ -108,11 +108,27 @@ export const getSurgeryDurationStats = async () => {
     }
 };
 
+/**
+ * Get surgery count per hour of the day (Peak hours analysis)
+ * @returns {Promise} Peak hours data
+ * Created by: M5 (Inthusha) - Day 19
+ */
+export const getPeakHoursAnalysis = async () => {
+    try {
+        const response = await api.get('/analytics/peak-hours');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching peak hours analysis:', error);
+        throw error;
+    }
+};
+
 export default {
     getSurgeriesPerDay,
     getSurgeryStatusCounts,
     getPatientDemographics,
     getStaffCountsByRole,
     getTheatreUtilization,
-    getSurgeryDurationStats
+    getSurgeryDurationStats,
+    getPeakHoursAnalysis
 };

@@ -24,12 +24,14 @@ import {
     getStaffCountsByRole,
     getTheatreUtilization,
     getSurgeriesPerDay,
-    getSurgeryDurationStats
+    getSurgeryDurationStats,
+    getPeakHoursAnalysis
 } from '../services/analyticsService';
 import StaffDistribution from '../components/analytics/StaffDistribution';
 import PatientDemographicsBarChart from '../components/analytics/PatientDemographicsBarChart';
 import DurationHistogram from '../components/analytics/DurationHistogram';
 import TheatreUtilizationStats from '../components/analytics/TheatreUtilizationStats';
+import PeakHoursChart from '../components/analytics/PeakHoursChart';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Custom Tooltip Component
@@ -60,6 +62,7 @@ const AnalyticsPage = () => {
     const [staffData, setStaffData] = useState(null);
     const [utilizationData, setUtilizationData] = useState(null);
     const [durationData, setDurationData] = useState(null);
+    const [peakHoursData, setPeakHoursData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartType, setChartType] = useState('line'); // 'area' | 'bar' | 'line'
@@ -81,13 +84,14 @@ const AnalyticsPage = () => {
             setLoading(true);
             setError(null);
 
-            const [perDayRes, statusRes, demoRes, staffRes, utilizationRes, durationRes] = await Promise.all([
+            const [perDayRes, statusRes, demoRes, staffRes, utilizationRes, durationRes, peakHoursRes] = await Promise.all([
                 getSurgeriesPerDay(),
                 getSurgeryStatusCounts(statusStartDate, statusEndDate),
                 getPatientDemographics(),
                 getStaffCountsByRole(),
                 getTheatreUtilization(),
-                getSurgeryDurationStats()
+                getSurgeryDurationStats(),
+                getPeakHoursAnalysis()
             ]);
 
             if (perDayRes?.success) {
@@ -107,6 +111,9 @@ const AnalyticsPage = () => {
             }
             if (durationRes?.success) {
                 setDurationData(durationRes.data);
+            }
+            if (peakHoursRes?.success) {
+                setPeakHoursData(peakHoursRes.data);
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
@@ -608,6 +615,16 @@ const AnalyticsPage = () => {
                         <DurationHistogram
                             buckets={durationData.buckets}
                             stats={durationData.stats}
+                        />
+                    </div>
+                )}
+
+                {/* ─── Peak Hours Analysis ─── M5 (Inthusha) Day 19 */}
+                {peakHoursData && (
+                    <div className="grid grid-cols-1 gap-6">
+                        <PeakHoursChart 
+                            data={peakHoursData.chartData} 
+                            peak={peakHoursData.peak} 
                         />
                     </div>
                 )}
