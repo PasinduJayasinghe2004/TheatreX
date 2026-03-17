@@ -26,12 +26,29 @@ const api = axios.create({
 });
 
 // ============================================================================
-// REQUEST INTERCEPTOR: Attach Access Token
+// REQUEST INTERCEPTOR: Attach Fresh Clerk Token
 // ============================================================================
-// Automatically adds the JWT access token to every outgoing request
+// Fetches a fresh Clerk session token for every outgoing request.
+// Clerk tokens are short-lived (~60s), so we must get a new one each time.
+// Falls back to localStorage if Clerk isn't loaded yet.
 // ============================================================================
 api.interceptors.request.use(
-    (config) => {
+    async (config) => {
+        try {
+            // Try to get a fresh token from Clerk's active session
+            const clerk = window.Clerk;
+            if (clerk && clerk.session) {
+                const freshToken = await clerk.session.getToken();
+                if (freshToken) {
+                    config.headers.Authorization = `Bearer ${freshToken}`;
+                    return config;
+                }
+            }
+        } catch (err) {
+            console.warn('Could not fetch fresh Clerk token, falling back to stored token:', err.message);
+        }
+
+        // Fallback: use stored token from localStorage
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
