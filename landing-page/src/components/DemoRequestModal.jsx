@@ -64,11 +64,30 @@ export default function DemoRequestModal({ isOpen, onClose }) {
         return Object.keys(errs).length === 0
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         if (!validate()) return
-        console.log('📬 Demo request submitted:', form)
-        setSubmitted(true)
+
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+            const response = await fetch(`${API_URL}/inquiries/demo-request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(form)
+            });
+
+            if (response.ok) {
+                console.log('📬 Demo request submitted:', form)
+                setSubmitted(true)
+            } else {
+                throw new Error('Submission failed');
+            }
+        } catch (error) {
+            console.error('❌ Error submitting demo request:', error);
+            setErrors({ submit: 'Something went wrong. Please try again later.' });
+        }
     }
 
     const handleChange = (e) => {
@@ -282,6 +301,12 @@ export default function DemoRequestModal({ isOpen, onClose }) {
                             >
                                 <Send size={16} /> Request Demo
                             </button>
+
+                            {errors.submit && (
+                                <p style={{ color: '#f87171', fontSize: '0.8rem', textAlign: 'center', marginTop: '0.5rem' }}>
+                                    {errors.submit}
+                                </p>
+                            )}
 
                             <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: '-0.25rem' }}>
                                 We&apos;ll respond within 24 hours. No spam, ever.
