@@ -36,6 +36,8 @@ import chatbotRoutes from './routes/chatbotRoutes.js'; // AI Chatbot - Gemini Fl
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
 import clerkWebhooks from './routes/clerkWebhooks.js';
+import inquiryRoutes from './routes/inquiryRoutes.js';
+import { createInquiriesTable } from './models/inquiryModel.js';
 
 // Load environment variables
 dotenv.config();
@@ -76,6 +78,7 @@ app.use('/api/notifications', notificationRoutes); // Notification routes - M5/M
 app.use('/api/technicians', technicianRoutes); // Technician routes - M4 Day 13
 app.use('/api/analytics', analyticsRoutes); // Analytics routes - M1 Day 18
 app.use('/api/chatbot', chatbotRoutes); // AI Chatbot routes - Gemini Flash
+app.use('/api/inquiries', inquiryRoutes); // Demo requests - New
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -143,6 +146,7 @@ const startServer = async () => {
             console.warn('Database connection failed. Running in limited mode.');
         } else {
             await initializeTables();
+            await createInquiriesTable();
         }
 
         // Start surgery reminder cron job (runs every 60 seconds) - M4 Day 16

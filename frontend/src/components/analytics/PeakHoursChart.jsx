@@ -15,7 +15,7 @@ import {
 /**
  * Custom Tooltip for the Peak Hours Chart
  */
-const CustomPeakTooltip = ({ active, payload, label }) => {
+const CustomPeakTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 shadow-lg">
