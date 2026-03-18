@@ -36,21 +36,11 @@ import analyticsRoutes from './routes/analyticsRoutes.js'; // M1 - Day 18
 import chatbotRoutes from './routes/chatbotRoutes.js'; // AI Chatbot - Gemini Flash
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
-import clerkWebhooks from './routes/clerkWebhooks.js';
-import inquiryRoutes from './routes/inquiryRoutes.js';
-import { createInquiriesTable } from './models/inquiryModel.js';
-
-// Load environment variables
-dotenv.config();
-
 // Initialize Express app
 const app = express();
 
 // Middleware
 app.use(cors());
-
-// Clerk Webhooks (Needs raw body for signature verification)
-app.use('/api/webhooks/clerk', clerkWebhooks);
 
 // Parse incoming JSON payloads in request body
 // Makes req.body available for JSON data

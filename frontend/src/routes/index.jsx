@@ -4,7 +4,7 @@ import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
 import LayoutDemo from '../pages/LayoutDemo';
-import RegisterForm from '../components/auth/RegisterForm';
+import Register from '../pages/Register';
 import Login from '../pages/Login';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
@@ -66,7 +66,7 @@ const AppRoutes = () => {
                 isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
             } />
             <Route path="/register" element={
-                isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterForm />
+                isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
             } />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
