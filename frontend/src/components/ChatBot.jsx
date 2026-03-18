@@ -110,12 +110,14 @@ export default function ChatBot() {
         setIsTyping(true)
 
         // Simulate typing delay
-        const delay = 400 + Math.random() * 600
         setTimeout(() => {
-            const answer = findAnswer(text)
-            setMessages(prev => [...prev, { from: 'bot', text: answer }])
-            setIsTyping(false)
-        }, delay)
+            const delay = 400 + Math.random() * 600
+            setTimeout(() => {
+                const answer = findAnswer(text)
+                setMessages(prev => [...prev, { from: 'bot', text: answer }])
+                setIsTyping(false)
+            }, delay)
+        }, 0)
     }
 
     const handleSubmit = (e) => {
