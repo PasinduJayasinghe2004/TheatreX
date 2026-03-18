@@ -88,7 +88,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(__dirname, '../landing-page/dist')));
 
 // Fallback for SPA routing/Landing Page
-// If request doesn't start with /api and doesn't match an API route, serve landing page
 app.get('*', (req, res, next) => {
     // Basic API 404
     if (req.path.startsWith('/api')) {
@@ -97,8 +96,21 @@ app.get('*', (req, res, next) => {
             message: 'API Route not found'
         });
     }
-    // Static file fallback for landing page
-    res.sendFile(path.join(__dirname, '../landing-page/dist/index.html'));
+
+    const landingPath = path.join(__dirname, '../landing-page/dist/index.html');
+
+    // Static file fallback with existence check in development/logging
+    res.sendFile(landingPath, (err) => {
+        if (err) {
+            console.error(`❌ Error sending landing page: ${landingPath}`, err.message);
+            // If the landing page dist isn't found, show a more helpful error
+            res.status(500).json({
+                success: false,
+                message: 'Internal server error: Landing page build not found. Please ensure the project is built correctly.',
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            });
+        }
+    });
 });
 
 // Root route (API-specific documentation)
