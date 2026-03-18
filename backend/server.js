@@ -12,7 +12,7 @@
  */
 
 import express from 'express';
-import path from 'path';
+
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -81,37 +81,6 @@ app.use('/api/analytics', analyticsRoutes); // Analytics routes - M1 Day 18
 app.use('/api/chatbot', chatbotRoutes); // AI Chatbot routes - Gemini Flash
 app.use('/api/inquiries', inquiryRoutes); // Demo requests - New
 
-// --- Static Frontend Integration ---
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Serve Landing Page Static files from backend/public (built from landing-page)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Fallback for SPA routing/Landing Page
-app.get('*', (req, res, next) => {
-    // Basic API 404
-    if (req.path.startsWith('/api')) {
-        return res.status(404).json({
-            success: false,
-            message: 'API Route not found'
-        });
-    }
-
-    const landingPath = path.join(__dirname, 'public/index.html');
-
-    // Static file fallback with existence check in development/logging
-    res.sendFile(landingPath, (err) => {
-        if (err) {
-            console.error(`❌ Error sending landing page: ${landingPath}`, err.message);
-            // If the landing page dist isn't found, show a more helpful error
-            res.status(500).json({
-                success: false,
-                message: 'Internal server error: Landing page build not found. Please ensure the project is built correctly.',
-                error: process.env.NODE_ENV === 'development' ? err.message : undefined
-            });
-        }
-    });
-});
 
 // Root route (API-specific documentation)
 app.get('/api', (req, res) => {
@@ -146,6 +115,16 @@ app.use((err, req, res, next) => {
         error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
+
+// 404 handler for any non-API routes (backend-only deployment — must be last)
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: `Route ${req.method} ${req.path} not found. This is a backend API server.`,
+        hint: 'All endpoints are prefixed with /api'
+    });
+});
+
 
 // Start server
 const PORT = process.env.PORT || 5000;
