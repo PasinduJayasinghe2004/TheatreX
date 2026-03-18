@@ -14,8 +14,8 @@
 
 import axios from 'axios';
 
-// Base API URL - adjust if your backend runs on a different port
-const API_URL = 'http://localhost:5000/api';
+// Base API URL - reads from VITE_API_URL env variable (falls back to localhost for dev)
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
 
 // Create axios instance with default config
 const api = axios.create({

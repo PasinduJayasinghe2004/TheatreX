@@ -21,7 +21,7 @@ const Profile = () => {
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
     const fileInputRef = useRef(null);
-    const backendUrl = 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     // Form state
     const [formData, setFormData] = useState({
@@ -73,7 +73,7 @@ const Profile = () => {
 
             // Make API request
             const response = await axios.put(
-                'http://localhost:5000/api/auth/profile',
+                `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/profile`,
                 updateData,
                 {
                     headers: {
