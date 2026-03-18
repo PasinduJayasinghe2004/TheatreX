@@ -12,6 +12,7 @@
  */
 
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -80,17 +81,28 @@ app.use('/api/analytics', analyticsRoutes); // Analytics routes - M1 Day 18
 app.use('/api/chatbot', chatbotRoutes); // AI Chatbot routes - Gemini Flash
 app.use('/api/inquiries', inquiryRoutes); // Demo requests - New
 
-// Health check route
-app.get('/api/health', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: 'TheatreX API is running',
-        timestamp: new Date().toISOString()
-    });
+// --- Static Frontend Integration ---
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Serve Landing Page Static files from landing-page/dist
+app.use(express.static(path.join(__dirname, '../landing-page/dist')));
+
+// Fallback for SPA routing/Landing Page
+// If request doesn't start with /api and doesn't match an API route, serve landing page
+app.get('*', (req, res, next) => {
+    // Basic API 404
+    if (req.path.startsWith('/api')) {
+        return res.status(404).json({
+            success: false,
+            message: 'API Route not found'
+        });
+    }
+    // Static file fallback for landing page
+    res.sendFile(path.join(__dirname, '../landing-page/dist/index.html'));
 });
 
-// Root route
-app.get('/', (req, res) => {
+// Root route (API-specific documentation)
+app.get('/api', (req, res) => {
     res.status(200).json({
         success: true,
         message: 'Welcome to TheatreX API',
@@ -103,11 +115,12 @@ app.get('/', (req, res) => {
     });
 });
 
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: 'Route not found'
+// Health check route
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'TheatreX API is running',
+        timestamp: new Date().toISOString()
     });
 });
 
