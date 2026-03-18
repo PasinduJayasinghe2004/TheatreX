@@ -84,8 +84,8 @@ app.use('/api/inquiries', inquiryRoutes); // Demo requests - New
 // --- Static Frontend Integration ---
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Serve Landing Page Static files from landing-page/dist
-app.use(express.static(path.join(__dirname, '../landing-page/dist')));
+// Serve Landing Page Static files from backend/public (built from landing-page)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Fallback for SPA routing/Landing Page
 app.get('*', (req, res, next) => {
@@ -97,7 +97,7 @@ app.get('*', (req, res, next) => {
         });
     }
 
-    const landingPath = path.join(__dirname, '../landing-page/dist/index.html');
+    const landingPath = path.join(__dirname, 'public/index.html');
 
     // Static file fallback with existence check in development/logging
     res.sendFile(landingPath, (err) => {

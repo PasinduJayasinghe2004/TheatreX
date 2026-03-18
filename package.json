@@ -20,7 +20,7 @@
   "scripts": {
     "start": "npm start --prefix backend",
     "build": "npm run build --prefix landing-page && npm install --prefix backend",
-    "postinstall": "npm install --prefix backend && npm install --prefix landing-page",
+    "postinstall": "npm install --prefix landing-page && npm run build --prefix landing-page && npm install --prefix backend",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
