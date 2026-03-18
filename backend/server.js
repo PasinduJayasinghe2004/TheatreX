@@ -20,6 +20,7 @@ import cron from 'node-cron';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
 import { createSurgeryNursesTable } from './models/surgeryNurseModel.js'; // M2 - Day 9
+import { createInquiriesTable } from './models/inquiryModel.js'; // Landing page inquiries
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
@@ -34,6 +35,7 @@ import notificationRoutes from './routes/notificationRoutes.js'; // M5/M6 - Day 
 import technicianRoutes from './routes/technicianRoutes.js'; // M4 - Day 13
 import analyticsRoutes from './routes/analyticsRoutes.js'; // M1 - Day 18
 import chatbotRoutes from './routes/chatbotRoutes.js'; // AI Chatbot - Gemini Flash
+import inquiryRoutes from './routes/inquiryRoutes.js'; // Demo requests - New
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
 
 // Initialize Express app
