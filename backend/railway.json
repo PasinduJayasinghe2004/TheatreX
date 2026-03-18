@@ -1,7 +1,8 @@
 {
     "$schema": "https://schema.railway.app/railway.json",
     "build": {
-        "builder": "NIXPACKS"
+        "builder": "NIXPACKS",
+        "nixpacksConfigPath": "nixpacks.toml"
     },
     "deploy": {
         "startCommand": "node server.js",
