@@ -29,14 +29,15 @@ export default function LandingNavbar({ onRequestDemo }) {
 
     const handleLogin = (e) => {
         e.preventDefault()
+        const DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL || 'http://localhost:5173'
         const landing = document.querySelector('.landing-page')
         if (landing) {
             landing.classList.add('landing-exit')
             landing.addEventListener('animationend', () => {
-                window.location.href = '/login'
+                window.location.href = `${DASHBOARD_URL}/login`
             }, { once: true })
         } else {
-            window.location.href = '/login'
+            window.location.href = `${DASHBOARD_URL}/login`
         }
     }
 
