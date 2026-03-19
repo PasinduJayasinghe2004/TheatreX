@@ -25,6 +25,7 @@
 // - Get available surgeons for a time slot - M1 Day 9
 // - Get available nurses for a time slot - M2 Day 9
 // - Get available anaesthetists for a time slot - M3 Day 9
+// - Get completed surgery history - M1 Day 20
 // - Uses the same axios instance as authService for automatic JWT handling
 // ============================================================================
 
@@ -60,6 +61,47 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching surgeries. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Get completed surgery history
+    // Created by: M1 (Pasindu) - Day 20
+    // Updated by: M2 (Chandeepa) - Day 20 (Added date range filter support)
+    // Updated by: M3 (Janani) - Day 20 (Added surgeon filter support)
+    // Updated by: M4 (Oneli) - Day 20 (Added theatre filter support)
+    // Updated by: M5 (User) - Day 20 (Added pagination support)
+    // ========================================
+    getSurgeryHistory: async (filters = {}) => {
+        try {
+            const params = new URLSearchParams();
+            if (filters.startDate) {
+                params.append('startDate', filters.startDate);
+            }
+            if (filters.endDate) {
+                params.append('endDate', filters.endDate);
+            }
+            if (filters.surgeonId) {
+                params.append('surgeonId', String(filters.surgeonId));
+            }
+            if (filters.theatreId) {
+                params.append('theatreId', String(filters.theatreId));
+            }
+            if (filters.page) {
+                params.append('page', String(filters.page));
+            }
+            if (filters.limit) {
+                params.append('limit', String(filters.limit));
+            }
+
+            const queryString = params.toString();
+            const url = queryString ? `/surgeries/history?${queryString}` : '/surgeries/history';
+
+            const response = await api.get(url);
+            return response.data;
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error fetching surgery history. Please try again.';
             throw new Error(message);
         }
     },
