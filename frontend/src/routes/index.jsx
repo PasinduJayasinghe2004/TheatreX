@@ -29,6 +29,7 @@ import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
 import HistoryPage from '../pages/HistoryPage'; // M1 - Day 20
+import SurgeryPrintView from '../pages/SurgeryPrintView'; // M3 - Day 21
 import LandingPage from '../pages/LandingPage';
 import NotFound from '../pages/NotFound';
 
@@ -222,6 +223,13 @@ const AppRoutes = () => {
             <Route path="/history" element={
                 <ProtectedRoute>
                     <HistoryPage />
+                </ProtectedRoute>
+            } />
+
+            {/* Print-Friendly Surgery Detail - M3 (Day 21) */}
+            <Route path="/history/:id/print" element={
+                <ProtectedRoute>
+                    <SurgeryPrintView />
                 </ProtectedRoute>
             } />
 
