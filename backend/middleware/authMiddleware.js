@@ -1,94 +1,65 @@
-import { createClerkClient } from '@clerk/clerk-sdk-node';
+
+import { verifyToken } from '../utils/jwtUtils.js';
 import { pool } from '../config/database.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 // ============================================================================
-// MIDDLEWARE: Protect Routes (Verify Clerk JWT)
+// MIDDLEWARE: Protect Routes (Verify Custom JWT)
+// ============================================================================
+// Extracts token from Authorization header, verifies it, and attaches user to req
 // ============================================================================
 export const protect = async (req, res, next) => {
     let token;
 
+    // Check for token in Authorization header (Bearer <token>)
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
     ) {
         try {
+            // Get token from header
             token = req.headers.authorization.split(' ')[1];
 
-            // Verify the Clerk JWT directly (more reliable than authenticateRequest
-            // for API-only backends where Express req lacks a full URL)
-            const decoded = await clerkClient.verifyToken(token);
+            // Verify token using centralized utility
+            const decoded = verifyToken(token);
 
-            if (!decoded || !decoded.sub) {
+            // Fetch current user from database to ensure they still exist and are active
+            const { rows: users } = await pool.query(
+                'SELECT id, name, email, role, phone, profile_image, is_active FROM users WHERE id = $1',
+                [decoded.id]
+            );
+
+            if (users.length === 0) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Not authorized, token failed'
+                    message: 'Not authorized, user no longer exists'
                 });
             }
 
-            const userId = decoded.sub;
+            const user = users[0];
 
-            // Fetch user from local database using Clerk ID
-            let { rows: users } = await pool.query(
-                'SELECT id, name, email, role, phone, is_active FROM users WHERE clerk_id = $1',
-                [userId]
-            );
-
-            // Also try by email if not found by clerk_id
-            if (users.length === 0 && decoded.email) {
-                const result = await pool.query(
-                    'SELECT id, name, email, role, phone, is_active FROM users WHERE email = $1',
-                    [decoded.email]
-                );
-                users = result.rows;
+            // Check if user account is active
+            if (!user.is_active) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Account is deactivated'
+                });
             }
 
-            // AUTO-PROVISION: If user exists in Clerk but not in local DB, create them
-            // This is essential for local dev where webhooks aren't easily reachable
-            if (users.length === 0) {
-                try {
-                    console.log(`🔍 User ${userId} not found in DB, auto-provisioning...`);
-                    const clerkUser = await clerkClient.users.getUser(userId);
-                    const email = clerkUser.emailAddresses[0]?.emailAddress;
-                    const name = `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Clerk User';
-                    const role = clerkUser.publicMetadata?.role || 'coordinator';
-
-                    const { rows: newUser } = await pool.query(
-                        `INSERT INTO users (clerk_id, email, name, role, is_active) 
-                         VALUES ($1, $2, $3, $4, $5)
-                         ON CONFLICT (email) DO UPDATE SET clerk_id = $1
-                         RETURNING id, name, email, role, phone, is_active`,
-                        [userId, email, name, role, true]
-                    );
-                    users = newUser;
-                    console.log(`✅ Auto-provisioned user ${email} (${role})`);
-                } catch (provisionErr) {
-                    console.error('Auto-provisioning failed:', provisionErr.message);
-                    return res.status(401).json({
-                        success: false,
-                        message: 'User found in Clerk but local profile creation failed.',
-                        error: provisionErr.message
-                    });
-                }
-            }
-
-            req.user = users[0];
-            req.auth = { userId, sessionClaims: decoded };
+            // Attach user object to request for use in controllers
+            req.user = user;
             next();
 
         } catch (error) {
-            console.error('Clerk Auth Error:', error.message);
+            console.error('Auth Middleware Error:', error.message);
             return res.status(401).json({
                 success: false,
-                message: 'Not authorized, token validation failed',
+                message: 'Not authorized, token failed',
                 error: error.message
             });
         }
-    } else {
+    }
+
+    if (!token) {
         return res.status(401).json({
             success: false,
             message: 'Not authorized, no token provided'
@@ -98,6 +69,8 @@ export const protect = async (req, res, next) => {
 
 // ============================================================================
 // MIDDLEWARE: Role-Based Access Control (RBAC)
+// ============================================================================
+// Restricts access to specific user roles
 // ============================================================================
 export const authorize = (...roles) => {
     return (req, res, next) => {

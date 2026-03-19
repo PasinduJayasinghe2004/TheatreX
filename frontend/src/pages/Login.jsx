@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { SignIn } from '@clerk/clerk-react';
-import { ChevronDown } from 'lucide-react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { ChevronDown, Eye, EyeOff, Loader2 } from 'lucide-react';
 import theatrexLogo from '../assets/theatrex-logo.svg';
+import { useAuth } from '../context/AuthContext';
+import { Button, Input } from '../components/ui';
 
 /* ========================================
    Slide Data — 3 slides with SVG content
@@ -152,13 +153,29 @@ const slides = [
 
 const Login = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { login, isAuthenticated } = useAuth();
+
     const [currentSlide, setCurrentSlide] = useState(0);
     const [logoutMessage, setLogoutMessage] = useState(false);
+
+    // Form state
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
 
     // Show logout message if redirected from logout
     useEffect(() => {
         if (location.state?.loggedOut) {
-            // Use setTimeout to avoid synchronous state update in effect which triggers linter
             const syncTimer = setTimeout(() => {
                 setLogoutMessage(true);
                 window.history.replaceState({}, document.title);
@@ -179,6 +196,21 @@ const Login = () => {
         }, 5000);
         return () => clearInterval(timer);
     }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
+
+        try {
+            await login(email, password);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.message || 'Invalid email or password');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="h-screen overflow-hidden flex relative" style={{ animation: 'loginEnter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
@@ -251,33 +283,111 @@ const Login = () => {
                 </div>
             </div>
 
-            {/* Right Panel - White Background with Clerk SignIn */}
+            {/* Right Panel - Login Form */}
             <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gray-50 overflow-y-auto">
-                <div className="w-full max-w-md">
-                    <div className="flex justify-end mb-8">
+                <div className="w-full max-w-md space-y-8">
+                    <div className="flex justify-end mb-4">
                         <button className="flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm">
                             <span>English (UK)</span>
                             <ChevronDown className="w-4 h-4" />
                         </button>
                     </div>
 
-                    <div className="flex justify-center">
-                        <SignIn
-                            routing="path"
-                            path="/login"
-                            signUpUrl="/register"
-                            appearance={{
-                                elements: {
-                                    formButtonPrimary: 'bg-blue-600 hover:bg-blue-700 text-sm normal-case',
-                                    card: 'shadow-none bg-transparent border-none',
-                                    headerTitle: 'text-2xl font-bold text-gray-900',
-                                    headerSubtitle: 'text-gray-500 text-sm',
-                                    socialButtonsBlockButton: 'border-gray-300 hover:bg-gray-50',
-                                    formFieldInput: 'rounded-lg border-gray-300 focus:ring-blue-500',
-                                    footerActionLink: 'text-blue-600 hover:text-blue-700 font-semibold'
-                                }
-                            }}
-                        />
+                    <div className="text-center">
+                        <h2 className="text-3xl font-extrabold text-gray-900">Sign in to TheatreX</h2>
+                        <p className="mt-2 text-sm text-gray-600">
+                            Welcome back! Please enter your details.
+                        </p>
+                    </div>
+
+                    {error && (
+                        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm flex items-center gap-2 animate-shake">
+                            <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                        <div className="space-y-4">
+                            <Input
+                                label="Email address"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="name@company.com"
+                                className="appearance-none"
+                            />
+
+                            <div className="relative">
+                                <Input
+                                    label="Password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="current-password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="appearance-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-[34px] text-gray-400 hover:text-gray-600 focus:outline-none"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <input
+                                    id="remember-me"
+                                    name="remember-me"
+                                    type="checkbox"
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                                    Remember me
+                                </label>
+                            </div>
+
+                            <div className="text-sm">
+                                <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+                                    Forgot your password?
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div>
+                            <Button
+                                type="submit"
+                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    'Sign in'
+                                )}
+                            </Button>
+                        </div>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-gray-600">
+                            Don&apos;t have an account?{' '}
+                            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                                Create an account
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </div>

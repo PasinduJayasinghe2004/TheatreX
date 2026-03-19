@@ -12,7 +12,7 @@
 // ============================================================================
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button, Input } from '../components/ui';
 import axios from 'axios';
 import theatrexLogo from '../assets/theatrex-logo.svg';
@@ -130,7 +130,7 @@ const Register = () => {
 
         try {
             // Make API request
-            const response = await axios.post('http://localhost:5000/api/auth/register', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, {
                 name: formData.name.trim(),
                 email: formData.email.trim().toLowerCase(),
                 password: formData.password,
@@ -314,12 +314,12 @@ const Register = () => {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600">
                         Already have an account?{' '}
-                        <a
-                            href="/login"
+                        <Link
+                            to="/login"
                             className="text-blue-600 hover:text-blue-700 font-medium"
                         >
                             Login here
-                        </a>
+                        </Link>
                     </p>
                 </div>
             </div>
