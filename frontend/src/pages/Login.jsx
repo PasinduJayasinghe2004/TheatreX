@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { ChevronDown, Eye, EyeOff, Loader2 } from 'lucide-react';
 import theatrexLogo from '../assets/theatrex-logo.svg';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input } from '../components/ui';
@@ -357,9 +357,9 @@ const Login = () => {
                             </div>
 
                             <div className="text-sm">
-                                <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+                                <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
                                     Forgot your password?
-                                </a>
+                                </Link>
                             </div>
                         </div>
 
@@ -383,10 +383,10 @@ const Login = () => {
 
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
-                            Don't have an account?{' '}
-                            <a href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                            Don&apos;t have an account?{' '}
+                            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
                                 Create an account
-                            </a>
+                            </Link>
                         </p>
                     </div>
                 </div>
