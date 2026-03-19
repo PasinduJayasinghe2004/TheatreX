@@ -31,6 +31,47 @@
 
 import { api } from './authService.js';
 
+const buildHistoryParams = (filters = {}) => {
+    const params = new URLSearchParams();
+    if (filters.startDate) {
+        params.append('startDate', filters.startDate);
+    }
+    if (filters.endDate) {
+        params.append('endDate', filters.endDate);
+    }
+    if (filters.surgeonId) {
+        params.append('surgeonId', String(filters.surgeonId));
+    }
+    if (filters.theatreId) {
+        params.append('theatreId', String(filters.theatreId));
+    }
+    if (filters.page) {
+        params.append('page', String(filters.page));
+    }
+    if (filters.limit) {
+        params.append('limit', String(filters.limit));
+    }
+    return params;
+};
+
+const parseFilenameFromDisposition = (contentDisposition, fallback = 'download.csv') => {
+    if (!contentDisposition) {
+        return fallback;
+    }
+
+    const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+        try {
+            return decodeURIComponent(utf8Match[1]);
+        } catch {
+            return utf8Match[1];
+        }
+    }
+
+    const plainMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    return plainMatch?.[1] || fallback;
+};
+
 // ============================================================================
 // Surgery Service Object
 // ============================================================================
@@ -75,25 +116,7 @@ const surgeryService = {
     // ========================================
     getSurgeryHistory: async (filters = {}) => {
         try {
-            const params = new URLSearchParams();
-            if (filters.startDate) {
-                params.append('startDate', filters.startDate);
-            }
-            if (filters.endDate) {
-                params.append('endDate', filters.endDate);
-            }
-            if (filters.surgeonId) {
-                params.append('surgeonId', String(filters.surgeonId));
-            }
-            if (filters.theatreId) {
-                params.append('theatreId', String(filters.theatreId));
-            }
-            if (filters.page) {
-                params.append('page', String(filters.page));
-            }
-            if (filters.limit) {
-                params.append('limit', String(filters.limit));
-            }
+            const params = buildHistoryParams(filters);
 
             const queryString = params.toString();
             const url = queryString ? `/surgeries/history?${queryString}` : '/surgeries/history';
@@ -102,6 +125,56 @@ const surgeryService = {
             return response.data;
         } catch (error) {
             const message = error.response?.data?.message || 'Error fetching surgery history. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Export surgery history as CSV
+    // Created by: M1/M2 - Day 21
+    // ========================================
+    exportSurgeryHistoryCsv: async (filters = {}) => {
+        try {
+            const params = buildHistoryParams(filters);
+            const queryString = params.toString();
+            const url = queryString
+                ? `/surgeries/history/export/csv?${queryString}`
+                : '/surgeries/history/export/csv';
+
+            const response = await api.get(url, { responseType: 'blob' });
+            const filename = parseFilenameFromDisposition(
+                response.headers?.['content-disposition'],
+                'surgery-history.csv'
+            );
+
+            return {
+                blob: response.data,
+                filename
+            };
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error exporting surgery history. Please try again.';
+            throw new Error(message);
+        }
+    },
+
+    // ========================================
+    // Export single surgery detail as CSV
+    // Created by: M3 - Day 21
+    // ========================================
+    exportSurgeryDetailCsv: async (id) => {
+        try {
+            const response = await api.get(`/surgeries/${id}/export/csv`, { responseType: 'blob' });
+            const filename = parseFilenameFromDisposition(
+                response.headers?.['content-disposition'],
+                `surgery-${id}-detail.csv`
+            );
+
+            return {
+                blob: response.data,
+                filename
+            };
+        } catch (error) {
+            const message = error.response?.data?.message || 'Error exporting surgery detail. Please try again.';
             throw new Error(message);
         }
     },

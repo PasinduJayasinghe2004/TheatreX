@@ -36,6 +36,105 @@
 import { pool } from '../config/database.js';
 import { assignNursesToSurgery, getNursesBySurgeryId } from '../models/surgeryNurseModel.js';
 
+const escapeCsvValue = (value) => {
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    const stringValue = String(value);
+    if (/[,"\n\r]/.test(stringValue)) {
+        return `"${stringValue.replace(/"/g, '""')}"`;
+    }
+
+    return stringValue;
+};
+
+const buildCsvContent = (headers, rows) => {
+    const headerLine = headers.join(',');
+    const dataLines = rows.map((row) => row.map(escapeCsvValue).join(','));
+    return [headerLine, ...dataLines].join('\n');
+};
+
+const buildHistoryFilters = (query = {}, includePagination = false) => {
+    const { startDate, endDate, surgeonId, theatreId, page = '1', limit = '10' } = query;
+
+    const filters = {
+        startDate: startDate || null,
+        endDate: endDate || null,
+        surgeonId: null,
+        theatreId: null,
+        page: 1,
+        limit: 10
+    };
+
+    if (surgeonId !== undefined && surgeonId !== null && surgeonId !== '') {
+        const surgeonIdNum = Number(surgeonId);
+        if (!Number.isInteger(surgeonIdNum) || surgeonIdNum <= 0) {
+            return { error: 'surgeonId must be a positive integer' };
+        }
+        filters.surgeonId = surgeonIdNum;
+    }
+
+    if (theatreId !== undefined && theatreId !== null && theatreId !== '') {
+        const theatreIdNum = Number(theatreId);
+        if (!Number.isInteger(theatreIdNum) || theatreIdNum <= 0) {
+            return { error: 'theatreId must be a positive integer' };
+        }
+        filters.theatreId = theatreIdNum;
+    }
+
+    if (includePagination) {
+        const pageNum = Number(page);
+        const limitNum = Number(limit);
+
+        if (!Number.isInteger(pageNum) || pageNum <= 0) {
+            return { error: 'page must be a positive integer' };
+        }
+
+        if (!Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100) {
+            return { error: 'limit must be an integer between 1 and 100' };
+        }
+
+        filters.page = pageNum;
+        filters.limit = limitNum;
+    }
+
+    let whereConditions = [`s.status = 'completed'`];
+    let queryParams = [];
+    let paramCounter = 1;
+
+    if (filters.startDate) {
+        whereConditions.push(`s.scheduled_date >= $${paramCounter}`);
+        queryParams.push(filters.startDate);
+        paramCounter++;
+    }
+
+    if (filters.endDate) {
+        whereConditions.push(`s.scheduled_date <= $${paramCounter}`);
+        queryParams.push(filters.endDate);
+        paramCounter++;
+    }
+
+    if (filters.surgeonId) {
+        whereConditions.push(`s.surgeon_id = $${paramCounter}`);
+        queryParams.push(filters.surgeonId);
+        paramCounter++;
+    }
+
+    if (filters.theatreId) {
+        whereConditions.push(`s.theatre_id = $${paramCounter}`);
+        queryParams.push(filters.theatreId);
+        paramCounter++;
+    }
+
+    return {
+        filters,
+        whereClause: `WHERE ${whereConditions.join(' AND ')}`,
+        queryParams,
+        paramCounter
+    };
+};
+
 // ============================================================================
 // CREATE SURGERY
 // ============================================================================
@@ -293,70 +392,20 @@ export const getAllSurgeries = async (req, res) => {
 // ============================================================================
 export const getSurgeryHistory = async (req, res) => {
     try {
-        const { startDate, endDate, surgeonId, theatreId, page = '1', limit = '10' } = req.query;
-
-        const pageNum = Number(page);
-        const limitNum = Number(limit);
-
-        if (!Number.isInteger(pageNum) || pageNum <= 0) {
+        const parsedFilters = buildHistoryFilters(req.query, true);
+        if (parsedFilters.error) {
             return res.status(400).json({
                 success: false,
-                message: 'page must be a positive integer'
+                message: parsedFilters.error
             });
         }
 
-        if (!Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100) {
-            return res.status(400).json({
-                success: false,
-                message: 'limit must be an integer between 1 and 100'
-            });
-        }
-
-        let whereConditions = [`s.status = 'completed'`];
-        let queryParams = [];
-        let paramCounter = 1;
-
-        if (startDate) {
-            whereConditions.push(`s.scheduled_date >= $${paramCounter}`);
-            queryParams.push(startDate);
-            paramCounter++;
-        }
-
-        if (endDate) {
-            whereConditions.push(`s.scheduled_date <= $${paramCounter}`);
-            queryParams.push(endDate);
-            paramCounter++;
-        }
-
-        if (surgeonId !== undefined && surgeonId !== null && surgeonId !== '') {
-            const surgeonIdNum = Number(surgeonId);
-            if (!Number.isInteger(surgeonIdNum) || surgeonIdNum <= 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'surgeonId must be a positive integer'
-                });
-            }
-
-            whereConditions.push(`s.surgeon_id = $${paramCounter}`);
-            queryParams.push(surgeonIdNum);
-            paramCounter++;
-        }
-
-        if (theatreId !== undefined && theatreId !== null && theatreId !== '') {
-            const theatreIdNum = Number(theatreId);
-            if (!Number.isInteger(theatreIdNum) || theatreIdNum <= 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'theatreId must be a positive integer'
-                });
-            }
-
-            whereConditions.push(`s.theatre_id = $${paramCounter}`);
-            queryParams.push(theatreIdNum);
-            paramCounter++;
-        }
-
-        const whereClause = `WHERE ${whereConditions.join(' AND ')}`;
+        const {
+            filters: { startDate, endDate, surgeonId, theatreId, page: pageNum, limit: limitNum },
+            whereClause,
+            queryParams,
+            paramCounter
+        } = parsedFilters;
 
         const countQuery = `
             SELECT COUNT(*)::int AS total
@@ -415,6 +464,199 @@ export const getSurgeryHistory = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgery history',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// EXPORT SURGERY HISTORY AS CSV (M1/M2 - Day 21)
+// ============================================================================
+// @desc    Export completed surgery history (supports same filters as history API)
+// @route   GET /api/surgeries/history/export/csv
+// @access  Protected
+// ============================================================================
+export const exportSurgeryHistoryCsv = async (req, res) => {
+    try {
+        const parsedFilters = buildHistoryFilters(req.query, false);
+        if (parsedFilters.error) {
+            return res.status(400).json({
+                success: false,
+                message: parsedFilters.error
+            });
+        }
+
+        const {
+            whereClause,
+            queryParams,
+            filters: { startDate, endDate, surgeonId, theatreId }
+        } = parsedFilters;
+
+        const query = `
+            SELECT
+                s.id,
+                s.patient_name,
+                s.surgery_type,
+                s.scheduled_date,
+                s.scheduled_time,
+                s.duration_minutes,
+                s.status,
+                s.priority,
+                t.name AS theatre_name,
+                u.name AS surgeon_name,
+                s.updated_at
+            FROM surgeries s
+            LEFT JOIN theatres t ON s.theatre_id = t.id
+            LEFT JOIN users u ON s.surgeon_id = u.id
+            ${whereClause}
+            ORDER BY s.scheduled_date DESC, s.scheduled_time DESC
+        `;
+
+        const { rows } = await pool.query(query, queryParams);
+
+        const csvRows = rows.map((row) => [
+            row.id,
+            row.patient_name || '',
+            row.surgery_type || '',
+            row.scheduled_date ? new Date(row.scheduled_date).toISOString().slice(0, 10) : '',
+            row.scheduled_time || '',
+            row.duration_minutes || '',
+            row.status || '',
+            row.priority || '',
+            row.surgeon_name || '',
+            row.theatre_name || '',
+            row.updated_at ? new Date(row.updated_at).toISOString() : ''
+        ]);
+
+        const csvContent = buildCsvContent(
+            [
+                'ID',
+                'Patient Name',
+                'Surgery Type',
+                'Scheduled Date',
+                'Scheduled Time',
+                'Duration (Minutes)',
+                'Status',
+                'Priority',
+                'Surgeon',
+                'Theatre',
+                'Last Updated At'
+            ],
+            csvRows
+        );
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filterSlug = [startDate || 'all', endDate || 'all', surgeonId || 'all', theatreId || 'all']
+            .join('_')
+            .replace(/[^a-zA-Z0-9_-]/g, '');
+        const fileName = `surgery-history-${filterSlug}-${timestamp}.csv`;
+
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        res.status(200).send(`\uFEFF${csvContent}`);
+    } catch (error) {
+        console.error('Error exporting surgery history CSV:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error exporting surgery history CSV',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// EXPORT SINGLE SURGERY DETAIL AS CSV (M3 - Day 21)
+// ============================================================================
+// @desc    Export a single surgery record as CSV
+// @route   GET /api/surgeries/:id/export/csv
+// @access  Protected
+// ============================================================================
+export const exportSurgeryDetailCsv = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id || isNaN(id) || Number(id) <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid surgery ID'
+            });
+        }
+
+        const { rows } = await pool.query(
+            `SELECT
+                s.id,
+                s.patient_id,
+                s.patient_name,
+                s.patient_age,
+                s.patient_gender,
+                s.surgery_type,
+                s.description,
+                s.scheduled_date,
+                s.scheduled_time,
+                s.duration_minutes,
+                s.status,
+                s.priority,
+                s.notes,
+                s.created_at,
+                s.updated_at,
+                t.name AS theatre_name,
+                u.name AS surgeon_name,
+                a.name AS anaesthetist_name
+             FROM surgeries s
+             LEFT JOIN theatres t ON s.theatre_id = t.id
+             LEFT JOIN users u ON s.surgeon_id = u.id
+             LEFT JOIN anaesthetists a ON s.anaesthetist_id = a.id
+             WHERE s.id = $1`,
+            [id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Surgery not found'
+            });
+        }
+
+        const surgery = rows[0];
+        const nurses = await getNursesBySurgeryId(surgery.id);
+        const nurseNames = (nurses || []).map((n) => n.name).filter(Boolean).join('; ');
+
+        const csvContent = buildCsvContent(
+            ['Field', 'Value'],
+            [
+                ['ID', surgery.id],
+                ['Patient ID', surgery.patient_id || ''],
+                ['Patient Name', surgery.patient_name || ''],
+                ['Patient Age', surgery.patient_age || ''],
+                ['Patient Gender', surgery.patient_gender || ''],
+                ['Surgery Type', surgery.surgery_type || ''],
+                ['Description', surgery.description || ''],
+                ['Scheduled Date', surgery.scheduled_date ? new Date(surgery.scheduled_date).toISOString().slice(0, 10) : ''],
+                ['Scheduled Time', surgery.scheduled_time || ''],
+                ['Duration (Minutes)', surgery.duration_minutes || ''],
+                ['Status', surgery.status || ''],
+                ['Priority', surgery.priority || ''],
+                ['Surgeon', surgery.surgeon_name || ''],
+                ['Anaesthetist', surgery.anaesthetist_name || ''],
+                ['Nurses', nurseNames],
+                ['Theatre', surgery.theatre_name || ''],
+                ['Notes', surgery.notes || ''],
+                ['Created At', surgery.created_at ? new Date(surgery.created_at).toISOString() : ''],
+                ['Updated At', surgery.updated_at ? new Date(surgery.updated_at).toISOString() : '']
+            ]
+        );
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const fileName = `surgery-${surgery.id}-detail-${timestamp}.csv`;
+
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        res.status(200).send(`\uFEFF${csvContent}`);
+    } catch (error) {
+        console.error('Error exporting surgery detail CSV:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error exporting surgery detail CSV',
             error: error.message
         });
     }
