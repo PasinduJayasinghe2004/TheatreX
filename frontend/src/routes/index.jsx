@@ -214,7 +214,7 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Default Landing Page */}
+            {/* Default route: Landing Page */}
             <Route path="/" element={<LandingPage />} />
 
             {/* 404 */}
