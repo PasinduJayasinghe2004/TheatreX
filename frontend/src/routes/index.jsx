@@ -28,6 +28,7 @@ import PatientsPage from '../pages/PatientsPage'; // M1 - Day 15
 import PatientDetail from '../pages/PatientDetail'; // M3 - Day 15
 import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
+import HistoryPage from '../pages/HistoryPage'; // M1 - Day 20
 import LandingPage from '../pages/LandingPage';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
@@ -203,6 +204,13 @@ const AppRoutes = () => {
             <Route path="/analytics" element={
                 <ProtectedRoute>
                     <AnalyticsPage />
+                </ProtectedRoute>
+            } />
+
+            {/* History Page - M1 (Pasindu) Day 20 */}
+            <Route path="/history" element={
+                <ProtectedRoute>
+                    <HistoryPage />
                 </ProtectedRoute>
             } />
 
