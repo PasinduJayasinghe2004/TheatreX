@@ -27,6 +27,7 @@
 // - assignStaff: PATCH /api/surgeries/:id/staff - Unified staff assignment (M5 Day 9)
 // - assignSurgeryToTheatre: PATCH /api/surgeries/:id/assign-theatre - Assign surgery to theatre (M3 Day 12)
 // - getUnassignedSurgeries: GET /api/surgeries/unassigned - Surgeries without theatre (M3 Day 12)
+// - getSurgeryHistory: GET /api/surgeries/history - Completed surgery history (M1 Day 20)
 // - getCalendarEvents: GET /api/surgeries/events - FullCalendar events
 // - checkConflicts: POST /api/surgeries/check-conflicts - Conflict detection (M1 Day 8)
 // - checkStaffConflicts: POST /api/surgeries/check-staff-conflicts - Staff conflict warnings (M4 Day 9)
@@ -273,6 +274,147 @@ export const getAllSurgeries = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgeries',
+            error: error.message
+        });
+    }
+};
+
+// ============================================================================
+// GET SURGERY HISTORY (M1 - Day 20)
+// ============================================================================
+// @desc    Get completed surgeries for history view
+// @route   GET /api/surgeries/history
+// @access  Protected
+// Created by: M1 (Pasindu) - Day 20
+// Updated by: M2 (Chandeepa) - Day 20 (Added date range filtering)
+// Updated by: M3 (Janani) - Day 20 (Added surgeon filtering)
+// Updated by: M4 (Oneli) - Day 20 (Added theatre filtering)
+// Updated by: M5 (User) - Day 20 (Added pagination)
+// ============================================================================
+export const getSurgeryHistory = async (req, res) => {
+    try {
+        const { startDate, endDate, surgeonId, theatreId, page = '1', limit = '10' } = req.query;
+
+        const pageNum = Number(page);
+        const limitNum = Number(limit);
+
+        if (!Number.isInteger(pageNum) || pageNum <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'page must be a positive integer'
+            });
+        }
+
+        if (!Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100) {
+            return res.status(400).json({
+                success: false,
+                message: 'limit must be an integer between 1 and 100'
+            });
+        }
+
+        let whereConditions = [`s.status = 'completed'`];
+        let queryParams = [];
+        let paramCounter = 1;
+
+        if (startDate) {
+            whereConditions.push(`s.scheduled_date >= $${paramCounter}`);
+            queryParams.push(startDate);
+            paramCounter++;
+        }
+
+        if (endDate) {
+            whereConditions.push(`s.scheduled_date <= $${paramCounter}`);
+            queryParams.push(endDate);
+            paramCounter++;
+        }
+
+        if (surgeonId !== undefined && surgeonId !== null && surgeonId !== '') {
+            const surgeonIdNum = Number(surgeonId);
+            if (!Number.isInteger(surgeonIdNum) || surgeonIdNum <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'surgeonId must be a positive integer'
+                });
+            }
+
+            whereConditions.push(`s.surgeon_id = $${paramCounter}`);
+            queryParams.push(surgeonIdNum);
+            paramCounter++;
+        }
+
+        if (theatreId !== undefined && theatreId !== null && theatreId !== '') {
+            const theatreIdNum = Number(theatreId);
+            if (!Number.isInteger(theatreIdNum) || theatreIdNum <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'theatreId must be a positive integer'
+                });
+            }
+
+            whereConditions.push(`s.theatre_id = $${paramCounter}`);
+            queryParams.push(theatreIdNum);
+            paramCounter++;
+        }
+
+        const whereClause = `WHERE ${whereConditions.join(' AND ')}`;
+
+        const countQuery = `
+            SELECT COUNT(*)::int AS total
+            FROM surgeries s
+            ${whereClause}
+        `;
+
+        const { rows: countRows } = await pool.query(countQuery, queryParams);
+        const total = countRows[0]?.total || 0;
+
+        const totalPages = total === 0 ? 1 : Math.ceil(total / limitNum);
+        const effectivePage = total === 0 ? 1 : Math.min(pageNum, totalPages);
+        const offset = (effectivePage - 1) * limitNum;
+
+        const query = `
+            SELECT
+                s.id,
+                s.patient_name,
+                s.surgery_type,
+                s.scheduled_date,
+                s.scheduled_time,
+                s.duration_minutes,
+                s.status,
+                s.priority,
+                s.theatre_id,
+                t.name AS theatre_name,
+                s.surgeon_id,
+                u.name AS surgeon_name,
+                s.updated_at
+            FROM surgeries s
+            LEFT JOIN theatres t ON s.theatre_id = t.id
+            LEFT JOIN users u ON s.surgeon_id = u.id
+            ${whereClause}
+            ORDER BY s.scheduled_date DESC, s.scheduled_time DESC
+            LIMIT $${paramCounter} OFFSET $${paramCounter + 1}
+        `;
+
+        const dataParams = [...queryParams, limitNum, offset];
+        const { rows } = await pool.query(query, dataParams);
+
+        res.status(200).json({
+            success: true,
+            count: rows.length,
+            data: rows,
+            pagination: {
+                page: effectivePage,
+                limit: limitNum,
+                total,
+                totalPages,
+                hasNextPage: effectivePage < totalPages,
+                hasPrevPage: effectivePage > 1
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching surgery history:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching surgery history',
             error: error.message
         });
     }

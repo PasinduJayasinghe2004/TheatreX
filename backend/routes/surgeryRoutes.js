@@ -20,6 +20,7 @@
 // - POST   /api/surgeries/check-staff-conflicts      - Check staff conflicts (Protected) - M4 Day 9
 // - GET    /api/surgeries                           - Get all surgeries (Protected)
 // - GET    /api/surgeries/unassigned                 - Get surgeries without theatre (Protected) - M3 Day 12
+// - GET    /api/surgeries/history                    - Get completed surgery history (Protected) - M1 Day 20
 // - GET    /api/surgeries/:id                       - Get surgery by ID (Protected)
 // - PUT    /api/surgeries/:id                       - Update surgery (Coordinator, Admin)
 // - PATCH  /api/surgeries/:id/status                - Update surgery status (Coordinator, Admin)
@@ -49,7 +50,8 @@ import {
     checkStaffConflicts,
     assignStaff,
     assignSurgeryToTheatre,
-    getUnassignedSurgeries
+    getUnassignedSurgeries,
+    getSurgeryHistory
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -134,6 +136,16 @@ router.post('/check-staff-conflicts', protect, checkStaffConflicts);
 // Created by: M3 (Janani) - Day 12
 // ============================================================================
 router.get('/unassigned', protect, getUnassignedSurgeries);
+
+// ============================================================================
+// ROUTE: GET /api/surgeries/history
+// ============================================================================
+// Get completed surgeries for history view
+// Query params: startDate, endDate, surgeonId, theatreId, page, limit (optional)
+// Protected - any authenticated user can view
+// Created by: M1 (Pasindu) - Day 20
+// ============================================================================
+router.get('/history', protect, getSurgeryHistory);
 
 // ============================================================================
 // ROUTE: POST /api/surgeries
