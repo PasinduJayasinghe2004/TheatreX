@@ -130,7 +130,10 @@ const Register = () => {
 
         try {
             // Make API request
-            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, {
+            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const REQUEST_URL = API_BASE.endsWith('/api') ? `${API_BASE}/auth/register` : `${API_BASE}/api/auth/register`;
+
+            const response = await axios.post(REQUEST_URL, {
                 name: formData.name.trim(),
                 email: formData.email.trim().toLowerCase(),
                 password: formData.password,

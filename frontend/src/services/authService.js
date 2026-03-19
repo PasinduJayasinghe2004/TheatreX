@@ -7,7 +7,9 @@
 import axios from 'axios';
 
 // Base API URL - reads from VITE_API_URL env variable (falls back to localhost for dev)
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
+// Avoid double /api suffix if it is already provided in the environment variable
+const VITE_API_URL_ENV = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = VITE_API_URL_ENV.endsWith('/api') ? VITE_API_URL_ENV : `${VITE_API_URL_ENV}/api`;
 
 // Create axios instance with default config
 const api = axios.create({

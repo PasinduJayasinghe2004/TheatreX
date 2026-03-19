@@ -17,9 +17,13 @@
   "directories": {
     "doc": "docs"
   },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "start": "npm start --prefix backend",
-    "build": "npm run build --prefix frontend && npm install --prefix backend",
+    "build": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
