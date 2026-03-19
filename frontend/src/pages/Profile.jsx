@@ -72,8 +72,11 @@ const Profile = () => {
             if (formData.password) updateData.password = formData.password;
 
             // Make API request
+            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const PROFILE_URL = API_BASE.endsWith('/api') ? `${API_BASE}/auth/profile` : `${API_BASE}/api/auth/profile`;
+
             const response = await axios.put(
-                `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/profile`,
+                PROFILE_URL,
                 updateData,
                 {
                     headers: {
@@ -136,8 +139,11 @@ const Profile = () => {
             setMessage({ type: '', text: '' });
 
             // 1. Upload the image
+            const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const UPLOAD_URL = API_BASE.endsWith('/api') ? `${API_BASE}/auth/profile-image` : `${API_BASE}/api/auth/profile-image`;
+
             const uploadRes = await axios.post(
-                `${backendUrl}/api/auth/profile-image`,
+                UPLOAD_URL,
                 formData,
                 {
                     headers: {
@@ -151,8 +157,10 @@ const Profile = () => {
                 const imageUrl = uploadRes.data.imageUrl;
 
                 // 2. Update the user profile with the new image URL
+                const UPDATE_PROFILE_URL = API_BASE.endsWith('/api') ? `${API_BASE}/auth/profile` : `${API_BASE}/api/auth/profile`;
+
                 const updateRes = await axios.put(
-                    `${backendUrl}/api/auth/profile`,
+                    UPDATE_PROFILE_URL,
                     { profile_image: imageUrl },
                     {
                         headers: {
