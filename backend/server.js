@@ -75,12 +75,13 @@ app.use('/api/chatbot', chatbotRoutes); // AI Chatbot routes - Gemini Flash
 app.use('/api/inquiries', inquiryRoutes); // Demo requests - New
 
 
-// Root route (API-specific documentation)
-app.get('/api', (req, res) => {
+// Root route (API documentation and health)
+app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
-        message: 'Welcome to TheatreX API',
+        message: 'Welcome to TheatreX Backend API',
         version: '1.0.0',
+        environment: process.env.NODE_ENV,
         endpoints: {
             health: '/api/health',
             users: '/api/users',
@@ -98,9 +99,6 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Serve static files from the frontend build directory
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 
 // 404 handler for API routes
@@ -113,9 +111,6 @@ app.use('/api/*', (req, res) => {
 });
 
 // For any other non-API routes, serve the React app (Frontend routing)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
 
 // Error handling middleware - MUST BE LAST
 app.use((err, req, res, next) => {
