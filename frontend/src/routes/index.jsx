@@ -1,10 +1,10 @@
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ButtonTest from '../pages/ButtonTest';
 import InputTest from '../pages/InputTest';
 import ModalTest from '../pages/ModalTest';
 import LayoutDemo from '../pages/LayoutDemo';
-import RegisterForm from '../components/auth/RegisterForm';
+import Register from '../pages/Register';
 import Login from '../pages/Login';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
@@ -30,9 +30,11 @@ import NotificationsPage from '../pages/NotificationsPage'; // M1 - Day 16
 import AnalyticsPage from '../pages/AnalyticsPage'; // M1 - Day 18
 import HistoryPage from '../pages/HistoryPage'; // M1 - Day 20
 import LandingPage from '../pages/LandingPage';
+import NotFound from '../pages/NotFound';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { useAuth } from '../context/AuthContext';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
@@ -44,20 +46,29 @@ const AdminPanel = () => (
     </div>
 );
 
-const NotFound = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
-        <p className="mt-4">The page you&apos;re looking for doesn&apos;t exist.</p>
-    </div>
-);
+// NotFound component is now imported from '../pages/NotFound'
 
 // Main Routes Component
 const AppRoutes = () => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
     return (
         <Routes>
             {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/login" element={
+                isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+            } />
+            <Route path="/register" element={
+                isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
+            } />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 

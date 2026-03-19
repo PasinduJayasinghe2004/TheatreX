@@ -1,0 +1,400 @@
+﻿
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mC:/Users/ASUS/OneDrive/Desktop/SDGP-Project/frontend[39m
+
+ [32mΓ£ô[39m src/tests/TheatreService.test.js [2m ([22m[2m43 tests[22m[2m)[22m[90m 33[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/CoordinatorDashboard.test.jsx [2m ([22m[2m33 tests[22m[2m)[22m[33m 2821[2mms[22m[39m
+ [33mΓ¥»[39m src/tests/AnaesthetistsPage.test.jsx [2m ([22m[2m14 tests[22m [2m|[22m [31m1 failed[39m[2m)[22m[33m 2861[2mms[22m[39m
+[31m   [33mΓ¥»[31m src/tests/AnaesthetistsPage.test.jsx[2m > [22mAnaesthetistsPage Tests (Day 14)[2m > [22mshould display correct stats (total, available, unavailable)[39m
+[31m     ΓåÆ Found multiple elements with the text: Available
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+[36m>[31m
+  [0mAvailable[0m
+[36m</span>[31m
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200"[31m
+[36m>[31m
+  [36m<span[31m
+    [33mclass[31m=[32m"w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"[31m
+  [36m/>[31m
+  [0mAvailable[0m
+[36m</span>[31m
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200"[31m
+[36m>[31m
+  [36m<span[31m
+    [33mclass[31m=[32m"w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"[31m
+  [36m/>[31m
+  [0mAvailable[0m
+[36m</span>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mdata-testid[31m=[32m"layout"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"p-6 max-w-7xl mx-auto"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex items-center justify-between mb-6"[31m
+        [36m>[31m
+          [36m<div>[31m
+            [36m<h1[31m
+              [33mclass[31m=[32m"text-2xl font-bold text-gray-900 font-outfit"[31m
+            [36m>[31m
+              [0mAnaesthetists[0m
+            [36m</h1>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-sm text-gray-500 mt-1"[31m
+            [36m>[31m
+              [0mManage anaesthesia department staff and profile pictures[0m
+            [36m</p>[31m
+          [36m</div>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow transition-colors"[31m
+            [33mid[31m=[32m"add-anaesthetist-btn"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33mclass[31m=[32m"w-4 h-4"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M12 4v16m8-8H4"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+            [0mAdd Anaesthetist[0m
+          [36m</button>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"grid grid-cols-3 gap-4 mb-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-xl font-bold text-blue-700"[31m
+              [36m>[31m
+                [0m3[0m
+              [36m</span>[31m
+            [36m</div>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+            [36m>[31m
+              [0mTotal Anaesthetists[0m
+            [36m</span>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-xl font-bold text-emerald-700"[31m
+              [36m>[31m
+                [0m2[0m
+              [36m</span>[31m
+            [36m</div>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+            [36m>[31m
+              [0mAvailable[0m
+            [36m</span>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-xl font-bold text-red-600"[31m
+              [36m>[31m
+                [0m1[0m
+              [36m</span>[31m
+            [36m</div>[31m
+            [36m<span[31m
+              [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+            [36m>[31m
+              [0mUnavailable[0m
+            [36m</span>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"flex flex-wrap gap-3 mb-6"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"relative flex-1 min-w-[200px]"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33mclass[31m=[32m"absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+            [36m<input[31m
+              [33mclass[31m=[32m"w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"[31m
+              [33mid[31m=[32m"anaesthetist-search"[31m
+              [33mplaceholder[31m=[32m"Search by name, specialization or emailΓÇª"[31m
+              [33mtype[31m=[32m"text"[31m
+              [33mvalue[31m=[32m""[31m
+            [36m/>[31m
+          [36m</div>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"[31m
+            [33mid[31m=[32m"anaesthetist-refresh-btn"[31m
+            [33mtitle[31m=[32m"Refresh"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33mclass[31m=[32m"w-4 h-4"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+            [0mRefresh[0m
+          [36m</button>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5 relative group"[31m
+          [36m>[31m
+            [36m<div[31m
+       ...
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"layout"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"p-6 max-w-7xl mx-auto"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex items-center justify-between mb-6"[31m
+          [36m>[31m
+            [36m<div>[31m
+              [36m<h1[31m
+                [33mclass[31m=[32m"text-2xl font-bold text-gray-900 font-outfit"[31m
+              [36m>[31m
+                [0mAnaesthetists[0m
+              [36m</h1>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-sm text-gray-500 mt-1"[31m
+              [36m>[31m
+                [0mManage anaesthesia department staff and profile pictures[0m
+              [36m</p>[31m
+            [36m</div>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow transition-colors"[31m
+              [33mid[31m=[32m"add-anaesthetist-btn"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33mclass[31m=[32m"w-4 h-4"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M12 4v16m8-8H4"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+              [0mAdd Anaesthetist[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"grid grid-cols-3 gap-4 mb-6"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-xl font-bold text-blue-700"[31m
+                [36m>[31m
+                  [0m3[0m
+                [36m</span>[31m
+              [36m</div>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+              [36m>[31m
+                [0mTotal Anaesthetists[0m
+              [36m</span>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-xl font-bold text-emerald-700"[31m
+                [36m>[31m
+                  [0m2[0m
+                [36m</span>[31m
+              [36m</div>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+              [36m>[31m
+                [0mAvailable[0m
+              [36m</span>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"text-xl font-bold text-red-600"[31m
+                [36m>[31m
+                  [0m1[0m
+                [36m</span>[31m
+              [36m</div>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"text-sm text-gray-500 font-medium"[31m
+              [36m>[31m
+                [0mUnavailable[0m
+              [36m</span>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"flex flex-wrap gap-3 mb-6"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"relative flex-1 min-w-[200px]"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33mclass[31m=[32m"absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+              [36m<input[31m
+                [33mclass[31m=[32m"w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"[31m
+                [33mid[31m=[32m"anaesthetist-search"[31m
+                [33mplaceholder[31m=[32m"Search by name, specialization or emailΓÇª"[31m
+                [33mtype[31m=[32m"text"[31m
+                [33mvalue[31m=[32m""[31m
+              [36m/>[31m
+            [36m</div>[31m
+            [36m<button[31m
+              [33mclass[31m=[32m"flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"[31m
+              [33mid[31m=[32m"anaesthetist-refresh-btn"[31m
+              [33mtitle[31m=[32m"Refresh"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33mclass[31m=[32m"w-4 h-4"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"[31m
+                  [33mstroke-linecap[31m=[32m"round"[31m
+                  [33mstroke-linejoin[31m=[32m"round"[31m
+                  [33mstroke-width[31m=[32m"2"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+              [0mRefresh[0m
+            [36m</button>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            ...[39m
+ [32mΓ£ô[39m src/tests/TheatreList.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 2337[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryForm.test.jsx [2m ([22m[2m26 tests[22m[2m)[22m[33m 3223[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/TheatreStatusBadge.test.jsx [2m ([22m[2m34 tests[22m[2m)[22m[33m 313[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryDetail.test.jsx [2m ([22m[2m26 tests[22m[2m)[22m[33m 4174[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/Dashboard.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 4935[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/TheatreAssignmentDropdown.test.jsx [2m ([22m[2m15 tests[22m[2m)[22m[33m 553[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryProgressBar.test.jsx [2m ([22m[2m12 tests[22m[2m)[22m[90m 159[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/usePolling.test.js [2m ([22m[2m10 tests[22m[2m)[22m[90m 84[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryCard.test.jsx [2m ([22m[2m22 tests[22m[2m)[22m[33m 554[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/LiveStatusPage.test.jsx [2m ([22m[2m9 tests[22m[2m)[22m[33m 977[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SurgeryList.test.jsx [2m ([22m[2m13 tests[22m[2m)[22m[33m 1803[2mms[22m[39m
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render login form with email and password fields[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mComponent Rendering[2m > [22m[2mshould render link to register page[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Validation[2m > [22m[2mshould show validation errors for empty fields[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ [32mΓ£ô[39m src/tests/EmergencyBooking.test.jsx [2m ([22m[2m4 tests[22m[2m)[22m[33m 506[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/DurationDisplay.test.jsx [2m ([22m[2m7 tests[22m[2m)[22m[90m 113[2mms[22m[39m
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Validation[2m > [22m[2mshould validate email format[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ [32mΓ£ô[39m src/tests/Register.test.jsx [2m ([22m[2m5 tests[22m[2m)[22m[33m 424[2mms[22m[39m
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould submit form with valid credentials[22m[39m
+Γä╣∩╕Å No existing user session found
+Γ£à Login successful: test@example.com
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould show loading state during submission[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle API errors gracefully[22m[39m
+Γä╣∩╕Å No existing user session found
+
+[90mstdout[2m | src/tests/Login.test.jsx[2m > [22m[2mLogin Component Tests[2m > [22m[2mForm Submission[2m > [22m[2mshould handle network errors gracefully[22m[39m
+Γä╣∩╕Å No existing user session found
+
+ [32mΓ£ô[39m src/tests/Login.test.jsx [2m ([22m[2m9 tests[22m[2m)[22m[33m 1002[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/Profile.test.jsx [2m ([22m[2m3 tests[22m[2m)[22m[90m 44[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m18 passed[39m[22m[90m (19)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m328 passed[39m[22m[90m (329)[39m
+[2m   Start at [22m 10:12:17
+[2m   Duration [22m 13.58s[2m (transform 4.01s, setup 12.62s, collect 10.22s, tests 26.92s, environment 24.66s, prepare 7.48s)[22m
+

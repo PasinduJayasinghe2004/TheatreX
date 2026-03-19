@@ -1,0 +1,41 @@
+﻿
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js tests/nurseController.test.js --no-colors
+
+node.exe : FAIL tests/nurseController.test.js
+At line:1 char:1
++ & "C:\New Folder/node.exe" 
+"C:\Users\ASUS\AppData\Roaming\npm/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/nurseContro 
+   ller.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ΓùÅ Test suite failed to run
+
+    ReferenceError: jest is not defined
+
+    [0m [90m 16 |[39m [36mimport[39m app [36mfrom[39m 
+[32m'../server.js'[39m[33m;[39m
+     [90m 17 |[39m
+    [31m[1m>[22m[39m[90m 18 |[39m 
+jest[33m.[39msetTimeout([35m30000[39m)[33m;[39m
+     [90m    |[39m [31m[1m^[22m[39m
+     [90m 19 |[39m
+     [90m 20 |[39m describe([32m'Nurse API Tests - Day 
+13'[39m[33m,[39m () [33m=>[39m {
+     [90m 21 |[39m     [36mlet[39m 
+coordinatorToken[33m;[39m[0m
+
+      at tests/nurseController.test.js:18:1
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.691 s
+Ran all test suites matching /tests\\nurseController.test.js/i.
+(node:11328) ExperimentalWarning: VM Modules is an experimental 
+feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was 
+created)
