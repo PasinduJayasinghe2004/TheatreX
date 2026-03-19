@@ -98,20 +98,10 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        // Only expose error details in development environment
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
-
 // Serve static files from the frontend build directory
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
@@ -125,6 +115,17 @@ app.use('/api/*', (req, res) => {
 // For any other non-API routes, serve the React app (Frontend routing)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
+// Error handling middleware - MUST BE LAST
+app.use((err, req, res, next) => {
+    console.error('SERVER ERROR:', err);
+    res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        // Only expose error details in development environment
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
 });
 
 
