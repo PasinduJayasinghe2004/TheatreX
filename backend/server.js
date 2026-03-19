@@ -16,6 +16,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import path from 'path';
 import cron from 'node-cron';
 import { testConnection } from './config/database.js';
 import { initializeTables } from './models/userModel.js';
@@ -108,13 +109,22 @@ app.use((err, req, res, next) => {
     });
 });
 
-// 404 handler for any non-API routes (backend-only deployment — must be last)
-app.use((req, res) => {
+// Serve static files from the frontend build directory
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// 404 handler for API routes
+app.use('/api/*', (req, res) => {
     res.status(404).json({
         success: false,
-        message: `Route ${req.method} ${req.path} not found. This is a backend API server.`,
-        hint: 'All endpoints are prefixed with /api'
+        message: `Route ${req.method} ${req.path} not found.`,
+        hint: 'Check your API endpoint'
     });
+});
+
+// For any other non-API routes, serve the React app (Frontend routing)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 
