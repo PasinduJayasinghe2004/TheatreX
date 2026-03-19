@@ -1,0 +1,212 @@
+﻿node : (node:23260) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+At line:1 char:1
++ node --experimental-v
+m-modules node_modules/
+jest/bin/jest.js 
+--forceE ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ((node:23260)    
+ Ex...nge at any ti    
+me:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+(node:28160) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+(node:28160) Warning: 
+SECURITY WARNING: The 
+SSL modes 'prefer', 
+'require', and 
+'verify-ca' are 
+treated as aliases for 
+'verify-full'.
+In the next major 
+version 
+(pg-connection-string 
+v3.0.0 and pg v9.0.0), 
+these modes will adopt 
+standard libpq 
+semantics, which have 
+weaker security 
+guarantees.
+
+To prepare for this 
+change:
+- If you want the 
+current behavior, 
+explicitly use 
+'sslmode=verify-full'
+- If you want libpq 
+compatibility now, use 
+'uselibpqcompat=true&ss
+lmode=require'
+
+See https://www.postgre
+sql.org/docs/current/li
+bpq-ssl.html for libpq 
+SSL mode definitions.
+(node:23260) Warning: 
+SECURITY WARNING: The 
+SSL modes 'prefer', 
+'require', and 
+'verify-ca' are 
+treated as aliases for 
+'verify-full'.
+In the next major 
+version 
+(pg-connection-string 
+v3.0.0 and pg v9.0.0), 
+these modes will adopt 
+standard libpq 
+semantics, which have 
+weaker security 
+guarantees.
+
+To prepare for this 
+change:
+- If you want the 
+current behavior, 
+explicitly use 
+'sslmode=verify-full'
+- If you want libpq 
+compatibility now, use 
+'uselibpqcompat=true&ss
+lmode=require'
+
+See https://www.postgre
+sql.org/docs/current/li
+bpq-ssl.html for libpq 
+SSL mode definitions.
+FAIL tests/day11_live_s
+tatus.test.js (13.352 
+s)
+  ΓùÅ Live Status 
+Polling API - 
+Integration Tests ΓÇ║ 
+Theatre data shape ΓÇ║ 
+theatre.current_surgery
+ should be null when 
+no surgery is in 
+progress
+
+    expect(received).to
+BeNull()
+
+    Received: 
+{"auto_progress": 100, 
+"duration_minutes": 
+120, 
+"elapsed_minutes": 
+931, 
+"estimated_end_time": 
+"10:00", "id": 358, 
+"is_overdue": true, 
+"manual_progress": 0, 
+"patient_name": "Prog 
+Dur Patient", 
+"priority": "routine", 
+"remaining_minutes": 
+0, "scheduled_time": 
+"08:00:00", 
+"surgery_type": "Prog 
+Dur Surgery"}
+
+    [0m [90m 171 
+|[39m             
+[36mconst[39m 
+freeTheatre 
+[33m=[39m res[33m.[
+39mbody[33m.[39mdata
+[33m.[39mfind(t 
+[33m=>[39m 
+t[33m.[39mstatus 
+[33m===[39m [32m'ava
+ilable'[39m)[33m;[39
+m
+     [90m 172 |[39m  
+           
+[36mif[39m 
+(freeTheatre) {
+    [31m[1m>[22m[39
+m[90m 173 |[39m      
+           expect(freeT
+heatre[33m.[39mcurren
+t_surgery)[33m.[39mto
+BeNull()[33m;[39m
+     [90m     |[39m  
+                       
+                       
+     
+[31m[1m^[22m[39m
+     [90m 174 |[39m  
+           }
+     [90m 175 |[39m  
+       })[33m;[39m
+     [90m 176 
+|[39m[0m
+
+      at 
+Object.<anonymous> (tes
+ts/day11_live_status.te
+st.js:173:53)
+
+PASS tests/day10_theatr
+e_m6.test.js (21.55 s)
+A worker process has 
+failed to exit 
+gracefully and has 
+been force exited. 
+This is likely caused 
+by tests leaking due 
+to improper teardown. 
+Try running with 
+--detectOpenHandles to 
+find leaks. Active 
+timers can also cause 
+this, ensure that 
+.unref() was called on 
+them.
+
+Test Suites: 1 failed, 
+1 passed, 2 total
+Tests:       1 failed, 
+50 passed, 51 total
+Snapshots:   0 total
+Time:        23.726 s, 
+estimated 32 s
+Ran all test suites 
+matching /day10_theatre
+_m6|day11_live_status/i
+.
+Force exiting Jest: 
+Have you considered 
+using 
+`--detectOpenHandles` 
+to detect async 
+operations that kept 
+running after all 
+tests finished?
