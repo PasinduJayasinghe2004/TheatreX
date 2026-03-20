@@ -15,7 +15,18 @@
  *  2. In any component: const { isDark, toggleTheme } = useTheme();
  */
 
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, useMemo, useSyncExternalStore } from 'react';
+
+const COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+
+const subscribeToColorScheme = (callback) => {
+    const media = window.matchMedia(COLOR_SCHEME_QUERY);
+    media.addEventListener('change', callback);
+    return () => media.removeEventListener('change', callback);
+};
+
+const getColorSchemeSnapshot = () => window.matchMedia(COLOR_SCHEME_QUERY).matches;
+const getColorSchemeServerSnapshot = () => false;
 
 const ThemeContext = createContext(null);
 
@@ -25,18 +36,23 @@ export const ThemeProvider = ({ children }) => {
         return stored || 'system';
     });
 
-    const [isDark, setIsDark] = useState(false);
     const [density, setDensity] = useState(() => localStorage.getItem('theatrex-density') || 'comfortable');
     const [highContrast, setHighContrast] = useState(() => localStorage.getItem('theatrex-high-contrast') === 'true');
+    const prefersDark = useSyncExternalStore(
+        subscribeToColorScheme,
+        getColorSchemeSnapshot,
+        getColorSchemeServerSnapshot
+    );
 
-    // Resolve dark mode from themeMode
+    const isDark = useMemo(
+        () => themeMode === 'dark' || (themeMode === 'system' && prefersDark),
+        [themeMode, prefersDark]
+    );
+
+    // Apply theme side effects and persistence
     useEffect(() => {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const resolvedIsDark = themeMode === 'dark' || (themeMode === 'system' && prefersDark);
-        setIsDark(resolvedIsDark);
-
         const root = document.documentElement;
-        if (resolvedIsDark) {
+        if (isDark) {
             root.classList.add('dark');
         } else {
             root.classList.remove('dark');
@@ -52,24 +68,7 @@ export const ThemeProvider = ({ children }) => {
         localStorage.setItem('theatrex-theme-mode', themeMode);
         localStorage.setItem('theatrex-density', density);
         localStorage.setItem('theatrex-high-contrast', String(highContrast));
-    }, [themeMode, density, highContrast]);
-
-    useEffect(() => {
-        if (themeMode !== 'system') return undefined;
-
-        const media = window.matchMedia('(prefers-color-scheme: dark)');
-        const onChange = (event) => {
-            setIsDark(event.matches);
-            if (event.matches) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        };
-
-        media.addEventListener('change', onChange);
-        return () => media.removeEventListener('change', onChange);
-    }, [themeMode]);
+    }, [isDark, themeMode, density, highContrast]);
 
     const toggleTheme = () => {
         setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
