@@ -21,6 +21,7 @@ import surgeonService from '../services/surgeonService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -800,23 +801,30 @@ const SurgeonsPage = () => {
                         </button>
                     </div>
                 ) : surgeons.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <p className="text-gray-500 font-medium">No surgeons found</p>
-                        {search || available ? (
-                            <p className="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
-                        ) : canCreate ? (
-                            <button
-                                onClick={() => setShowCreateModal(true)}
-                                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
-                            >
-                                Add the first surgeon
-                            </button>
-                        ) : null}
-                    </div>
+                    <EmptyState
+                        icon="👨‍⚕️"
+                        title={search || available ? 'No surgeons match your filters' : 'No surgeons found'}
+                        description={
+                            search || available
+                                ? 'Try adjusting your search query or availability filter.'
+                                : canCreate
+                                    ? 'Start by adding your first surgeon to the system.'
+                                    : 'There are no surgeons registered in the system.'
+                        }
+                        actionButton={
+                            canCreate && (
+                                <button
+                                    onClick={() => setShowCreateModal(true)}
+                                    className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add First Surgeon
+                                </button>
+                            )
+                        }
+                    />
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {surgeons.map(surgeon => (

@@ -13,11 +13,12 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AlertCircle, Building2, Filter } from 'lucide-react';
+import { Building2, Filter } from 'lucide-react';
 import Layout from '../components/Layout';
 import TheatreCard from '../components/TheatreCard';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 import TheatreStatusBadge, {
     ALL_THEATRE_STATUSES,
     THEATRE_STATUS_LABELS,
@@ -266,19 +267,15 @@ const TheatreList = () => {
                     {!loading && !error && (
                         <>
                             {theatres.length === 0 ? (
-                                <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
-                                    <div className="max-w-md mx-auto">
-                                        <div className="w-16 h-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <Building2 className="w-8 h-8 text-gray-400 dark:text-slate-500" />
-                                        </div>
-                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Theatres Found</h3>
-                                        <p className="text-gray-600 dark:text-slate-400">
-                                            {filters.status || filters.type
-                                                ? 'No theatres match the selected filters. Try adjusting your filters.'
-                                                : 'No theatres have been configured yet.'}
-                                        </p>
-                                    </div>
-                                </div>
+                                <EmptyState
+                                    icon="🏥"
+                                    title={filters.status || filters.type ? 'No theatres match your filters' : 'No theatres found'}
+                                    description={
+                                        filters.status || filters.type
+                                            ? 'No theatres match the selected filters. Try adjusting your filters to see more results.'
+                                            : 'There are no theatres configured in the system yet. Please contact an administrator.'
+                                    }
+                                />
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {theatres.map(theatre => (

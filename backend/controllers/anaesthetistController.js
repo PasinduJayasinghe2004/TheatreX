@@ -1,14 +1,16 @@
 import * as AnaesthetistRecord from '../models/anaesthetistModel.js';
 import { pool } from '../config/database.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 /**
  * @desc    Get all anaesthetists
  * @route   GET /api/anaesthetists
  * @access  Private (Coordinator/Admin)
  */
-export const getAnaesthetists = async (req, res) => {
+export const getAnaesthetists = async (req, res, next) => {
     try {
+        const anaesthetists = await AnaesthetistRecord.getAllAnaesthetists();
         sendSuccess(res, anaesthetists, 'Anaesthetists fetched successfully', 200);
     } catch (error) {
         next(error);
@@ -20,8 +22,9 @@ export const getAnaesthetists = async (req, res) => {
  * @route   GET /api/anaesthetists/available
  * @access  Private (Coordinator/Admin)
  */
-export const getAvailableAnaesthetists = async (req, res) => {
+export const getAvailableAnaesthetists = async (req, res, next) => {
     try {
+        const anaesthetists = await AnaesthetistRecord.getAvailableAnaesthetists();
         sendSuccess(res, anaesthetists, 'Available anaesthetists fetched successfully', 200);
     } catch (error) {
         next(error);
@@ -33,18 +36,10 @@ export const getAvailableAnaesthetists = async (req, res) => {
  * @route   POST /api/anaesthetists
  * @access  Private (Admin)
  */
-export const createAnaesthetist = async (req, res) => {
+export const createAnaesthetist = async (req, res, next) => {
     try {
         const { name, email, phone, specialization, license_number, years_of_experience, qualification, shift_preference } = req.body;
         const profile_picture = req.file ? `/uploads/profiles/${req.file.filename}` : null;
-
-        // Basic validation
-        if (!name || !email || !specialization || !license_number) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide all required fields'
-            });
-        }
 
         const newAnaesthetist = await AnaesthetistRecord.createAnaesthetist({
             name,
@@ -61,7 +56,7 @@ export const createAnaesthetist = async (req, res) => {
         sendSuccess(res, newAnaesthetist, 'Anaesthetist created successfully', 201);
     } catch (error) {
         if (error.code === '23505') {
-            return sendError(res, 'An anaesthetist with this email or licence number already exists', 409);
+            return sendError(res, 'An anaesthetist with this email or licence number already exists', 409, ERROR_CODES.CONFLICT);
         }
         next(error);
     }
@@ -71,25 +66,18 @@ export const createAnaesthetist = async (req, res) => {
  * @desc    Get anaesthetist by ID
  * @route   GET /api/anaesthetists/:id
  * @access  Private (Coordinator/Admin)
- * Created by: M3 (Janani) - Day 14
  */
-export const getAnaesthetistById = async (req, res) => {
+export const getAnaesthetistById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const anaesthetistId = parseInt(id, 10);
         if (isNaN(anaesthetistId) || anaesthetistId <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid anaesthetist ID. Must be a positive integer.',
-            });
+            return sendError(res, 'Invalid anaesthetist ID. Must be a positive integer.', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const anaesthetist = await AnaesthetistRecord.getAnaesthetistById(anaesthetistId);
         if (!anaesthetist || !anaesthetist.is_active) {
-            return res.status(404).json({
-                success: false,
-                message: 'Anaesthetist not found',
-            });
+            return sendError(res, 'Anaesthetist not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         sendSuccess(res, anaesthetist, 'Anaesthetist fetched successfully', 200);
@@ -111,10 +99,7 @@ export const updateAnaesthetist = async (req, res) => {
         // 1. Validate ID
         const anaesthetistId = parseInt(id, 10);
         if (isNaN(anaesthetistId) || anaesthetistId <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid anaesthetist ID. Must be a positive integer.',
-            });
+            return sendError(res, 'Invalid anaesthetist ID. Must be a positive integer.', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         // 2. Check anaesthetist exists and is active
@@ -145,21 +130,13 @@ export const updateAnaesthetist = async (req, res) => {
         // 4. Business-rule validations
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email && !emailRegex.test(email)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: ['email must be a valid email address'],
-            });
+            return sendError(res, 'Validation failed: email must be a valid email address', 400, ERROR_CODES.VALIDATION_ERROR);
         }
 
         if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
             const yoe = Number(years_of_experience);
             if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Validation failed',
-                    errors: ['years_of_experience must be a non-negative integer'],
-                });
+                return sendError(res, 'Validation failed: years_of_experience must be a non-negative integer', 400, ERROR_CODES.VALIDATION_ERROR);
             }
         }
 
@@ -221,10 +198,7 @@ export const deleteAnaesthetist = async (req, res) => {
 
         const anaesthetistId = parseInt(id, 10);
         if (isNaN(anaesthetistId) || anaesthetistId <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid anaesthetist ID. Must be a positive integer.',
-            });
+            return sendError(res, 'Invalid anaesthetist ID. Must be a positive integer.', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const { rows } = await pool.query(
@@ -236,10 +210,7 @@ export const deleteAnaesthetist = async (req, res) => {
         );
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Anaesthetist not found',
-            });
+            return sendError(res, 'Anaesthetist not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         sendSuccess(res, null, `Anaesthetist "${rows[0].name}" deleted successfully`, 200);
@@ -259,19 +230,13 @@ export const updateAvailability = async (req, res) => {
         const { is_available } = req.body;
 
         if (is_available === undefined) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide is_available status'
-            });
+            return sendError(res, 'Please provide is_available status', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const updated = await AnaesthetistRecord.updateAnaesthetistAvailability(id, is_available);
 
         if (!updated) {
-            return res.status(404).json({
-                success: false,
-                message: 'Anaesthetist not found'
-            });
+            return sendError(res, 'Anaesthetist not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         sendSuccess(res, null, 'Availability updated successfully', 200);

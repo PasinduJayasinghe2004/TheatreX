@@ -1,12 +1,5 @@
-// ============================================================================
-// Surgeon Validation Middleware
-// ============================================================================
-// Created by: M1 (Pasindu) - Day 13
-// Updated by: M1 (Pasindu) - Day 14 (added validateSurgeonUpdate)
-//
-// Validates incoming surgeon data before the controller processes it.
-// Ensures all required fields are present and correctly formatted.
-// ============================================================================
+import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ── Validate Create Surgeon body ─────────────────────────────────────────────
 export const validateSurgeon = (req, res, next) => {
@@ -48,11 +41,7 @@ export const validateSurgeon = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors,
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();
@@ -82,11 +71,7 @@ export const validateSurgeonUpdate = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors,
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();

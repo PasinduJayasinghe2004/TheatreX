@@ -1,10 +1,5 @@
-// ============================================================================
-// Anaesthetist Validation Middleware
-// ============================================================================
-// Created by: M3 (Janani) - Day 14
-//
-// Validates incoming anaesthetist data before the controller processes it.
-// ============================================================================
+import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ── Validate Create Anaesthetist body (all required fields) ───────────────
 export const validateAnaesthetist = (req, res, next) => {
@@ -22,11 +17,7 @@ export const validateAnaesthetist = (req, res, next) => {
     if (!license_number || !license_number.trim()) errors.push('license_number is required');
 
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors,
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();
@@ -34,7 +25,7 @@ export const validateAnaesthetist = (req, res, next) => {
 
 // ── Validate Update Anaesthetist body (partial — all fields optional) ─────
 export const validateAnaesthetistUpdate = (req, res, next) => {
-    const { email, years_of_experience } = req.body;
+    const { email, years_of_experience, shift_preference } = req.body;
 
     const errors = [];
 
@@ -55,7 +46,6 @@ export const validateAnaesthetistUpdate = (req, res, next) => {
     }
 
     // shift_preference (only if provided)
-    const { shift_preference } = req.body;
     const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
     if (shift_preference !== undefined && shift_preference !== null && shift_preference !== '') {
         if (!validShifts.includes(shift_preference)) {
@@ -64,11 +54,7 @@ export const validateAnaesthetistUpdate = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors,
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();

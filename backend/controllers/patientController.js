@@ -19,6 +19,7 @@
 
 import { pool } from '../config/database.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ============================================================================
 // GET ALL PATIENTS
@@ -187,105 +188,16 @@ export const getPatientById = async (req, res) => {
 // @route   POST /api/patients
 // @access  Protected (coordinator, admin)
 // ============================================================================
-export const createPatient = async (req, res) => {
+export const createPatient = async (req, res, next) => {
     try {
         const {
-            name,
-            date_of_birth,
-            gender,
-            blood_type,
-            phone,
-            email,
-            address,
-            emergency_contact_name,
-            emergency_contact_phone,
-            emergency_contact_relationship,
-            medical_history,
-            allergies,
-            current_medications
+            name, date_of_birth, gender, blood_type, phone, email,
+            address, emergency_contact_name, emergency_contact_phone,
+            emergency_contact_relationship, medical_history,
+            allergies, current_medications
         } = req.body;
 
-        // ── Validate required fields ────────────────────────────────────
-        if (!name || !name.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: 'Name is required'
-            });
-        }
-
-        if (!date_of_birth) {
-            return res.status(400).json({
-                success: false,
-                message: 'Date of birth is required'
-            });
-        }
-
-        // Validate date_of_birth format
         const dob = new Date(date_of_birth);
-        if (isNaN(dob.getTime())) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid date of birth format'
-            });
-        }
-
-        if (!gender || !gender.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: 'Gender is required'
-            });
-        }
-
-        // Validate gender enum
-        const validGenders = ['male', 'female', 'other'];
-        if (!validGenders.includes(gender.toLowerCase())) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid gender. Must be one of: ${validGenders.join(', ')}`
-            });
-        }
-
-        if (!phone || !phone.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: 'Phone is required'
-            });
-        }
-
-        // Validate blood_type if provided
-        const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-        if (blood_type && !validBloodTypes.includes(blood_type)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid blood type. Must be one of: ${validBloodTypes.join(', ')}`
-            });
-        }
-
-        // Validate email format if provided
-        if (email && email.trim()) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.trim())) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid email format'
-                });
-            }
-        }
-
-        // Check for duplicate phone
-        const { rows: existing } = await pool.query(
-            'SELECT id FROM patients WHERE phone = $1',
-            [phone.trim()]
-        );
-
-        if (existing.length > 0) {
-            return res.status(409).json({
-                success: false,
-                message: 'A patient with this phone number already exists'
-            });
-        }
-
-        // Calculate age from date_of_birth
         const today = new Date();
         let age = today.getFullYear() - dob.getFullYear();
         const monthDiff = today.getMonth() - dob.getMonth();
@@ -293,51 +205,27 @@ export const createPatient = async (req, res) => {
             age--;
         }
 
-        // ── Insert patient ──────────────────────────────────────────────
         const { rows } = await pool.query(`
             INSERT INTO patients (
-                name,
-                date_of_birth,
-                age,
-                gender,
-                blood_type,
-                phone,
-                email,
-                address,
-                emergency_contact_name,
-                emergency_contact_phone,
-                emergency_contact_relationship,
-                medical_history,
-                allergies,
-                current_medications
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-            RETURNING
-                id, name, date_of_birth, age, gender, blood_type,
+                name, date_of_birth, age, gender, blood_type,
                 phone, email, address,
                 emergency_contact_name, emergency_contact_phone, emergency_contact_relationship,
-                medical_history, allergies, current_medications,
-                is_active, created_at, updated_at
+                medical_history, allergies, current_medications
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+            RETURNING *
         `, [
-            name.trim(),
-            date_of_birth,
-            age,
-            gender.toLowerCase(),
-            blood_type || null,
-            phone.trim(),
-            email ? email.trim().toLowerCase() : null,
-            address || null,
-            emergency_contact_name || null,
-            emergency_contact_phone || null,
-            emergency_contact_relationship || null,
-            medical_history || null,
-            allergies || null,
-            current_medications || null
+            name.trim(), date_of_birth, age, gender.toLowerCase(),
+            blood_type || null, phone.trim(),
+            email ? email.trim().toLowerCase() : null, address || null,
+            emergency_contact_name || null, emergency_contact_phone || null,
+            emergency_contact_relationship || null, medical_history || null,
+            allergies || null, current_medications || null
         ]);
 
         sendSuccess(res, rows[0], `Patient '${rows[0].name}' created successfully`, 201);
     } catch (error) {
         if (error.code === '23505') {
-            return sendError(res, 'A patient with this identifier already exists', 409);
+            return sendError(res, 'A patient with this phone number already exists', 409, ERROR_CODES.CONFLICT);
         }
         next(error);
     }
@@ -350,60 +238,35 @@ export const createPatient = async (req, res) => {
 // @route   PUT /api/patients/:id
 // @access  Protected (coordinator, admin)
 // ============================================================================
-export const updatePatient = async (req, res) => {
+export const updatePatient = async (req, res, next) => {
     try {
         const { id } = req.params;
         const {
-            name,
-            date_of_birth,
-            gender,
-            blood_type,
-            phone,
-            email,
-            address,
-            emergency_contact_name,
-            emergency_contact_phone,
-            emergency_contact_relationship,
-            medical_history,
-            allergies,
-            current_medications
+            name, date_of_birth, gender, blood_type, phone, email,
+            address, emergency_contact_name, emergency_contact_phone,
+            emergency_contact_relationship, medical_history,
+            allergies, current_medications
         } = req.body;
 
-        // Check that the patient exists
-        const { rows: existing } = await pool.query(
-            'SELECT id FROM patients WHERE id = $1',
-            [id]
-        );
-
+        const { rows: existing } = await pool.query('SELECT id FROM patients WHERE id = $1', [id]);
         if (existing.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Patient not found'
-            });
+            return sendError(res, 'Patient not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
-        // Build dynamic SET clause
         const fields = [];
         const params = [];
         let idx = 0;
 
         if (name !== undefined) {
-            if (!name.trim()) {
-                return res.status(400).json({ success: false, message: 'Name cannot be empty' });
-            }
             params.push(name.trim());
             fields.push(`name = $${++idx}`);
         }
 
         if (date_of_birth !== undefined) {
             const dob = new Date(date_of_birth);
-            if (isNaN(dob.getTime())) {
-                return res.status(400).json({ success: false, message: 'Invalid date of birth format' });
-            }
             params.push(date_of_birth);
             fields.push(`date_of_birth = $${++idx}`);
 
-            // Recalculate age
             const today = new Date();
             let age = today.getFullYear() - dob.getFullYear();
             const monthDiff = today.getMonth() - dob.getMonth();
@@ -415,58 +278,22 @@ export const updatePatient = async (req, res) => {
         }
 
         if (gender !== undefined) {
-            const validGenders = ['male', 'female', 'other'];
-            if (!validGenders.includes(gender.toLowerCase())) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Invalid gender. Must be one of: ${validGenders.join(', ')}`
-                });
-            }
             params.push(gender.toLowerCase());
             fields.push(`gender = $${++idx}`);
         }
 
         if (blood_type !== undefined) {
-            const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-            if (blood_type && !validBloodTypes.includes(blood_type)) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Invalid blood type. Must be one of: ${validBloodTypes.join(', ')}`
-                });
-            }
             params.push(blood_type || null);
             fields.push(`blood_type = $${++idx}`);
         }
 
         if (phone !== undefined) {
-            if (!phone.trim()) {
-                return res.status(400).json({ success: false, message: 'Phone cannot be empty' });
-            }
-            // Check for duplicate phone (excluding current patient)
-            const { rows: dup } = await pool.query(
-                'SELECT id FROM patients WHERE phone = $1 AND id != $2',
-                [phone.trim(), id]
-            );
-            if (dup.length > 0) {
-                return res.status(409).json({
-                    success: false,
-                    message: 'A patient with this phone number already exists'
-                });
-            }
             params.push(phone.trim());
             fields.push(`phone = $${++idx}`);
         }
 
         if (email !== undefined) {
-            if (email && email.trim()) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email.trim())) {
-                    return res.status(400).json({ success: false, message: 'Invalid email format' });
-                }
-                params.push(email.trim().toLowerCase());
-            } else {
-                params.push(null);
-            }
+            params.push(email ? email.trim().toLowerCase() : null);
             fields.push(`email = $${++idx}`);
         }
 
@@ -506,30 +333,22 @@ export const updatePatient = async (req, res) => {
         }
 
         if (fields.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'No fields provided to update'
-            });
+            return sendError(res, 'No fields provided to update', 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        // Add id as last param
         params.push(id);
-        const idIdx = params.length;
-
         const { rows } = await pool.query(`
             UPDATE patients
             SET ${fields.join(', ')}, updated_at = NOW()
-            WHERE id = $${idIdx}
-            RETURNING
-                id, name, date_of_birth, age, gender, blood_type,
-                phone, email, address,
-                emergency_contact_name, emergency_contact_phone, emergency_contact_relationship,
-                medical_history, allergies, current_medications,
-                is_active, created_at, updated_at
+            WHERE id = $${params.length}
+            RETURNING *
         `, params);
 
         sendSuccess(res, rows[0], `Patient '${rows[0].name}' updated successfully`, 200);
     } catch (error) {
+        if (error.code === '23505') {
+            return sendError(res, 'A patient with this phone number already exists', 409, ERROR_CODES.CONFLICT);
+        }
         next(error);
     }
 };
@@ -541,28 +360,21 @@ export const updatePatient = async (req, res) => {
 // @route   DELETE /api/patients/:id
 // @access  Protected (coordinator, admin)
 // ============================================================================
-export const deletePatient = async (req, res) => {
+export const deletePatient = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        // Check that patient exists and is active
         const { rows: existing } = await pool.query(
             'SELECT id, name, is_active FROM patients WHERE id = $1',
             [id]
         );
 
         if (existing.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Patient not found'
-            });
+            return sendError(res, 'Patient not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         if (!existing[0].is_active) {
-            return res.status(400).json({
-                success: false,
-                message: 'Patient is already deactivated'
-            });
+            return sendError(res, 'Patient is already deactivated', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         await pool.query(
