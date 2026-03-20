@@ -1,12 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useContext, useEffect } from 'react';
 import authService from '../services/authService';
+import authStorage from '../utils/authStorage';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [token, setToken] = useState(authStorage.getToken());
     const [loading, setLoading] = useState(true);
 
     // ========================================
@@ -14,12 +15,12 @@ export const AuthProvider = ({ children }) => {
     // ========================================
     const checkAuth = async () => {
         try {
-            const storedToken = localStorage.getItem('token');
-            const storedUser = localStorage.getItem('user');
+            const storedToken = authStorage.getToken();
+            const storedUser = authStorage.getUser();
 
             if (storedToken && storedUser) {
                 setToken(storedToken);
-                setUser(JSON.parse(storedUser));
+                setUser(storedUser);
 
                 // Optional: Verify token with backend
                 // const profile = await authService.getProfile();
