@@ -20,6 +20,8 @@ import surgeryService from '../services/surgeryService';
 import axios from 'axios';
 import Layout from '../components/Layout';
 import StaffConflictWarning from '../components/StaffConflictWarning';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 // Mock data for staff (replace with API calls when available)
 const MOCK_NURSES = [
@@ -38,9 +40,8 @@ const EmergencyBooking = () => {
     const { token } = useAuth();
     const navigate = useNavigate();
 
-    // Loading and message states
+    // Loading states
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
 
     // Data states
     const [surgeons, setSurgeons] = useState([]);
@@ -291,12 +292,12 @@ const EmergencyBooking = () => {
             );
 
             if (response.data.success) {
-                setMessage({ type: 'success', text: '🚨 Emergency surgery scheduled successfully!' });
+                toast.success('🚨 Emergency surgery scheduled successfully!');
                 setTimeout(() => navigate('/surgeries'), 1500);
             }
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'Error scheduling emergency surgery';
-            setMessage({ type: 'error', text: errorMessage });
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -327,15 +328,6 @@ const EmergencyBooking = () => {
                     {/* Main Form Card */}
                     <div className="bg-white dark:bg-slate-800 rounded-b-2xl shadow-xl border border-transparent dark:border-slate-700">
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                            {/* Alert Messages */}
-                            {message.text && (
-                                <div className={`p-4 rounded-lg text-sm ${message.type === 'success'
-                                    ? 'bg-green-50 text-green-700 border border-green-200'
-                                    : 'bg-red-50 text-red-700 border border-red-200'
-                                    }`}>
-                                    {message.text}
-                                </div>
-                            )}
 
                             {/* Conflict Warning Banner - M1 Day 8 */}
                             {conflicts?.has_conflicts && (

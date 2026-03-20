@@ -14,6 +14,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, AlertCircle, Filter } from 'lucide-react';
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
+import { toast } from 'react-toastify';
 import SurgeryCard from '../components/SurgeryCard';
 import DateFilter from '../components/DateFilter';
 import EditSurgeryModal from '../components/EditSurgeryModal';
@@ -55,10 +57,14 @@ const SurgeryList = () => {
             if (response.success) {
                 setSurgeries(response.data);
             } else {
-                setError(response.message || 'Failed to load surgeries');
+                const msg = response.message || 'Failed to load surgeries';
+                setError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setError(err.message || 'An error occurred while fetching surgeries');
+            const msg = err.message || 'An error occurred while fetching surgeries';
+            setError(msg);
+            toast.error(msg);
             console.error('Error fetching surgeries:', err);
         } finally {
             setLoading(false);
@@ -85,6 +91,7 @@ const SurgeryList = () => {
         setSurgeries(prev => prev.map(s => s.id === updatedSurgery.id ? { ...s, ...updatedSurgery } : s));
         setShowStaffModal(false);
         setAssigningStaffSurgery(null);
+        toast.success(`Staff assigned to surgery #${updatedSurgery.id} successfully`);
     };
 
     // Handle edit success - refresh list and close modal
@@ -168,9 +175,7 @@ const SurgeryList = () => {
 
                     {/* Loading State */}
                     {loading && (
-                        <div className="flex justify-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                        </div>
+                        <Loading message="Fetching surgery records..." />
                     )}
 
                     {/* Error State */}

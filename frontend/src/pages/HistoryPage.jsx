@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import DateFilter from '../components/DateFilter';
 import surgeryService from '../services/surgeryService';
+import Loading from '../components/common/Loading';
+import { toast } from 'react-toastify';
 
 const formatDate = (value) => {
     if (!value) return 'N/A';
@@ -91,10 +93,14 @@ const HistoryPage = () => {
                     }
                 }
             } else {
-                setError(response?.message || 'Failed to load surgery history');
+                const msg = response?.message || 'Failed to load surgery history';
+                setError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setError(err.message || 'Failed to load surgery history');
+            const msg = err.message || 'Failed to load surgery history';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -198,8 +204,11 @@ const HistoryPage = () => {
             setError(null);
             const { blob, filename } = await surgeryService.exportSurgeryDetailCsv(surgeryId);
             triggerDownload(blob, filename);
+            toast.success('Surgery details exported successfully');
         } catch (err) {
-            setError(err.message || 'Failed to export surgery detail');
+            const msg = err.message || 'Failed to export surgery detail';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setExportingDetailId(null);
         }
@@ -228,7 +237,10 @@ const HistoryPage = () => {
                             {isExportingHistory ? 'Exporting...' : 'Export CSV'}
                         </button>
                         <button
-                            onClick={fetchHistory}
+                            onClick={async () => {
+                                await fetchHistory();
+                                toast.info('History archive refreshed');
+                            }}
                             className="px-3 py-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                         >
                             Refresh
@@ -290,10 +302,7 @@ const HistoryPage = () => {
                 </div>
 
                 {loading && (
-                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-8 text-center">
-                        <div className="inline-block w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                        <p className="mt-3 text-sm text-gray-600 dark:text-slate-400">Loading surgery history...</p>
-                    </div>
+                    <Loading message="Fetching surgery history archive..." />
                 )}
 
                 {!loading && error && (
