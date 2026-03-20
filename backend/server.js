@@ -107,17 +107,6 @@ import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js';
 // 404 handler for API routes
 app.use('/api/*', notFoundHandler);
 
-// For any other non-API routes, serve the React app (Frontend routing)
-const __dirname = path.dirname(__filename);
-
-// Serve static files from frontend dist folder
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-// Fallback to index.html for all non-API routes (SPA routing)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
-
 // Global error handling middleware - MUST BE LAST
 app.use(errorHandler);
 
@@ -181,8 +170,7 @@ const startServer = async () => {
 // Export app for testing
 export default app;
 
-// Start server only if run directly
+// Start server
 const __filename = fileURLToPath(import.meta.url);
-if (process.argv[1] === __filename) {
-    startServer();
-}
+const __dirname = path.dirname(__filename);
+startServer();
