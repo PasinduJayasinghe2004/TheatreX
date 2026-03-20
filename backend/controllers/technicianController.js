@@ -12,6 +12,8 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ============================================================================
 // GET ALL TECHNICIANS
@@ -61,18 +63,9 @@ export const getTechnicians = async (req, res) => {
             ORDER BY name ASC
         `, params);
 
-        res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows
-        });
+        sendSuccess(res, rows, 'Technicians fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching technicians:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching technicians',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -83,46 +76,25 @@ export const getTechnicians = async (req, res) => {
 // @route   GET /api/technicians/:id
 // @access  Protected
 // ============================================================================
-export const getTechnicianById = async (req, res) => {
+export const getTechnicianById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
         const { rows } = await pool.query(`
-            SELECT
-                id,
-                name,
-                email,
-                phone,
-                specialization,
-                license_number,
-                years_of_experience,
-                is_available,
-                shift_preference,
-                is_active,
-                created_at,
-                updated_at
+            SELECT id, name, email, phone, specialization, license_number,
+                   years_of_experience, is_available, shift_preference,
+                   is_active, created_at, updated_at
             FROM technicians
             WHERE id = $1
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Technician not found'
-            });
+            return sendError(res, 'Technician not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
-        res.status(200).json({
-            success: true,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], 'Technician fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching technician',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -133,117 +105,32 @@ export const getTechnicianById = async (req, res) => {
 // @route   POST /api/technicians
 // @access  Protected (coordinator, admin)
 // ============================================================================
-export const createTechnician = async (req, res) => {
+export const createTechnician = async (req, res, next) => {
     try {
         const {
-            name,
-            email,
-            phone,
-            specialization,
-            license_number,
-            years_of_experience,
-            is_available,
-            shift_preference
+            name, email, phone, specialization, license_number,
+            years_of_experience, is_available = true, shift_preference = 'flexible'
         } = req.body;
 
-        // Validate required fields
-        if (!name || !name.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: 'Name is required'
-            });
-        }
-
-        if (!email || !email.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email is required'
-            });
-        }
-
-        // Basic email format check
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid email format'
-            });
-        }
-
-        // Validate shift_preference if provided
-        const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
-        if (shift_preference && !validShifts.includes(shift_preference)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid shift_preference. Must be one of: ${validShifts.join(', ')}`
-            });
-        }
-
-        // Validate years_of_experience if provided
-        if (years_of_experience !== undefined && years_of_experience !== null) {
-            const yearsNum = parseInt(years_of_experience, 10);
-            if (isNaN(yearsNum) || yearsNum < 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'years_of_experience must be a non-negative number'
-                });
-            }
-        }
-
-        // Check for duplicate email
-        const { rows: existing } = await pool.query(
-            'SELECT id FROM technicians WHERE email = $1',
-            [email.trim().toLowerCase()]
-        );
-
-        if (existing.length > 0) {
-            return res.status(409).json({
-                success: false,
-                message: 'A technician with this email already exists'
-            });
-        }
-
-        // Insert technician
         const { rows } = await pool.query(`
             INSERT INTO technicians (
-                name,
-                email,
-                phone,
-                specialization,
-                license_number,
-                years_of_experience,
-                is_available,
-                shift_preference
+                name, email, phone, specialization, license_number,
+                years_of_experience, is_available, shift_preference
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING
-                id, name, email, phone, specialization, license_number,
-                years_of_experience, is_available, shift_preference,
-                is_active, created_at, updated_at
+            RETURNING *
         `, [
-            name.trim(),
-            email.trim().toLowerCase(),
-            phone || null,
-            specialization || null,
-            license_number || null,
-            years_of_experience !== undefined && years_of_experience !== null
-                ? parseInt(years_of_experience, 10)
-                : 0,
-            is_available !== undefined ? Boolean(is_available) : true,
-            shift_preference || 'flexible'
+            name.trim(), email.trim().toLowerCase(), phone || null,
+            specialization || null, license_number || null,
+            years_of_experience ? parseInt(years_of_experience, 10) : 0,
+            is_available, shift_preference
         ]);
 
-        res.status(201).json({
-            success: true,
-            message: `Technician '${rows[0].name}' created successfully`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Technician '${rows[0].name}' created successfully`, 201);
     } catch (error) {
-        console.error('Error creating technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating technician',
-            error: error.message
-        });
+        if (error.code === '23505') {
+            return sendError(res, 'A technician with this email already exists', 409, ERROR_CODES.CONFLICT);
+        }
+        next(error);
     }
 };
 
@@ -254,94 +141,19 @@ export const createTechnician = async (req, res) => {
 // @route   PUT /api/technicians/:id
 // @access  Protected (coordinator, admin)
 // ============================================================================
-export const updateTechnician = async (req, res) => {
+export const updateTechnician = async (req, res, next) => {
     try {
         const { id } = req.params;
-
-        // Check technician exists
-        const { rows: existingRows } = await pool.query(
-            'SELECT id FROM technicians WHERE id = $1',
-            [id]
-        );
-
-        if (existingRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Technician not found'
-            });
-        }
-
         const {
-            name,
-            email,
-            phone,
-            specialization,
-            license_number,
-            years_of_experience,
-            is_available,
-            shift_preference
+            name, email, phone, specialization, license_number,
+            years_of_experience, is_available, shift_preference
         } = req.body;
 
-        // Validate name if provided
-        if (name !== undefined && (!name || !name.trim())) {
-            return res.status(400).json({
-                success: false,
-                message: 'Name cannot be empty'
-            });
+        const { rows: existingRows } = await pool.query('SELECT id FROM technicians WHERE id = $1', [id]);
+        if (existingRows.length === 0) {
+            return sendError(res, 'Technician not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
-        // Validate email if provided
-        if (email !== undefined) {
-            if (!email || !email.trim()) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Email cannot be empty'
-                });
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.trim())) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid email format'
-                });
-            }
-
-            // Check duplicate email (excluding current technician)
-            const { rows: dupRows } = await pool.query(
-                'SELECT id FROM technicians WHERE email = $1 AND id != $2',
-                [email.trim().toLowerCase(), id]
-            );
-
-            if (dupRows.length > 0) {
-                return res.status(409).json({
-                    success: false,
-                    message: 'A technician with this email already exists'
-                });
-            }
-        }
-
-        // Validate shift_preference if provided
-        const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
-        if (shift_preference && !validShifts.includes(shift_preference)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid shift_preference. Must be one of: ${validShifts.join(', ')}`
-            });
-        }
-
-        // Validate years_of_experience if provided
-        if (years_of_experience !== undefined && years_of_experience !== null) {
-            const yearsNum = parseInt(years_of_experience, 10);
-            if (isNaN(yearsNum) || yearsNum < 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'years_of_experience must be a non-negative number'
-                });
-            }
-        }
-
-        // Build dynamic SET clause
         const setClauses = [];
         const params = [];
 
@@ -379,35 +191,23 @@ export const updateTechnician = async (req, res) => {
         }
 
         if (setClauses.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'No fields to update'
-            });
+            return sendError(res, 'No fields to update', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         params.push(id);
         const { rows } = await pool.query(`
             UPDATE technicians
-            SET ${setClauses.join(', ')}
+            SET ${setClauses.join(', ')}, updated_at = NOW()
             WHERE id = $${params.length}
-            RETURNING
-                id, name, email, phone, specialization, license_number,
-                years_of_experience, is_available, shift_preference,
-                is_active, created_at, updated_at
+            RETURNING *
         `, params);
 
-        res.status(200).json({
-            success: true,
-            message: `Technician '${rows[0].name}' updated successfully`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Technician '${rows[0].name}' updated successfully`, 200);
     } catch (error) {
-        console.error('Error updating technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating technician',
-            error: error.message
-        });
+        if (error.code === '23505') {
+            return sendError(res, 'A technician with this email already exists', 409, ERROR_CODES.CONFLICT);
+        }
+        next(error);
     }
 };
 
@@ -418,34 +218,23 @@ export const updateTechnician = async (req, res) => {
 // @route   DELETE /api/technicians/:id
 // @access  Protected (coordinator, admin)
 // ============================================================================
-export const deleteTechnician = async (req, res) => {
+export const deleteTechnician = async (req, res, next) => {
     try {
         const { id } = req.params;
 
         const { rows } = await pool.query(`
             UPDATE technicians
-            SET is_active = FALSE
+            SET is_active = FALSE, updated_at = NOW()
             WHERE id = $1 AND is_active = TRUE
             RETURNING id, name
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Technician not found or already deleted'
-            });
+            return sendError(res, 'Technician not found or already deleted', 404, ERROR_CODES.NOT_FOUND);
         }
 
-        res.status(200).json({
-            success: true,
-            message: `Technician '${rows[0].name}' deleted successfully`
-        });
+        sendSuccess(res, null, `Technician '${rows[0].name}' deleted successfully`, 200);
     } catch (error) {
-        console.error('Error deleting technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting technician',
-            error: error.message
-        });
+        next(error);
     }
 };

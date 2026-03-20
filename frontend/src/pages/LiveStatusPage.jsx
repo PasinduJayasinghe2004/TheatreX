@@ -35,6 +35,8 @@ import {
 import Layout from '../components/Layout';
 import theatreService from '../services/theatreService';
 import usePolling from '../hooks/usePolling';
+import Loading from '../components/common/Loading';
+import { toast } from 'react-toastify';
 import TheatreStatusBadge from '../components/TheatreStatusBadge';
 
 // ── Polling interval (30 seconds) ───────────────────────────────────────────
@@ -115,7 +117,13 @@ const LiveStatusPage = () => {
         pause,
         resume,
         paused
-    } = usePolling(fetchLiveStatus, { interval: POLL_INTERVAL });
+    } = usePolling(fetchLiveStatus, { 
+        interval: POLL_INTERVAL,
+        onError: (err) => {
+            console.error('Polling error:', err);
+            toast.error('Failed to sync live status. Retrying...');
+        }
+    });
 
     const theatres = response?.data ?? [];
     const summary = response?.summary ?? { total: 0, available: 0, in_use: 0, maintenance: 0, cleaning: 0, overdue: 0 };
@@ -150,7 +158,10 @@ const LiveStatusPage = () => {
                         {/* Controls */}
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={refresh}
+                                onClick={async () => {
+                                    await refresh();
+                                    toast.info('Live status synced');
+                                }}
                                 disabled={loading}
                                 className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                             >
@@ -224,9 +235,7 @@ const LiveStatusPage = () => {
 
                     {/* ── Loading State ───────────────────────────────────────── */}
                     {loading && !response && (
-                        <div className="flex justify-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-                        </div>
+                        <Loading message="Connecting to live theatre monitors..." />
                     )}
 
                     {/* ── Error State ─────────────────────────────────────────── */}

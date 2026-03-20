@@ -35,6 +35,8 @@ import {
     getAllowedTransitions
 } from '../utils/theatreConstants.js';
 import { calculateAutoProgress, enrichSurgeryWithProgress } from '../utils/progressCalculator.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ============================================================================
 // GET ALL THEATRES
@@ -112,18 +114,9 @@ export const getTheatres = async (req, res) => {
             return row;
         });
 
-        res.status(200).json({
-            success: true,
-            count: enrichedRows.length,
-            data: enrichedRows
-        });
+        sendSuccess(res, enrichedRows, 'Theatres fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching theatres:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching theatres',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -171,10 +164,7 @@ export const getTheatreById = async (req, res) => {
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         const theatre = rows[0];
@@ -225,32 +215,23 @@ export const getTheatreById = async (req, res) => {
             );
         }
 
-        res.status(200).json({
-            success: true,
-            data: {
-                ...theatre,
-                // Auto-progress fields - M2 Day 11
-                auto_progress: autoProgressData?.auto_progress ?? null,
-                elapsed_minutes: autoProgressData?.elapsed_minutes ?? null,
-                remaining_minutes: autoProgressData?.remaining_minutes ?? null,
-                is_overdue: autoProgressData?.is_overdue ?? false,
-                estimated_end_time: autoProgressData?.estimated_end_time ?? null,
-                upcoming_surgeries: upcoming,
-                surgery_history: history,
-                stats: {
-                    completed_this_week: parseInt(stats.completed_week) || 0,
-                    cancelled_this_week: parseInt(stats.cancelled_week) || 0,
-                    upcoming_total: parseInt(stats.upcoming_total) || 0
-                }
+        sendSuccess(res, {
+            ...theatre,
+            auto_progress: autoProgressData?.auto_progress ?? null,
+            elapsed_minutes: autoProgressData?.elapsed_minutes ?? null,
+            remaining_minutes: autoProgressData?.remaining_minutes ?? null,
+            is_overdue: autoProgressData?.is_overdue ?? false,
+            estimated_end_time: autoProgressData?.estimated_end_time ?? null,
+            upcoming_surgeries: upcoming,
+            surgery_history: history,
+            stats: {
+                completed_this_week: parseInt(stats.completed_week) || 0,
+                cancelled_this_week: parseInt(stats.cancelled_week) || 0,
+                upcoming_total: parseInt(stats.upcoming_total) || 0
             }
-        });
+        }, 'Theatre fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching theatre:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching theatre',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -268,36 +249,19 @@ export const updateTheatreStatus = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
 
-        // Enum validation (belt-and-braces; middleware also validates)
         if (!status || !VALID_THEATRE_STATUSES.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
-            });
+            return sendError(res, `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`, 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        // Verify theatre exists
-        const { rows: existing } = await pool.query(
-            'SELECT id, status FROM theatres WHERE id = $1',
-            [id]
-        );
-
+        const { rows: existing } = await pool.query('SELECT id, status FROM theatres WHERE id = $1', [id]);
         if (existing.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         const previousStatus = existing[0].status;
-
-        // Enforce valid status transitions (M3 - Day 10)
         const allowed = getAllowedTransitions(previousStatus);
         if (!allowed.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Cannot transition from '${previousStatus}' to '${status}'. Allowed transitions: ${allowed.join(', ')}`
-            });
+            return sendError(res, `Cannot transition from '${previousStatus}' to '${status}'. Allowed transitions: ${allowed.join(', ')}`, 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const { rows } = await pool.query(`
@@ -307,18 +271,9 @@ export const updateTheatreStatus = async (req, res) => {
             RETURNING id, name, location, status, capacity, equipment, theatre_type, is_active, updated_at
         `, [status, id]);
 
-        res.status(200).json({
-            success: true,
-            message: `Theatre status updated from '${previousStatus}' to '${status}'`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Theatre status updated from '${previousStatus}' to '${status}'`, 200);
     } catch (error) {
-        console.error('Error updating theatre status:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating theatre status',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -338,12 +293,8 @@ export const toggleMaintenanceMode = async (req, res) => {
         const { id } = req.params;
         const { enable, reason } = req.body;
 
-        // 1. Validate 'enable' flag is provided
         if (enable === undefined || enable === null) {
-            return res.status(400).json({
-                success: false,
-                message: "'enable' field is required (true to enter maintenance, false to exit)"
-            });
+            return sendError(res, "'enable' field is required (true to enter maintenance, false to exit)", 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const enableBool = Boolean(enable);
@@ -355,10 +306,7 @@ export const toggleMaintenanceMode = async (req, res) => {
         );
 
         if (existing.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         const theatre = existing[0];
@@ -369,10 +317,7 @@ export const toggleMaintenanceMode = async (req, res) => {
             // Validate transition is allowed
             const allowed = getAllowedTransitions(previousStatus);
             if (!allowed.includes(THEATRE_STATUS.MAINTENANCE)) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Cannot enter maintenance from '${previousStatus}'. Allowed transitions: ${allowed.join(', ')}`
-                });
+                return sendError(res, `Cannot enter maintenance from '${previousStatus}'. Allowed transitions: ${allowed.join(', ')}`, 400, ERROR_CODES.BAD_REQUEST);
             }
 
             // Trim & cap reason
@@ -401,18 +346,11 @@ export const toggleMaintenanceMode = async (req, res) => {
                 updatedTheatre = { ...rows[0], maintenance_reason: trimmedReason };
             }
 
-            return res.status(200).json({
-                success: true,
-                message: `Theatre '${theatre.name}' is now in maintenance mode`,
-                data: updatedTheatre
-            });
+            return sendSuccess(res, updatedTheatre, `Theatre '${theatre.name}' is now in maintenance mode`, 200);
         } else {
             // --- EXIT MAINTENANCE ---
             if (previousStatus !== THEATRE_STATUS.MAINTENANCE) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Theatre is not in maintenance mode (current status: '${previousStatus}')`
-                });
+                return sendError(res, `Theatre is not in maintenance mode (current status: '${previousStatus}')`, 400, ERROR_CODES.BAD_REQUEST);
             }
 
             let updatedTheatre;
@@ -436,19 +374,10 @@ export const toggleMaintenanceMode = async (req, res) => {
                 updatedTheatre = { ...rows[0], maintenance_reason: null };
             }
 
-            return res.status(200).json({
-                success: true,
-                message: `Theatre '${theatre.name}' exited maintenance mode and is now available`,
-                data: updatedTheatre
-            });
+            return sendSuccess(res, updatedTheatre, `Theatre '${theatre.name}' exited maintenance mode and is now available`, 200);
         }
     } catch (error) {
-        console.error('Error toggling maintenance mode:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error toggling maintenance mode',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -470,18 +399,12 @@ export const checkTheatreAvailability = async (req, res) => {
 
         // Validate required params
         if (!date || !time || !duration) {
-            return res.status(400).json({
-                success: false,
-                message: 'Missing required query parameters: date, time, duration'
-            });
+            return sendError(res, 'Missing required query parameters: date, time, duration', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const durationMinutes = parseInt(duration, 10);
         if (isNaN(durationMinutes) || durationMinutes <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Duration must be a positive number (minutes)'
-            });
+            return sendError(res, 'Duration must be a positive number (minutes)', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         // 1. Fetch all active theatres
@@ -525,20 +448,14 @@ export const checkTheatreAvailability = async (req, res) => {
             };
         });
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             count: result.length,
             available_count: result.filter(t => t.available).length,
             data: result,
             query: { date, time, duration: durationMinutes }
-        });
+        }, 'Theatre availability checked successfully', 200);
     } catch (error) {
-        console.error('Error checking theatre availability:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error checking theatre availability',
-            error: error.message
-        });
+        next(error);
     }
 };
 // ============================================================================
@@ -570,28 +487,15 @@ export const getCurrentSurgeryByTheatreId = async (req, res) => {
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(200).json({
-                success: true,
-                message: 'No surgery currently in progress for this theatre',
-                data: null
-            });
+            return sendSuccess(res, null, 'No surgery currently in progress for this theatre', 200);
         }
 
-        // Enrich with auto-progress - M2 Day 11
         const surgery = rows[0];
         const enriched = enrichSurgeryWithProgress(surgery);
 
-        res.status(200).json({
-            success: true,
-            data: enriched
-        });
+        sendSuccess(res, enriched, 'Current surgery fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching current surgery:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching current surgery',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -609,34 +513,18 @@ export const updateSurgeryProgress = async (req, res) => {
         const { id } = req.params;
         const { progress } = req.body;
 
-        // Validate progress value
         if (progress === undefined || progress === null) {
-            return res.status(400).json({
-                success: false,
-                message: 'Progress value is required'
-            });
+            return sendError(res, 'Progress value is required', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const progressValue = Number(progress);
-
         if (!Number.isInteger(progressValue) || progressValue < 0 || progressValue > 100) {
-            return res.status(400).json({
-                success: false,
-                message: 'Progress must be an integer between 0 and 100'
-            });
+            return sendError(res, 'Progress must be an integer between 0 and 100', 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        // Verify theatre exists
-        const { rows: theatreRows } = await pool.query(
-            'SELECT id, name, status FROM theatres WHERE id = $1',
-            [id]
-        );
-
+        const { rows: theatreRows } = await pool.query('SELECT id, name, status FROM theatres WHERE id = $1', [id]);
         if (theatreRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         // Find the current in-progress surgery for this theatre
@@ -649,16 +537,12 @@ export const updateSurgeryProgress = async (req, res) => {
         `, [id]);
 
         if (surgeryRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No in-progress surgery found for this theatre'
-            });
+            return sendError(res, 'No in-progress surgery found for this theatre', 404, ERROR_CODES.NOT_FOUND);
         }
 
         const surgery = surgeryRows[0];
         const previousProgress = surgery.progress_percent || 0;
 
-        // Update the surgery progress
         const { rows: updatedRows } = await pool.query(`
             UPDATE surgeries
             SET progress_percent = $1, updated_at = CURRENT_TIMESTAMP
@@ -666,22 +550,13 @@ export const updateSurgeryProgress = async (req, res) => {
             RETURNING id, surgery_type, patient_name, progress_percent, status, duration_minutes
         `, [progressValue, surgery.id]);
 
-        res.status(200).json({
-            success: true,
-            message: `Surgery progress updated from ${previousProgress}% to ${progressValue}%`,
-            data: {
-                theatre_id: parseInt(id),
-                theatre_name: theatreRows[0].name,
-                surgery: updatedRows[0]
-            }
-        });
+        sendSuccess(res, {
+            theatre_id: parseInt(id),
+            theatre_name: theatreRows[0].name,
+            surgery: updatedRows[0]
+        }, `Surgery progress updated from ${previousProgress}% to ${progressValue}%`, 200);
     } catch (error) {
-        console.error('Error updating surgery progress:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating surgery progress',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -700,17 +575,9 @@ export const getAutoProgress = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // 1. Verify theatre exists
-        const { rows: theatreRows } = await pool.query(
-            'SELECT id, name, status FROM theatres WHERE id = $1',
-            [id]
-        );
-
+        const { rows: theatreRows } = await pool.query('SELECT id, name, status FROM theatres WHERE id = $1', [id]);
         if (theatreRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         // 2. Find the current in-progress surgery for this theatre
@@ -724,42 +591,25 @@ export const getAutoProgress = async (req, res) => {
         `, [id]);
 
         if (surgeryRows.length === 0) {
-            return res.status(200).json({
-                success: true,
-                message: 'No in-progress surgery found for this theatre',
-                data: null
-            });
+            return sendSuccess(res, null, 'No in-progress surgery found for this theatre', 200);
         }
 
         const surgery = surgeryRows[0];
+        const progressData = calculateAutoProgress(surgery.scheduled_time, surgery.duration_minutes);
 
-        // 3. Calculate auto-progress
-        const progressData = calculateAutoProgress(
-            surgery.scheduled_time,
-            surgery.duration_minutes
-        );
-
-        res.status(200).json({
-            success: true,
-            data: {
-                theatre_id: parseInt(id),
-                theatre_name: theatreRows[0].name,
-                surgery_id: surgery.id,
-                surgery_type: surgery.surgery_type,
-                patient_name: surgery.patient_name,
-                scheduled_time: surgery.scheduled_time,
-                duration_minutes: surgery.duration_minutes,
-                manual_progress: surgery.progress_percent || 0,
-                ...progressData
-            }
-        });
+        sendSuccess(res, {
+            theatre_id: parseInt(id),
+            theatre_name: theatreRows[0].name,
+            surgery_id: surgery.id,
+            surgery_type: surgery.surgery_type,
+            patient_name: surgery.patient_name,
+            scheduled_time: surgery.scheduled_time,
+            duration_minutes: surgery.duration_minutes,
+            manual_progress: surgery.progress_percent || 0,
+            ...progressData
+        }, 'Auto-progress calculated successfully', 200);
     } catch (error) {
-        console.error('Error calculating auto-progress:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error calculating auto-progress',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -845,19 +695,13 @@ export const getLiveStatus = async (req, res) => {
             overdue: theatres.filter(t => t.current_surgery?.is_overdue).length
         };
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             polled_at: new Date().toISOString(),
             summary,
             data: theatres
-        });
+        }, 'Live status fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching live status:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching live status',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -875,20 +719,11 @@ export const getTheatreDuration = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // 1. Verify theatre exists
-        const { rows: theatreRows } = await pool.query(
-            'SELECT id, name, status FROM theatres WHERE id = $1',
-            [id]
-        );
-
+        const { rows: theatreRows } = await pool.query('SELECT id, name, status FROM theatres WHERE id = $1', [id]);
         if (theatreRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
-        // 2. Find the current in-progress surgery for this theatre
         const { rows: surgeryRows } = await pool.query(`
             SELECT id, surgery_type, patient_name, scheduled_time,
                    duration_minutes, progress_percent, status
@@ -899,22 +734,12 @@ export const getTheatreDuration = async (req, res) => {
         `, [id]);
 
         if (surgeryRows.length === 0) {
-            return res.status(200).json({
-                success: true,
-                message: 'No in-progress surgery found for this theatre',
-                data: null
-            });
+            return sendSuccess(res, null, 'No in-progress surgery found for this theatre', 200);
         }
 
         const surgery = surgeryRows[0];
+        const progressData = calculateAutoProgress(surgery.scheduled_time, surgery.duration_minutes);
 
-        // 3. Calculate duration using the existing progress calculator
-        const progressData = calculateAutoProgress(
-            surgery.scheduled_time,
-            surgery.duration_minutes
-        );
-
-        // 4. Format minutes into human-readable strings
         const formatMinutes = (mins) => {
             if (mins <= 0) return '0m';
             const hours = Math.floor(mins / 60);
@@ -924,40 +749,29 @@ export const getTheatreDuration = async (req, res) => {
             return `${minutes}m`;
         };
 
-        // 5. Calculate overdue amount if applicable
-        const overdueMinutes = progressData.is_overdue
-            ? progressData.elapsed_minutes - surgery.duration_minutes
-            : 0;
+        const overdueMinutes = progressData.is_overdue ? progressData.elapsed_minutes - surgery.duration_minutes : 0;
 
-        res.status(200).json({
-            success: true,
-            data: {
-                theatre_id: parseInt(id),
-                theatre_name: theatreRows[0].name,
-                surgery_id: surgery.id,
-                duration: {
-                    total: surgery.duration_minutes,
-                    elapsed: progressData.elapsed_minutes,
-                    remaining: progressData.remaining_minutes,
-                    overdue: overdueMinutes,
-                    formatted: {
-                        total: formatMinutes(surgery.duration_minutes),
-                        elapsed: formatMinutes(progressData.elapsed_minutes),
-                        remaining: progressData.is_overdue ? '0m' : formatMinutes(progressData.remaining_minutes),
-                        overdue: overdueMinutes > 0 ? formatMinutes(overdueMinutes) : '0m'
-                    }
-                },
-                is_overdue: progressData.is_overdue,
-                estimated_end_time: progressData.estimated_end_time
-            }
-        });
+        sendSuccess(res, {
+            theatre_id: parseInt(id),
+            theatre_name: theatreRows[0].name,
+            surgery_id: surgery.id,
+            duration: {
+                total: surgery.duration_minutes,
+                elapsed: progressData.elapsed_minutes,
+                remaining: progressData.remaining_minutes,
+                overdue: overdueMinutes,
+                formatted: {
+                    total: formatMinutes(surgery.duration_minutes),
+                    elapsed: formatMinutes(progressData.elapsed_minutes),
+                    remaining: progressData.is_overdue ? '0m' : formatMinutes(progressData.remaining_minutes),
+                    overdue: overdueMinutes > 0 ? formatMinutes(overdueMinutes) : '0m'
+                }
+            },
+            is_overdue: progressData.is_overdue,
+            estimated_end_time: progressData.estimated_end_time
+        }, 'Theatre duration calculated successfully', 200);
     } catch (error) {
-        console.error('Error calculating theatre duration:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error calculating theatre duration',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -1030,17 +844,9 @@ export const getTheatreStats = async (req, res) => {
             average_surgery_progress: parseFloat(progressRows[0].avg_progress).toFixed(1)
         };
 
-        res.status(200).json({
-            success: true,
-            data: stats
-        });
+        sendSuccess(res, stats, 'Theatre statistics fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching theatre stats:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching theatre stats',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -1140,19 +946,13 @@ export const getCoordinatorOverview = async (req, res) => {
             overdue_count
         };
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             generated_at: new Date().toISOString(),
             summary,
             data: theatres
-        });
+        }, 'Coordinator overview fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching coordinator overview:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching coordinator overview',
-            error: error.message
-        });
+        next(error);
     }
 };
 // ============================================================================
@@ -1170,31 +970,17 @@ export const quickUpdateStatus = async (req, res) => {
         const { status } = req.body;
 
         if (!status || !VALID_THEATRE_STATUSES.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
-            });
+            return sendError(res, `Invalid status. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`, 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        // Validate that :id is numeric
         if (isNaN(parseInt(id, 10)) || !/^\d+$/.test(id)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Theatre ID must be a numeric value'
-            });
+            return sendError(res, 'Theatre ID must be a numeric value', 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        // 1. Get current status
-        const { rows: existing } = await pool.query(
-            'SELECT id, status, name FROM theatres WHERE id = $1',
-            [id]
-        );
+        const { rows: existing } = await pool.query('SELECT id, status, name FROM theatres WHERE id = $1', [id]);
 
         if (existing.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         const currentStatus = existing[0].status;
@@ -1203,10 +989,7 @@ export const quickUpdateStatus = async (req, res) => {
         // 2. Validate transition
         const allowed = getAllowedTransitions(currentStatus);
         if (!allowed.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Cannot transition from '${currentStatus}' to '${status}'. Allowed: ${allowed.join(', ')}`
-            });
+            return sendError(res, `Cannot transition from '${currentStatus}' to '${status}'. Allowed: ${allowed.join(', ')}`, 400, ERROR_CODES.BAD_REQUEST);
         }
 
         // 3. Update status
@@ -1217,17 +1000,8 @@ export const quickUpdateStatus = async (req, res) => {
             RETURNING id, name, status, updated_at
         `, [status, id]);
 
-        res.status(200).json({
-            success: true,
-            message: `Theatre '${name}' updated to ${status}`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Theatre '${name}' updated to ${status}`, 200);
     } catch (error) {
-        console.error('Error in quickUpdateStatus:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating theatre status',
-            error: error.message
-        });
+        next(error);
     }
 };

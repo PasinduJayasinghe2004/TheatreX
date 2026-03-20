@@ -21,7 +21,9 @@
 // - GET    /api/surgeries                           - Get all surgeries (Protected)
 // - GET    /api/surgeries/unassigned                 - Get surgeries without theatre (Protected) - M3 Day 12
 // - GET    /api/surgeries/history                    - Get completed surgery history (Protected) - M1 Day 20
+// - GET    /api/surgeries/history/export/csv         - Export filtered history as CSV (Protected) - Day 21
 // - GET    /api/surgeries/:id                       - Get surgery by ID (Protected)
+// - GET    /api/surgeries/:id/export/csv            - Export surgery detail as CSV (Protected) - Day 21
 // - PUT    /api/surgeries/:id                       - Update surgery (Coordinator, Admin)
 // - PATCH  /api/surgeries/:id/status                - Update surgery status (Coordinator, Admin)
 // - PATCH  /api/surgeries/:id/assign-theatre        - Assign surgery to theatre (Coordinator, Admin) - M3 Day 12
@@ -51,7 +53,9 @@ import {
     assignStaff,
     assignSurgeryToTheatre,
     getUnassignedSurgeries,
-    getSurgeryHistory
+    getSurgeryHistory,
+    exportSurgeryHistoryCsv,
+    exportSurgeryDetailCsv
 } from '../controllers/surgeryController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 import { validateSurgery } from '../middleware/surgeryValidation.js';
@@ -148,6 +152,16 @@ router.get('/unassigned', protect, getUnassignedSurgeries);
 router.get('/history', protect, getSurgeryHistory);
 
 // ============================================================================
+// ROUTE: GET /api/surgeries/history/export/csv
+// ============================================================================
+// Export completed surgery history in CSV format
+// Query params: startDate, endDate, surgeonId, theatreId (optional)
+// Protected - any authenticated user can export
+// Created by: M1/M2 - Day 21
+// ============================================================================
+router.get('/history/export/csv', protect, exportSurgeryHistoryCsv);
+
+// ============================================================================
 // ROUTE: POST /api/surgeries
 // ============================================================================
 // Create a new surgery
@@ -173,13 +187,19 @@ router.get('/', protect, getAllSurgeries);
 router.get('/:id', protect, getSurgeryById);
 
 // ============================================================================
-// ROUTE: PUT /api/surgeries/:id
+// ROUTE: GET /api/surgeries/:id/export/csv
 // ============================================================================
+// Export a single surgery detail in CSV format
+// Protected - any authenticated user can export
+// Created by: M3 - Day 21
+// ============================================================================
+router.get('/:id/export/csv', protect, exportSurgeryDetailCsv);
+
 // Update a surgery's details
 // Protected - only coordinators and admins can update surgeries
 // Created by: M1 (Pasindu) - Day 6
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
+router.put('/:id', protect, authorize('coordinator', 'admin'), validateSurgery, updateSurgery);
 
 // ============================================================================
 // ROUTE: PATCH /api/surgeries/:id/status

@@ -29,7 +29,8 @@ import {
 } from 'lucide-react';
 import surgeryService from '../services/surgeryService';
 import Layout from '../components/Layout';
-import Loading from '../components/ui/Loading';
+import Loading from '../components/common/Loading';
+import { toast } from 'react-toastify';
 import Modal from '../components/ui/Modal';
 import StatusBadge, { VALID_STATUS_TRANSITIONS, STATUS_LABELS } from '../components/StatusBadge';
 
@@ -130,10 +131,14 @@ const SurgeryDetail = () => {
                 if (response.success) {
                     setSurgery(response.data);
                 } else {
-                    setError(response.message || 'Failed to load surgery details');
+                    const msg = response.message || 'Failed to load surgery details';
+                    setError(msg);
+                    toast.error(msg);
                 }
             } catch (err) {
-                setError(err.message || 'An error occurred while fetching surgery details');
+                const msg = err.message || 'An error occurred while fetching surgery details';
+                setError(msg);
+                toast.error(msg);
                 console.error('Error fetching surgery:', err);
             } finally {
                 setLoading(false);
@@ -153,14 +158,17 @@ const SurgeryDetail = () => {
             if (response.success) {
                 // Close modal and navigate back to surgeries list
                 setShowDeleteModal(false);
-                navigate('/surgeries', {
-                    state: { message: `Surgery "${surgery.surgery_type}" deleted successfully` }
-                });
+                toast.success(response.message || `Surgery "${surgery.surgery_type}" deleted successfully`);
+                navigate('/surgeries');
             } else {
-                setDeleteError(response.message || 'Failed to delete surgery');
+                const msg = response.message || 'Failed to delete surgery';
+                setDeleteError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setDeleteError(err.message || 'An error occurred while deleting the surgery');
+            const msg = err.message || 'An error occurred while deleting the surgery';
+            setDeleteError(msg);
+            toast.error(msg);
             console.error('Error deleting surgery:', err);
         } finally {
             setDeleting(false);
@@ -178,21 +186,14 @@ const SurgeryDetail = () => {
 
             if (response.success) {
                 setSurgery(prev => ({ ...prev, ...response.data }));
-                setStatusMessage({
-                    type: 'success',
-                    text: response.message || `Status updated to ${STATUS_LABELS[newStatus]}`
-                });
+                toast.success(response.message || `Status updated to ${STATUS_LABELS[newStatus]}`);
             } else {
-                setStatusMessage({
-                    type: 'error',
-                    text: response.message || 'Failed to update status'
-                });
+                const msg = response.message || 'Failed to update status';
+                toast.error(msg);
             }
         } catch (err) {
-            setStatusMessage({
-                type: 'error',
-                text: err.message || 'An error occurred while updating status'
-            });
+            const msg = err.message || 'An error occurred while updating status';
+            toast.error(msg);
             console.error('Error updating surgery status:', err);
         } finally {
             setStatusUpdating(false);
@@ -209,9 +210,7 @@ const SurgeryDetail = () => {
         return (
             <Layout>
                 <div className="min-h-screen bg-gray-50 py-8 px-4">
-                    <div className="max-w-4xl mx-auto flex justify-center items-center h-64">
-                        <Loading />
-                    </div>
+                    <Loading message="Fetching surgery details..." />
                 </div>
             </Layout>
         );

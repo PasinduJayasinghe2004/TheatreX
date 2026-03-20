@@ -21,6 +21,9 @@ import Layout from '../components/Layout';
 import TechnicianForm from '../components/TechnicianForm';
 import technicianService from '../services/technicianService';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -207,7 +210,9 @@ const TechniciansPage = () => {
             const response = await technicianService.getAllTechnicians(filters);
             setTechnicians(response.data ?? []);
         } catch (err) {
-            setError(err.message || 'Failed to load technicians.');
+            const msg = err.message || 'Failed to load technicians.';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -248,11 +253,14 @@ const TechniciansPage = () => {
         if (!deletingTech) return;
         setDeleteLoading(true);
         try {
-            await technicianService.deleteTechnician(deletingTech.id);
+            const response = await technicianService.deleteTechnician(deletingTech.id);
             setTechnicians(prev => prev.filter(t => t.id !== deletingTech.id));
+            toast.success(response.message || `Technician '${deletingTech.name}' deleted successfully`);
             setDeletingTech(null);
         } catch (err) {
-            setError(err.message || 'Failed to delete technician.');
+            const msg = err.message || 'Failed to delete technician.';
+            setError(msg);
+            toast.error(msg);
             setDeletingTech(null);
         } finally {
             setDeleteLoading(false);
@@ -348,24 +356,7 @@ const TechniciansPage = () => {
 
                 {/* Content */}
                 {loading ? (
-                    /* Loading skeleton */
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 animate-pulse">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-10 h-10 bg-gray-200 dark:bg-slate-700 rounded-full" />
-                                    <div className="flex-1 space-y-1.5">
-                                        <div className="h-3 bg-gray-200 dark:bg-slate-700 rounded w-3/4" />
-                                        <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded" />
-                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-4/5" />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <Loading message="Fetching technicians..." />
                 ) : error ? (
                     /* Error state */
                     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -382,33 +373,28 @@ const TechniciansPage = () => {
                         </button>
                     </div>
                 ) : displayed.length === 0 ? (
-                    /* Empty state */
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="w-14 h-14 bg-teal-50 dark:bg-teal-950/30 rounded-full flex items-center justify-center mb-4">
-                            <UserPlus className="w-7 h-7 text-teal-400" />
-                        </div>
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
-                            {search || filterSpecialization || filterAvailability !== 'all'
-                                ? 'No technicians match your filters'
-                                : 'No technicians yet'}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4 max-w-xs">
-                            {search || filterSpecialization || filterAvailability !== 'all'
-                                ? 'Try adjusting your filters or search query.'
+                    <EmptyState
+                        icon="🛠️"
+                        title={search || filterSpecialization || filterAvailability !== 'all' ? 'No technicians match your filters' : 'No technicians found'}
+                        description={
+                            search || filterSpecialization || filterAvailability !== 'all'
+                                ? 'Try adjusting your filters or search query to find who you are looking for.'
                                 : canManage
-                                    ? 'Add the first technician to get started.'
-                                    : 'No technicians have been added yet.'}
-                        </p>
-                        {canManage && (
-                            <button
-                                onClick={() => setShowForm(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors"
-                            >
-                                <UserPlus className="w-4 h-4" />
-                                Add Technician
-                            </button>
-                        )}
-                    </div>
+                                    ? 'Start by adding your first technician record to the system.'
+                                    : 'There are no technicians registered in the system.'
+                        }
+                        actionButton={
+                            canManage && (
+                                <button
+                                    onClick={() => setShowForm(true)}
+                                    className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl shadow-md transition-colors"
+                                >
+                                    <UserPlus className="w-4 h-4" />
+                                    Add First Technician
+                                </button>
+                            )
+                        }
+                    />
                 ) : (
                     /* Technician card grid */
                     <>

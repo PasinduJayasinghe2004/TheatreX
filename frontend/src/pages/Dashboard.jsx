@@ -11,6 +11,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 import SummaryCard from '../components/SummaryCard';
 import StatusBadge from '../components/StatusBadge';
@@ -436,7 +438,9 @@ const Dashboard = () => {
                 }
             } catch (statsErr) {
                 console.warn('Dashboard stats/summary unavailable:', statsErr.message);
-                setError('Failed to load dashboard statistics. Please check your connection.');
+                const msg = 'Failed to load dashboard statistics. Please check your connection.';
+                setError(msg);
+                toast.error(msg);
                 return; // Stop further execution if stats fail
             }
 
@@ -457,7 +461,9 @@ const Dashboard = () => {
                 }
             } catch (surgeryErr) {
                 console.warn('Surgeries data unavailable:', surgeryErr.message);
-                setError('Failed to load today\'s surgery schedule.');
+                const msg = "Failed to load today's surgery schedule.";
+                setError(msg);
+                toast.error(msg);
                 return;
             }
 
@@ -487,11 +493,12 @@ const Dashboard = () => {
             return;
         }
         try {
-            await surgeryService.deleteSurgery(surgeryId);
+            const response = await surgeryService.deleteSurgery(surgeryId);
             setSurgeries(prev => prev.filter(s => s.id !== surgeryId));
+            toast.success(response.message || 'Surgery deleted successfully');
         } catch (err) {
             console.error('Error deleting surgery:', err);
-            alert(err.message || 'Failed to delete surgery. Please try again.');
+            toast.error(err.message || 'Failed to delete surgery. Please try again.');
         }
     };
 
@@ -515,9 +522,10 @@ const Dashboard = () => {
     });
 
     // Manual refresh handler
-    const handleManualRefresh = () => {
-        fetchDashboardData();
+    const handleManualRefresh = async () => {
+        await fetchDashboardData();
         setLastRefresh(new Date());
+        toast.info('Dashboard refreshed');
     };
 
     // Dismiss alert
@@ -540,12 +548,7 @@ const Dashboard = () => {
     if (loading) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600 dark:text-slate-400">Loading dashboard...</p>
-                    </div>
-                </div>
+                <Loading message="Updating dashboard data..." />
             </Layout>
         );
     }

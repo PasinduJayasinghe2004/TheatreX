@@ -14,6 +14,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, AlertCircle, Filter } from 'lucide-react';
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
+import { toast } from 'react-toastify';
 import SurgeryCard from '../components/SurgeryCard';
 import DateFilter from '../components/DateFilter';
 import EditSurgeryModal from '../components/EditSurgeryModal';
@@ -33,7 +36,7 @@ const SurgeryList = () => {
         status: null      // M3 (Janani) Day 6 — status filter
     });
 
-    // Modal states
+    // ... existing state and effects ...
     const [editingSurgery, setEditingSurgery] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
 
@@ -55,10 +58,14 @@ const SurgeryList = () => {
             if (response.success) {
                 setSurgeries(response.data);
             } else {
-                setError(response.message || 'Failed to load surgeries');
+                const msg = response.message || 'Failed to load surgeries';
+                setError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setError(err.message || 'An error occurred while fetching surgeries');
+            const msg = err.message || 'An error occurred while fetching surgeries';
+            setError(msg);
+            toast.error(msg);
             console.error('Error fetching surgeries:', err);
         } finally {
             setLoading(false);
@@ -85,6 +92,7 @@ const SurgeryList = () => {
         setSurgeries(prev => prev.map(s => s.id === updatedSurgery.id ? { ...s, ...updatedSurgery } : s));
         setShowStaffModal(false);
         setAssigningStaffSurgery(null);
+        toast.success(`Staff assigned to surgery #${updatedSurgery.id} successfully`);
     };
 
     // Handle edit success - refresh list and close modal
@@ -168,9 +176,7 @@ const SurgeryList = () => {
 
                     {/* Loading State */}
                     {loading && (
-                        <div className="flex justify-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                        </div>
+                        <Loading message="Fetching surgery records..." />
                     )}
 
                     {/* Error State */}
@@ -200,24 +206,24 @@ const SurgeryList = () => {
                             </div>
 
                             {surgeries.length === 0 ? (
-                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
-                                <div className="max-w-md mx-auto">
-                                    <div className="w-16 h-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Plus className="w-8 h-8 text-gray-400 dark:text-slate-500" />
-                                    </div>
-                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Surgeries Found</h3>
-                                    <p className="text-gray-600 dark:text-slate-400 mb-6">
-                                            Get started by creating your first surgery. Click the &quot;Create Surgery&quot; button above.
-                                        </p>
+                                <EmptyState
+                                    icon="📅"
+                                    title="No Surgeries Found"
+                                    description={
+                                        filters.startDate || filters.endDate || filters.status
+                                            ? "No surgeries match your current filters. Try adjusting your search criteria."
+                                            : "There are no surgeries scheduled yet. Get started by creating your first surgery record."
+                                    }
+                                    actionButton={
                                         <button
                                             onClick={() => navigate('/surgeries/new')}
-                                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md font-medium"
                                         >
                                             <Plus className="w-5 h-5" />
                                             Create First Surgery
                                         </button>
-                                    </div>
-                                </div>
+                                    }
+                                />
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {surgeries.map((surgery) => (

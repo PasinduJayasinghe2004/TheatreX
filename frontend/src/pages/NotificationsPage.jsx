@@ -12,6 +12,7 @@ import Layout from '../components/Layout';
 import NotificationList from '../components/NotificationList';
 import notificationService from '../services/notificationService';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 import TYPE_CONFIG, { NOTIFICATION_TYPE_KEYS } from '../constants/notificationTypes.js';
 
 const NotificationsPage = () => {
@@ -58,10 +59,10 @@ const NotificationsPage = () => {
         setIsCleaning(true);
         try {
             const res = await notificationService.cleanupNotifications();
-            alert(res.message);
+            toast.success(res.message || 'Notifications cleaned up successfully');
             handleRefresh();
         } catch (err) {
-            alert(err.message || 'Error cleaning up notifications');
+            toast.error(err.message || 'Error cleaning up notifications');
         } finally {
             setIsCleaning(false);
         }
@@ -145,7 +146,10 @@ const NotificationsPage = () => {
 
                         {/* Manual refresh */}
                         <button
-                            onClick={handleRefresh}
+                            onClick={() => {
+                                handleRefresh();
+                                toast.info('Notifications refreshed');
+                            }}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors
                                        bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
                             title="Refresh now"

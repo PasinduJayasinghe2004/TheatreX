@@ -37,13 +37,13 @@ export const getSurgeryDurationStats = async (req, res) => {
                     WHEN duration_minutes <= 120 THEN '91-120'
                     WHEN duration_minutes <= 180 THEN '121-180'
                     ELSE '180+'
-                END AS range,
+                END AS "range",
                 COUNT(*)::int AS count
             FROM surgeries
             WHERE duration_minutes IS NOT NULL
-            GROUP BY range
+            GROUP BY "range"
             ORDER BY
-                CASE range
+                CASE "range"
                     WHEN '0-30'    THEN 1
                     WHEN '31-60'   THEN 2
                     WHEN '61-90'   THEN 3
@@ -481,7 +481,7 @@ export const getPeakHoursAnalysis = async (req, res) => {
         // Format data for Recharts: { hour: '00:00', count: 5 }
         const formattedData = result.rows.map(row => ({
             hour: `${row.hour.toString().padStart(2, '0')}:00`,
-            displayHour: row.hour > 12 ? `${row.hour - 12} PM` : row.hour === 12 ? '12 PM' : row.hour === 0 ? '12 AM' : `${row.hour} AM`,
+            displayHour: row.hour === 0 ? '12 AM' : row.hour < 12 ? `${row.hour} AM` : row.hour === 12 ? '12 PM' : `${row.hour - 12} PM`,
             count: row.count
         }));
 

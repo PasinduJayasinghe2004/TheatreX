@@ -12,6 +12,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 import {
     LineChart, Line, BarChart, Bar,
     XAxis, YAxis, CartesianGrid, Tooltip,
@@ -117,7 +119,9 @@ const AnalyticsPage = () => {
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
-            setError('Failed to load analytics data. Please try again.');
+            const msg = 'Failed to load analytics data. Please try again.';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -161,12 +165,7 @@ const AnalyticsPage = () => {
     if (loading) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-[60vh]">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600 dark:text-slate-400">Loading analytics...</p>
-                    </div>
-                </div>
+                <Loading message="Fetching comprehensive analytics data..." />
             </Layout>
         );
     }
@@ -203,7 +202,10 @@ const AnalyticsPage = () => {
                         <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Surgery statistics and status breakdown</p>
                     </div>
                     <button
-                        onClick={fetchAnalyticsData}
+                        onClick={async () => {
+                            await fetchAnalyticsData();
+                            toast.info('Analytics refreshed');
+                        }}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-sm"
                         title="Refresh analytics data"
                     >

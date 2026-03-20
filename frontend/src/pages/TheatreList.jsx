@@ -13,9 +13,12 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AlertCircle, Building2, Filter } from 'lucide-react';
+import { Building2, Filter, AlertCircle } from 'lucide-react';
 import Layout from '../components/Layout';
 import TheatreCard from '../components/TheatreCard';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 import TheatreStatusBadge, {
     ALL_THEATRE_STATUSES,
     THEATRE_STATUS_LABELS,
@@ -47,10 +50,14 @@ const TheatreList = () => {
             if (response.success) {
                 setTheatres(response.data);
             } else {
-                setError(response.message || 'Failed to load theatres');
+                const msg = response.message || 'Failed to load theatres';
+                setError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setError(err.message || 'An error occurred while fetching theatres');
+            const msg = err.message || 'An error occurred while fetching theatres';
+            setError(msg);
+            toast.error(msg);
             console.error('Error fetching theatres:', err);
         } finally {
             setLoading(false);
@@ -97,10 +104,13 @@ const TheatreList = () => {
                         t.id === theatreId ? { ...t, status: newStatus } : t
                     )
                 );
+                toast.success(response.message || `Theatre status updated to ${THEATRE_STATUS_LABELS[newStatus]}`);
             }
         } catch (err) {
             console.error('Error updating theatre status:', err);
-            setError(err.message || 'Failed to update theatre status');
+            const msg = err.message || 'Failed to update theatre status';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setStatusUpdating(null);
         }
@@ -233,9 +243,7 @@ const TheatreList = () => {
 
                     {/* Loading State */}
                     {loading && (
-                        <div className="flex justify-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                        </div>
+                        <Loading message="Fetching theatres..." />
                     )}
 
                     {/* Error State */}
@@ -259,19 +267,15 @@ const TheatreList = () => {
                     {!loading && !error && (
                         <>
                             {theatres.length === 0 ? (
-                                <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
-                                    <div className="max-w-md mx-auto">
-                                        <div className="w-16 h-16 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <Building2 className="w-8 h-8 text-gray-400 dark:text-slate-500" />
-                                        </div>
-                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Theatres Found</h3>
-                                        <p className="text-gray-600 dark:text-slate-400">
-                                            {filters.status || filters.type
-                                                ? 'No theatres match the selected filters. Try adjusting your filters.'
-                                                : 'No theatres have been configured yet.'}
-                                        </p>
-                                    </div>
-                                </div>
+                                <EmptyState
+                                    icon="🏥"
+                                    title={filters.status || filters.type ? 'No theatres match your filters' : 'No theatres found'}
+                                    description={
+                                        filters.status || filters.type
+                                            ? 'No theatres match the selected filters. Try adjusting your filters to see more results.'
+                                            : 'There are no theatres configured in the system yet. Please contact an administrator.'
+                                    }
+                                />
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {theatres.map(theatre => (
