@@ -20,28 +20,74 @@ import { createContext, useState, useContext, useEffect } from 'react';
 const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-    // Initialise from localStorage, fallback to system preference
-    const [isDark, setIsDark] = useState(() => {
-        const stored = localStorage.getItem('theatrex-theme');
-        if (stored !== null) return stored === 'dark';
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const [themeMode, setThemeMode] = useState(() => {
+        const stored = localStorage.getItem('theatrex-theme-mode');
+        return stored || 'system';
     });
 
-    // Apply / remove .dark class on <html> whenever isDark changes
+    const [isDark, setIsDark] = useState(false);
+    const [density, setDensity] = useState(() => localStorage.getItem('theatrex-density') || 'comfortable');
+    const [highContrast, setHighContrast] = useState(() => localStorage.getItem('theatrex-high-contrast') === 'true');
+
+    // Resolve dark mode from themeMode
     useEffect(() => {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const resolvedIsDark = themeMode === 'dark' || (themeMode === 'system' && prefersDark);
+        setIsDark(resolvedIsDark);
+
         const root = document.documentElement;
-        if (isDark) {
+        if (resolvedIsDark) {
             root.classList.add('dark');
         } else {
             root.classList.remove('dark');
         }
-        localStorage.setItem('theatrex-theme', isDark ? 'dark' : 'light');
-    }, [isDark]);
 
-    const toggleTheme = () => setIsDark(prev => !prev);
+        root.dataset.density = density;
+        if (highContrast) {
+            root.classList.add('high-contrast');
+        } else {
+            root.classList.remove('high-contrast');
+        }
+
+        localStorage.setItem('theatrex-theme-mode', themeMode);
+        localStorage.setItem('theatrex-density', density);
+        localStorage.setItem('theatrex-high-contrast', String(highContrast));
+    }, [themeMode, density, highContrast]);
+
+    useEffect(() => {
+        if (themeMode !== 'system') return undefined;
+
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const onChange = (event) => {
+            setIsDark(event.matches);
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+
+        media.addEventListener('change', onChange);
+        return () => media.removeEventListener('change', onChange);
+    }, [themeMode]);
+
+    const toggleTheme = () => {
+        setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
+    };
 
     return (
-        <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+        <ThemeContext.Provider
+            value={{
+                isDark,
+                toggleTheme,
+                themeMode,
+                setThemeMode,
+                density,
+                setDensity,
+                highContrast,
+                setHighContrast,
+            }}
+        >
             {children}
         </ThemeContext.Provider>
     );

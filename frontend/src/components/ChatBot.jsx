@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Bot, User } from 'lucide-react'
+import { X, Send, User } from 'lucide-react'
+import theatrexLogo from '../assets/theatrex-logo.svg'
 import './ChatBot.css'
 
 const FAQ_DATA = [
@@ -138,7 +139,7 @@ export default function ChatBot() {
                 aria-label={isOpen ? 'Close chat' : 'Open chat'}
             >
                 <span className="chatbot-toggle-icon">
-                    {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
+                    {isOpen ? <X size={24} /> : <img src={theatrexLogo} alt="TheatreX" className="chatbot-logo-icon" />}
                 </span>
                 {!isOpen && <span className="chatbot-toggle-pulse" />}
             </button>
@@ -149,7 +150,7 @@ export default function ChatBot() {
                 <div className="chatbot-header">
                     <div className="chatbot-header-info">
                         <div className="chatbot-avatar">
-                            <Bot size={20} />
+                            <img src={theatrexLogo} alt="TheatreX" className="chatbot-avatar-logo" />
                         </div>
                         <div>
                             <div className="chatbot-header-name">TheatreX Assistant</div>
@@ -170,7 +171,7 @@ export default function ChatBot() {
                         <div key={i} className={`chatbot-msg chatbot-msg-${msg.from}`}>
                             {msg.from === 'bot' && (
                                 <div className="chatbot-msg-avatar">
-                                    <Bot size={14} />
+                                    <img src={theatrexLogo} alt="TheatreX" className="chatbot-msg-avatar-logo" />
                                 </div>
                             )}
                             <div className={`chatbot-bubble chatbot-bubble-${msg.from}`}>
@@ -186,7 +187,9 @@ export default function ChatBot() {
 
                     {isTyping && (
                         <div className="chatbot-msg chatbot-msg-bot">
-                            <div className="chatbot-msg-avatar"><Bot size={14} /></div>
+                            <div className="chatbot-msg-avatar">
+                                <img src={theatrexLogo} alt="TheatreX" className="chatbot-msg-avatar-logo" />
+                            </div>
                             <div className="chatbot-bubble chatbot-bubble-bot chatbot-typing">
                                 <span /><span /><span />
                             </div>
