@@ -143,7 +143,10 @@ export default function DashboardChatBot() {
     }, []);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        const endNode = messagesEndRef.current;
+        if (endNode && typeof endNode.scrollIntoView === 'function') {
+            endNode.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages, isTyping]);
 
     useEffect(() => {
