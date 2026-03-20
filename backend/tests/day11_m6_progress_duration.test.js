@@ -24,6 +24,7 @@
 import { describe, it, expect, beforeAll, jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../server.js';
+import { pool } from '../config/database.js';
 
 jest.setTimeout(30000);
 
@@ -34,6 +35,7 @@ jest.setTimeout(30000);
 let coordinatorToken;
 let staffToken;
 let validTheatreId;
+let emptyTheatreId;
 
 const uniqueId = Date.now();
 
@@ -103,6 +105,14 @@ beforeAll(async () => {
                 priority: 'routine'
             });
     }
+
+    // Create a dedicated empty theatre (no surgeries) for "no in-progress surgery" tests
+    const { rows: emptyTheatreRows } = await pool.query(`
+        INSERT INTO theatres (name, location, status, theatre_type, is_active)
+        VALUES ($1, 'Test Building', 'available', 'general', TRUE)
+        RETURNING id
+    `, [`Empty Theatre ${uniqueId}`]);
+    emptyTheatreId = emptyTheatreRows[0].id;
 });
 
 // ============================================================================
@@ -200,21 +210,9 @@ describe('PUT /api/theatres/:id/progress – Surgery Progress Update', () => {
 
     describe('No in-progress surgery', () => {
         it('should return 404 when the theatre exists but has no in-progress surgery', async () => {
-            // Find a theatre that is NOT in_use status (available/maintenance/cleaning)
-            const theatresRes = await request(app)
-                .get('/api/theatres')
-                .set('Authorization', `Bearer ${coordinatorToken}`);
-
-            const idleTheatre = theatresRes.body.data?.find(t => t.status !== 'in_use');
-
-            if (!idleTheatre) {
-                // Skip gracefully if all theatres are in use
-                console.log('Skipping: all theatres are in_use');
-                return;
-            }
-
+            // Use the dedicated empty theatre (guaranteed no surgeries)
             const res = await request(app)
-                .put(`/api/theatres/${idleTheatre.id}/progress`)
+                .put(`/api/theatres/${emptyTheatreId}/progress`)
                 .set('Authorization', `Bearer ${coordinatorToken}`)
                 .send({ progress: 40 });
 
@@ -335,18 +333,9 @@ describe('GET /api/theatres/:id/duration – Theatre Duration Calculation', () =
 
     describe('No in-progress surgery', () => {
         it('should return 200 with null data when theatre has no in-progress surgery', async () => {
-            const theatresRes = await request(app)
-                .get('/api/theatres')
-                .set('Authorization', `Bearer ${coordinatorToken}`);
-
-            const idleTheatre = theatresRes.body.data?.find(t => t.status !== 'in_use');
-            if (!idleTheatre) {
-                console.log('Skipping: no idle theatre available');
-                return;
-            }
-
+            // Use the dedicated empty theatre (guaranteed no surgeries)
             const res = await request(app)
-                .get(`/api/theatres/${idleTheatre.id}/duration`)
+                .get(`/api/theatres/${emptyTheatreId}/duration`)
                 .set('Authorization', `Bearer ${coordinatorToken}`);
 
             expect(res.status).toBe(200);

@@ -1,0 +1,69 @@
+﻿node : (node:26608) 
+ExperimentalWarning: 
+VM Modules is an 
+experimental feature 
+and might change at 
+any time
+At line:1 char:1
++ node --experimental-v
+m-modules node_modules/
+jest/bin/jest.js 
+--forceE ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ((node:26608)    
+ Ex...nge at any ti    
+me:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+(Use `node 
+--trace-warnings ...` 
+to show where the 
+warning was created)
+PASS tests/day19_m6_cha
+rt_accuracy.test.js
+  Analytics Chart 
+Accuracy - M6 Day 19 
+(Unit Tests)
+    
+getSurgeryDurationStats
+      ΓêÜ should 
+correctly format 
+duration buckets and 
+calculate stats (11 ms)
+    
+getPeakHoursAnalysis
+      ΓêÜ should 
+identify the peak hour 
+correctly (3 ms)
+    
+getPatientDemographics
+      ΓêÜ should 
+properly compute 
+percentages (3 ms)
+
+Test Suites: 1 passed, 
+1 total
+Tests:       3 passed, 
+3 total
+Snapshots:   0 total
+Time:        1.771 s, 
+estimated 2 s
+Ran all test suites 
+matching /day19_m6_char
+t_accuracy/i.
+Force exiting Jest: 
+Have you considered 
+using 
+`--detectOpenHandles` 
+to detect async 
+operations that kept 
+running after all 
+tests finished?

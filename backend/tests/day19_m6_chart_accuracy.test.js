@@ -5,22 +5,21 @@
 // ============================================================================
 
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { getSurgeryDurationStats, getPeakHoursAnalysis, getPatientDemographics } from '../controllers/analyticsController.js';
 
-// Mock the database pool
+// Mock the database pool BEFORE importing the controller
 jest.unstable_mockModule('../config/database.js', () => ({
     pool: {
         query: jest.fn()
     }
 }));
 
-describe('Analytics Chart Accuracy - M6 Day 19 (Unit Tests)', () => {
-    let poolMock;
+// Dynamically import after mock is set up so controller gets mocked pool
+const { getSurgeryDurationStats, getPeakHoursAnalysis, getPatientDemographics } = await import('../controllers/analyticsController.js');
+const { pool } = await import('../config/database.js');
 
-    beforeEach(async () => {
+describe('Analytics Chart Accuracy - M6 Day 19 (Unit Tests)', () => {
+    beforeEach(() => {
         jest.clearAllMocks();
-        const db = await import('../config/database.js');
-        poolMock = db.pool.query;
     });
 
     describe('getSurgeryDurationStats', () => {
@@ -42,8 +41,8 @@ describe('Analytics Chart Accuracy - M6 Day 19 (Unit Tests)', () => {
             };
 
             // First query is buckets, second is stats in Promise.all
-            poolMock.mockImplementation((queryText) => {
-                if (queryText.includes('CASE\n                    WHEN duration_minutes <= 30')) {
+            pool.query.mockImplementation((queryText) => {
+                if (queryText.includes('WHEN duration_minutes')) {
                     return Promise.resolve(mockBucketResult);
                 }
                 return Promise.resolve(mockStatsResult);
@@ -84,7 +83,7 @@ describe('Analytics Chart Accuracy - M6 Day 19 (Unit Tests)', () => {
                 }))
             };
 
-            poolMock.mockResolvedValue(mockHoursResult);
+            pool.query.mockResolvedValue(mockHoursResult);
 
             const req = {};
             const res = {
@@ -106,8 +105,8 @@ describe('Analytics Chart Accuracy - M6 Day 19 (Unit Tests)', () => {
 
     describe('getPatientDemographics', () => {
         it('should properly compute percentages', async () => {
-            poolMock.mockImplementation((queryText) => {
-                if (queryText.includes('FROM patients\n            WHERE is_active = true\n            GROUP BY gender')) {
+            pool.query.mockImplementation((queryText) => {
+                if (queryText.includes('GROUP BY gender')) {
                     return Promise.resolve({ rows: [{ gender: 'Male', count: 40 }, { gender: 'Female', count: 60 }] });
                 }
                 if (queryText.includes('blood_type')) {

@@ -1,0 +1,1557 @@
+﻿node : (node:29064) ExperimentalWarning: VM Modules is an experimental feature 
+and might change at any time
+At line:1 char:1
++ node --experimental-vm-modules node_modules/jest/bin/jest.js --forceE ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:29064) Ex...nge at any time: 
+   String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29064) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+FAIL tests/day19_m6_chart_accuracy.test.js (7.621 s)
+  ΓùÅ Console
+
+    console.error
+      Error fetching surgery duration stats: error: column "range" does not 
+exist
+          at 
+C:\Users\ranas\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at async Promise.all (index 0)
+          at getSurgeryDurationStats (C:\Users\ranas\Desktop\SDGP-Project\backen
+d\controllers\analyticsController.js:67:45)
+          at Object.<anonymous> (C:\Users\ranas\Desktop\SDGP-Project\backend\tes
+ts\day19_m6_chart_accuracy.test.js:58:13) {
+        length: 106,
+        severity: 'ERROR',
+        code: '42703',
+        detail: undefined,
+        hint: undefined,
+        position: '595',
+        internalPosition: undefined,
+        internalQuery: undefined,
+        where: undefined,
+        schema: undefined,
+        table: undefined,
+        column: undefined,
+        dataType: undefined,
+        constraint: undefined,
+        file: 'parse_relation.c',
+        line: '3716',
+        routine: 'errorMissingColumn'
+      }
+
+    [0m [90m 101 |[39m
+     [90m 102 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 103 |[39m         
+console[33m.[39merror([32m'Error fetching surgery duration 
+stats:'[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 104 |[39m         
+res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 105 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 106 |[39m             message[33m:[39m [32m'Error fetching 
+surgery duration statistics'[39m[33m,[39m[0m
+
+      at getSurgeryDurationStats (controllers/analyticsController.js:103:17)
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:58:13)
+
+  ΓùÅ Analytics Chart Accuracy - M6 Day 19 (Unit Tests) ΓÇ║ 
+getSurgeryDurationStats ΓÇ║ should correctly format duration buckets and 
+calculate stats
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 200
+    Received: 500
+
+    Number of calls: 1
+
+    [0m [90m 58 |[39m             [36mawait[39m 
+getSurgeryDurationStats(req[33m,[39m res)[33m;[39m
+     [90m 59 |[39m
+    [31m[1m>[22m[39m[90m 60 |[39m             expect(res[33m.[39mstatus)
+[33m.[39mtoHaveBeenCalledWith([35m200[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 61 |[39m             
+     [90m 62 |[39m             [36mconst[39m responseData [33m=[39m res[3
+3m.[39mjson[33m.[39mmock[33m.[39mcalls[[35m0[39m][[35m0[39m][33m;[39m
+     [90m 63 |[39m             expect(responseData[33m.[39msuccess)[33m.[3
+9mtoBe([36mtrue[39m)[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:60:32)
+
+  ΓùÅ Analytics Chart Accuracy - M6 Day 19 (Unit Tests) ΓÇ║ 
+getPeakHoursAnalysis ΓÇ║ should identify the peak hour correctly
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "14:00"
+    Received: "10:00"
+
+    [0m [90m  99 |[39m             
+     [90m 100 |[39m             expect(responseData[33m.[39mdata[33m.[39mc
+hartData[33m.[39mlength)[33m.[39mtoBe([35m24[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 101 |[39m             expect(responseData[33m.[
+39mdata[33m.[39mpeak[33m.[39mhour)[33m.[39mtoBe([32m'14:00'[39m)[33m;[
+39m
+     [90m     |[39m                                                 
+[31m[1m^[22m[39m
+     [90m 102 |[39m             expect(responseData[33m.[39mdata[33m.[39mp
+eak[33m.[39mcount)[33m.[39mtoBe([35m15[39m)[33m;[39m
+     [90m 103 |[39m             expect(responseData[33m.[39mdata[33m.[39mp
+eak[33m.[39mdisplayHour)[33m.[39mtoBe([32m'2 PM'[39m)[33m;[39m
+     [90m 104 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:101:49)
+
+  ΓùÅ Analytics Chart Accuracy - M6 Day 19 (Unit Tests) ΓÇ║ 
+getPatientDemographics ΓÇ║ should properly compute percentages
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 100
+    Received: 7
+
+    [0m [90m 134 |[39m             [36mconst[39m responseData [33m=[39m r
+es[33m.[39mjson[33m.[39mmock[33m.[39mcalls[[35m0[39m][[35m0[39m][33m;
+[39m
+     [90m 135 |[39m
+    [31m[1m>[22m[39m[90m 136 |[39m             expect(responseData[33m.[
+39mdata[33m.[39mtotal)[33m.[39mtoBe([35m100[39m)[33m;[39m
+     [90m     |[39m                                             
+[31m[1m^[22m[39m
+     [90m 137 |[39m             expect(responseData[33m.[39mdata[33m.[39mg
+ender[[35m0[39m][33m.[39mpercentage)[33m.[39mtoBe([35m40[39m)[33m;[39m
+     [90m 138 |[39m             expect(responseData[33m.[39mdata[33m.[39mg
+ender[[35m1[39m][33m.[39mpercentage)[33m.[39mtoBe([35m60[39m)[33m;[39m
+     [90m 139 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:136:45)
+
+(node:30688) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16888) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26932) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29348) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1344) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30060) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19444) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7580) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2360) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23852) ExperimentalWarning: VM Modules is an experimental feature and 
+might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16888) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:7580) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:1344) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30688) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:19444) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:26932) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:29348) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30060) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:23852) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:2360) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:29064) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day15_m2_patients.test.js (27.158 s)
+PASS tests/authController.test.js (29.043 s)
+  ΓùÅ Console
+
+    console.error
+      Auth Middleware Error: Invalid token
+
+    [0m [90m 51 |[39m
+     [90m 52 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 53 |[39m             
+console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m 
+error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 54 |[39m             [36mreturn[39m 
+res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 55 |[39m                 success[33m:[39m 
+[36mfalse[39m[33m,[39m
+     [90m 56 |[39m                 message[33m:[39m [32m'Not authorized, 
+token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:53:21)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser 
+(node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+PASS tests/day11_auto_progress.test.js (21.667 s)
+PASS tests/technicianController.test.js (29.95 s)
+(node:2360) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day12_theatre_assignment.test.js (31.9 s)
+(node:29064) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:23852) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30060) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+FAIL tests/day11_m6_progress_duration.test.js (35.822 s)
+  ΓùÅ Console
+
+    console.log
+      Skipping happy path: no in-progress surgery available in test DB
+
+      at Object.<anonymous> (tests/day11_m6_progress_duration.test.js:239:25)
+
+    console.log
+      Skipping: no in-progress surgery in test DB
+
+      at Object.<anonymous> (tests/day11_m6_progress_duration.test.js:368:25)
+
+  ΓùÅ PUT /api/theatres/:id/progress ΓÇô Surgery Progress Update ΓÇ║ No 
+in-progress surgery ΓÇ║ should return 404 when the theatre exists but has no 
+in-progress surgery
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 404
+    Received: 200
+
+    [0m [90m 219 |[39m                 [33m.[39msend({ progress[33m:[39m 
+[35m40[39m })[33m;[39m
+     [90m 220 |[39m
+    [31m[1m>[22m[39m[90m 221 |[39m             
+expect(res[33m.[39mstatus)[33m.[39mtoBe([35m404[39m)[33m;[39m
+     [90m     |[39m                                [31m[1m^[22m[39m
+     [90m 222 |[39m             expect(res[33m.[39mbody[33m.[39msuccess)[
+33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 223 |[39m             
+expect(res[33m.[39mbody[33m.[39mmessage)[33m.[39mtoMatch([35m/no 
+in-progress surgery/i[39m)[33m;[39m
+     [90m 224 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day11_m6_progress_duration.test.js:221:32)
+
+  ΓùÅ GET /api/theatres/:id/duration ΓÇô Theatre Duration Calculation ΓÇ║ No 
+in-progress surgery ΓÇ║ should return 200 with null data when theatre has no 
+in-progress surgery
+
+    expect(received).toBeNull()
+
+    Received: {"duration": {"elapsed": 875, "formatted": {"elapsed": "14h 35m", 
+"overdue": "12h 35m", "remaining": "0m", "total": "2h"}, "overdue": 755, 
+"remaining": 0, "total": 120}, "estimated_end_time": "10:00", "is_overdue": 
+true, "surgery_id": 315, "theatre_id": 22, "theatre_name": "QS Theatre 
+1773249163402"}
+
+    [0m [90m 352 |[39m             
+expect(res[33m.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m 353 |[39m             expect(res[33m.[39mbody[33m.[39msuccess)[
+33m.[39mtoBe([36mtrue[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 354 |[39m             
+expect(res[33m.[39mbody[33m.[39mdata)[33m.[39mtoBeNull()[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 355 |[39m         })[33m;[39m
+     [90m 356 |[39m     })[33m;[39m
+     [90m 357 |[39m[0m
+
+      at Object.<anonymous> (tests/day11_m6_progress_duration.test.js:354:35)
+
+(node:1344) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/surgeryController.test.js (37.73 s)
+PASS tests/theatreController.test.js (38.46 s)
+PASS tests/notificationController.test.js (39.084 s)
+(node:29348) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:26932) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:19444) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30688) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/nurseController.test.js (15.064 s)
+  ΓùÅ Console
+
+    console.error
+      Error creating nurse: error: duplicate key value violates unique 
+constraint "nurses_email_key"
+          at 
+C:\Users\ranas\Desktop\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at createNurse (C:\Users\ranas\Desktop\SDGP-Project\backend\controller
+s\nurseController.js:119:26) {
+        length: 231,
+        severity: 'ERROR',
+        code: '23505',
+        detail: 'Key (email)=(jane.nurse1773939908518@hospital.com) already 
+exists.',
+        hint: undefined,
+        position: undefined,
+        internalPosition: undefined,
+        internalQuery: undefined,
+        where: undefined,
+        schema: 'public',
+        table: 'nurses',
+        column: undefined,
+        dataType: undefined,
+        constraint: 'nurses_email_key',
+        file: 'nbtinsert.c',
+        line: '667',
+        routine: '_bt_check_unique'
+      }
+
+    [0m [90m 127 |[39m
+     [90m 128 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 129 |[39m         
+console[33m.[39merror([32m'Error creating nurse:'[39m[33m,[39m 
+error)[33m;[39m
+     [90m     |[39m                 [31m[1m^[22m[39m
+     [90m 130 |[39m
+     [90m 131 |[39m         [90m// Duplicate email[39m
+     [90m 132 |[39m         [36mif[39m (error[33m.[39mcode [33m===[39m 
+[32m'23505'[39m [33m&&[39m 
+error[33m.[39mconstraint[33m?[39m[33m.[39mincludes([32m'email'[39m)) 
+{[0m
+
+      at createNurse (controllers/nurseController.js:129:17)
+
+PASS tests/day10_theatre_m6.test.js (45.671 s)
+PASS tests/day14_m3_anaesthetists.test.js (14.095 s)
+PASS tests/day12_m6_quick_status.test.js (17.547 s)
+PASS tests/patientController.test.js (19.913 s)
+PASS tests/rbac.test.js (18.316 s)
+  ΓùÅ Console
+
+    console.error
+      Auth Middleware Error: Invalid token
+
+    [0m [90m 51 |[39m
+     [90m 52 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 53 |[39m             
+console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m 
+error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 54 |[39m             [36mreturn[39m 
+res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 55 |[39m                 success[33m:[39m 
+[36mfalse[39m[33m,[39m
+     [90m 56 |[39m                 message[33m:[39m [32m'Not authorized, 
+token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:53:21)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser 
+(node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+    console.error
+      Auth Middleware Error: Invalid token
+
+    [0m [90m 51 |[39m
+     [90m 52 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 53 |[39m             
+console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m 
+error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 54 |[39m             [36mreturn[39m 
+res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 55 |[39m                 success[33m:[39m 
+[36mfalse[39m[33m,[39m
+     [90m 56 |[39m                 message[33m:[39m [32m'Not authorized, 
+token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:53:21)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser 
+(node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+PASS tests/conflict.test.js (9.351 s)
+  ΓùÅ Console
+
+    console.log
+      Create Base Surgery: {
+        success: true,
+        message: 'Surgery created successfully',
+        data: {
+          id: 331,
+          patient_id: null,
+          patient_name: 'Base Patient',
+          patient_age: 35,
+          patient_gender: 'male',
+          surgery_type: 'Base Surgery',
+          description: null,
+          scheduled_date: '2026-06-14T18:30:00.000Z',
+          scheduled_time: '10:00:00',
+          duration_minutes: 120,
+          theatre_id: 22,
+          surgeon_id: 444,
+          status: 'scheduled',
+          priority: 'routine',
+          notes: null,
+          created_at: '2026-03-19T11:35:22.600Z',
+          updated_at: '2026-03-19T11:35:22.600Z',
+          anaesthetist_id: null,
+          progress_percent: 0,
+          nurses: []
+        }
+      }
+
+      at Object.<anonymous> (tests/conflict.test.js:102:17)
+
+PASS tests/day17_m6_notification_flow.test.js (48.309 s)
+PASS tests/day9_staff_assignment.test.js (12.478 s)
+  ΓùÅ Console
+
+    console.log
+      Starting beforeAll hook...
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:30:17)
+
+    console.log
+      Cleaned up old staff
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:37:21)
+
+    console.log
+      Created test staff
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:59:21)
+
+    console.log
+      Got theatre ID: 33
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:74:21)
+
+    console.log
+      Generated token
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:78:21)
+
+    console.log
+      Running nurse availability test...
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:104:17)
+
+    console.log
+      Running anaesthetist availability test...
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:160:17)
+
+    console.log
+      Running conflict detection test...
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:179:17)
+
+    console.log
+      Starting afterAll hook...
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:86:17)
+
+    console.log
+      Cleanup finished
+
+      at Object.<anonymous> (tests/day9_staff_assignment.test.js:97:21)
+
+PASS tests/authMiddleware.test.js (9.427 s)
+  ΓùÅ Console
+
+    console.error
+      Auth Middleware Error: Invalid token
+
+    [0m [90m 51 |[39m
+     [90m 52 |[39m         } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 53 |[39m             
+console[33m.[39merror([32m'Auth Middleware Error:'[39m[33m,[39m 
+error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 54 |[39m             [36mreturn[39m 
+res[33m.[39mstatus([35m401[39m)[33m.[39mjson({
+     [90m 55 |[39m                 success[33m:[39m 
+[36mfalse[39m[33m,[39m
+     [90m 56 |[39m                 message[33m:[39m [32m'Not authorized, 
+token failed'[39m[33m,[39m[0m
+
+      at protect (middleware/authMiddleware.js:53:21)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at next (node_modules/express/lib/router/route.js:149:13)
+      at Route.dispatch (node_modules/express/lib/router/route.js:119:3)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at node_modules/express/lib/router/index.js:284:15
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at router (node_modules/express/lib/router/index.js:47:12)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at urlencodedParser 
+(node_modules/body-parser/lib/types/urlencoded.js:91:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at jsonParser (node_modules/body-parser/lib/types/json.js:113:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at cors (node_modules/cors/lib/index.js:188:7)
+      at node_modules/cors/lib/index.js:224:17
+      at originCallback (node_modules/cors/lib/index.js:214:15)
+      at node_modules/cors/lib/index.js:219:13
+      at optionsCallback (node_modules/cors/lib/index.js:199:9)
+      at corsMiddleware (node_modules/cors/lib/index.js:204:7)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at expressInit (node_modules/express/lib/middleware/init.js:40:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at query (node_modules/express/lib/middleware/query.js:45:5)
+      at Layer.handle [as handle_request] 
+(node_modules/express/lib/router/layer.js:95:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:328:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at router.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at router.handle (node_modules/express/lib/router/index.js:175:3)
+      at app.handle (node_modules/express/lib/application.js:181:10)
+      at Server.app (node_modules/express/lib/express.js:39:9)
+
+PASS tests/day11_live_status.test.js (11.547 s)
+(node:30060) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:1344) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:16888) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:29064) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:2360) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:23852) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:19444) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:29348) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30688) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:7580) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:26932) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day20_m4_history_theatre_filter.test.js
+PASS tests/surgery.test.js (6.866 s)
+PASS tests/day12_coordinator_overview.test.js (9.131 s)
+PASS tests/day14_m1_surgeons.test.js (6.683 s)
+PASS tests/dashboardSummary.test.js (6.492 s)
+PASS tests/anaesthetist.test.js (9.147 s)
+PASS tests/day13_m2_surgeons.test.js (6.348 s)
+PASS tests/day13_m3_nurses.test.js (8.311 s)
+PASS tests/day14_m2_nurses.test.js (7.618 s)
+PASS tests/day13_m1_surgeons.test.js (6.416 s)
+PASS tests/day16_m3_notifications.test.js (7.779 s)
+(node:29348) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:1344) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day20_m1_history.test.js (8.563 s)
+(node:30060) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:23852) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30688) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:2360) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:16888) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:29064) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:19444) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:26932) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:7580) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day20_m5_history_pagination.test.js (8.118 s)
+PASS tests/day19_m5_peak_hours.test.js (8.104 s)
+  ΓùÅ Console
+
+    console.warn
+      Skipping test: No token obtained.
+
+    [0m [90m 21 |[39m         [36mconst[39m token [33m=[39m 
+[36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 22 |[39m         [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 23 |[39m             
+console[33m.[39mwarn([32m'Skipping test: No token obtained.'[39m)[33m;[39m
+     [90m    |[39m                     [31m[1m^[22m[39m
+     [90m 24 |[39m             [36mreturn[39m[33m;[39m
+     [90m 25 |[39m         }
+     [90m 26 |[39m[0m
+
+      at Object.<anonymous> (tests/day19_m5_peak_hours.test.js:23:21)
+
+PASS tests/day21_export.test.js (8.268 s)
+PASS tests/day20_m2_history_filter.test.js (7.339 s)
+PASS tests/day15_m3_patients.test.js (9.892 s)
+PASS tests/day20_m3_history_surgeon_filter.test.js (6.952 s)
+PASS tests/day19_m4_duration_stats.test.js (7.914 s)
+  ΓùÅ Console
+
+    console.warn
+      Skipping test: No token obtained. Check if test user exists.
+
+    [0m [90m 42 |[39m             [36mconst[39m token [33m=[39m 
+[36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 43 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 44 |[39m                 
+console[33m.[39mwarn([32m'Skipping test: No token obtained. Check if test 
+user exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 45 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 46 |[39m             }
+     [90m 47 |[39m[0m
+
+      at Object.<anonymous> (tests/day19_m4_duration_stats.test.js:44:25)
+
+PASS tests/day19_m2_analytics.test.js (6.794 s)
+PASS tests/day18_m1_analytics.test.js (7.535 s)
+PASS tests/day18_m3_demographics.test.js (8.233 s)
+(node:29064) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day16_m6_scheduler.test.js
+  ΓùÅ Console
+
+    console.log
+      ΓÅ░ Found 1 surgeries starting in ~15 minutes. Sending reminders...
+
+      at checkSurgeryReminders (utils/scheduler.js:47:17)
+
+    console.log
+      ΓÅ░ Found 1 surgeries starting in ~15 minutes. Sending reminders...
+
+      at checkSurgeryReminders (utils/scheduler.js:47:17)
+
+    console.log
+      ΓÅ░ Found 1 surgeries starting in ~15 minutes. Sending reminders...
+
+      at checkSurgeryReminders (utils/scheduler.js:47:17)
+
+    console.log
+      ΓÅ░ Found 1 surgeries starting in ~15 minutes. Sending reminders...
+
+      at checkSurgeryReminders (utils/scheduler.js:47:17)
+
+    console.error
+      Γ¥î Error in checkSurgeryReminders scheduler: DB connection lost
+
+    [0m [90m 89 |[39m         }
+     [90m 90 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 91 |[39m         
+console[33m.[39merror([32m'Γ¥î Error in checkSurgeryReminders 
+scheduler:'[39m[33m,[39m error[33m.[39mmessage)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 92 |[39m     }
+     [90m 93 |[39m }[33m;[39m
+     [90m 94 |[39m[0m
+
+      at checkSurgeryReminders (utils/scheduler.js:91:17)
+      at Object.<anonymous> (tests/day16_m6_scheduler.test.js:176:9)
+
+    console.log
+      ΓÅ░ Found 2 surgeries starting in ~15 minutes. Sending reminders...
+
+      at checkSurgeryReminders (utils/scheduler.js:47:17)
+
+PASS tests/theatreConstants.test.js
+(node:29348) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/notificationModel.test.js
+  ΓùÅ Console
+
+    console.log
+      Γ£à Notifications table created/verified successfully
+
+      at createNotificationsTable (models/notificationModel.js:54:13)
+
+PASS tests/day18_m5_theatre_utilization.test.js
+  ΓùÅ Console
+
+    console.warn
+      Skipping test: No token obtained. Ensure test user exists.
+
+    [0m [90m 38 |[39m             [36mconst[39m token [33m=[39m 
+[36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 39 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 40 |[39m                 
+console[33m.[39mwarn([32m'Skipping test: No token obtained. Ensure test user 
+exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 41 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 42 |[39m             }
+     [90m 43 |[39m[0m
+
+      at Object.<anonymous> (tests/day18_m5_theatre_utilization.test.js:40:25)
+
+(node:23852) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:30060) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+(node:2360) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 
+'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these 
+modes will adopt standard libpq semantics, which have weaker security 
+guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode 
+definitions.
+PASS tests/day20_m6_history_robustness.test.js
+PASS tests/day18_m4_staff_analytics.test.js
+  ΓùÅ Console
+
+    console.warn
+      Skipping test: No token obtained. Check if test user exists.
+
+    [0m [90m 42 |[39m             [36mconst[39m token [33m=[39m 
+[36mawait[39m getToken([32m'coordinator'[39m)[33m;[39m
+     [90m 43 |[39m             [36mif[39m ([33m![39mtoken) {
+    [31m[1m>[22m[39m[90m 44 |[39m                 
+console[33m.[39mwarn([32m'Skipping test: No token obtained. Check if test 
+user exists.'[39m)[33m;[39m
+     [90m    |[39m                         [31m[1m^[22m[39m
+     [90m 45 |[39m                 [36mreturn[39m[33m;[39m
+     [90m 46 |[39m             }
+     [90m 47 |[39m[0m
+
+      at Object.<anonymous> (tests/day18_m4_staff_analytics.test.js:44:25)
+
+PASS tests/day13_m6_anaesthetists.test.js
+A worker process has failed to exit gracefully and has been force exited. This 
+is likely caused by tests leaking due to improper teardown. Try running with 
+--detectOpenHandles to find leaks. Active timers can also cause this, ensure 
+that .unref() was called on them.
+
+Summary of all failing tests
+FAIL tests/day19_m6_chart_accuracy.test.js (7.621 s)
+  ΓùÅ Analytics Chart Accuracy - M6 Day 19 (Unit Tests) ΓÇ║ 
+getSurgeryDurationStats ΓÇ║ should correctly format duration buckets and 
+calculate stats
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 200
+    Received: 500
+
+    Number of calls: 1
+
+    [0m [90m 58 |[39m             [36mawait[39m 
+getSurgeryDurationStats(req[33m,[39m res)[33m;[39m
+     [90m 59 |[39m
+    [31m[1m>[22m[39m[90m 60 |[39m             expect(res[33m.[39mstatus)
+[33m.[39mtoHaveBeenCalledWith([35m200[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 61 |[39m             
+     [90m 62 |[39m             [36mconst[39m responseData [33m=[39m res[3
+3m.[39mjson[33m.[39mmock[33m.[39mcalls[[35m0[39m][[35m0[39m][33m;[39m
+     [90m 63 |[39m             expect(responseData[33m.[39msuccess)[33m.[3
+9mtoBe([36mtrue[39m)[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:60:32)
+
+  ΓùÅ Analytics Chart Accuracy - M6 Day 19 (Unit Tests) ΓÇ║ 
+getPeakHoursAnalysis ΓÇ║ should identify the peak hour correctly
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "14:00"
+    Received: "10:00"
+
+    [0m [90m  99 |[39m             
+     [90m 100 |[39m             expect(responseData[33m.[39mdata[33m.[39mc
+hartData[33m.[39mlength)[33m.[39mtoBe([35m24[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 101 |[39m             expect(responseData[33m.[
+39mdata[33m.[39mpeak[33m.[39mhour)[33m.[39mtoBe([32m'14:00'[39m)[33m;[
+39m
+     [90m     |[39m                                                 
+[31m[1m^[22m[39m
+     [90m 102 |[39m             expect(responseData[33m.[39mdata[33m.[39mp
+eak[33m.[39mcount)[33m.[39mtoBe([35m15[39m)[33m;[39m
+     [90m 103 |[39m             expect(responseData[33m.[39mdata[33m.[39mp
+eak[33m.[39mdisplayHour)[33m.[39mtoBe([32m'2 PM'[39m)[33m;[39m
+     [90m 104 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:101:49)
+
+  ΓùÅ Analytics Chart Accuracy - M6 Day 19 (Unit Tests) ΓÇ║ 
+getPatientDemographics ΓÇ║ should properly compute percentages
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 100
+    Received: 7
+
+    [0m [90m 134 |[39m             [36mconst[39m responseData [33m=[39m r
+es[33m.[39mjson[33m.[39mmock[33m.[39mcalls[[35m0[39m][[35m0[39m][33m;
+[39m
+     [90m 135 |[39m
+    [31m[1m>[22m[39m[90m 136 |[39m             expect(responseData[33m.[
+39mdata[33m.[39mtotal)[33m.[39mtoBe([35m100[39m)[33m;[39m
+     [90m     |[39m                                             
+[31m[1m^[22m[39m
+     [90m 137 |[39m             expect(responseData[33m.[39mdata[33m.[39mg
+ender[[35m0[39m][33m.[39mpercentage)[33m.[39mtoBe([35m40[39m)[33m;[39m
+     [90m 138 |[39m             expect(responseData[33m.[39mdata[33m.[39mg
+ender[[35m1[39m][33m.[39mpercentage)[33m.[39mtoBe([35m60[39m)[33m;[39m
+     [90m 139 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day19_m6_chart_accuracy.test.js:136:45)
+
+FAIL tests/day11_m6_progress_duration.test.js (35.822 s)
+  ΓùÅ PUT /api/theatres/:id/progress ΓÇô Surgery Progress Update ΓÇ║ No 
+in-progress surgery ΓÇ║ should return 404 when the theatre exists but has no 
+in-progress surgery
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 404
+    Received: 200
+
+    [0m [90m 219 |[39m                 [33m.[39msend({ progress[33m:[39m 
+[35m40[39m })[33m;[39m
+     [90m 220 |[39m
+    [31m[1m>[22m[39m[90m 221 |[39m             
+expect(res[33m.[39mstatus)[33m.[39mtoBe([35m404[39m)[33m;[39m
+     [90m     |[39m                                [31m[1m^[22m[39m
+     [90m 222 |[39m             expect(res[33m.[39mbody[33m.[39msuccess)[
+33m.[39mtoBe([36mfalse[39m)[33m;[39m
+     [90m 223 |[39m             
+expect(res[33m.[39mbody[33m.[39mmessage)[33m.[39mtoMatch([35m/no 
+in-progress surgery/i[39m)[33m;[39m
+     [90m 224 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (tests/day11_m6_progress_duration.test.js:221:32)
+
+  ΓùÅ GET /api/theatres/:id/duration ΓÇô Theatre Duration Calculation ΓÇ║ No 
+in-progress surgery ΓÇ║ should return 200 with null data when theatre has no 
+in-progress surgery
+
+    expect(received).toBeNull()
+
+    Received: {"duration": {"elapsed": 875, "formatted": {"elapsed": "14h 35m", 
+"overdue": "12h 35m", "remaining": "0m", "total": "2h"}, "overdue": 755, 
+"remaining": 0, "total": 120}, "estimated_end_time": "10:00", "is_overdue": 
+true, "surgery_id": 315, "theatre_id": 22, "theatre_name": "QS Theatre 
+1773249163402"}
+
+    [0m [90m 352 |[39m             
+expect(res[33m.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m 353 |[39m             expect(res[33m.[39mbody[33m.[39msuccess)[
+33m.[39mtoBe([36mtrue[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 354 |[39m             
+expect(res[33m.[39mbody[33m.[39mdata)[33m.[39mtoBeNull()[33m;[39m
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 355 |[39m         })[33m;[39m
+     [90m 356 |[39m     })[33m;[39m
+     [90m 357 |[39m[0m
+
+      at Object.<anonymous> (tests/day11_m6_progress_duration.test.js:354:35)
+
+
+Test Suites: 2 failed, 48 passed, 50 total
+Tests:       5 failed, 638 passed, 643 total
+Snapshots:   0 total
+Time:        68.283 s
+Ran all test suites.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect 
+async operations that kept running after all tests finished?
