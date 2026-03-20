@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 // ============================================================================
 // Staff on Duty Modal Content
 // ============================================================================
@@ -45,6 +47,8 @@ const STAFF_BADGE_STYLES = {
 };
 
 const StaffOnDutyModal = () => {
+    const [avatarLoadFailed, setAvatarLoadFailed] = useState({});
+
     return (
         <div className="space-y-6">
             {/* Top Stats */}
@@ -67,6 +71,7 @@ const StaffOnDutyModal = () => {
             <div className="space-y-4">
                 {SAMPLE_STAFF_LIST.map((staff, idx) => {
                     const badge = STAFF_BADGE_STYLES[staff.status] || STAFF_BADGE_STYLES.available;
+                    const showFallbackAvatar = !!avatarLoadFailed[idx];
                     return (
                         <div
                             key={idx}
@@ -74,15 +79,20 @@ const StaffOnDutyModal = () => {
                         >
                             {/* Avatar */}
                             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-100 dark:border-slate-600 flex-shrink-0">
-                                <img
-                                    src={staff.avatar}
-                                    alt={staff.name}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center text-gray-500 dark:text-slate-300 text-xl font-bold">${staff.name.charAt(0)}</div>`;
-                                    }}
-                                />
+                                {showFallbackAvatar ? (
+                                    <div className="w-full h-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center text-gray-500 dark:text-slate-300 text-xl font-bold">
+                                        {staff.name.charAt(0)}
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={staff.avatar}
+                                        alt={staff.name}
+                                        className="w-full h-full object-cover"
+                                        onError={() => {
+                                            setAvatarLoadFailed((prev) => ({ ...prev, [idx]: true }));
+                                        }}
+                                    />
+                                )}
                             </div>
 
                             {/* Info */}
