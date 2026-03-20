@@ -15,6 +15,7 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 // ============================================================================
 // CREATE NURSE
@@ -119,44 +120,13 @@ export const createNurse = async (req, res) => {
         const { rows } = await pool.query(insertQuery, values);
         const newNurse = rows[0];
 
-        return res.status(201).json({
-            success: true,
-            message: 'Nurse created successfully',
-            data: newNurse,
-        });
+        sendSuccess(res, newNurse, 'Nurse created successfully', 201);
 
     } catch (error) {
-        console.error('Error creating nurse:', error);
-
-        // Duplicate email
-        if (error.code === '23505' && error.constraint?.includes('email')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A nurse with this email already exists',
-            });
-        }
-
-        // Duplicate license number
-        if (error.code === '23505' && error.constraint?.includes('license_number')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A nurse with this licence number already exists',
-            });
-        }
-
-        // Generic duplicate
         if (error.code === '23505') {
-            return res.status(409).json({
-                success: false,
-                message: 'Duplicate entry — email or licence number already registered',
-            });
+            return sendError(res, 'A nurse with this email or licence number already exists', 409);
         }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Error creating nurse',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -221,24 +191,9 @@ export const getAllNurses = async (req, res) => {
 
         const { rows } = await pool.query(query, params);
 
-        return res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows,
-            filters: {
-                search: search || null,
-                available: available || null,
-                shift: shift || null,
-            },
-        });
-
+        sendSuccess(res, rows, 'Nurses fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching nurses:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error fetching nurses',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -279,24 +234,12 @@ export const getNurseById = async (req, res) => {
         const { rows } = await pool.query(query, [nurseId]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Nurse not found',
-            });
+            return sendError(res, 'Nurse not found', 404);
         }
 
-        return res.status(200).json({
-            success: true,
-            data: rows[0],
-        });
-
+        sendSuccess(res, rows[0], 'Nurse fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching nurse by ID:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error fetching nurse',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -410,39 +353,13 @@ export const updateNurse = async (req, res) => {
 
         const { rows } = await pool.query(updateQuery, values);
 
-        return res.status(200).json({
-            success: true,
-            message: 'Nurse updated successfully',
-            data: rows[0],
-        });
+        sendSuccess(res, rows[0], 'Nurse updated successfully', 200);
 
     } catch (error) {
-        console.error('Error updating nurse:', error);
-
-        if (error.code === '23505' && error.constraint?.includes('email')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A nurse with this email already exists',
-            });
-        }
-        if (error.code === '23505' && error.constraint?.includes('license_number')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A nurse with this licence number already exists',
-            });
-        }
         if (error.code === '23505') {
-            return res.status(409).json({
-                success: false,
-                message: 'Duplicate entry — email or licence number already registered',
-            });
+            return sendError(res, 'A nurse with this email or licence number already exists', 409);
         }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Error updating nurse',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -475,23 +392,11 @@ export const deleteNurse = async (req, res) => {
         );
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Nurse not found',
-            });
+            return sendError(res, 'Nurse not found', 404);
         }
 
-        return res.status(200).json({
-            success: true,
-            message: `Nurse "${rows[0].name}" deleted successfully`,
-        });
-
+        sendSuccess(res, null, `Nurse "${rows[0].name}" deleted successfully`, 200);
     } catch (error) {
-        console.error('Error deleting nurse:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error deleting nurse',
-            error: error.message,
-        });
+        next(error);
     }
 };

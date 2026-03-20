@@ -101,27 +101,16 @@ app.get('/api/health', (req, res) => {
 
 
 
+// Import error handlers
+import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js';
+
 // 404 handler for API routes
-app.use('/api/*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Route ${req.method} ${req.path} not found.`,
-        hint: 'Check your API endpoint'
-    });
-});
+app.use('/api/*', notFoundHandler);
 
 // For any other non-API routes, serve the React app (Frontend routing)
 
-// Error handling middleware - MUST BE LAST
-app.use((err, req, res, next) => {
-    console.error('SERVER ERROR:', err);
-    res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        // Only expose error details in development environment
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
+// Global error handling middleware - MUST BE LAST
+app.use(errorHandler);
 
 
 // Start server

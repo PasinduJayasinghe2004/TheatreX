@@ -18,6 +18,7 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 // ============================================================================
 // GET ALL PATIENTS
@@ -95,18 +96,9 @@ export const getPatients = async (req, res) => {
             ORDER BY name ASC
         `, params);
 
-        res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows
-        });
+        sendSuccess(res, rows, 'Patients fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching patients:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching patients',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -149,10 +141,7 @@ export const getPatientById = async (req, res) => {
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Patient not found'
-            });
+            return sendError(res, 'Patient not found', 404);
         }
 
         const patient = rows[0];
@@ -182,20 +171,12 @@ export const getPatientById = async (req, res) => {
             // surgeries table may not have patient_id yet – silently skip
         }
 
-        res.status(200).json({
-            success: true,
-            data: {
-                ...patient,
-                surgeries
-            }
-        });
+        sendSuccess(res, {
+            ...patient,
+            surgeries
+        }, 'Patient fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching patient:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching patient',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -353,18 +334,12 @@ export const createPatient = async (req, res) => {
             current_medications || null
         ]);
 
-        res.status(201).json({
-            success: true,
-            message: `Patient '${rows[0].name}' created successfully`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Patient '${rows[0].name}' created successfully`, 201);
     } catch (error) {
-        console.error('Error creating patient:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating patient',
-            error: error.message
-        });
+        if (error.code === '23505') {
+            return sendError(res, 'A patient with this identifier already exists', 409);
+        }
+        next(error);
     }
 };
 
@@ -553,18 +528,9 @@ export const updatePatient = async (req, res) => {
                 is_active, created_at, updated_at
         `, params);
 
-        res.status(200).json({
-            success: true,
-            message: `Patient '${rows[0].name}' updated successfully`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Patient '${rows[0].name}' updated successfully`, 200);
     } catch (error) {
-        console.error('Error updating patient:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating patient',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -604,16 +570,8 @@ export const deletePatient = async (req, res) => {
             [id]
         );
 
-        res.status(200).json({
-            success: true,
-            message: `Patient '${existing[0].name}' has been deactivated`
-        });
+        sendSuccess(res, null, `Patient '${existing[0].name}' has been deactivated`, 200);
     } catch (error) {
-        console.error('Error deleting patient:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting patient',
-            error: error.message
-        });
+        next(error);
     }
 };
