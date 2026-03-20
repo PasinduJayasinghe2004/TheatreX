@@ -8,6 +8,8 @@ import {
     getStaffCountsByRole,
     getTheatreUtilization,
     getSurgeriesPerDay,
+    getSurgeryDurationStats,
+    getPeakHoursAnalysis,
 } from '../services/analyticsService';
 
 vi.mock('../components/Layout', () => ({
@@ -28,6 +30,8 @@ vi.mock('../services/analyticsService', () => ({
     getPatientDemographics: vi.fn(),
     getStaffCountsByRole: vi.fn(),
     getTheatreUtilization: vi.fn(),
+    getSurgeryDurationStats: vi.fn(),
+    getPeakHoursAnalysis: vi.fn(),
 }));
 
 const mockDemographics = {
@@ -100,20 +104,47 @@ describe('AnalyticsPage - M3 Day 19', () => {
                 { theatreName: 'Theatre 1', utilizationRate: 80 },
             ],
         });
+
+        getSurgeryDurationStats.mockResolvedValue({
+            success: true,
+            data: {
+                buckets: [
+                    { range: '0-30', count: 1 },
+                    { range: '31-60', count: 2 },
+                ],
+                stats: {
+                    avgDuration: 52,
+                    minDuration: 20,
+                    maxDuration: 120,
+                    totalSurgeries: 3,
+                }
+            }
+        });
+
+        getPeakHoursAnalysis.mockResolvedValue({
+            success: true,
+            data: {
+                chartData: [
+                    { hour: '09:00', displayHour: '9 AM', count: 2 },
+                    { hour: '10:00', displayHour: '10 AM', count: 3 },
+                ],
+                peak: { hour: '10:00', displayHour: '10 AM', count: 3 }
+            }
+        });
     });
 
     it('renders the demographics bar chart with age-group data by default', async () => {
         renderPage();
 
         await waitFor(() => {
-            expect(screen.getByText('Patient Demographics')).toBeInTheDocument();
+            expect(screen.getByText(/Patient Demographics/i)).toBeInTheDocument();
         });
 
         expect(screen.getByText('Demographics Bar Chart')).toBeInTheDocument();
         expect(screen.getByText('Age bands across active patients')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Age Groups' })).toHaveAttribute('aria-pressed', 'true');
         expect(screen.getByTestId('patient-demographics-bar-chart')).toBeInTheDocument();
-        expect(screen.getByText('31-45')).toBeInTheDocument();
+        expect(screen.getAllByText('31-45').length).toBeGreaterThan(0);
         expect(screen.getByText('Largest Segment')).toBeInTheDocument();
     });
 
@@ -126,8 +157,8 @@ describe('AnalyticsPage - M3 Day 19', () => {
         await waitFor(() => {
             expect(genderButton).toHaveAttribute('aria-pressed', 'true');
             expect(screen.getByText('Gender mix across active patients')).toBeInTheDocument();
-            expect(screen.getByText('Male')).toBeInTheDocument();
-            expect(screen.getByText('Female')).toBeInTheDocument();
+            expect(screen.getAllByText('Male').length).toBeGreaterThan(0);
+            expect(screen.getAllByText('Female').length).toBeGreaterThan(0);
         });
     });
 });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RoleGuard from './RoleGuard';
@@ -7,6 +7,37 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 import theatrexLogo from '../assets/theatrex-logo.svg';
+
+const QUICK_SEARCH_ROUTES = [
+    { path: '/dashboard', keywords: ['dashboard', 'home', 'overview'] },
+    { path: '/surgeries', keywords: ['surgery', 'surgeries', 'booking', 'schedule'] },
+    { path: '/theatres', keywords: ['theatre', 'theatres', 'room', 'rooms'] },
+    { path: '/live-status', keywords: ['live', 'status', 'monitor', 'monitoring'] },
+    { path: '/coordinator', keywords: ['coordinator'] },
+    { path: '/calendar', keywords: ['calendar', 'date'] },
+    { path: '/staff', keywords: ['staff', 'surgeon', 'nurse', 'anaesthetist', 'technician'] },
+    { path: '/patients', keywords: ['patient', 'patients'] },
+    { path: '/analytics', keywords: ['analytics', 'report', 'reports', 'insights'] },
+    { path: '/history', keywords: ['history', 'logs'] },
+    { path: '/notifications', keywords: ['notification', 'notifications', 'alerts'] },
+    { path: '/emergency', keywords: ['emergency', 'urgent'] },
+];
+
+const resolveSearchRoute = (query) => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+        return '/dashboard';
+    }
+
+    for (const route of QUICK_SEARCH_ROUTES) {
+        if (route.keywords.some((keyword) => normalizedQuery.includes(keyword))) {
+            return route.path;
+        }
+    }
+
+    return '/dashboard';
+};
 
 /**
  * Header Component
@@ -20,6 +51,9 @@ const Header = ({ pageTitle = 'Theatre Management Dashboard', pageSubtitle = 'Re
     const navigate = useNavigate();
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef(null);
 
     // Live clock - updates every second
     useEffect(() => {
@@ -28,6 +62,12 @@ const Header = ({ pageTitle = 'Theatre Management Dashboard', pageSubtitle = 'Re
         }, 1000);
         return () => clearInterval(timer);
     }, []);
+
+    useEffect(() => {
+        if (isSearchOpen) {
+            searchInputRef.current?.focus();
+        }
+    }, [isSearchOpen]);
 
     // Format time as "09:26 PM"
     const formattedTime = currentTime.toLocaleTimeString('en-US', {
@@ -59,6 +99,18 @@ const Header = ({ pageTitle = 'Theatre Management Dashboard', pageSubtitle = 'Re
         setIsUserMenuOpen(false);
         logout();
         navigate('/login', { state: { loggedOut: true } });
+    };
+
+    const handleSearchToggle = () => {
+        setIsSearchOpen(prev => !prev);
+    };
+
+    const handleSearchSubmit = (event) => {
+        event.preventDefault();
+        const targetPath = resolveSearchRoute(searchQuery);
+        navigate(targetPath);
+        setIsSearchOpen(false);
+        setSearchQuery('');
     };
 
     const userInitial = user?.name?.charAt(0).toUpperCase() || 'U';
@@ -93,9 +145,31 @@ const Header = ({ pageTitle = 'Theatre Management Dashboard', pageSubtitle = 'Re
                 {/* ── Right Controls ───────────────────────────────────── */}
                 <div className="flex items-center gap-1 px-4 shrink-0">
 
+                    {isSearchOpen && (
+                        <form onSubmit={handleSearchSubmit} className="mr-2 hidden md:flex items-center gap-2">
+                            <input
+                                id="header-search-input"
+                                ref={searchInputRef}
+                                type="text"
+                                value={searchQuery}
+                                onChange={(event) => setSearchQuery(event.target.value)}
+                                placeholder="Search pages..."
+                                className="w-52 px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                                type="submit"
+                                className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                            >
+                                Go
+                            </button>
+                        </form>
+                    )}
+
                     {/* Search */}
                     <button
                         id="header-search-btn"
+                        type="button"
+                        onClick={handleSearchToggle}
                         className="p-2 rounded-lg text-gray-400 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 transition-all duration-200"
                         aria-label="Search"
                     >

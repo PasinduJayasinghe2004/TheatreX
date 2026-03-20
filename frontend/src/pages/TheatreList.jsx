@@ -163,11 +163,11 @@ const TheatreList = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-6 sm:py-8 px-3 sm:px-4">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="mb-8">
-                        <div className="flex items-center gap-3 mb-1">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
                             <Building2 className="w-8 h-8 text-blue-600" />
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="theatre-list-title">Theatres</h1>
                         </div>
@@ -208,12 +208,12 @@ const TheatreList = () => {
 
                     {/* Filters */}
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-6">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                             <Filter className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                             <select
                                 value={filters.status || 'all'}
                                 onChange={handleStatusFilterChange}
-                                className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                className="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                             >
                                 <option value="all">All Statuses</option>
                                 {ALL_THEATRE_STATUSES.map(s => (
@@ -222,12 +222,12 @@ const TheatreList = () => {
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                             <Filter className="w-4 h-4 text-gray-400 dark:text-slate-500" />
                             <select
                                 value={filters.type || 'all'}
                                 onChange={handleTypeFilterChange}
-                                className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                className="w-full sm:w-auto px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                             >
                                 <option value="all">All Types</option>
                                 {ALL_THEATRE_TYPES.map(t => (
@@ -236,7 +236,7 @@ const TheatreList = () => {
                             </select>
                         </div>
 
-                        <p className="text-sm text-gray-500 dark:text-slate-400 ml-auto">
+                        <p className="text-sm text-gray-500 dark:text-slate-400 sm:ml-auto">
                             {theatres.length} {theatres.length === 1 ? 'theatre' : 'theatres'} found
                         </p>
                     </div>

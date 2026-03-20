@@ -2,7 +2,7 @@
  * Standardize API responses
  */
 
-export const sendSuccess = (res, data, message = 'Success', status = 200) => {
+export const sendSuccess = (res, data, message = 'Success', status = 200, meta = null) => {
     const response = {
         success: true,
         message,
@@ -11,6 +11,10 @@ export const sendSuccess = (res, data, message = 'Success', status = 200) => {
 
     if (Array.isArray(data)) {
         response.count = data.length;
+    }
+
+    if (meta && typeof meta === 'object') {
+        response.meta = meta;
     }
 
     return res.status(status).json(response);

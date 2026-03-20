@@ -37,6 +37,7 @@ import {
 import { calculateAutoProgress, enrichSurgeryWithProgress } from '../utils/progressCalculator.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
 import { ERROR_CODES } from '../constants/errorCodes.js';
+import { getCache, setCache } from '../utils/cache.js';
 
 // ============================================================================
 // GET ALL THEATRES
@@ -51,6 +52,11 @@ import { ERROR_CODES } from '../constants/errorCodes.js';
 export const getTheatres = async (req, res) => {
     try {
         const { status, type } = req.query;
+        const cacheKey = `theatres:list:${status || 'all'}:${type || 'all'}`;
+        const cachedData = getCache(cacheKey);
+        if (cachedData) {
+            return sendSuccess(res, cachedData, 'Theatres fetched successfully', 200);
+        }
 
         // Build dynamic WHERE clauses
         const conditions = ['t.is_active = TRUE'];
@@ -114,6 +120,7 @@ export const getTheatres = async (req, res) => {
             return row;
         });
 
+        setCache(cacheKey, enrichedRows, 10000);
         sendSuccess(res, enrichedRows, 'Theatres fetched successfully', 200);
     } catch (error) {
         next(error);
@@ -626,6 +633,12 @@ export const getAutoProgress = async (req, res) => {
 // ============================================================================
 export const getLiveStatus = async (req, res) => {
     try {
+        const cacheKey = 'theatres:live-status';
+        const cachedData = getCache(cacheKey);
+        if (cachedData) {
+            return sendSuccess(res, cachedData, 'Live status fetched successfully', 200);
+        }
+
         // Single query: theatres + current in-progress surgery (if any)
         const { rows } = await pool.query(`
             SELECT
@@ -695,11 +708,14 @@ export const getLiveStatus = async (req, res) => {
             overdue: theatres.filter(t => t.current_surgery?.is_overdue).length
         };
 
-        sendSuccess(res, {
+        const payload = {
             polled_at: new Date().toISOString(),
             summary,
             data: theatres
-        }, 'Live status fetched successfully', 200);
+        };
+
+        setCache(cacheKey, payload, 5000);
+        sendSuccess(res, payload, 'Live status fetched successfully', 200);
     } catch (error) {
         next(error);
     }

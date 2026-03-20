@@ -96,15 +96,50 @@ const summaryCards = (s) => [
 // ── Component ───────────────────────────────────────────────────────────────
 
 const LiveStatusPage = () => {
+    const normalizeLivePayload = (response) => {
+        if (response && typeof response === 'object' && response.summary && Array.isArray(response.data)) {
+            return response;
+        }
+
+        if (
+            response &&
+            typeof response === 'object' &&
+            response.data &&
+            typeof response.data === 'object' &&
+            response.data.summary &&
+            Array.isArray(response.data.data)
+        ) {
+            return response.data;
+        }
+
+        throw new Error('Invalid live status response');
+    };
+
+    const normalizeStatsPayload = (response) => {
+        if (response && typeof response === 'object' && response.utilization) {
+            return response;
+        }
+
+        if (response && typeof response === 'object' && response.data && typeof response.data === 'object') {
+            return response.data;
+        }
+
+        return null;
+    };
+
     // Fetch function for the polling hook
     const fetchLiveStatus = useCallback(async () => {
         const [liveResponse, statsResponse] = await Promise.all([
             theatreService.getLiveStatus(),
             theatreService.getTheatreStats()
         ]);
+
+        const livePayload = normalizeLivePayload(liveResponse);
+        const statsPayload = normalizeStatsPayload(statsResponse);
+
         return {
-            ...liveResponse,
-            stats: statsResponse.data
+            ...livePayload,
+            stats: statsPayload
         };
     }, []);
 
