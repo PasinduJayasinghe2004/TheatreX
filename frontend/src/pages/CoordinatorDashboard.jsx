@@ -15,6 +15,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
 import SummaryCard from '../components/SummaryCard';
 import TheatreAssignmentDropdown from '../components/TheatreAssignmentDropdown';
 import theatreService from '../services/theatreService';
@@ -307,12 +308,7 @@ const CoordinatorDashboard = () => {
     if (loading) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-                        <p className="mt-4 text-gray-500 dark:text-slate-400">Loading coordinator overview…</p>
-                    </div>
-                </div>
+                <Loading message="Loading coordinator overview..." />
             </Layout>
         );
     }

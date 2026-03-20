@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
 import SummaryCard from '../components/SummaryCard';
 import StatusBadge from '../components/StatusBadge';
 import { useAuth } from '../context/AuthContext';
@@ -49,6 +50,15 @@ const formatStamp = (date) => {
         minute: '2-digit',
         second: '2-digit',
     });
+};
+
+const withTimeout = (promise, ms, label) => {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+            setTimeout(() => reject(new Error(`${label} timed out`)), ms);
+        }),
+    ]);
 };
 
 const EmptyPanel = ({ title, description }) => (
@@ -190,9 +200,9 @@ const Dashboard = () => {
 
         try {
             const [kpiResult, surgeriesResult, theatreResult] = await Promise.allSettled([
-                Promise.all([getDashboardStats(), getDashboardSummary()]),
-                surgeryService.getAllSurgeries(surgeryParams),
-                theatreService.getCoordinatorOverview(),
+                withTimeout(Promise.all([getDashboardStats(), getDashboardSummary()]), 9000, 'KPI data request'),
+                withTimeout(surgeryService.getAllSurgeries(surgeryParams), 9000, 'Surgery list request'),
+                withTimeout(theatreService.getCoordinatorOverview(), 9000, 'Theatre timeline request'),
             ]);
 
             if (kpiResult.status === 'fulfilled') {
@@ -514,6 +524,14 @@ const Dashboard = () => {
 
         setSelectedKpi(kpiKey);
     };
+
+    if (showInitialSkeleton) {
+        return (
+            <Layout>
+                <Loading message="Loading dashboard overview..." />
+            </Layout>
+        );
+    }
 
     return (
         <Layout>
