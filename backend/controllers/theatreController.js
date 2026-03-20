@@ -35,6 +35,7 @@ import {
     getAllowedTransitions
 } from '../utils/theatreConstants.js';
 import { calculateAutoProgress, enrichSurgeryWithProgress } from '../utils/progressCalculator.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 // ============================================================================
 // GET ALL THEATRES
@@ -112,18 +113,9 @@ export const getTheatres = async (req, res) => {
             return row;
         });
 
-        res.status(200).json({
-            success: true,
-            count: enrichedRows.length,
-            data: enrichedRows
-        });
+        sendSuccess(res, enrichedRows, 'Theatres fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching theatres:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching theatres',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -171,10 +163,7 @@ export const getTheatreById = async (req, res) => {
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Theatre not found'
-            });
+            return sendError(res, 'Theatre not found', 404);
         }
 
         const theatre = rows[0];
@@ -225,32 +214,23 @@ export const getTheatreById = async (req, res) => {
             );
         }
 
-        res.status(200).json({
-            success: true,
-            data: {
-                ...theatre,
-                // Auto-progress fields - M2 Day 11
-                auto_progress: autoProgressData?.auto_progress ?? null,
-                elapsed_minutes: autoProgressData?.elapsed_minutes ?? null,
-                remaining_minutes: autoProgressData?.remaining_minutes ?? null,
-                is_overdue: autoProgressData?.is_overdue ?? false,
-                estimated_end_time: autoProgressData?.estimated_end_time ?? null,
-                upcoming_surgeries: upcoming,
-                surgery_history: history,
-                stats: {
-                    completed_this_week: parseInt(stats.completed_week) || 0,
-                    cancelled_this_week: parseInt(stats.cancelled_week) || 0,
-                    upcoming_total: parseInt(stats.upcoming_total) || 0
-                }
+        sendSuccess(res, {
+            ...theatre,
+            auto_progress: autoProgressData?.auto_progress ?? null,
+            elapsed_minutes: autoProgressData?.elapsed_minutes ?? null,
+            remaining_minutes: autoProgressData?.remaining_minutes ?? null,
+            is_overdue: autoProgressData?.is_overdue ?? false,
+            estimated_end_time: autoProgressData?.estimated_end_time ?? null,
+            upcoming_surgeries: upcoming,
+            surgery_history: history,
+            stats: {
+                completed_this_week: parseInt(stats.completed_week) || 0,
+                cancelled_this_week: parseInt(stats.cancelled_week) || 0,
+                upcoming_total: parseInt(stats.upcoming_total) || 0
             }
-        });
+        }, 'Theatre fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching theatre:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching theatre',
-            error: error.message
-        });
+        next(error);
     }
 };
 

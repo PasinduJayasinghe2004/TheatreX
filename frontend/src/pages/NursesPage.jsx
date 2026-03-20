@@ -19,6 +19,8 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import nurseService from '../services/nurseService';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -37,21 +39,6 @@ const AvailBadge = ({ available }) =>
         </span>
     );
 
-const SkeletonCard = () => (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 animate-pulse">
-        <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-slate-700 flex-shrink-0" />
-            <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-2/3" />
-                <div className="h-3 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
-            </div>
-        </div>
-        <div className="mt-4 space-y-2">
-            <div className="h-3 bg-gray-100 dark:bg-slate-600 rounded w-3/4" />
-            <div className="h-3 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
-        </div>
-    </div>
-);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Nurse Card
@@ -313,8 +300,11 @@ const CreateNurseModal = ({ onClose, onCreated }) => {
         try {
             const result = await nurseService.createNurse(form);
             onCreated(result.data);
+            toast.success(`Nurse '${result.data.name}' added successfully`);
         } catch (err) {
-            setServerErrors([err.message]);
+            const msg = err.message || 'Failed to create nurse';
+            setServerErrors([msg]);
+            toast.error(msg);
         } finally {
             setSubmitting(false);
         }
@@ -399,8 +389,10 @@ const EditNurseModal = ({ nurse, onClose, onUpdated }) => {
         try {
             const result = await nurseService.updateNurse(nurse.id, form);
             onUpdated(result.data);
+            toast.success(`Nurse '${result.data.name}' updated successfully`);
         } catch (err) {
-            alert(err.message);
+            const msg = err.message || 'Failed to update nurse';
+            toast.error(msg);
         } finally {
             setSubmitting(false);
         }
@@ -464,10 +456,13 @@ const DeleteNurseModal = ({ nurse, onClose, onDeleted }) => {
         setError(null);
         setDeleting(true);
         try {
-            await nurseService.deleteNurse(nurse.id);
+            const response = await nurseService.deleteNurse(nurse.id);
             onDeleted(nurse.id);
+            toast.success(response.message || `Nurse '${nurse.name}' deleted successfully`);
         } catch (err) {
-            setError(err.message);
+            const msg = err.message || 'Failed to delete nurse';
+            setError(msg);
+            toast.error(msg);
             setDeleting(false);
         }
     };
@@ -563,7 +558,9 @@ const NursesPage = () => {
             const res = await nurseService.getAllNurses({ search, available, shift });
             setNurses(res.data);
         } catch (err) {
-            setError(err.message);
+            const msg = err.message || 'Failed to fetch nurses';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -641,9 +638,7 @@ const NursesPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
-                    </div>
+                    <Loading message="Fetching nurses..." />
                 ) : error ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <svg className="w-12 h-12 text-red-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

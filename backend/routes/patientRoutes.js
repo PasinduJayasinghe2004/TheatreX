@@ -21,6 +21,7 @@ import {
     deletePatient
 } from '../controllers/patientController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
+import { validatePatient } from '../middleware/patientValidation.js';
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/', protect, getPatients);
 // Create a new patient record
 // Protected + coordinator or admin only
 // ============================================================================
-router.post('/', protect, authorize('coordinator', 'admin'), createPatient);
+router.post('/', protect, authorize('coordinator', 'admin'), validatePatient, createPatient);
 
 // ============================================================================
 // ROUTE: PUT /api/patients/:id
@@ -46,7 +47,7 @@ router.post('/', protect, authorize('coordinator', 'admin'), createPatient);
 // Update an existing patient record (partial update)
 // Protected + coordinator or admin only
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), updatePatient);
+router.put('/:id', protect, authorize('coordinator', 'admin'), validatePatient, updatePatient);
 
 // ============================================================================
 // ROUTE: DELETE /api/patients/:id

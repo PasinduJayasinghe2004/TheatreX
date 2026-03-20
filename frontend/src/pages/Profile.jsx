@@ -13,13 +13,14 @@ import { getRoleDisplayName, getRoleBadgeColor } from '../utils/roleUtils';
 import Layout from '../components/Layout';
 import axios from 'axios';
 import { Camera, User } from 'lucide-react';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 const Profile = () => {
     const { user, token } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
     const fileInputRef = useRef(null);
     const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -54,11 +55,10 @@ const Profile = () => {
     // Handle form submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage({ type: '', text: '' });
 
         // Validate passwords match if password is being changed
         if (formData.password && formData.password !== formData.confirmPassword) {
-            setMessage({ type: 'error', text: 'Passwords do not match' });
+            toast.error('Passwords do not match');
             return;
         }
 
@@ -86,7 +86,7 @@ const Profile = () => {
             );
 
             if (response.data.success) {
-                setMessage({ type: 'success', text: 'Profile updated successfully!' });
+                toast.success('Profile updated successfully!');
                 setIsEditing(false);
 
                 // Update local storage with new user data
@@ -105,10 +105,7 @@ const Profile = () => {
                 }, 1500);
             }
         } catch (error) {
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.message || 'Error updating profile'
-            });
+            toast.error(error.response?.data?.message || 'Error updating profile');
         } finally {
             setLoading(false);
         }
@@ -121,13 +118,13 @@ const Profile = () => {
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            setMessage({ type: 'error', text: 'Please select an image file.' });
+            toast.error('Please select an image file.');
             return;
         }
 
         // Validate file size (5MB)
         if (file.size > 5 * 1024 * 1024) {
-            setMessage({ type: 'error', text: 'Image size should be less than 5MB.' });
+            toast.error('Image size should be less than 5MB.');
             return;
         }
 
@@ -136,7 +133,6 @@ const Profile = () => {
 
         try {
             setUploading(true);
-            setMessage({ type: '', text: '' });
 
             // 1. Upload the image
             const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -170,7 +166,7 @@ const Profile = () => {
                 );
 
                 if (updateRes.data.success) {
-                    setMessage({ type: 'success', text: 'Profile picture updated successfully!' });
+                    toast.success('Profile picture updated successfully!');
 
                     // Update local storage
                     const updatedUser = { ...user, profile_image: imageUrl };
@@ -184,10 +180,7 @@ const Profile = () => {
             }
         } catch (error) {
             console.error('Upload Error:', error);
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.message || 'Error uploading image'
-            });
+            toast.error(error.response?.data?.message || 'Error uploading image');
         } finally {
             setUploading(false);
         }
@@ -197,7 +190,6 @@ const Profile = () => {
         fileInputRef.current?.click();
     };
 
-    // Cancel editing
     const handleCancel = () => {
         setIsEditing(false);
         setFormData({
@@ -206,14 +198,13 @@ const Profile = () => {
             password: '',
             confirmPassword: ''
         });
-        setMessage({ type: '', text: '' });
     };
 
     if (!user) {
         return (
             <Layout>
                 <div className="flex items-center justify-center min-h-screen">
-                    <p>Loading...</p>
+                    <Loading message="Fetching user profile..." />
                 </div>
             </Layout>
         );
@@ -273,15 +264,6 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* Message */}
-                    {message.text && (
-                        <div className={`mb-6 p-4 rounded-lg ${message.type === 'success'
-                            ? 'bg-green-100 text-green-800 border border-green-200'
-                            : 'bg-red-100 text-red-800 border border-red-200'
-                            }`}>
-                            {message.text}
-                        </div>
-                    )}
 
                     {/* Profile Information */}
                     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-transparent dark:border-slate-700">

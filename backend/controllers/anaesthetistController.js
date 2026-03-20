@@ -1,5 +1,6 @@
 import * as AnaesthetistRecord from '../models/anaesthetistModel.js';
 import { pool } from '../config/database.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 /**
  * @desc    Get all anaesthetists
@@ -8,18 +9,9 @@ import { pool } from '../config/database.js';
  */
 export const getAnaesthetists = async (req, res) => {
     try {
-        const anaesthetists = await AnaesthetistRecord.getAllAnaesthetists();
-        res.status(200).json({
-            success: true,
-            count: anaesthetists.length,
-            data: anaesthetists
-        });
+        sendSuccess(res, anaesthetists, 'Anaesthetists fetched successfully', 200);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching anaesthetists',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -30,18 +22,9 @@ export const getAnaesthetists = async (req, res) => {
  */
 export const getAvailableAnaesthetists = async (req, res) => {
     try {
-        const anaesthetists = await AnaesthetistRecord.getAvailableAnaesthetists();
-        res.status(200).json({
-            success: true,
-            count: anaesthetists.length,
-            data: anaesthetists
-        });
+        sendSuccess(res, anaesthetists, 'Available anaesthetists fetched successfully', 200);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching available anaesthetists',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -75,17 +58,12 @@ export const createAnaesthetist = async (req, res) => {
             profile_picture
         });
 
-        res.status(201).json({
-            success: true,
-            message: 'Anaesthetist created successfully',
-            data: newAnaesthetist
-        });
+        sendSuccess(res, newAnaesthetist, 'Anaesthetist created successfully', 201);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error creating anaesthetist',
-            error: error.message
-        });
+        if (error.code === '23505') {
+            return sendError(res, 'An anaesthetist with this email or licence number already exists', 409);
+        }
+        next(error);
     }
 };
 
@@ -114,16 +92,9 @@ export const getAnaesthetistById = async (req, res) => {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            data: anaesthetist,
-        });
+        sendSuccess(res, anaesthetist, 'Anaesthetist fetched successfully', 200);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching anaesthetist',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -152,10 +123,7 @@ export const updateAnaesthetist = async (req, res) => {
             [anaesthetistId]
         );
         if (existing.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Anaesthetist not found',
-            });
+            return sendError(res, 'Anaesthetist not found', 404);
         }
 
         const current = existing.rows[0];
@@ -232,40 +200,12 @@ export const updateAnaesthetist = async (req, res) => {
 
         const { rows } = await pool.query(updateQuery, values);
 
-        return res.status(200).json({
-            success: true,
-            message: 'Anaesthetist updated successfully',
-            data: rows[0],
-        });
+        sendSuccess(res, rows[0], 'Anaesthetist updated successfully', 200);
     } catch (error) {
-        console.error('Error updating anaesthetist:', error);
-
-        if (error.code === '23505' && error.constraint?.includes('email')) {
-            return res.status(409).json({
-                success: false,
-                message: 'An anaesthetist with this email already exists',
-            });
-        }
-
-        if (error.code === '23505' && error.constraint?.includes('license_number')) {
-            return res.status(409).json({
-                success: false,
-                message: 'An anaesthetist with this licence number already exists',
-            });
-        }
-
         if (error.code === '23505') {
-            return res.status(409).json({
-                success: false,
-                message: 'Duplicate entry — email or licence number already registered',
-            });
+            return sendError(res, 'An anaesthetist with this email or licence number already exists', 409);
         }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Error updating anaesthetist',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -302,17 +242,9 @@ export const deleteAnaesthetist = async (req, res) => {
             });
         }
 
-        return res.status(200).json({
-            success: true,
-            message: `Anaesthetist "${rows[0].name}" deleted successfully`,
-        });
+        sendSuccess(res, null, `Anaesthetist "${rows[0].name}" deleted successfully`, 200);
     } catch (error) {
-        console.error('Error deleting anaesthetist:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error deleting anaesthetist',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -342,15 +274,8 @@ export const updateAvailability = async (req, res) => {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Availability updated successfully'
-        });
+        sendSuccess(res, null, 'Availability updated successfully', 200);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error updating availability',
-            error: error.message
-        });
+        next(error);
     }
 };

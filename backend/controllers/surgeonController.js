@@ -15,6 +15,7 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 // ============================================================================
 // CREATE SURGEON
@@ -106,44 +107,20 @@ export const createSurgeon = async (req, res) => {
         const { rows } = await pool.query(insertQuery, values);
         const newSurgeon = rows[0];
 
-        return res.status(201).json({
-            success: true,
-            message: 'Surgeon created successfully',
-            data: newSurgeon,
-        });
+        sendSuccess(res, newSurgeon, 'Surgeon created successfully', 201);
 
     } catch (error) {
-        console.error('Error creating surgeon:', error);
-
-        // Duplicate email
+        // Handle specific PostgreSQL errors
         if (error.code === '23505' && error.constraint?.includes('email')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A surgeon with this email already exists',
-            });
+            return sendError(res, 'A surgeon with this email already exists', 409);
         }
-
-        // Duplicate license number
         if (error.code === '23505' && error.constraint?.includes('license_number')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A surgeon with this licence number already exists',
-            });
+            return sendError(res, 'A surgeon with this licence number already exists', 409);
         }
-
-        // Generic duplicate
         if (error.code === '23505') {
-            return res.status(409).json({
-                success: false,
-                message: 'Duplicate entry — email or licence number already registered',
-            });
+            return sendError(res, 'Duplicate entry detected', 409);
         }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Error creating surgeon',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -198,23 +175,9 @@ export const getAllSurgeons = async (req, res) => {
 
         const { rows } = await pool.query(query, params);
 
-        return res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows,
-            filters: {
-                search: search || null,
-                available: available || null,
-            },
-        });
-
+        sendSuccess(res, rows, 'Surgeons fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching surgeons:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error fetching surgeons',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -254,24 +217,12 @@ export const getSurgeonById = async (req, res) => {
         const { rows } = await pool.query(query, [surgeonId]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Surgeon not found',
-            });
+            return sendError(res, 'Surgeon not found', 404);
         }
 
-        return res.status(200).json({
-            success: true,
-            data: rows[0],
-        });
-
+        sendSuccess(res, rows[0], 'Surgeon fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching surgeon by ID:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error fetching surgeon',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -382,43 +333,13 @@ export const updateSurgeon = async (req, res) => {
 
         const { rows } = await pool.query(updateQuery, values);
 
-        return res.status(200).json({
-            success: true,
-            message: 'Surgeon updated successfully',
-            data: rows[0],
-        });
+        sendSuccess(res, rows[0], 'Surgeon updated successfully', 200);
 
     } catch (error) {
-        console.error('Error updating surgeon:', error);
-
-        // Duplicate email
-        if (error.code === '23505' && error.constraint?.includes('email')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A surgeon with this email already exists',
-            });
-        }
-
-        // Duplicate licence number
-        if (error.code === '23505' && error.constraint?.includes('license_number')) {
-            return res.status(409).json({
-                success: false,
-                message: 'A surgeon with this licence number already exists',
-            });
-        }
-
         if (error.code === '23505') {
-            return res.status(409).json({
-                success: false,
-                message: 'Duplicate entry — email or licence number already registered',
-            });
+            return sendError(res, 'A surgeon with this email or licence number already exists', 409);
         }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Error updating surgeon',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
@@ -453,23 +374,11 @@ export const deleteSurgeon = async (req, res) => {
         );
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Surgeon not found',
-            });
+            return sendError(res, 'Surgeon not found', 404);
         }
 
-        return res.status(200).json({
-            success: true,
-            message: `Surgeon "${rows[0].name}" deleted successfully`,
-        });
-
+        sendSuccess(res, null, `Surgeon "${rows[0].name}" deleted successfully`, 200);
     } catch (error) {
-        console.error('Error deleting surgeon:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error deleting surgeon',
-            error: error.message,
-        });
+        next(error);
     }
 };

@@ -16,6 +16,7 @@
 import { useState, useEffect } from 'react';
 import { X, UserPlus, Edit3, AlertCircle, CheckCircle } from 'lucide-react';
 import technicianService from '../services/technicianService';
+import { toast } from 'react-toastify';
 
 const SHIFT_OPTIONS = [
     { value: 'flexible', label: 'Flexible' },
@@ -97,12 +98,15 @@ const TechnicianForm = ({ onSuccess, onClose, technician }) => {
 
             if (response.success) {
                 setSuccess(true);
+                toast.success(`Technician '${response.data.name}' ${isEdit ? 'updated' : 'added'} successfully`);
                 setTimeout(() => {
                     onSuccess?.(response.data);
                 }, 1200);
             }
         } catch (err) {
-            setError(err.message || `Failed to ${isEdit ? 'update' : 'create'} technician.`);
+            const msg = err.message || `Failed to ${isEdit ? 'update' : 'create'} technician.`;
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }

@@ -195,14 +195,11 @@ router.get('/:id', protect, getSurgeryById);
 // ============================================================================
 router.get('/:id/export/csv', protect, exportSurgeryDetailCsv);
 
-// ============================================================================
-// ROUTE: PUT /api/surgeries/:id
-// ============================================================================
 // Update a surgery's details
 // Protected - only coordinators and admins can update surgeries
 // Created by: M1 (Pasindu) - Day 6
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), updateSurgery);
+router.put('/:id', protect, authorize('coordinator', 'admin'), validateSurgery, updateSurgery);
 
 // ============================================================================
 // ROUTE: PATCH /api/surgeries/:id/status

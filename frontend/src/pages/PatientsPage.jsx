@@ -23,6 +23,8 @@ import Layout from '../components/Layout';
 import PatientForm from '../components/PatientForm';
 import patientService from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -204,7 +206,9 @@ const PatientsPage = () => {
             const response = await patientService.getAllPatients(filters);
             setPatients(response.data ?? []);
         } catch (err) {
-            setError(err.message || 'Failed to load patients.');
+            const msg = err.message || 'Failed to load patients.';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -224,6 +228,7 @@ const PatientsPage = () => {
     const handlePatientCreated = (newPatient) => {
         setShowForm(false);
         setPatients(prev => [newPatient, ...prev]);
+        toast.success(`Patient '${newPatient.name}' added successfully`);
     };
 
     const handleEditClick = (patient) => {
@@ -235,6 +240,7 @@ const PatientsPage = () => {
         setPatients(prev =>
             prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
         );
+        toast.success(`Patient '${updatedPatient.name}' updated successfully`);
     };
 
     const handleDeleteClick = (patient) => {
@@ -245,11 +251,12 @@ const PatientsPage = () => {
         if (!deletingPatient) return;
         setDeleteLoading(true);
         try {
-            await patientService.deletePatient(deletingPatient.id);
+            const response = await patientService.deletePatient(deletingPatient.id);
             setPatients(prev => prev.filter(p => p.id !== deletingPatient.id));
+            toast.success(response.message || 'Patient deleted successfully');
             setDeletingPatient(null);
         } catch (err) {
-            setError(err.message || 'Failed to delete patient.');
+            toast.error(err.message || 'Failed to delete patient.');
         } finally {
             setDeleteLoading(false);
         }
@@ -345,24 +352,7 @@ const PatientsPage = () => {
 
                 {/* Content */}
                 {loading ? (
-                    /* Loading skeleton */
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 animate-pulse">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-10 h-10 bg-gray-200 dark:bg-slate-700 rounded-full" />
-                                    <div className="flex-1 space-y-1.5">
-                                        <div className="h-3 bg-gray-200 dark:bg-slate-700 rounded w-3/4" />
-                                        <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-1/2" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded" />
-                                    <div className="h-2.5 bg-gray-100 dark:bg-slate-600 rounded w-4/5" />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <Loading message="Fetching patients..." />
                 ) : error ? (
                     /* Error state */
                     <div className="flex flex-col items-center justify-center py-20 text-center">

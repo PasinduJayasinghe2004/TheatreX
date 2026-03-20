@@ -12,6 +12,7 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 // ============================================================================
 // GET ALL TECHNICIANS
@@ -61,18 +62,9 @@ export const getTechnicians = async (req, res) => {
             ORDER BY name ASC
         `, params);
 
-        res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows
-        });
+        sendSuccess(res, rows, 'Technicians fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching technicians:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching technicians',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -106,23 +98,12 @@ export const getTechnicianById = async (req, res) => {
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Technician not found'
-            });
+            return sendError(res, 'Technician not found', 404);
         }
 
-        res.status(200).json({
-            success: true,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], 'Technician fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching technician',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -232,18 +213,12 @@ export const createTechnician = async (req, res) => {
             shift_preference || 'flexible'
         ]);
 
-        res.status(201).json({
-            success: true,
-            message: `Technician '${rows[0].name}' created successfully`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Technician '${rows[0].name}' created successfully`, 201);
     } catch (error) {
-        console.error('Error creating technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating technician',
-            error: error.message
-        });
+        if (error.code === '23505') {
+            return sendError(res, 'A technician with this email already exists', 409);
+        }
+        next(error);
     }
 };
 
@@ -265,10 +240,7 @@ export const updateTechnician = async (req, res) => {
         );
 
         if (existingRows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Technician not found'
-            });
+            return sendError(res, 'Technician not found', 404);
         }
 
         const {
@@ -396,18 +368,9 @@ export const updateTechnician = async (req, res) => {
                 is_active, created_at, updated_at
         `, params);
 
-        res.status(200).json({
-            success: true,
-            message: `Technician '${rows[0].name}' updated successfully`,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], `Technician '${rows[0].name}' updated successfully`, 200);
     } catch (error) {
-        console.error('Error updating technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating technician',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -430,22 +393,11 @@ export const deleteTechnician = async (req, res) => {
         `, [id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Technician not found or already deleted'
-            });
+            return sendError(res, 'Technician not found or already deleted', 404);
         }
 
-        res.status(200).json({
-            success: true,
-            message: `Technician '${rows[0].name}' deleted successfully`
-        });
+        sendSuccess(res, null, `Technician '${rows[0].name}' deleted successfully`, 200);
     } catch (error) {
-        console.error('Error deleting technician:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting technician',
-            error: error.message
-        });
+        next(error);
     }
 };

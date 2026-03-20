@@ -24,6 +24,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { AlertCircle, RefreshCw, X, Clock, User, MapPin, Activity, Flag } from 'lucide-react';
 import Layout from '../components/Layout';
 import surgeryService from '../services/surgeryService';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 
 // ── Legend colour config (matches backend STATUS_COLORS / PRIORITY_COLORS) ──
@@ -70,10 +72,14 @@ const Calendar = () => {
             if (response.success) {
                 setEvents(response.data);
             } else {
-                setError(response.message || 'Failed to fetch events');
+                const msg = response.message || 'Failed to fetch events';
+                setError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setError(err.message || 'Error loading calendar events');
+            const msg = err.message || 'Error loading calendar events';
+            setError(msg);
+            toast.error(msg);
             console.error('Error fetching calendar events:', err);
         } finally {
             setLoading(false);
@@ -121,11 +127,12 @@ const Calendar = () => {
 
     // ── Refresh ──
 
-    const handleRefresh = useCallback(() => {
+    const handleRefresh = useCallback(async () => {
         if (calendarRef.current) {
             const calendarApi = calendarRef.current.getApi();
             const view = calendarApi.view;
-            fetchEvents(view.activeStart, view.activeEnd);
+            await fetchEvents(view.activeStart, view.activeEnd);
+            toast.info('Calendar schedule refreshed');
         }
     }, [fetchEvents]);
 
@@ -358,12 +365,7 @@ const Calendar = () => {
 
                     {/* ── Loading overlay ── */}
                     {loading && (
-                        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-40 pointer-events-none">
-                            <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow-lg flex items-center gap-3">
-                                <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
-                                <span className="text-gray-700">Loading surgeries...</span>
-                            </div>
-                        </div>
+                        <Loading message="Fetching surgery schedule..." />
                     )}
                 </div>
 

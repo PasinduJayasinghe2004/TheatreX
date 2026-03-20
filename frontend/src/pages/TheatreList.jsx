@@ -16,6 +16,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { AlertCircle, Building2, Filter } from 'lucide-react';
 import Layout from '../components/Layout';
 import TheatreCard from '../components/TheatreCard';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 import TheatreStatusBadge, {
     ALL_THEATRE_STATUSES,
     THEATRE_STATUS_LABELS,
@@ -47,10 +49,14 @@ const TheatreList = () => {
             if (response.success) {
                 setTheatres(response.data);
             } else {
-                setError(response.message || 'Failed to load theatres');
+                const msg = response.message || 'Failed to load theatres';
+                setError(msg);
+                toast.error(msg);
             }
         } catch (err) {
-            setError(err.message || 'An error occurred while fetching theatres');
+            const msg = err.message || 'An error occurred while fetching theatres';
+            setError(msg);
+            toast.error(msg);
             console.error('Error fetching theatres:', err);
         } finally {
             setLoading(false);
@@ -97,10 +103,13 @@ const TheatreList = () => {
                         t.id === theatreId ? { ...t, status: newStatus } : t
                     )
                 );
+                toast.success(response.message || `Theatre status updated to ${THEATRE_STATUS_LABELS[newStatus]}`);
             }
         } catch (err) {
             console.error('Error updating theatre status:', err);
-            setError(err.message || 'Failed to update theatre status');
+            const msg = err.message || 'Failed to update theatre status';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setStatusUpdating(null);
         }
@@ -233,9 +242,7 @@ const TheatreList = () => {
 
                     {/* Loading State */}
                     {loading && (
-                        <div className="flex justify-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                        </div>
+                        <Loading message="Fetching theatres..." />
                     )}
 
                     {/* Error State */}
