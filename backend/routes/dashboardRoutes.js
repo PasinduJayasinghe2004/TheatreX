@@ -9,7 +9,7 @@
 
 import express from 'express';
 import { getDashboardStats, getDashboardSummary } from '../controllers/dashboardController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -29,6 +29,6 @@ router.get('/stats', protect, getDashboardStats);
 // @desc    Get high-level dashboard summary
 // @access  Protected (coordinator, admin)
 // ============================================================================
-router.get('/summary', protect, getDashboardSummary);
+router.get('/summary', protect, authorize('coordinator', 'admin'), getDashboardSummary);
 
 export default router;

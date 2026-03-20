@@ -75,11 +75,31 @@ const AppRoutes = () => {
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Test Pages */}
-            <Route path="/button-test" element={<ButtonTest />} /> {/* M4 Day 1 */}
-            <Route path="/input-test" element={<InputTest />} /> {/* M5 Day 1 */}
-            <Route path="/modal-test" element={<ModalTest />} /> {/* M1 Day 2 */}
-            <Route path="/datepicker-test" element={<DatePickerTest />} /> {/* M3 Day 2 */}
-            <Route path="/layout-demo" element={<LayoutDemo />} /> {/* M6 Day 2 */}
+            <Route path="/button-test" element={
+                <ProtectedRoute>
+                    <ButtonTest />
+                </ProtectedRoute>
+            } /> {/* M4 Day 1 */}
+            <Route path="/input-test" element={
+                <ProtectedRoute>
+                    <InputTest />
+                </ProtectedRoute>
+            } /> {/* M5 Day 1 */}
+            <Route path="/modal-test" element={
+                <ProtectedRoute>
+                    <ModalTest />
+                </ProtectedRoute>
+            } /> {/* M1 Day 2 */}
+            <Route path="/datepicker-test" element={
+                <ProtectedRoute>
+                    <DatePickerTest />
+                </ProtectedRoute>
+            } /> {/* M3 Day 2 */}
+            <Route path="/layout-demo" element={
+                <ProtectedRoute>
+                    <LayoutDemo />
+                </ProtectedRoute>
+            } /> {/* M6 Day 2 */}
 
             {/* Protected Routes */}
             <Route path="/dashboard" element={

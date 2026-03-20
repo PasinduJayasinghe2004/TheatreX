@@ -5,6 +5,7 @@
 // ============================================================================
 
 import axios from 'axios';
+import authStorage from '../utils/authStorage';
 
 // Base API URL - reads from VITE_API_URL env variable (falls back to localhost for dev)
 // Avoid double /api suffix if it is already provided in the environment variable
@@ -24,7 +25,7 @@ const api = axios.create({
 // ============================================================================
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = authStorage.getToken();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -77,7 +78,7 @@ api.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const storedRefreshToken = localStorage.getItem('refreshToken');
+                const storedRefreshToken = authStorage.getRefreshToken();
                 if (!storedRefreshToken) {
                     throw new Error('No refresh token available');
                 }
@@ -88,7 +89,7 @@ api.interceptors.response.use(
 
                 if (response.data.success && response.data.token) {
                     const newToken = response.data.token;
-                    localStorage.setItem('token', newToken);
+                    authStorage.setToken(newToken);
                     originalRequest.headers.Authorization = `Bearer ${newToken}`;
                     processQueue(null, newToken);
                     return api(originalRequest);
@@ -97,9 +98,7 @@ api.interceptors.response.use(
                 }
             } catch (refreshError) {
                 processQueue(refreshError, null);
-                localStorage.removeItem('token');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('user');
+                authStorage.clear();
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
             } finally {
@@ -120,11 +119,11 @@ const authService = {
             const response = await api.post('/auth/login', { email, password });
 
             if (response.data.success && response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                authStorage.setToken(response.data.token);
+                authStorage.setUser(response.data.user);
 
                 if (response.data.refreshToken) {
-                    localStorage.setItem('refreshToken', response.data.refreshToken);
+                    authStorage.setRefreshToken(response.data.refreshToken);
                 }
             }
 
@@ -146,26 +145,23 @@ const authService = {
     },
 
     logout: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        authStorage.clear();
     },
 
     getCurrentUser: () => {
-        const userStr = localStorage.getItem('user');
-        return userStr ? JSON.parse(userStr) : null;
+        return authStorage.getUser();
     },
 
     isLoggedIn: () => {
-        return !!localStorage.getItem('token');
+        return !!authStorage.getToken();
     },
 
     getToken: () => {
-        return localStorage.getItem('token');
+        return authStorage.getToken();
     },
 
     getRefreshToken: () => {
-        return localStorage.getItem('refreshToken');
+        return authStorage.getRefreshToken();
     },
 
     forgotPassword: async (email) => {

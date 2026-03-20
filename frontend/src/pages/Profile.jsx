@@ -15,6 +15,7 @@ import axios from 'axios';
 import { Camera, User } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
+import authStorage from '../utils/authStorage';
 
 const Profile = () => {
     const { user, token } = useAuth();
@@ -90,7 +91,7 @@ const Profile = () => {
                 setIsEditing(false);
 
                 // Update local storage with new user data
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                authStorage.setUser(response.data.user);
 
                 // Clear password fields
                 setFormData({
@@ -170,7 +171,7 @@ const Profile = () => {
 
                     // Update local storage
                     const updatedUser = { ...user, profile_image: imageUrl };
-                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    authStorage.setUser(updatedUser);
 
                     // Reload after a short delay
                     setTimeout(() => {
