@@ -2,17 +2,14 @@
  * Loading Spinner Component
  * A premium, modern loading indicator with glassmorphism and smooth animations.
  */
+import { AnimatedLogoLoader } from '../AnimatedIcons';
+
 const Loading = ({ fullPage = false, message = 'Loading...' }) => {
+  const isBuffering = String(message || '').toLowerCase().includes('buffer');
+
   const spinnerContent = (
     <div className="flex flex-col items-center justify-center space-y-4">
-      <div className="relative w-16 h-16">
-        {/* Outer ring */}
-        <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-        {/* Spinning ring */}
-        <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
-        {/* Pulsing center */}
-        <div className="absolute inset-4 bg-primary/40 rounded-full animate-pulse"></div>
-      </div>
+      <AnimatedLogoLoader mode={isBuffering ? 'buffering' : 'loading'} iconSize={56} />
       
       {message && (
         <p className="text-secondary font-medium tracking-wide animate-pulse">
