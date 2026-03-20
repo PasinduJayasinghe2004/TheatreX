@@ -247,8 +247,29 @@ const CoordinatorDashboard = () => {
         setError(null);
 
         try {
-            const data = await theatreService.getCoordinatorOverview();
-            setOverview(data);
+            const response = await theatreService.getCoordinatorOverview();
+
+            if (response?.success === false) {
+                throw new Error(response?.message || 'Failed to load coordinator overview');
+            }
+
+            // Support both service styles:
+            // 1) wrapped API response: { success, message, data: { summary, data, generated_at } }
+            // 2) direct payload: { summary, data, generated_at }
+            const isDirectPayload = response && typeof response === 'object' && response.summary && Array.isArray(response.data);
+            const isWrappedPayload = response && typeof response === 'object' && response.data && typeof response.data === 'object' && response.data.summary && Array.isArray(response.data.data);
+
+            const payload = isDirectPayload
+                ? response
+                : isWrappedPayload
+                    ? response.data
+                    : null;
+
+            if (!payload) {
+                throw new Error('Unexpected coordinator overview response format');
+            }
+
+            setOverview(payload);
             setLastRefresh(new Date());
         } catch (err) {
             setError(err.message || 'Failed to load coordinator overview');

@@ -86,7 +86,7 @@ const AnalyticsPage = () => {
             setLoading(true);
             setError(null);
 
-            const [perDayRes, statusRes, demoRes, staffRes, utilizationRes, durationRes, peakHoursRes] = await Promise.all([
+            const results = await Promise.allSettled([
                 getSurgeriesPerDay(),
                 getSurgeryStatusCounts(statusStartDate, statusEndDate),
                 getPatientDemographics(),
@@ -96,26 +96,52 @@ const AnalyticsPage = () => {
                 getPeakHoursAnalysis()
             ]);
 
-            if (perDayRes?.success) {
-                setChartData(perDayRes.data);
+            const [
+                perDayResult,
+                statusResult,
+                demoResult,
+                staffResult,
+                utilizationResult,
+                durationResult,
+                peakHoursResult
+            ] = results;
+
+            const extractData = (result) => (
+                result.status === 'fulfilled' && result.value?.success ? result.value.data : null
+            );
+
+            const perDayData = extractData(perDayResult);
+            const statusDataValue = extractData(statusResult);
+            const demographicsDataValue = extractData(demoResult);
+            const staffDataValue = extractData(staffResult);
+            const utilizationDataValue = extractData(utilizationResult);
+            const durationDataValue = extractData(durationResult);
+            const peakHoursDataValue = extractData(peakHoursResult);
+
+            if (perDayData) setChartData(perDayData);
+            if (statusDataValue) setStatusData(statusDataValue);
+            if (demographicsDataValue) setDemographicsData(demographicsDataValue);
+            if (staffDataValue) setStaffData(staffDataValue);
+            if (utilizationDataValue) setUtilizationData(utilizationDataValue);
+            if (durationDataValue) setDurationData(durationDataValue);
+            if (peakHoursDataValue) setPeakHoursData(peakHoursDataValue);
+
+            const successfulCount = [
+                perDayData,
+                statusDataValue,
+                demographicsDataValue,
+                staffDataValue,
+                utilizationDataValue,
+                durationDataValue,
+                peakHoursDataValue
+            ].filter(Boolean).length;
+
+            if (successfulCount === 0) {
+                throw new Error('All analytics requests failed');
             }
-            if (statusRes?.success) {
-                setStatusData(statusRes.data);
-            }
-            if (demoRes?.success) {
-                setDemographicsData(demoRes.data);
-            }
-            if (staffRes?.success) {
-                setStaffData(staffRes.data);
-            }
-            if (utilizationRes?.success) {
-                setUtilizationData(utilizationRes.data);
-            }
-            if (durationRes?.success) {
-                setDurationData(durationRes.data);
-            }
-            if (peakHoursRes?.success) {
-                setPeakHoursData(peakHoursRes.data);
+
+            if (successfulCount < results.length) {
+                toast.warn('Some analytics sections could not be loaded.');
             }
         } catch (err) {
             console.error('Error fetching analytics data:', err);
