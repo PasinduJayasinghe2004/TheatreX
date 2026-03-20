@@ -13,7 +13,7 @@
 // ============================================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Building2, Filter } from 'lucide-react';
+import { Building2, Filter, AlertCircle } from 'lucide-react';
 import Layout from '../components/Layout';
 import TheatreCard from '../components/TheatreCard';
 import { toast } from 'react-toastify';

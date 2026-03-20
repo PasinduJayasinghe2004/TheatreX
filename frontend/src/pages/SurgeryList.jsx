@@ -12,7 +12,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, AlertCircle, Filter, Calendar } from 'lucide-react';
+import { Plus, AlertCircle, Filter } from 'lucide-react';
 import Layout from '../components/Layout';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
