@@ -586,15 +586,15 @@ const NursesPage = () => {
 
     return (
         <Layout>
-            <div className="p-6 max-w-7xl mx-auto min-h-screen dark:bg-slate-900">
-                <div className="flex items-center justify-between mb-8">
+            <div className="p-3 sm:p-6 max-w-7xl mx-auto min-h-screen dark:bg-slate-900">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nurses</h1>
                         <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Manage and view all nurse records</p>
                     </div>
                     {canCreate && (
                         <button id="add-nurse-btn" onClick={() => setShowCreateModal(true)}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl shadow transition-colors">
+                            className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl shadow transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
@@ -604,7 +604,7 @@ const NursesPage = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-3 mb-6">
-                    <div className="relative flex-1 min-w-[200px]">
+                    <div className="relative flex-1 min-w-[220px]">
                         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

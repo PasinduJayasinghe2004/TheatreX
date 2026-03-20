@@ -113,6 +113,12 @@ const flushPromises = async () => {
 
 describe('LiveStatusPage', () => {
     beforeEach(() => {
+        if (!Element.prototype.scrollIntoView) {
+            Element.prototype.scrollIntoView = vi.fn();
+        } else {
+            vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(() => {});
+        }
+
         vi.useFakeTimers();
         vi.clearAllMocks();
         theatreService.getLiveStatus.mockResolvedValue(mockLiveResponse);
@@ -127,6 +133,7 @@ describe('LiveStatusPage', () => {
     });
 
     afterEach(() => {
+        vi.restoreAllMocks();
         vi.useRealTimers();
     });
 

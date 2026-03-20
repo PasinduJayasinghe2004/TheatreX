@@ -268,7 +268,18 @@ export const getAllSurgeries = async (req, res) => {
         // Extract query parameters for filtering
         // Updated by: M3 (Janani) - Day 6 (Added status filter)
         // Updated by: M4 (Oneli) - Day 6 (Added date filtering)
-        const { startDate, endDate, status } = req.query;
+        const { startDate, endDate, status, page = '1', limit = '12' } = req.query;
+
+        const pageNum = Number(page);
+        const limitNum = Number(limit);
+
+        if (!Number.isInteger(pageNum) || pageNum <= 0) {
+            return sendError(res, 'page must be a positive integer', 400, 'BAD_REQUEST');
+        }
+
+        if (!Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100) {
+            return sendError(res, 'limit must be an integer between 1 and 100', 400, 'BAD_REQUEST');
+        }
 
         // Build dynamic WHERE clause
         let whereConditions = [];
@@ -300,8 +311,19 @@ export const getAllSurgeries = async (req, res) => {
             ? `WHERE ${whereConditions.join(' AND ')}`
             : '';
 
-        // Build the complete query
-        const query = `
+        const countQuery = `
+            SELECT COUNT(*)::int AS total
+            FROM surgeries s
+            ${whereClause}
+        `;
+
+        const { rows: countRows } = await pool.query(countQuery, queryParams);
+        const total = countRows[0]?.total || 0;
+        const totalPages = total === 0 ? 1 : Math.ceil(total / limitNum);
+        const effectivePage = total === 0 ? 1 : Math.min(pageNum, totalPages);
+        const offset = (effectivePage - 1) * limitNum;
+
+        const dataQuery = `
             SELECT
                 s.*,
                 u.name as surgeon_name,
@@ -310,9 +332,11 @@ export const getAllSurgeries = async (req, res) => {
             LEFT JOIN users u ON s.surgeon_id = u.id
             ${whereClause}
             ORDER BY s.scheduled_date ASC, s.scheduled_time ASC
+            LIMIT $${paramCounter} OFFSET $${paramCounter + 1}
         `;
 
-        const { rows } = await pool.query(query, queryParams);
+        const dataParams = [...queryParams, limitNum, offset];
+        const { rows } = await pool.query(dataQuery, dataParams);
 
         // Transform the flat result into nested structure
         const surgeries = rows.map(row => ({
@@ -340,9 +364,18 @@ export const getAllSurgeries = async (req, res) => {
             updated_at: row.updated_at
         }));
 
-        sendSuccess(res, surgeries, 'Surgeries fetched successfully', 200);
+        sendSuccess(res, surgeries, 'Surgeries fetched successfully', 200, {
+            pagination: {
+                page: effectivePage,
+                limit: limitNum,
+                total,
+                totalPages,
+                hasNextPage: effectivePage < totalPages,
+                hasPrevPage: effectivePage > 1
+            }
+        });
     } catch (error) {
-        next(error);
+        sendError(res, 'Error fetching surgeries', 500, 'INTERNAL_SERVER_ERROR', error);
     }
 };
 

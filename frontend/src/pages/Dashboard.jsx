@@ -576,18 +576,18 @@ const Dashboard = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
 
                 {/* ─── Welcome Greeting + Alerts ─── */}
-                <div className="px-6 pt-5 pb-2 space-y-3">
-                    <div className="flex items-center justify-between">
+                <div className="px-3 sm:px-6 pt-5 pb-2 space-y-3">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                                 Welcome back, {user?.name?.split(' ')[0] || 'Doctor'} 👋
                             </h1>
                             <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Here&apos;s what&apos;s happening in your theatres today</p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                             <span className="text-xs text-gray-400 dark:text-slate-500">
                                 Last updated: {lastRefresh.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                             </span>
@@ -635,7 +635,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* ─── Summary Header ─── */}
-                <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm px-6 py-4 rounded-3xl mx-6 mb-8 mt-2" data-testid="dashboard-title">
+                <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm px-4 sm:px-6 py-4 rounded-3xl mx-3 sm:mx-6 mb-8 mt-2" data-testid="dashboard-title">
                     <div className="flex items-stretch gap-4 flex-wrap">
                         {/* Summary Cards */}
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-w-0">
@@ -900,7 +900,7 @@ const Dashboard = () => {
                                 </div>
                             </div>
                             {SAMPLE_THEATRES.length > 0 ? (
-                                <div className={theatreView === 'grid' ? 'grid grid-cols-2 gap-4' : 'space-y-4'}>
+                                <div className={theatreView === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-4'}>
                                     {SAMPLE_THEATRES.map((theatre, idx) => (
                                         <LiveTheatreCard
                                             key={idx}
