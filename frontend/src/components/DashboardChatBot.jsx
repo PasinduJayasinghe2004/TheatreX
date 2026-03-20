@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Send, Bot, User, Sparkles, Mic, MicOff, Trash2 } from 'lucide-react';
+import { X, Send, User, Mic, MicOff, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import chatbotService from '../services/chatbotService';
+import theatrexLogo from '../assets/theatrex-logo.svg';
 import './DashboardChatBot.css';
 
 // ─── Navigation detection (kept client-side for instant nav) ──
@@ -251,7 +252,11 @@ export default function DashboardChatBot() {
                 aria-label={isOpen ? 'Close assistant' : 'Open assistant'}
             >
                 <span className="dcb-toggle-icon">
-                    {isOpen ? <X size={22} /> : <Sparkles size={22} />}
+                    {isOpen ? (
+                        <X size={22} />
+                    ) : (
+                        <img src={theatrexLogo} alt="TheatreX" className="dcb-logo-icon" />
+                    )}
                 </span>
                 {!isOpen && <span className="dcb-pulse" />}
             </button>
@@ -262,7 +267,7 @@ export default function DashboardChatBot() {
                 <div className="dcb-header">
                     <div className="dcb-header-left">
                         <div className="dcb-avatar">
-                            <Bot size={18} />
+                            <img src={theatrexLogo} alt="TheatreX" className="dcb-avatar-logo" />
                         </div>
                         <div>
                             <div className="dcb-header-name">TheatreX AI Assistant</div>
@@ -296,7 +301,9 @@ export default function DashboardChatBot() {
                     {messages.map((msg, i) => (
                         <div key={i} className={`dcb-msg dcb-msg-${msg.from}`}>
                             {msg.from === 'bot' && (
-                                <div className="dcb-msg-avatar"><Bot size={13} /></div>
+                                <div className="dcb-msg-avatar">
+                                    <img src={theatrexLogo} alt="TheatreX" className="dcb-msg-avatar-logo" />
+                                </div>
                             )}
                             <div className={`dcb-bubble dcb-bubble-${msg.from}`}>
                                 {renderText(msg.text)}
@@ -308,7 +315,9 @@ export default function DashboardChatBot() {
                     ))}
                     {isTyping && (
                         <div className="dcb-msg dcb-msg-bot">
-                            <div className="dcb-msg-avatar"><Bot size={13} /></div>
+                            <div className="dcb-msg-avatar">
+                                <img src={theatrexLogo} alt="TheatreX" className="dcb-msg-avatar-logo" />
+                            </div>
                             <div className="dcb-bubble dcb-bubble-bot dcb-typing">
                                 <span /><span /><span />
                             </div>
