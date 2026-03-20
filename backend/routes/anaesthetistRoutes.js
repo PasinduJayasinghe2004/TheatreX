@@ -25,7 +25,7 @@ import {
     updateAvailability
 } from '../controllers/anaesthetistController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
-import { validateAnaesthetistUpdate } from '../middleware/anaesthetistValidation.js';
+import { validateAnaesthetist, validateAnaesthetistUpdate } from '../middleware/anaesthetistValidation.js';
 import { uploadProfilePicture } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
@@ -43,7 +43,7 @@ router.get('/available', authorize('coordinator', 'admin'), getAvailableAnaesthe
 router.get('/:id', authorize('coordinator', 'admin'), getAnaesthetistById);
 
 // Create new anaesthetist - Admin only
-router.post('/', authorize('admin'), uploadProfilePicture, createAnaesthetist);
+router.post('/', authorize('admin'), uploadProfilePicture, validateAnaesthetist, createAnaesthetist);
 
 // Update anaesthetist - Coordinator and Admin
 router.put('/:id', authorize('coordinator', 'admin'), uploadProfilePicture, validateAnaesthetistUpdate, updateAnaesthetist);
