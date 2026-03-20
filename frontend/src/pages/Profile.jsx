@@ -55,7 +55,6 @@ const Profile = () => {
     // Handle form submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage({ type: '', text: '' });
 
         // Validate passwords match if password is being changed
         if (formData.password && formData.password !== formData.confirmPassword) {
@@ -87,7 +86,7 @@ const Profile = () => {
             );
 
             if (response.data.success) {
-                setMessage({ type: 'success', text: 'Profile updated successfully!' });
+                toast.success('Profile updated successfully!');
                 setIsEditing(false);
 
                 // Update local storage with new user data
@@ -106,10 +105,7 @@ const Profile = () => {
                 }, 1500);
             }
         } catch (error) {
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.message || 'Error updating profile'
-            });
+            toast.error(error.response?.data?.message || 'Error updating profile');
         } finally {
             setLoading(false);
         }
@@ -122,13 +118,13 @@ const Profile = () => {
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            setMessage({ type: 'error', text: 'Please select an image file.' });
+            toast.error('Please select an image file.');
             return;
         }
 
         // Validate file size (5MB)
         if (file.size > 5 * 1024 * 1024) {
-            setMessage({ type: 'error', text: 'Image size should be less than 5MB.' });
+            toast.error('Image size should be less than 5MB.');
             return;
         }
 
@@ -137,7 +133,6 @@ const Profile = () => {
 
         try {
             setUploading(true);
-            setMessage({ type: '', text: '' });
 
             // 1. Upload the image
             const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -195,7 +190,6 @@ const Profile = () => {
         fileInputRef.current?.click();
     };
 
-    // Cancel editing
     const handleCancel = () => {
         setIsEditing(false);
         setFormData({
@@ -204,7 +198,6 @@ const Profile = () => {
             password: '',
             confirmPassword: ''
         });
-        setMessage({ type: '', text: '' });
     };
 
     if (!user) {

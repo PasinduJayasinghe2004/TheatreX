@@ -21,7 +21,6 @@ import axios from 'axios';
 import Layout from '../components/Layout';
 import StaffConflictWarning from '../components/StaffConflictWarning';
 import { toast } from 'react-toastify';
-import Loading from '../components/common/Loading';
 
 // Mock data for staff (replace with API calls when available)
 const MOCK_NURSES = [
@@ -244,19 +243,18 @@ const EmergencyBooking = () => {
     // Handle form submit
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage({ type: '', text: '' });
 
         // Validation
         if (!formData.procedure_name) {
-            setMessage({ type: 'error', text: 'Please enter procedure name' });
+            toast.error('Please enter procedure name');
             return;
         }
         if (!formData.patient_name) {
-            setMessage({ type: 'error', text: 'Patient name is required for emergency booking' });
+            toast.error('Patient name is required for emergency booking');
             return;
         }
         if (!formData.scheduled_date || !formData.scheduled_time) {
-            setMessage({ type: 'error', text: 'Please select date and time' });
+            toast.error('Please select date and time');
             return;
         }
 

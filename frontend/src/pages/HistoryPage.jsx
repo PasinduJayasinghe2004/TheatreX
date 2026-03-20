@@ -6,7 +6,7 @@
 // Displays completed surgeries fetched from GET /api/surgeries/history.
 // ============================================================================
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import DateFilter from '../components/DateFilter';
@@ -77,7 +77,7 @@ const HistoryPage = () => {
         }
     };
 
-    const fetchHistory = async () => {
+    const fetchHistory = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -86,7 +86,7 @@ const HistoryPage = () => {
                 setHistory(response.data || []);
                 if (response.pagination) {
                     setPagination(response.pagination);
-
+ 
                     // Keep local request page in sync if backend clamps page bounds.
                     if (response.pagination.page !== filters.page) {
                         setFilters(prev => ({ ...prev, page: response.pagination.page }));
@@ -104,7 +104,7 @@ const HistoryPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters]);
 
     useEffect(() => {
         fetchSurgeons();
@@ -113,7 +113,7 @@ const HistoryPage = () => {
 
     useEffect(() => {
         fetchHistory();
-    }, [filters.startDate, filters.endDate, filters.surgeonId, filters.theatreId, filters.page, filters.limit]);
+    }, [fetchHistory]);
 
     const handleFilterChange = ({ startDate, endDate }) => {
         setFilters(prev => ({
