@@ -45,6 +45,7 @@ const createTheatresTable = async () => {
     CREATE INDEX IF NOT EXISTS idx_theatres_status ON theatres (status);
     CREATE INDEX IF NOT EXISTS idx_theatres_is_active ON theatres (is_active);
     CREATE INDEX IF NOT EXISTS idx_theatres_theatre_type ON theatres (theatre_type);
+    CREATE INDEX IF NOT EXISTS idx_theatres_active_status_type ON theatres (is_active, status, theatre_type);
     `;
 
   const createTrigger = `

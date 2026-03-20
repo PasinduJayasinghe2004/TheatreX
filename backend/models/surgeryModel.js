@@ -61,6 +61,9 @@ const createSurgeriesTable = async () => {
     CREATE INDEX IF NOT EXISTS idx_surgeries_theatre_id ON surgeries (theatre_id);
     CREATE INDEX IF NOT EXISTS idx_surgeries_surgeon_id ON surgeries (surgeon_id);
     CREATE INDEX IF NOT EXISTS idx_surgeries_patient_id ON surgeries (patient_id);
+    CREATE INDEX IF NOT EXISTS idx_surgeries_status_date_time ON surgeries (status, scheduled_date, scheduled_time);
+    CREATE INDEX IF NOT EXISTS idx_surgeries_theatre_date_time ON surgeries (theatre_id, scheduled_date, scheduled_time);
+    CREATE INDEX IF NOT EXISTS idx_surgeries_surgeon_date_time ON surgeries (surgeon_id, scheduled_date, scheduled_time);
   `;
 
   // Add anaesthetist_id column if it doesn't exist (M3 - Day 9)

@@ -11,6 +11,7 @@
 // ============================================================================
 
 import { pool } from '../config/database.js';
+import { getCache, setCache } from '../utils/cache.js';
 
 // ============================================================================
 // GET DASHBOARD STATISTICS
@@ -22,6 +23,12 @@ import { pool } from '../config/database.js';
 // ============================================================================
 export const getDashboardStats = async (req, res) => {
     try {
+        const cacheKey = 'dashboard:stats';
+        const cachedStats = getCache(cacheKey);
+        if (cachedStats) {
+            return res.status(200).json(cachedStats);
+        }
+
         // Query 1: Total surgeries count
         const totalSurgeriesQuery = `
             SELECT COUNT(*) as total
@@ -110,7 +117,7 @@ export const getDashboardStats = async (req, res) => {
         const totalTheatres = Object.values(theatreStatusSummary).reduce((sum, count) => sum + count, 0);
 
         // Send response
-        res.status(200).json({
+        const payload = {
             success: true,
             data: {
                 totalSurgeries,
@@ -120,7 +127,10 @@ export const getDashboardStats = async (req, res) => {
                 theatreStatusSummary,
                 totalTheatres
             }
-        });
+        };
+
+        setCache(cacheKey, payload, 15000);
+        res.status(200).json(payload);
 
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
@@ -142,6 +152,12 @@ export const getDashboardStats = async (req, res) => {
 // ============================================================================
 export const getDashboardSummary = async (req, res) => {
     try {
+        const cacheKey = 'dashboard:summary';
+        const cachedSummary = getCache(cacheKey);
+        if (cachedSummary) {
+            return res.status(200).json(cachedSummary);
+        }
+
         // 1. Theatre status counts
         const theatreStatusQuery = `
             SELECT status, COUNT(*) as count
@@ -202,7 +218,7 @@ export const getDashboardSummary = async (req, res) => {
             ? parseFloat(((theatreStatus.in_use / theatreStatus.total) * 100).toFixed(1))
             : 0;
 
-        res.status(200).json({
+        const payload = {
             success: true,
             data: {
                 theatre_summary: {
@@ -221,7 +237,10 @@ export const getDashboardSummary = async (req, res) => {
                     }
                 }
             }
-        });
+        };
+
+        setCache(cacheKey, payload, 15000);
+        res.status(200).json(payload);
 
     } catch (error) {
         console.error('Error fetching dashboard summary:', error);
