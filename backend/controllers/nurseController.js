@@ -16,6 +16,7 @@
 
 import { pool } from '../config/database.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ============================================================================
 // CREATE NURSE
@@ -25,7 +26,7 @@ import { sendSuccess, sendError } from '../utils/responseHelper.js';
 // @access  Protected (coordinator, admin)
 // Created by: M3 (Janani) - Day 13
 // ============================================================================
-export const createNurse = async (req, res) => {
+export const createNurse = async (req, res, next) => {
     try {
         const {
             name,
@@ -37,54 +38,6 @@ export const createNurse = async (req, res) => {
             is_available = true,
             shift_preference = 'flexible',
         } = req.body;
-
-        // ── 1. Required field check ──────────────────────────────────────────
-        const missingFields = [];
-        if (!name) missingFields.push('name');
-        if (!specialization) missingFields.push('specialization');
-        if (!license_number) missingFields.push('license_number');
-        if (!phone) missingFields.push('phone');
-        if (!email) missingFields.push('email');
-
-        if (missingFields.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: missingFields.map(f => `${f} is required`),
-            });
-        }
-
-        // ── 2. Email format check ─────────────────────────────────────────────
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: ['email must be a valid email address'],
-            });
-        }
-
-        // ── 3. years_of_experience type check (optional field) ────────────────
-        if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
-            const yoe = Number(years_of_experience);
-            if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Validation failed',
-                    errors: ['years_of_experience must be a non-negative integer'],
-                });
-            }
-        }
-
-        // ── 4. shift_preference check ─────────────────────────────────────────
-        const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
-        if (shift_preference && !validShifts.includes(shift_preference)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: [`shift_preference must be one of: ${validShifts.join(', ')}`],
-            });
-        }
 
         const profile_picture = req.file ? `/uploads/profiles/${req.file.filename}` : null;
 
@@ -124,7 +77,7 @@ export const createNurse = async (req, res) => {
 
     } catch (error) {
         if (error.code === '23505') {
-            return sendError(res, 'A nurse with this email or licence number already exists', 409);
+            return sendError(res, 'A nurse with this email or licence number already exists', 409, ERROR_CODES.CONFLICT);
         }
         next(error);
     }
@@ -205,17 +158,12 @@ export const getAllNurses = async (req, res) => {
 // @access  Protected
 // Created by: M3 (Janani) - Day 13
 // ============================================================================
-export const getNurseById = async (req, res) => {
+export const getNurseById = async (req, res, next) => {
     try {
         const { id } = req.params;
-
-        // Validate ID is a positive integer
         const nurseId = parseInt(id, 10);
         if (isNaN(nurseId) || nurseId <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid nurse ID. Must be a positive integer.',
-            });
+            return sendError(res, 'Invalid nurse ID. Must be a positive integer.', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const query = `
@@ -234,7 +182,7 @@ export const getNurseById = async (req, res) => {
         const { rows } = await pool.query(query, [nurseId]);
 
         if (rows.length === 0) {
-            return sendError(res, 'Nurse not found', 404);
+            return sendError(res, 'Nurse not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         sendSuccess(res, rows[0], 'Nurse fetched successfully', 200);
@@ -251,34 +199,23 @@ export const getNurseById = async (req, res) => {
 // @access  Protected (coordinator, admin)
 // Created by: M2 (Chandeepa) - Day 14
 // ============================================================================
-export const updateNurse = async (req, res) => {
+export const updateNurse = async (req, res, next) => {
     try {
         const { id } = req.params;
-
-        // ── 1. Validate ID ───────────────────────────────────────────────────
         const nurseId = parseInt(id, 10);
         if (isNaN(nurseId) || nurseId <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid nurse ID. Must be a positive integer.',
-            });
+            return sendError(res, 'Invalid nurse ID. Must be a positive integer.', 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        // ── 2. Check nurse exists and is active ─────────────────────────────
         const existing = await pool.query(
             'SELECT * FROM nurses WHERE id = $1 AND is_active = TRUE',
             [nurseId]
         );
         if (existing.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Nurse not found',
-            });
+            return sendError(res, 'Nurse not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         const current = existing.rows[0];
-
-        // ── 3. Merge with existing values (partial update) ──────────────────
         const {
             name = current.name,
             specialization = current.specialization,
@@ -290,37 +227,6 @@ export const updateNurse = async (req, res) => {
             shift_preference = current.shift_preference,
         } = req.body;
 
-        // ── 4. Business-rule validations ────────────────────────────────
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email && !emailRegex.test(email)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: ['email must be a valid email address'],
-            });
-        }
-
-        if (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') {
-            const yoe = Number(years_of_experience);
-            if (isNaN(yoe) || yoe < 0 || !Number.isInteger(yoe)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Validation failed',
-                    errors: ['years_of_experience must be a non-negative integer'],
-                });
-            }
-        }
-
-        const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
-        if (shift_preference && !validShifts.includes(shift_preference)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: [`shift_preference must be one of: ${validShifts.join(', ')}`],
-            });
-        }
-
-        // ── 5. Run UPDATE ────────────────────────────────────────────────
         const updateQuery = `
             UPDATE nurses
             SET
@@ -338,26 +244,17 @@ export const updateNurse = async (req, res) => {
         `;
 
         const values = [
-            name.trim(),
-            specialization.trim(),
-            license_number.trim(),
-            years_of_experience !== '' && years_of_experience !== null
-                ? parseInt(years_of_experience, 10)
-                : null,
-            phone.trim(),
-            email.trim().toLowerCase(),
-            is_available,
-            shift_preference || 'flexible',
-            nurseId,
+            name.trim(), specialization.trim(), license_number.trim(),
+            years_of_experience ? parseInt(years_of_experience, 10) : null,
+            phone.trim(), email.trim().toLowerCase(), is_available,
+            shift_preference || 'flexible', nurseId
         ];
 
         const { rows } = await pool.query(updateQuery, values);
-
         sendSuccess(res, rows[0], 'Nurse updated successfully', 200);
-
     } catch (error) {
         if (error.code === '23505') {
-            return sendError(res, 'A nurse with this email or licence number already exists', 409);
+            return sendError(res, 'A nurse with this email or licence number already exists', 409, ERROR_CODES.CONFLICT);
         }
         next(error);
     }
@@ -371,16 +268,12 @@ export const updateNurse = async (req, res) => {
 // @access  Protected (coordinator, admin)
 // Created by: M2 (Chandeepa) - Day 14
 // ============================================================================
-export const deleteNurse = async (req, res) => {
+export const deleteNurse = async (req, res, next) => {
     try {
         const { id } = req.params;
-
         const nurseId = parseInt(id, 10);
         if (isNaN(nurseId) || nurseId <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid nurse ID. Must be a positive integer.',
-            });
+            return sendError(res, 'Invalid nurse ID. Must be a positive integer.', 400, ERROR_CODES.BAD_REQUEST);
         }
 
         const { rows } = await pool.query(
@@ -392,7 +285,7 @@ export const deleteNurse = async (req, res) => {
         );
 
         if (rows.length === 0) {
-            return sendError(res, 'Nurse not found', 404);
+            return sendError(res, 'Nurse not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
         sendSuccess(res, null, `Nurse "${rows[0].name}" deleted successfully`, 200);

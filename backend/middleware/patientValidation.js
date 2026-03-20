@@ -1,4 +1,5 @@
 import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 /**
  * Validation for Patient creation and updates
@@ -38,7 +39,7 @@ export const validatePatient = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return sendError(res, 'Validation failed', 400, { message: errors.join(', ') });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();

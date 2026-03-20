@@ -10,169 +10,72 @@
 
 import { pool } from '../config/database.js';
 import { hashPassword } from '../utils/hashPassword.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 /**
  * Get all users from the database
- * 
- * @desc    Retrieves all users with their basic information (excludes password)
- * @route   GET /api/users
- * @access  Public (will be protected with authentication in Day 3)
- * 
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * 
- * @returns {Object} JSON response with:
- *   - success: boolean indicating operation status
- *   - count: number of users returned
- *   - data: array of user objects
- * 
- * @throws {500} Internal server error if database query fails
  */
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
     try {
-        // Query database for all users
-        // Note: Password field is excluded for security
         const { rows } = await pool.query(
             'SELECT id, name, email, role, phone, is_active, created_at FROM users'
         );
 
-        // Return successful response with user data
-        res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows
-        });
+        sendSuccess(res, rows, 'Users fetched successfully', 200);
     } catch (error) {
-        // Handle database errors
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching users',
-            error: error.message
-        });
+        next(error);
     }
 };
 
 /**
  * Get a single user by their ID
- * 
- * @desc    Retrieves a specific user's information by their unique ID
- * @route   GET /api/users/:id
- * @access  Public (will be protected with authentication in Day 3)
- * 
- * @param {Object} req - Express request object
- * @param {string} req.params.id - User ID from URL parameter
- * @param {Object} res - Express response object
- * 
- * @returns {Object} JSON response with:
- *   - success: boolean indicating operation status
- *   - data: user object if found
- * 
- * @throws {404} User not found
- * @throws {500} Internal server error if database query fails
  */
-export const getUserById = async (req, res) => {
+export const getUserById = async (req, res, next) => {
     try {
-        // Query database for user with specific ID
-        // Using parameterized query ($1) to prevent SQL injection
         const { rows } = await pool.query(
             'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = $1',
             [req.params.id]
         );
 
-        // Check if user exists
         if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
+            return sendError(res, 'User not found', 404, ERROR_CODES.NOT_FOUND);
         }
 
-        // Return the found user (first element of results array)
-        res.status(200).json({
-            success: true,
-            data: rows[0]
-        });
+        sendSuccess(res, rows[0], 'User fetched successfully', 200);
     } catch (error) {
-        // Handle database errors
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching user',
-            error: error.message
-        });
+        next(error);
     }
 };
 
 // @desc    Create new user (Register)
-// @route   POST /api/users
-// @access  Public
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
     try {
         const { name, email, password, role, phone } = req.body;
-
-        // Validate required fields
-        if (!name || !email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide name, email, and password'
-            });
-        }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide a valid email address'
-            });
-        }
-
-        // Validate password length
-        if (password.length < 6) {
-            return res.status(400).json({
-                success: false,
-                message: 'Password must be at least 6 characters'
-            });
-        }
 
         // Check if email already exists
         const { rows: existingUsers } = await pool.query(
             'SELECT id FROM users WHERE email = $1',
-            [email]
+            [email.trim().toLowerCase()]
         );
 
         if (existingUsers.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email already exists'
-            });
+            return sendError(res, 'Email already exists', 409, ERROR_CODES.CONFLICT);
         }
 
-        // Hash password
         const hashedPassword = await hashPassword(password);
 
-        // Insert user into database using RETURNING to get the new id
         const { rows: insertResult } = await pool.query(
-            'INSERT INTO users (name, email, password, role, phone) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-            [name, email, hashedPassword, role || 'coordinator', phone || null]
+            'INSERT INTO users (name, email, password, role, phone) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, role, phone, is_active, created_at',
+            [name.trim(), email.trim().toLowerCase(), hashedPassword, role || 'coordinator', phone || null]
         );
 
-        // Get the created user (without password)
-        const { rows: newUser } = await pool.query(
-            'SELECT id, name, email, role, phone, is_active, created_at FROM users WHERE id = $1',
-            [insertResult[0].id]
-        );
-
-        res.status(201).json({
-            success: true,
-            message: 'User registered successfully',
-            data: newUser[0]
-        });
+        sendSuccess(res, insertResult[0], 'User registered successfully', 201);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error creating user',
-            error: error.message
-        });
+        if (error.code === '23505') {
+            return sendError(res, 'Email already exists', 409, ERROR_CODES.CONFLICT);
+        }
+        next(error);
     }
 };
 

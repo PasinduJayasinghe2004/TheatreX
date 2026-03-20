@@ -71,7 +71,7 @@ const buildHistoryFilters = (query = {}, includePagination = false) => {
     if (surgeonId !== undefined && surgeonId !== null && surgeonId !== '') {
         const surgeonIdNum = Number(surgeonId);
         if (!Number.isInteger(surgeonIdNum) || surgeonIdNum <= 0) {
-            return { error: 'surgeonId must be a positive integer' };
+            return { error: 'surgeonId must be a positive integer', errorCode: ERROR_CODES.BAD_REQUEST };
         }
         filters.surgeonId = surgeonIdNum;
     }
@@ -79,7 +79,7 @@ const buildHistoryFilters = (query = {}, includePagination = false) => {
     if (theatreId !== undefined && theatreId !== null && theatreId !== '') {
         const theatreIdNum = Number(theatreId);
         if (!Number.isInteger(theatreIdNum) || theatreIdNum <= 0) {
-            return { error: 'theatreId must be a positive integer' };
+            return { error: 'theatreId must be a positive integer', errorCode: ERROR_CODES.BAD_REQUEST };
         }
         filters.theatreId = theatreIdNum;
     }
@@ -89,11 +89,11 @@ const buildHistoryFilters = (query = {}, includePagination = false) => {
         const limitNum = Number(limit);
 
         if (!Number.isInteger(pageNum) || pageNum <= 0) {
-            return { error: 'page must be a positive integer' };
+            return { error: 'page must be a positive integer', errorCode: ERROR_CODES.BAD_REQUEST };
         }
 
         if (!Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100) {
-            return { error: 'limit must be an integer between 1 and 100' };
+            return { error: 'limit must be an integer between 1 and 100', errorCode: ERROR_CODES.BAD_REQUEST };
         }
 
         filters.page = pageNum;
@@ -362,10 +362,7 @@ export const getSurgeryHistory = async (req, res) => {
     try {
         const parsedFilters = buildHistoryFilters(req.query, true);
         if (parsedFilters.error) {
-            return res.status(400).json({
-                success: false,
-                message: parsedFilters.error
-            });
+            return sendError(res, parsedFilters.error, 400, parsedFilters.errorCode || ERROR_CODES.BAD_REQUEST);
         }
 
         const {
@@ -414,10 +411,7 @@ export const getSurgeryHistory = async (req, res) => {
         const dataParams = [...queryParams, limitNum, offset];
         const { rows } = await pool.query(query, dataParams);
 
-        res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows,
+        return sendSuccess(res, rows, 'Surgery history fetched successfully', 200, {
             pagination: {
                 page: effectivePage,
                 limit: limitNum,
@@ -428,12 +422,7 @@ export const getSurgeryHistory = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching surgery history:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching surgery history',
-            error: error.message
-        });
+        return sendError(res, 'Error fetching surgery history', 500, 'INTERNAL_SERVER_ERROR', error);
     }
 };
 
@@ -787,18 +776,9 @@ export const getSurgeonsDropdown = async (req, res) => {
             ORDER BY name ASC
         `);
 
-        res.status(200).json({
-            success: true,
-            count: rows.length,
-            data: rows
-        });
+        return sendSuccess(res, rows, 'Surgeons fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching surgeons:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching surgeons',
-            error: error.message
-        });
+        return sendError(res, 'Error fetching surgeons', 500, 'INTERNAL_SERVER_ERROR', error);
     }
 };
 
@@ -892,19 +872,14 @@ export const getAvailableSurgeons = async (req, res) => {
 
         const availableCount = surgeonsWithAvailability.filter(s => s.available).length;
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             count: surgeonsWithAvailability.length,
             available_count: availableCount,
             data: surgeonsWithAvailability
-        });
+        }, 'Available surgeons fetched successfully', 200);
     } catch (error) {
         console.error('Error fetching available surgeons:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching available surgeons',
-            error: error.message
-        });
+        sendError(res, 'Error fetching available surgeons', 500, ERROR_CODES.INTERNAL_SERVER_ERROR, error);
     }
 };
 
@@ -1000,20 +975,15 @@ export const getAvailableNurses = async (req, res) => {
 
         const availableCount = nursesWithAvailability.filter(n => n.available).length;
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             count: nursesWithAvailability.length,
             available_count: availableCount,
             max_per_surgery: 3,
             data: nursesWithAvailability
-        });
+        }, 'Available nurses fetched successfully', 200);
     } catch (error) {
         console.error('Error fetching available nurses:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching available nurses',
-            error: error.message
-        });
+        sendError(res, 'Error fetching available nurses', 500, ERROR_CODES.INTERNAL_SERVER_ERROR, error);
     }
 };
 

@@ -1,22 +1,8 @@
-// ============================================================================
-// User Validation Middleware
-// ============================================================================
-// Reusable validation middleware for authentication routes
-// Created by: M3 - Day 3 (User Validation Middleware)
-//
-// MIDDLEWARE:
-// - validateRegister - Validates registration input
-// - validateLogin - Validates login input
-// ============================================================================
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
+import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 /**
  * Validate email format using regex
- * @param {string} email - Email to validate
- * @returns {boolean} - True if valid email format
  */
 const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,8 +11,6 @@ const isValidEmail = (email) => {
 
 /**
  * Validate password strength
- * @param {string} password - Password to validate
- * @returns {object} - { isValid, message }
  */
 const validatePassword = (password) => {
     if (!password) {
@@ -38,12 +22,6 @@ const validatePassword = (password) => {
     return { isValid: true, message: '' };
 };
 
-// ============================================================================
-// MIDDLEWARE: Validate Registration Input
-// ============================================================================
-// Validates: name, email, password, role
-// Returns 400 error if validation fails
-// ============================================================================
 export const validateRegister = (req, res, next) => {
     const { name, email, password, role } = req.body;
     const errors = [];
@@ -78,11 +56,7 @@ export const validateRegister = (req, res, next) => {
 
     // Return errors if any
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     // Trim and sanitize input before passing to controller
@@ -92,12 +66,6 @@ export const validateRegister = (req, res, next) => {
     next();
 };
 
-// ============================================================================
-// MIDDLEWARE: Validate Login Input
-// ============================================================================
-// Validates: email, password
-// Returns 400 error if validation fails
-// ============================================================================
 export const validateLogin = (req, res, next) => {
     const { email, password } = req.body;
     const errors = [];
@@ -116,11 +84,7 @@ export const validateLogin = (req, res, next) => {
 
     // Return errors if any
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     // Normalize email before passing to controller
@@ -129,5 +93,4 @@ export const validateLogin = (req, res, next) => {
     next();
 };
 
-// Export helper functions for reuse
 export { isValidEmail, validatePassword };

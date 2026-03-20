@@ -1,12 +1,5 @@
-// ============================================================================
-// Nurse Validation Middleware
-// ============================================================================
-// Created by: M3 (Janani) - Day 13
-// Updated by: M2 (Chandeepa) - Day 14 (added validateNurseUpdate)
-//
-// Validates incoming nurse data before the controller processes it.
-// Ensures all required fields are present and correctly formatted.
-// ============================================================================
+import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 // ── Validate Create Nurse body ───────────────────────────────────────────────
 export const validateNurse = (req, res, next) => {
@@ -55,11 +48,7 @@ export const validateNurse = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors,
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();
@@ -97,11 +86,7 @@ export const validateNurseUpdate = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors,
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();

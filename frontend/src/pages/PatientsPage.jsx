@@ -25,6 +25,7 @@ import patientService from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -369,33 +370,28 @@ const PatientsPage = () => {
                         </button>
                     </div>
                 ) : displayed.length === 0 ? (
-                    /* Empty state */
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mb-4">
-                            <UserPlus className="w-7 h-7 text-emerald-400" />
-                        </div>
-                        <h3 className="text-base font-semibold text-gray-900 mb-1">
-                            {search || filterGender || filterBloodType
-                                ? 'No patients match your filters'
-                                : 'No patients yet'}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-4 max-w-xs">
-                            {search || filterGender || filterBloodType
+                    <EmptyState
+                        icon="👤"
+                        title={search || filterGender || filterBloodType ? 'No patients match your filters' : 'No patients yet'}
+                        description={
+                            search || filterGender || filterBloodType
                                 ? 'Try adjusting your filters or search query.'
                                 : canManage
                                     ? 'Add the first patient to get started.'
-                                    : 'No patients have been added yet.'}
-                        </p>
-                        {canManage && (
-                            <button
-                                onClick={() => setShowForm(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
-                            >
-                                <UserPlus className="w-4 h-4" />
-                                Add Patient
-                            </button>
-                        )}
-                    </div>
+                                    : 'No patients have been added yet.'
+                        }
+                        actionButton={
+                            canManage && (
+                                <button
+                                    onClick={() => setShowForm(true)}
+                                    className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors shadow-md"
+                                >
+                                    <UserPlus className="w-4 h-4" />
+                                    Add Patient
+                                </button>
+                            )
+                        }
+                    />
                 ) : (
                     /* Patient card grid */
                     <>

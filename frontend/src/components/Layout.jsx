@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import DashboardChatBot from './DashboardChatBot';
+import ErrorBoundary from './common/ErrorBoundary';
 
 /**
  * Layout Component
@@ -10,6 +11,7 @@ import DashboardChatBot from './DashboardChatBot';
  * Created by: M6 (Dinil) - Day 2
  * Updated by: M4 (Oneli) - Day 2 (Added Header component)
  * Updated by: M5 - Day 2 (Integrated Sidebar component)
+ * Updated by: Antigravity - Day 23 (Wrapped with ErrorBoundary)
  * 
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Main content to render
@@ -46,7 +48,9 @@ const Layout = ({ children, showHeader = true, showSidebar = true }) => {
                     `}
                 >
                     <div className="max-w-7xl mx-auto">
-                        {children}
+                        <ErrorBoundary>
+                            {children}
+                        </ErrorBoundary>
                     </div>
                 </main>
             </div>

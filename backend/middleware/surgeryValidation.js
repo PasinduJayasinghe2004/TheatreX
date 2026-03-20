@@ -1,11 +1,5 @@
-// ============================================================================
-// Surgery Validation Middleware
-// ============================================================================
-// Created by: M4 (Oneli) - Day 5
-// 
-// Validates incoming surgery data before processing
-// Ensures data integrity and correct types
-// ============================================================================
+import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 export const validateSurgery = (req, res, next) => {
     const {
@@ -107,11 +101,7 @@ export const validateSurgery = (req, res, next) => {
 
     // Return errors if any
     if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors
-        });
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
     }
 
     next();

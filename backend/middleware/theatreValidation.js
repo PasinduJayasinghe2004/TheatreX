@@ -1,16 +1,5 @@
-// ============================================================================
-// Theatre Validation Middleware
-// ============================================================================
-// Created by: M3 (Janani) - Day 10
-//
-// Express middleware that validates theatre-related request data before
-// the request reaches the controller.
-//
-// EXPORTS:
-//   validateTheatreStatus  – validates PUT /api/theatres/:id/status body
-//   validateTheatreFilters – validates GET /api/theatres query params
-// ============================================================================
-
+import { sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 import {
     isValidTheatreStatus,
     isValidTheatreType,
@@ -18,54 +7,29 @@ import {
     VALID_THEATRE_TYPES
 } from '../utils/theatreConstants.js';
 
-// ============================================================================
-// Validate Theatre Status (for PUT /api/theatres/:id/status)
-// ============================================================================
-// Ensures:
-//   1. `status` is present in req.body
-//   2. `status` is one of the allowed enum values
-// ============================================================================
 export const validateTheatreStatus = (req, res, next) => {
     const { status } = req.body;
 
     if (!status) {
-        return res.status(400).json({
-            success: false,
-            message: 'Status is required'
-        });
+        return sendError(res, 'Status is required', 400, ERROR_CODES.VALIDATION_ERROR);
     }
 
     if (!isValidTheatreStatus(status)) {
-        return res.status(400).json({
-            success: false,
-            message: `Invalid status '${status}'. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
-        });
+        return sendError(res, `Invalid status '${status}'. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`, 400, ERROR_CODES.VALIDATION_ERROR);
     }
 
     next();
 };
 
-// ============================================================================
-// Validate Theatre Query Filters (for GET /api/theatres)
-// ============================================================================
-// If the caller provides ?status= or ?type=, make sure the values are valid.
-// Invalid filter values return 400 instead of silently returning 0 results.
-// ============================================================================
 export const validateTheatreFilters = (req, res, next) => {
     const { status, type } = req.query;
 
     if (status && !isValidTheatreStatus(status)) {
-        return res.status(400).json({
-            success: false,
-            message: `Invalid status filter '${status}'. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`
-        });
+        return sendError(res, `Invalid status filter '${status}'. Must be one of: ${VALID_THEATRE_STATUSES.join(', ')}`, 400, ERROR_CODES.VALIDATION_ERROR);
     }
 
     if (type && !isValidTheatreType(type)) {
-        return res.status(400).json({
-            success: false,
-            message: `Invalid type filter '${type}'. Must be one of: ${VALID_THEATRE_TYPES.join(', ')}`
-        });
+        return sendError(res, `Invalid type filter '${type}'. Must be one of: ${VALID_THEATRE_TYPES.join(', ')}`, 400, ERROR_CODES.VALIDATION_ERROR);
     }
 
     next();

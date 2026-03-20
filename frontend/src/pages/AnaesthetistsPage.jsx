@@ -19,6 +19,7 @@ import anaesthetistService from '../services/anaesthetistService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -809,23 +810,28 @@ const AnaesthetistsPage = () => {
                         </button>
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <svg className="w-16 h-16 text-gray-300 dark:text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <p className="text-gray-500 dark:text-slate-400 font-medium">No anaesthetists found</p>
-                        {search ? (
-                            <p className="text-sm text-gray-400 dark:text-slate-500 mt-1">Try adjusting your search</p>
-                        ) : canCreate ? (
-                            <button
-                                onClick={() => setShowCreateModal(true)}
-                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                            >
-                                Add the first anaesthetist
-                            </button>
-                        ) : null}
-                    </div>
+                    <EmptyState
+                        icon="🥼"
+                        title={search ? 'No anaesthetists match your search' : 'No anaesthetists found'}
+                        description={
+                            search
+                                ? 'Try adjusting your search query to find who you are looking for.'
+                                : canCreate
+                                    ? 'Start by adding your first anaesthetist record to the system.'
+                                    : 'There are no anaesthetists registered in the system.'
+                        }
+                        actionButton={
+                            canCreate && (
+                                <button
+                                    onClick={() => setShowCreateModal(true)}
+                                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                    Add First Anaesthetist
+                                </button>
+                            )
+                        }
+                    />
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {filtered.map(item => (

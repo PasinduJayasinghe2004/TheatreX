@@ -23,6 +23,7 @@ import technicianService from '../services/technicianService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -372,33 +373,28 @@ const TechniciansPage = () => {
                         </button>
                     </div>
                 ) : displayed.length === 0 ? (
-                    /* Empty state */
-                    <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="w-14 h-14 bg-teal-50 dark:bg-teal-950/30 rounded-full flex items-center justify-center mb-4">
-                            <UserPlus className="w-7 h-7 text-teal-400" />
-                        </div>
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
-                            {search || filterSpecialization || filterAvailability !== 'all'
-                                ? 'No technicians match your filters'
-                                : 'No technicians yet'}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4 max-w-xs">
-                            {search || filterSpecialization || filterAvailability !== 'all'
-                                ? 'Try adjusting your filters or search query.'
+                    <EmptyState
+                        icon="🛠️"
+                        title={search || filterSpecialization || filterAvailability !== 'all' ? 'No technicians match your filters' : 'No technicians found'}
+                        description={
+                            search || filterSpecialization || filterAvailability !== 'all'
+                                ? 'Try adjusting your filters or search query to find who you are looking for.'
                                 : canManage
-                                    ? 'Add the first technician to get started.'
-                                    : 'No technicians have been added yet.'}
-                        </p>
-                        {canManage && (
-                            <button
-                                onClick={() => setShowForm(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors"
-                            >
-                                <UserPlus className="w-4 h-4" />
-                                Add Technician
-                            </button>
-                        )}
-                    </div>
+                                    ? 'Start by adding your first technician record to the system.'
+                                    : 'There are no technicians registered in the system.'
+                        }
+                        actionButton={
+                            canManage && (
+                                <button
+                                    onClick={() => setShowForm(true)}
+                                    className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl shadow-md transition-colors"
+                                >
+                                    <UserPlus className="w-4 h-4" />
+                                    Add First Technician
+                                </button>
+                            )
+                        }
+                    />
                 ) : (
                     /* Technician card grid */
                     <>
