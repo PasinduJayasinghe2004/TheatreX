@@ -18,6 +18,7 @@ import { createSurgeriesTable } from './surgeryModel.js';
 import { createTheatresTable } from './theatreModel.js';
 import { createPatientsTable } from './patientModel.js';
 import { createTechniciansTable } from './technicianModel.js';
+import { initializeSettingsTables } from './settingsModel.js';
 
 /**
  * Create shared trigger function for auto-updating updated_at timestamps
@@ -173,6 +174,7 @@ const initializeTables = async () => {
         await createAnaesthetistsTable(); // M5 - Day 2
         await createSurgeonsTable(); // Janani (M3) - Day 2
         await createSurgeryNursesTable(); // M2 - Day 9
+        await initializeSettingsTables(); // Settings persistence and auth sessions
         console.log('✅ All tables initialized successfully');
     } catch (error) {
         console.error('❌ Error initializing tables:', error.message);

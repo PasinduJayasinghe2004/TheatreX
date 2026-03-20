@@ -15,19 +15,41 @@
  *  2. In any component: const { isDark, toggleTheme } = useTheme();
  */
 
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, useMemo, useSyncExternalStore } from 'react';
+
+const COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+
+const subscribeToColorScheme = (callback) => {
+    const media = window.matchMedia(COLOR_SCHEME_QUERY);
+    media.addEventListener('change', callback);
+    return () => media.removeEventListener('change', callback);
+};
+
+const getColorSchemeSnapshot = () => window.matchMedia(COLOR_SCHEME_QUERY).matches;
+const getColorSchemeServerSnapshot = () => false;
 
 const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-    // Initialise from localStorage, fallback to system preference
-    const [isDark, setIsDark] = useState(() => {
-        const stored = localStorage.getItem('theatrex-theme');
-        if (stored !== null) return stored === 'dark';
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const [themeMode, setThemeMode] = useState(() => {
+        const stored = localStorage.getItem('theatrex-theme-mode');
+        return stored || 'system';
     });
 
-    // Apply / remove .dark class on <html> whenever isDark changes
+    const [density, setDensity] = useState(() => localStorage.getItem('theatrex-density') || 'comfortable');
+    const [highContrast, setHighContrast] = useState(() => localStorage.getItem('theatrex-high-contrast') === 'true');
+    const prefersDark = useSyncExternalStore(
+        subscribeToColorScheme,
+        getColorSchemeSnapshot,
+        getColorSchemeServerSnapshot
+    );
+
+    const isDark = useMemo(
+        () => themeMode === 'dark' || (themeMode === 'system' && prefersDark),
+        [themeMode, prefersDark]
+    );
+
+    // Apply theme side effects and persistence
     useEffect(() => {
         const root = document.documentElement;
         if (isDark) {
@@ -35,13 +57,36 @@ export const ThemeProvider = ({ children }) => {
         } else {
             root.classList.remove('dark');
         }
-        localStorage.setItem('theatrex-theme', isDark ? 'dark' : 'light');
-    }, [isDark]);
 
-    const toggleTheme = () => setIsDark(prev => !prev);
+        root.dataset.density = density;
+        if (highContrast) {
+            root.classList.add('high-contrast');
+        } else {
+            root.classList.remove('high-contrast');
+        }
+
+        localStorage.setItem('theatrex-theme-mode', themeMode);
+        localStorage.setItem('theatrex-density', density);
+        localStorage.setItem('theatrex-high-contrast', String(highContrast));
+    }, [isDark, themeMode, density, highContrast]);
+
+    const toggleTheme = () => {
+        setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
+    };
 
     return (
-        <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+        <ThemeContext.Provider
+            value={{
+                isDark,
+                toggleTheme,
+                themeMode,
+                setThemeMode,
+                density,
+                setDensity,
+                highContrast,
+                setHighContrast,
+            }}
+        >
             {children}
         </ThemeContext.Provider>
     );

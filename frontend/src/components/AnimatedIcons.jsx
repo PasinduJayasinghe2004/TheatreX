@@ -3,6 +3,39 @@ import { useState, useEffect, useRef } from 'react'
 const color = '#2563EB'
 const size = 24
 
+export function AnimatedLogoLoader({ mode = 'loading', iconSize = 56 }) {
+    const isBuffering = mode === 'buffering'
+
+    return (
+        <div className="relative inline-flex items-center justify-center" role="img" aria-label={isBuffering ? 'Buffering' : 'Loading'}>
+            <span
+                className={`absolute rounded-full border border-blue-200 ${isBuffering ? 'animate-ping' : ''}`}
+                style={{ width: iconSize + 18, height: iconSize + 18 }}
+            />
+
+            <span
+                className={`absolute rounded-full border-2 border-blue-500/70 border-t-transparent ${isBuffering ? 'animate-spin' : 'animate-spin'}`}
+                style={{ width: iconSize + 6, height: iconSize + 6, animationDuration: isBuffering ? '1.2s' : '1.8s' }}
+            />
+
+            <img
+                src="/logo.svg"
+                alt="TheatreX"
+                className={`${isBuffering ? 'animate-pulse' : ''} drop-shadow-sm`}
+                style={{ width: iconSize, height: iconSize }}
+            />
+
+            {isBuffering && (
+                <span className="absolute -bottom-4 flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '140ms' }} />
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '280ms' }} />
+                </span>
+            )}
+        </div>
+    )
+}
+
 export function AnimatedClock() {
     return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img" aria-label="Real-time status">

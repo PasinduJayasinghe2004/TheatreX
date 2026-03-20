@@ -15,6 +15,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
 import SummaryCard from '../components/SummaryCard';
 import TheatreAssignmentDropdown from '../components/TheatreAssignmentDropdown';
 import theatreService from '../services/theatreService';
@@ -27,7 +28,7 @@ const STATUS_CONFIG = {
     available: { label: 'Available', bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-300', border: 'border-emerald-200 dark:border-emerald-900/50', dot: 'bg-emerald-500', card: 'border-l-emerald-400' },
     in_use: { label: 'In Use', bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-300', border: 'border-blue-200 dark:border-blue-900/50', dot: 'bg-blue-500', card: 'border-l-blue-400' },
     maintenance: { label: 'Maintenance', bg: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-200 dark:border-amber-900/50', dot: 'bg-amber-500', card: 'border-l-amber-400' },
-    cleaning: { label: 'Cleaning', bg: 'bg-purple-50 dark:bg-purple-950/30', text: 'text-purple-700 dark:text-purple-300', border: 'border-purple-200 dark:border-purple-900/50', dot: 'bg-purple-500', card: 'border-l-purple-400' },
+    cleaning: { label: 'Cleaning', bg: 'bg-slate-100 dark:bg-slate-800/70', text: 'text-slate-700 dark:text-slate-300', border: 'border-slate-200 dark:border-slate-700', dot: 'bg-slate-500', card: 'border-l-slate-400' },
 };
 
 const StatusBadge = ({ status }) => {
@@ -85,7 +86,7 @@ const TheatreCard = ({ theatre, onViewDetail, onViewLive, onQuickStatus, onAssig
     } else if (status === 'maintenance' || status === 'cleaning') {
         quickActions.push({ label: 'Set Available', target: 'available', color: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' });
     } else if (status === 'in_use') {
-        quickActions.push({ label: 'Complete & Clean', target: 'cleaning', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200' });
+        quickActions.push({ label: 'Complete & Clean', target: 'cleaning', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200' });
     }
 
     // Show "Assign Surgery" button for available theatres without a current surgery
@@ -307,12 +308,7 @@ const CoordinatorDashboard = () => {
     if (loading) {
         return (
             <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-                        <p className="mt-4 text-gray-500 dark:text-slate-400">Loading coordinator overview…</p>
-                    </div>
-                </div>
+                <Loading message="Loading coordinator overview..." />
             </Layout>
         );
     }

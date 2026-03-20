@@ -10,6 +10,7 @@ import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 
 import Profile from '../pages/Profile';
+import Settings from '../pages/Settings';
 import CreateSurgery from '../pages/CreateSurgery';
 import SurgeryList from '../pages/SurgeryList';
 import SurgeryDetail from '../pages/SurgeryDetail';
@@ -90,6 +91,12 @@ const AppRoutes = () => {
             <Route path="/profile" element={
                 <ProtectedRoute>
                     <Profile />
+                </ProtectedRoute>
+            } />
+
+            <Route path="/settings" element={
+                <ProtectedRoute>
+                    <Settings />
                 </ProtectedRoute>
             } />
 
