@@ -2,6 +2,7 @@ import express from 'express';
 import { pool } from '../config/database.js';
 
 const router = express.Router();
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * @route   POST /api/inquiries/demo-request
@@ -17,6 +18,48 @@ router.post('/demo-request', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'Name and email are required'
+            });
+        }
+
+        if (!EMAIL_REGEX.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid email address'
+            });
+        }
+
+        if (String(name).length > 120 || String(email).length > 160) {
+            return res.status(400).json({
+                success: false,
+                message: 'Input is too long'
+            });
+        }
+
+        if (organization && String(organization).length > 160) {
+            return res.status(400).json({
+                success: false,
+                message: 'Organization is too long'
+            });
+        }
+
+        if (role && String(role).length > 80) {
+            return res.status(400).json({
+                success: false,
+                message: 'Role is too long'
+            });
+        }
+
+        if (phone && String(phone).length > 30) {
+            return res.status(400).json({
+                success: false,
+                message: 'Phone number is too long'
+            });
+        }
+
+        if (message && String(message).length > 2000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Message exceeds maximum length'
             });
         }
 
@@ -42,8 +85,7 @@ router.post('/demo-request', async (req, res) => {
         console.error('❌ Error submitting demo request:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Internal server error',
-            error: error.message
+            message: 'Internal server error'
         });
     }
 });

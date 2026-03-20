@@ -38,21 +38,78 @@ import analyticsRoutes from './routes/analyticsRoutes.js'; // M1 - Day 18
 import chatbotRoutes from './routes/chatbotRoutes.js'; // AI Chatbot - Gemini Flash
 import inquiryRoutes from './routes/inquiryRoutes.js'; // Demo requests - New
 import { checkSurgeryReminders, clearOldNotifications } from './utils/scheduler.js'; // M4 - Day 16
+import { securityHeaders, sanitizeRequest, createRateLimiter } from './middleware/securityMiddleware.js';
 
 // Initialize Express app
 const app = express();
+const isTestEnv = process.env.NODE_ENV === 'test';
+
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+
+const configuredOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+const defaultOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:4173'
+];
+
+const allowedOrigins = configuredOrigins.length > 0 ? configuredOrigins : defaultOrigins;
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Allow requests from server-to-server tools and same-origin requests.
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error('CORS origin is not allowed'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+const apiRateLimiter = createRateLimiter({
+    windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000),
+    max: Number(process.env.RATE_LIMIT_MAX || 120),
+    message: 'Too many API requests. Please try again shortly.'
+});
+
+const authRateLimiter = createRateLimiter({
+    windowMs: Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60_000),
+    max: Number(process.env.AUTH_RATE_LIMIT_MAX || 30),
+    message: 'Too many authentication attempts. Please wait and try again.'
+});
+
+const inquiryRateLimiter = createRateLimiter({
+    windowMs: Number(process.env.INQUIRY_RATE_LIMIT_WINDOW_MS || 10 * 60_000),
+    max: Number(process.env.INQUIRY_RATE_LIMIT_MAX || 10),
+    message: 'Too many demo requests from this IP. Please try again later.'
+});
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
+app.use(securityHeaders);
+if (!isTestEnv) {
+    app.use('/api', apiRateLimiter);
+    app.use('/api/auth', authRateLimiter);
+    app.use('/api/inquiries', inquiryRateLimiter);
+}
 
 // Parse incoming JSON payloads in request body
 // Makes req.body available for JSON data
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 
 // Parse URL-encoded data (form submissions)
 // extended: true allows for rich objects and arrays to be encoded
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+app.use(sanitizeRequest);
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static('uploads'));

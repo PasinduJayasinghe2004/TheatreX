@@ -51,10 +51,17 @@ export const protect = async (req, res, next) => {
 
         } catch (error) {
             console.error('Auth Middleware Error:', error.message);
-            return res.status(401).json({
+            const response = {
                 success: false,
-                message: 'Not authorized, token failed',
-                error: error.message
+                message: 'Not authorized, token is invalid or expired'
+            };
+
+            if (process.env.NODE_ENV === 'development') {
+                response.details = error.message;
+            }
+
+            return res.status(401).json({
+                ...response
             });
         }
     }
@@ -84,7 +91,7 @@ export const authorize = (...roles) => {
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
-                message: `User role '${req.user.role}' is not authorized to access this route`
+                message: 'Forbidden: insufficient permissions for this route'
             });
         }
 
