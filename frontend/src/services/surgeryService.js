@@ -94,6 +94,12 @@ const surgeryService = {
             if (filters.status) {
                 params.append('status', filters.status);
             }
+            if (filters.page) {
+                params.append('page', String(filters.page));
+            }
+            if (filters.limit) {
+                params.append('limit', String(filters.limit));
+            }
 
             const queryString = params.toString();
             const url = queryString ? `/surgeries?${queryString}` : '/surgeries';

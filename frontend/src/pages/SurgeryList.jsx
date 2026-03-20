@@ -35,6 +35,14 @@ const SurgeryList = () => {
         endDate: null,
         status: null      // M3 (Janani) Day 6 — status filter
     });
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState({
+        total: 0,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        limit: 12
+    });
 
     // ... existing state and effects ...
     const [editingSurgery, setEditingSurgery] = useState(null);
@@ -47,16 +55,24 @@ const SurgeryList = () => {
     useEffect(() => {
         fetchSurgeries();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters]);
+    }, [filters, page]);
 
     const fetchSurgeries = async () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await surgeryService.getAllSurgeries(filters);
+            const response = await surgeryService.getAllSurgeries({
+                ...filters,
+                page,
+                limit: pagination.limit
+            });
 
             if (response.success) {
                 setSurgeries(response.data);
+                const paginationMeta = response.meta?.pagination;
+                if (paginationMeta) {
+                    setPagination(prev => ({ ...prev, ...paginationMeta }));
+                }
             } else {
                 const msg = response.message || 'Failed to load surgeries';
                 setError(msg);
@@ -120,24 +136,27 @@ const SurgeryList = () => {
 
     // Filter handlers
     const handleFilterChange = (startDate, endDate) => {
+        setPage(1);
         setFilters(prev => ({ ...prev, startDate, endDate }));
     };
 
     const handleClearFilter = () => {
+        setPage(1);
         setFilters(prev => ({ ...prev, startDate: null, endDate: null }));
     };
 
     const handleStatusFilterChange = (e) => {
         const value = e.target.value;
+        setPage(1);
         setFilters(prev => ({ ...prev, status: value === 'all' ? null : value }));
     };
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-6 sm:py-8 px-3 sm:px-4">
                 <div className="max-w-7xl mx-auto">
                     {/* ... Header and Filters ... */}
-                    <div className="mb-8 flex justify-between items-center">
+                    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="surgery-list-title">Surgeries</h1>
                             <p className="mt-1 text-gray-600 dark:text-slate-400">
@@ -146,7 +165,7 @@ const SurgeryList = () => {
                         </div>
                         <button
                             onClick={() => navigate('/surgeries/new')}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                            className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
                         >
                             <Plus className="w-5 h-5" />
                             Create Surgery
@@ -201,7 +220,7 @@ const SurgeryList = () => {
                         <>
                             <div className="mb-6">
                                 <p className="text-sm text-gray-600 dark:text-slate-400">
-                                    {surgeries.length} {surgeries.length === 1 ? 'surgery' : 'surgeries'} found
+                                    {pagination.total} total {pagination.total === 1 ? 'surgery' : 'surgeries'}
                                 </p>
                             </div>
 
@@ -234,6 +253,30 @@ const SurgeryList = () => {
                                             onDelete={handleDelete}
                                         />
                                     ))}
+                                </div>
+                            )}
+
+                            {pagination.totalPages > 1 && (
+                                <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                    <p className="text-sm text-gray-600 dark:text-slate-400">
+                                        Page {page} of {pagination.totalPages}
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                                            disabled={!pagination.hasPrevPage}
+                                            className="px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Previous
+                                        </button>
+                                        <button
+                                            onClick={() => setPage(prev => prev + 1)}
+                                            disabled={!pagination.hasNextPage}
+                                            className="px-3 py-2 text-sm rounded-lg bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </>
