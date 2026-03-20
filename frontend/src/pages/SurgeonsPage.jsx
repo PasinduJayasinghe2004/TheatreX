@@ -19,6 +19,8 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import surgeonService from '../services/surgeonService';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import Loading from '../components/common/Loading';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Small helpers
@@ -307,8 +309,11 @@ const CreateSurgeonModal = ({ onClose, onCreated }) => {
             });
             const res = await surgeonService.createSurgeon(formData);
             onCreated(res.data);
+            toast.success(`Surgeon '${res.data.name}' added successfully`);
         } catch (err) {
-            setServerErrors([err.message]);
+            const msg = err.message || 'Failed to create surgeon';
+            setServerErrors([msg]);
+            toast.error(msg);
         } finally {
             setSubmitting(false);
         }
@@ -471,8 +476,11 @@ const EditSurgeonModal = ({ surgeon, onClose, onUpdated }) => {
         try {
             const result = await surgeonService.updateSurgeon(surgeon.id, form);
             onUpdated(result.data);
+            toast.success(`Surgeon '${result.data.name}' updated successfully`);
         } catch (err) {
-            setServerErrors([err.message]);
+            const msg = err.message || 'Failed to update surgeon';
+            setServerErrors([msg]);
+            toast.error(msg);
         } finally {
             setSubmitting(false);
         }
@@ -609,10 +617,13 @@ const DeleteSurgeonModal = ({ surgeon, onClose, onDeleted }) => {
         setError(null);
         setDeleting(true);
         try {
-            await surgeonService.deleteSurgeon(surgeon.id);
+            const response = await surgeonService.deleteSurgeon(surgeon.id);
             onDeleted(surgeon.id);
+            toast.success(response.message || `Surgeon '${surgeon.name}' deleted successfully`);
         } catch (err) {
-            setError(err.message);
+            const msg = err.message || 'Failed to delete surgeon';
+            setError(msg);
+            toast.error(msg);
             setDeleting(false);
         }
     };
@@ -721,7 +732,9 @@ const SurgeonsPage = () => {
             const res = await surgeonService.getAllSurgeons({ search, available });
             setSurgeons(res.data);
         } catch (err) {
-            setError(err.message);
+            const msg = err.message || 'Failed to load surgeons';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -787,9 +800,7 @@ const SurgeonsPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
-                    </div>
+                    <Loading message="Fetching surgeons..." />
                 ) : error ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <svg className="w-12 h-12 text-red-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
