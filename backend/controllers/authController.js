@@ -228,6 +228,17 @@ export const login = async (req, res) => {
         const token = generateToken(tokenPayload);
         const refreshToken = generateRefreshToken(tokenPayload);
 
+        await pool.query(
+            `INSERT INTO auth_sessions (user_id, refresh_token, user_agent, ip_address)
+             VALUES ($1, $2, $3, $4)`,
+            [
+                user.id,
+                refreshToken,
+                req.headers['user-agent'] || null,
+                req.ip || req.connection?.remoteAddress || null,
+            ]
+        );
+
         // Return user data (without password), access token, and refresh token
         res.status(200).json({
             success: true,
@@ -577,5 +588,328 @@ export const updateProfile = async (req, res) => {
             message: 'Error updating profile',
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
+    }
+};
+
+const getDefaultSettings = (role = 'staff') => {
+    const isManager = role === 'admin' || role === 'coordinator';
+
+    return {
+        notifications: {
+            emergency: { email: true, inApp: true, push: true },
+            scheduleChanges: { email: true, inApp: true, push: false },
+            theatreStatus: { email: false, inApp: true, push: false },
+            dailySummary: { email: true, inApp: false, push: false },
+        },
+        preferences: {
+            timezone: 'UTC',
+            dateFormat: 'DD/MM/YYYY',
+            language: 'en',
+            defaultLanding: isManager ? 'coordinator' : 'dashboard',
+            density: 'comfortable',
+        },
+        appearance: {
+            themeMode: 'system',
+            highContrast: false,
+        },
+        privacy: {
+            analyticsConsent: true,
+            allowDataExport: true,
+        },
+        security: {
+            twoFactorEnabled: false,
+        },
+    };
+};
+
+export const getSettings = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const { rows } = await pool.query(
+            `SELECT notifications, preferences, appearance, privacy, security, updated_at, updated_by
+             FROM user_settings
+             WHERE user_id = $1`,
+            [userId]
+        );
+
+        if (rows.length === 0) {
+            const defaults = getDefaultSettings(req.user.role);
+
+            await pool.query(
+                `INSERT INTO user_settings (user_id, notifications, preferences, appearance, privacy, security, updated_by)
+                 VALUES ($1, $2::jsonb, $3::jsonb, $4::jsonb, $5::jsonb, $6::jsonb, $7)`,
+                [
+                    userId,
+                    JSON.stringify(defaults.notifications),
+                    JSON.stringify(defaults.preferences),
+                    JSON.stringify(defaults.appearance),
+                    JSON.stringify(defaults.privacy),
+                    JSON.stringify(defaults.security),
+                    userId,
+                ]
+            );
+
+            return res.status(200).json({
+                success: true,
+                settings: defaults,
+                meta: {
+                    updated_at: new Date().toISOString(),
+                    updated_by: userId,
+                },
+            });
+        }
+
+        const settings = rows[0];
+        return res.status(200).json({
+            success: true,
+            settings: {
+                notifications: settings.notifications || {},
+                preferences: settings.preferences || {},
+                appearance: settings.appearance || {},
+                privacy: settings.privacy || {},
+                security: settings.security || {},
+            },
+            meta: {
+                updated_at: settings.updated_at,
+                updated_by: settings.updated_by,
+            },
+        });
+    } catch (error) {
+        console.error('Get Settings error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to fetch settings',
+        });
+    }
+};
+
+export const updateSettings = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { notifications, preferences, appearance, privacy, security } = req.body;
+
+        const current = await pool.query(
+            `SELECT notifications, preferences, appearance, privacy, security
+             FROM user_settings
+             WHERE user_id = $1`,
+            [userId]
+        );
+
+        const fallback = getDefaultSettings(req.user.role);
+        const oldSettings = current.rows[0] || fallback;
+
+        const nextSettings = {
+            notifications: notifications ?? oldSettings.notifications,
+            preferences: preferences ?? oldSettings.preferences,
+            appearance: appearance ?? oldSettings.appearance,
+            privacy: privacy ?? oldSettings.privacy,
+            security: security ?? oldSettings.security,
+        };
+
+        await pool.query(
+            `INSERT INTO user_settings (user_id, notifications, preferences, appearance, privacy, security, updated_by)
+             VALUES ($1, $2::jsonb, $3::jsonb, $4::jsonb, $5::jsonb, $6::jsonb, $7)
+             ON CONFLICT (user_id)
+             DO UPDATE SET
+                notifications = EXCLUDED.notifications,
+                preferences = EXCLUDED.preferences,
+                appearance = EXCLUDED.appearance,
+                privacy = EXCLUDED.privacy,
+                security = EXCLUDED.security,
+                updated_by = EXCLUDED.updated_by`,
+            [
+                userId,
+                JSON.stringify(nextSettings.notifications),
+                JSON.stringify(nextSettings.preferences),
+                JSON.stringify(nextSettings.appearance),
+                JSON.stringify(nextSettings.privacy),
+                JSON.stringify(nextSettings.security),
+                userId,
+            ]
+        );
+
+        await pool.query(
+            `INSERT INTO user_settings_audit (user_id, changed_by, previous_settings, new_settings)
+             VALUES ($1, $2, $3::jsonb, $4::jsonb)`,
+            [userId, userId, JSON.stringify(oldSettings), JSON.stringify(nextSettings)]
+        );
+
+        const { rows: updatedRows } = await pool.query(
+            `SELECT updated_at, updated_by FROM user_settings WHERE user_id = $1`,
+            [userId]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Settings updated successfully',
+            settings: nextSettings,
+            meta: updatedRows[0] || null,
+        });
+    } catch (error) {
+        console.error('Update Settings error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to update settings',
+        });
+    }
+};
+
+export const getSettingsAuditHistory = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { rows } = await pool.query(
+            `SELECT id, created_at, changed_by
+             FROM user_settings_audit
+             WHERE user_id = $1
+             ORDER BY created_at DESC
+             LIMIT 10`,
+            [userId]
+        );
+
+        return res.status(200).json({ success: true, history: rows });
+    } catch (error) {
+        console.error('Settings history error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to fetch settings history' });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            return res.status(400).json({ success: false, message: 'All password fields are required' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ success: false, message: 'New password must be at least 8 characters' });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ success: false, message: 'New password and confirmation do not match' });
+        }
+
+        const { rows: users } = await pool.query('SELECT password FROM users WHERE id = $1', [userId]);
+        if (!users.length) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const valid = await bcrypt.compare(currentPassword, users[0].password);
+        if (!valid) {
+            return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+        }
+
+        const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashed, userId]);
+
+        return res.status(200).json({ success: true, message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Change Password error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to change password' });
+    }
+};
+
+export const getActiveSessions = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { rows } = await pool.query(
+            `SELECT id, user_agent, ip_address, created_at, last_seen_at, is_active
+             FROM auth_sessions
+             WHERE user_id = $1 AND is_active = TRUE
+             ORDER BY last_seen_at DESC`,
+            [userId]
+        );
+        return res.status(200).json({ success: true, sessions: rows });
+    } catch (error) {
+        console.error('Get sessions error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to fetch sessions' });
+    }
+};
+
+export const logoutOtherSessions = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { keepSessionId } = req.body || {};
+
+        let keepId = keepSessionId;
+        if (!keepId) {
+            const { rows: latestRows } = await pool.query(
+                `SELECT id FROM auth_sessions
+                 WHERE user_id = $1 AND is_active = TRUE
+                 ORDER BY last_seen_at DESC, id DESC
+                 LIMIT 1`,
+                [userId]
+            );
+            keepId = latestRows[0]?.id;
+        }
+
+        if (!keepId) {
+            return res.status(200).json({ success: true, message: 'No active sessions found' });
+        }
+
+        await pool.query(
+            `UPDATE auth_sessions
+             SET is_active = FALSE
+             WHERE user_id = $1 AND id <> $2`,
+            [userId, keepId]
+        );
+
+        return res.status(200).json({ success: true, message: 'Other sessions logged out successfully' });
+    } catch (error) {
+        console.error('Logout other sessions error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to logout other sessions' });
+    }
+};
+
+export const exportMyData = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const { rows: userRows } = await pool.query(
+            'SELECT id, name, email, role, phone, profile_image, created_at FROM users WHERE id = $1',
+            [userId]
+        );
+
+        const { rows: settingsRows } = await pool.query(
+            'SELECT notifications, preferences, appearance, privacy, security, updated_at FROM user_settings WHERE user_id = $1',
+            [userId]
+        );
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                user: userRows[0] || null,
+                settings: settingsRows[0] || null,
+                exported_at: new Date().toISOString(),
+            },
+        });
+    } catch (error) {
+        console.error('Export data error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to export data' });
+    }
+};
+
+export const deactivateAccount = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        await pool.query('UPDATE users SET is_active = FALSE WHERE id = $1', [userId]);
+        await pool.query('UPDATE auth_sessions SET is_active = FALSE WHERE user_id = $1', [userId]);
+        return res.status(200).json({ success: true, message: 'Account deactivated successfully' });
+    } catch (error) {
+        console.error('Deactivate account error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to deactivate account' });
+    }
+};
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        await pool.query('DELETE FROM users WHERE id = $1', [userId]);
+        return res.status(200).json({ success: true, message: 'Account deleted permanently' });
+    } catch (error) {
+        console.error('Delete account error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to delete account' });
     }
 };

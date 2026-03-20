@@ -16,7 +16,24 @@
 // ============================================================================
 
 import express from 'express';
-import { register, login, getProfile, updateProfile, forgotPassword, resetPassword, refreshTokenHandler } from '../controllers/authController.js';
+import {
+    register,
+    login,
+    getProfile,
+    updateProfile,
+    forgotPassword,
+    resetPassword,
+    refreshTokenHandler,
+    getSettings,
+    updateSettings,
+    getSettingsAuditHistory,
+    changePassword,
+    getActiveSessions,
+    logoutOtherSessions,
+    exportMyData,
+    deactivateAccount,
+    deleteAccount,
+} from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../middleware/validateUser.js';
 import { protect } from '../middleware/authMiddleware.js';
 import multer from 'multer';
@@ -101,6 +118,19 @@ router.get('/profile', protect, getProfile);
 // Returns: { success, message, user }
 // ============================================================================
 router.put('/profile', protect, updateProfile);
+
+router.get('/settings', protect, getSettings);
+router.put('/settings', protect, updateSettings);
+router.get('/settings/history', protect, getSettingsAuditHistory);
+
+router.post('/change-password', protect, changePassword);
+
+router.get('/sessions', protect, getActiveSessions);
+router.post('/sessions/logout-others', protect, logoutOtherSessions);
+
+router.get('/export-data', protect, exportMyData);
+router.post('/deactivate', protect, deactivateAccount);
+router.delete('/account', protect, deleteAccount);
 
 // ============================================================================
 // ROUTE: POST /api/auth/profile-image
