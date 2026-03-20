@@ -6,6 +6,32 @@
 // Validates incoming anaesthetist data before the controller processes it.
 // ============================================================================
 
+// ── Validate Create Anaesthetist body (all required fields) ───────────────
+export const validateAnaesthetist = (req, res, next) => {
+    const { name, email, specialization, license_number } = req.body;
+    const errors = [];
+
+    if (!name || !name.trim()) errors.push('name is required');
+    if (!email || !email.trim()) {
+        errors.push('email is required');
+    } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) errors.push('email must be a valid email address');
+    }
+    if (!specialization || !specialization.trim()) errors.push('specialization is required');
+    if (!license_number || !license_number.trim()) errors.push('license_number is required');
+
+    if (errors.length > 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Validation failed',
+            errors,
+        });
+    }
+
+    next();
+};
+
 // ── Validate Update Anaesthetist body (partial — all fields optional) ─────
 export const validateAnaesthetistUpdate = (req, res, next) => {
     const { email, years_of_experience } = req.body;

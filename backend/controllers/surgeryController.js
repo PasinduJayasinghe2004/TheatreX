@@ -35,6 +35,7 @@
 
 import { pool } from '../config/database.js';
 import { assignNursesToSurgery, getNursesBySurgeryId } from '../models/surgeryNurseModel.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 const escapeCsvValue = (value) => {
     if (value === null || value === undefined) {
@@ -230,45 +231,26 @@ export const createSurgery = async (req, res) => {
             }
         }
 
-        res.status(201).json({
-            success: true,
-            message: 'Surgery created successfully',
-            data: {
-                ...newSurgery,
-                nurses: assignedNurses
-            }
-        });
+        sendSuccess(res, {
+            ...newSurgery,
+            nurses: assignedNurses
+        }, 'Surgery created successfully', 201);
 
     } catch (error) {
-        console.error('Error creating surgery:', error);
-
         // Handle specific PostgreSQL errors
         if (error.code === '23505') {
-            return res.status(409).json({
-                success: false,
-                message: 'Surgery conflict - duplicate entry detected'
-            });
+            return sendError(res, 'Surgery conflict - duplicate entry detected', 409);
         }
 
         if (error.code === '23503') {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid reference - theatre or surgeon does not exist'
-            });
+            return sendError(res, 'Invalid reference - theatre or surgeon does not exist', 400);
         }
 
         if (error.code === '23514') {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed - check patient data or enum values'
-            });
+            return sendError(res, 'Validation failed - check patient data or enum values', 400);
         }
 
-        res.status(500).json({
-            success: false,
-            message: 'Error creating surgery',
-            error: error.message
-        });
+        next(error);
     }
 };
 
@@ -358,23 +340,9 @@ export const getAllSurgeries = async (req, res) => {
             updated_at: row.updated_at
         }));
 
-        res.status(200).json({
-            success: true,
-            count: surgeries.length,
-            data: surgeries,
-            filters: {
-                startDate: startDate || null,
-                endDate: endDate || null,
-                status: status || null
-            }
-        });
+        sendSuccess(res, surgeries, 'Surgeries fetched successfully', 200);
     } catch (error) {
-        console.error('Error fetching surgeries:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching surgeries',
-            error: error.message
-        });
+        next(error);
     }
 };
 
