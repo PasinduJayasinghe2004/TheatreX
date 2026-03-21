@@ -21,7 +21,7 @@ import {
     deletePatient
 } from '../controllers/patientController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
-import { validatePatient } from '../middleware/patientValidation.js';
+import { validatePatient, validatePatientUpdate } from '../middleware/patientValidation.js';
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.get('/:id', protect, getPatientById);
 // ============================================================================
 // ROUTE: PUT /api/patients/:id
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), validatePatient, updatePatient);
+router.put('/:id', protect, authorize('coordinator', 'admin'), validatePatientUpdate, updatePatient);
 
 // ============================================================================
 // ROUTE: DELETE /api/patients/:id

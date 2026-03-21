@@ -42,15 +42,7 @@ export const getSurgeryDurationStats = async (req, res) => {
             FROM surgeries
             WHERE duration_minutes IS NOT NULL
             GROUP BY "range"
-            ORDER BY
-                CASE "range"
-                    WHEN '0-30'    THEN 1
-                    WHEN '31-60'   THEN 2
-                    WHEN '61-90'   THEN 3
-                    WHEN '91-120'  THEN 4
-                    WHEN '121-180' THEN 5
-                    ELSE 6
-                END
+            ORDER BY MIN(duration_minutes)
         `;
 
         // Aggregate stats query
