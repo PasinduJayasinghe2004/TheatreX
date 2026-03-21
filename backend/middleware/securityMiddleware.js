@@ -81,6 +81,17 @@ export const createRateLimiter = ({
 } = {}) => {
     const store = new Map();
 
+    // Periodically clean up expired entries to prevent memory leaks
+    const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // every 5 minutes
+    setInterval(() => {
+        const now = Date.now();
+        for (const [key, entry] of store) {
+            if (now > entry.resetAt) {
+                store.delete(key);
+            }
+        }
+    }, CLEANUP_INTERVAL_MS).unref();
+
     return (req, res, next) => {
         const now = Date.now();
         const key = req.ip || req.headers['x-forwarded-for'] || 'unknown';
