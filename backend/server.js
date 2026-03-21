@@ -227,7 +227,7 @@ const startServer = async () => {
 // Export app for testing
 export default app;
 
-// Start server
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-startServer();
+// Start server only if this file is run directly
+if (process.env.NODE_ENV !== 'test') {
+    startServer();
+}

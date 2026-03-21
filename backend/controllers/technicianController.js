@@ -24,7 +24,7 @@ import { ERROR_CODES } from '../constants/errorCodes.js';
 // @route   GET /api/technicians
 // @access  Protected
 // ============================================================================
-export const getTechnicians = async (req, res) => {
+export const getTechnicians = async (req, res, next) => {
     try {
         const { specialization, is_available } = req.query;
 
@@ -32,7 +32,7 @@ export const getTechnicians = async (req, res) => {
         const params = [];
 
         if (specialization) {
-            params.push(specialization);
+            params.push(`%${specialization.trim()}%`);
             conditions.push(`specialization ILIKE $${params.length}`);
         }
 
@@ -79,6 +79,10 @@ export const getTechnicians = async (req, res) => {
 export const getTechnicianById = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const techId = parseInt(id, 10);
+        if (isNaN(techId)) {
+            return sendError(res, 'Invalid technician ID', 400, ERROR_CODES.BAD_REQUEST);
+        }
 
         const { rows } = await pool.query(`
             SELECT id, name, email, phone, specialization, license_number,
@@ -86,7 +90,7 @@ export const getTechnicianById = async (req, res, next) => {
                    is_active, created_at, updated_at
             FROM technicians
             WHERE id = $1
-        `, [id]);
+        `, [techId]);
 
         if (rows.length === 0) {
             return sendError(res, 'Technician not found', 404, ERROR_CODES.NOT_FOUND);
@@ -121,7 +125,9 @@ export const createTechnician = async (req, res, next) => {
         `, [
             name.trim(), email.trim().toLowerCase(), phone || null,
             specialization || null, license_number || null,
-            years_of_experience ? parseInt(years_of_experience, 10) : 0,
+            (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') 
+                ? parseInt(years_of_experience, 10) 
+                : null,
             is_available, shift_preference
         ]);
 
@@ -144,12 +150,17 @@ export const createTechnician = async (req, res, next) => {
 export const updateTechnician = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const techId = parseInt(id, 10);
+        if (isNaN(techId)) {
+            return sendError(res, 'Invalid technician ID', 400, ERROR_CODES.BAD_REQUEST);
+        }
+
         const {
             name, email, phone, specialization, license_number,
             years_of_experience, is_available, shift_preference
         } = req.body;
 
-        const { rows: existingRows } = await pool.query('SELECT id FROM technicians WHERE id = $1', [id]);
+        const { rows: existingRows } = await pool.query('SELECT id FROM technicians WHERE id = $1 AND is_active = TRUE', [techId]);
         if (existingRows.length === 0) {
             return sendError(res, 'Technician not found', 404, ERROR_CODES.NOT_FOUND);
         }
@@ -157,11 +168,11 @@ export const updateTechnician = async (req, res, next) => {
         const setClauses = [];
         const params = [];
 
-        if (name !== undefined) {
+        if (name !== undefined && name !== null) {
             params.push(name.trim());
             setClauses.push(`name = $${params.length}`);
         }
-        if (email !== undefined) {
+        if (email !== undefined && email !== null) {
             params.push(email.trim().toLowerCase());
             setClauses.push(`email = $${params.length}`);
         }
@@ -194,11 +205,11 @@ export const updateTechnician = async (req, res, next) => {
             return sendError(res, 'No fields to update', 400, ERROR_CODES.BAD_REQUEST);
         }
 
-        params.push(id);
+        params.push(techId);
         const { rows } = await pool.query(`
             UPDATE technicians
             SET ${setClauses.join(', ')}, updated_at = NOW()
-            WHERE id = $${params.length}
+            WHERE id = $${params.length} AND is_active = TRUE
             RETURNING *
         `, params);
 
@@ -221,13 +232,17 @@ export const updateTechnician = async (req, res, next) => {
 export const deleteTechnician = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const techId = parseInt(id, 10);
+        if (isNaN(techId)) {
+            return sendError(res, 'Invalid technician ID', 400, ERROR_CODES.BAD_REQUEST);
+        }
 
         const { rows } = await pool.query(`
             UPDATE technicians
             SET is_active = FALSE, updated_at = NOW()
             WHERE id = $1 AND is_active = TRUE
             RETURNING id, name
-        `, [id]);
+        `, [techId]);
 
         if (rows.length === 0) {
             return sendError(res, 'Technician not found or already deleted', 404, ERROR_CODES.NOT_FOUND);

@@ -20,7 +20,7 @@ import {
     deleteTechnician
 } from '../controllers/technicianController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
-import { validateTechnician } from '../middleware/technicianValidation.js';
+import { validateTechnician, validateTechnicianUpdate } from '../middleware/technicianValidation.js';
 
 const router = express.Router();
 
@@ -54,7 +54,7 @@ router.get('/:id', protect, getTechnicianById);
 // Update a technician record
 // Protected + coordinator or admin only
 // ============================================================================
-router.put('/:id', protect, authorize('coordinator', 'admin'), validateTechnician, updateTechnician);
+router.put('/:id', protect, authorize('coordinator', 'admin'), validateTechnicianUpdate, updateTechnician);
 
 // ============================================================================
 // ROUTE: DELETE /api/technicians/:id
