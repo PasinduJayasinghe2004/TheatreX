@@ -32,7 +32,7 @@ import { ERROR_CODES } from '../constants/errorCodes.js';
 // @route   GET /api/patients
 // @access  Protected
 // ============================================================================
-export const getPatients = async (req, res) => {
+export const getPatients = async (req, res, next) => {
     try {
         const { gender, blood_type, is_active, search } = req.query;
 
@@ -112,7 +112,7 @@ export const getPatients = async (req, res) => {
 // @access  Protected
 // Updated by: M3 (Janani) - Day 15  (added surgery history join)
 // ============================================================================
-export const getPatientById = async (req, res) => {
+export const getPatientById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
