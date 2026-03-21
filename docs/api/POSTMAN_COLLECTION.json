@@ -1,0 +1,1813 @@
+{
+  "info": {
+    "name": "TheatreX Operating Theatre Management System",
+    "description": "Complete API collection for TheatreX system with all authentication, surgery, theatre, staff, and patient endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and profile management endpoints",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"surgeon\",\n  \"specialization\": \"Cardiology\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"your-refresh-token\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"specialization\": \"Cardiology\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"OldPass123!\",\n  \"newPassword\": \"NewPass456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "forgot-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token-from-email\",\n  \"newPassword\": \"NewPass456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/sessions",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "sessions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout Others",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout-others",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout-others"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enable 2FA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/2fa/enable",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "2fa", "enable"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify 2FA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/2fa/verify",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "2fa", "verify"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/export-data",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "export-data"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/account",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "account"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Surgery Management",
+      "description": "Surgery scheduling and management endpoints",
+      "item": [
+        {
+          "name": "Create Surgery",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": \"patient-123\",\n  \"surgeonId\": \"surgeon-456\",\n  \"surgeryType\": \"Appendectomy\",\n  \"scheduledDate\": \"2025-04-15\",\n  \"estimatedDuration\": 60,\n  \"urgency\": \"routine\",\n  \"notes\": \"Pre-operative notes here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/surgeries",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Surgeries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/surgeries?status=scheduled&from=2025-04-01&to=2025-04-30",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "scheduled"
+                },
+                {
+                  "key": "from",
+                  "value": "2025-04-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2025-04-30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Surgery by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/surgeries/surgery-123",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "surgery-123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Surgery",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"surgeryType\": \"Appendectomy\",\n  \"scheduledDate\": \"2025-04-15\",\n  \"estimatedDuration\": 75,\n  \"notes\": \"Updated notes\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/surgeries/surgery-123",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "surgery-123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Surgery Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in-progress\",\n  \"notes\": \"Surgery started\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/surgeries/surgery-123/status",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "surgery-123", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Theatre",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theatreId\": \"theatre-789\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/surgeries/surgery-123/assign-theatre",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "surgery-123", "assign-theatre"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unassigned Surgeries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/surgeries/unassigned",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "unassigned"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Surgery History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/surgeries/history?patientId=patient-123",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "history"],
+              "query": [
+                {
+                  "key": "patientId",
+                  "value": "patient-123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/surgeries/calendar/events?month=4&year=2025",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "calendar", "events"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "4"
+                },
+                {
+                  "key": "year",
+                  "value": "2025"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Conflicts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"surgeonId\": \"surgeon-456\",\n  \"theatreId\": \"theatre-789\",\n  \"startTime\": \"2025-04-15T09:00:00Z\",\n  \"endTime\": \"2025-04-15T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/surgeries/check-conflicts",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "check-conflicts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Surgery",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/surgeries/surgery-123",
+              "host": ["{{base_url}}"],
+              "path": ["surgeries", "surgery-123"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Theatre Management",
+      "description": "Operating theatre and equipment management endpoints",
+      "item": [
+        {
+          "name": "Create Theatre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"OT-101\",\n  \"type\": \"General Surgery\",\n  \"capacity\": 6,\n  \"location\": \"Floor 3, Wing A\",\n  \"features\": [\"C-Arm\", \"Laparoscopic\", \"Advanced Lighting\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres",
+              "host": ["{{base_url}}"],
+              "path": ["theatres"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Theatres",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/theatres",
+              "host": ["{{base_url}}"],
+              "path": ["theatres"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Theatre by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Theatre",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"OT-101\",\n  \"capacity\": 8,\n  \"features\": [\"C-Arm\", \"Laparoscopic\", \"Advanced Lighting\", \"3D Imaging\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Equipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Surgical Microscope\",\n  \"status\": \"operational\",\n  \"maintenanceDate\": \"2025-05-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/equipment",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "equipment"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Equipment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"maintenance\",\n  \"maintenanceDate\": \"2025-05-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/equipment/equipment-456",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "equipment", "equipment-456"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Theatre Availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/availability?date=2025-04-15",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "availability"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-04-15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Theatre Schedule",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/schedule",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "schedule"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Plan Maintenance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-05-01\",\n  \"endDate\": \"2025-05-02\",\n  \"reason\": \"Preventive maintenance\",\n  \"notes\": \"Full equipment inspection\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/maintenance",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "maintenance"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Cleaning Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cleaningDate\": \"2025-04-15\",\n  \"type\": \"terminal\",\n  \"status\": \"completed\",\n  \"notes\": \"Full sterilization completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/cleaning",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "cleaning"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Theatre Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789/statistics",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789", "statistics"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Theatre",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/theatres/theatre-789",
+              "host": ["{{base_url}}"],
+              "path": ["theatres", "theatre-789"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Staff Management",
+      "description": "Manage surgeons, nurses, anaesthetists, and technicians",
+      "item": [
+        {
+          "name": "Surgeons",
+          "item": [
+            {
+              "name": "Create Surgeon",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Dr. Sarah\",\n  \"lastName\": \"Johnson\",\n  \"email\": \"sarah@example.com\",\n  \"specialization\": \"Cardiology\",\n  \"licenseNumber\": \"LIC-001\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/surgeons",
+                  "host": ["{{base_url}}"],
+                  "path": ["surgeons"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Surgeons",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/surgeons",
+                  "host": ["{{base_url}}"],
+                  "path": ["surgeons"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Surgeon by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/surgeons/surgeon-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["surgeons", "surgeon-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Surgeon",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"specialization\": \"Cardiothoracic Surgery\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/surgeons/surgeon-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["surgeons", "surgeon-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Surgeon Schedule",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/surgeons/surgeon-123/schedule",
+                  "host": ["{{base_url}}"],
+                  "path": ["surgeons", "surgeon-123", "schedule"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Surgeon",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/surgeons/surgeon-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["surgeons", "surgeon-123"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Nurses",
+          "item": [
+            {
+              "name": "Create Nurse",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Maria\",\n  \"lastName\": \"Garcia\",\n  \"email\": \"maria@example.com\",\n  \"specialization\": \"Operating Room Nurse\",\n  \"licenseNumber\": \"NUR-001\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/nurses",
+                  "host": ["{{base_url}}"],
+                  "path": ["nurses"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Nurses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/nurses",
+                  "host": ["{{base_url}}"],
+                  "path": ["nurses"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Nurse by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/nurses/nurse-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["nurses", "nurse-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Nurse",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"specialization\": \"ICU Nurse\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/nurses/nurse-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["nurses", "nurse-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Nurse Schedule",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/nurses/nurse-123/schedule",
+                  "host": ["{{base_url}}"],
+                  "path": ["nurses", "nurse-123", "schedule"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Nurse",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/nurses/nurse-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["nurses", "nurse-123"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Anaesthetists",
+          "item": [
+            {
+              "name": "Create Anaesthetist",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Dr. Ahmed\",\n  \"lastName\": \"Khan\",\n  \"email\": \"ahmed@example.com\",\n  \"specialization\": \"Anaesthesiology\",\n  \"licenseNumber\": \"ANA-001\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/anaesthetists",
+                  "host": ["{{base_url}}"],
+                  "path": ["anaesthetists"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Anaesthetists",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/anaesthetists",
+                  "host": ["{{base_url}}"],
+                  "path": ["anaesthetists"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Anaesthetist by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/anaesthetists/anaesthetist-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["anaesthetists", "anaesthetist-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Anaesthetist",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"specialization\": \"Paediatric Anaesthesia\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/anaesthetists/anaesthetist-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["anaesthetists", "anaesthetist-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Anaesthetist Schedule",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/anaesthetists/anaesthetist-123/schedule",
+                  "host": ["{{base_url}}"],
+                  "path": ["anaesthetists", "anaesthetist-123", "schedule"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Anaesthetist",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/anaesthetists/anaesthetist-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["anaesthetists", "anaesthetist-123"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Technicians",
+          "item": [
+            {
+              "name": "Create Technician",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Ahmed\",\n  \"lastName\": \"Ali\",\n  \"email\": \"ahmed.ali@example.com\",\n  \"specialization\": \"Theatre Technician\",\n  \"licenseNumber\": \"TECH-001\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/technicians",
+                  "host": ["{{base_url}}"],
+                  "path": ["technicians"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Technicians",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/technicians",
+                  "host": ["{{base_url}}"],
+                  "path": ["technicians"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Technician by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/technicians/technician-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["technicians", "technician-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Technician",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"specialization\": \"Equipment Technician\",\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/technicians/technician-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["technicians", "technician-123"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Technician Schedule",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/technicians/technician-123/schedule",
+                  "host": ["{{base_url}}"],
+                  "path": ["technicians", "technician-123", "schedule"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Technician",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/technicians/technician-123",
+                  "host": ["{{base_url}}"],
+                  "path": ["technicians", "technician-123"]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Patient Management",
+      "description": "Patient records and medical information endpoints",
+      "item": [
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"dateOfBirth\": \"1980-05-15\",\n  \"gender\": \"male\",\n  \"bloodType\": \"O+\",\n  \"phone\": \"+1-555-0123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients",
+              "host": ["{{base_url}}"],
+              "path": ["patients"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patients",
+              "host": ["{{base_url}}"],
+              "path": ["patients"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Patient by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"newemail@example.com\",\n  \"phone\": \"+1-555-0124\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Medical Condition",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"condition\": \"Hypertension\",\n  \"diagnosedDate\": \"2020-01-15\",\n  \"status\": \"ongoing\",\n  \"notes\": \"Managed with medication\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123/conditions",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123", "conditions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Allergy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allergen\": \"Penicillin\",\n  \"reaction\": \"Severe rash\",\n  \"severity\": \"severe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123/allergies",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123", "allergies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Medication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medication\": \"Metformin\",\n  \"dosage\": \"500mg\",\n  \"frequency\": \"twice daily\",\n  \"reason\": \"Diabetes management\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123/medications",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123", "medications"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Surgery History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123/surgeries",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123", "surgeries"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Patient Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123/export",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123", "export"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Patient",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/patients/patient-123",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "patient-123"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "Patient notification and alert endpoints",
+      "item": [
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": \"patient-123\",\n  \"type\": \"surgery-reminder\",\n  \"title\": \"Surgery Scheduled\",\n  \"message\": \"Your surgery is scheduled for tomorrow at 9:00 AM\",\n  \"priority\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/notifications",
+              "host": ["{{base_url}}"],
+              "path": ["notifications"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications",
+              "host": ["{{base_url}}"],
+              "path": ["notifications"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notification by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/notification-123",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "notification-123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/notification-123/read",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "notification-123", "read"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Notification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/notification-123/archive",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "notification-123", "archive"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/statistics",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "statistics"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk Send Notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientIds\": [\"patient-1\", \"patient-2\", \"patient-3\"],\n  \"type\": \"system-update\",\n  \"title\": \"System Maintenance\",\n  \"message\": \"System will be down for 2 hours tomorrow\",\n  \"priority\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/notifications/bulk-send",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "bulk-send"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailNotifications\": true,\n  \"smsNotifications\": false,\n  \"pushNotifications\": true,\n  \"reminderTime\": 24\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/notifications/preferences",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "preferences"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/notification-123",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "notification-123"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
