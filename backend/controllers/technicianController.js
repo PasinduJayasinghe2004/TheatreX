@@ -24,7 +24,7 @@ import { ERROR_CODES } from '../constants/errorCodes.js';
 // @route   GET /api/technicians
 // @access  Protected
 // ============================================================================
-export const getTechnicians = async (req, res) => {
+export const getTechnicians = async (req, res, next) => {
     try {
         const { specialization, is_available } = req.query;
 

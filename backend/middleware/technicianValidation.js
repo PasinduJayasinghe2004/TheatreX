@@ -1,4 +1,5 @@
 import { ERROR_CODES } from '../constants/errorCodes.js';
+import { sendError } from '../utils/responseHelper.js';
 
 /**
  * Validation for Technician creation and updates
