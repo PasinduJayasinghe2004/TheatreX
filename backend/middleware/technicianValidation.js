@@ -32,3 +32,31 @@ export const validateTechnician = (req, res, next) => {
 
     next();
 };
+
+/**
+ * Validation for Technician updates (all fields optional)
+ */
+export const validateTechnicianUpdate = (req, res, next) => {
+    const { email, shift_preference } = req.body;
+    const errors = [];
+
+    if (email !== undefined && email !== null && email !== '') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            errors.push('Invalid email format');
+        }
+    }
+
+    if (shift_preference !== undefined && shift_preference !== null && shift_preference !== '') {
+        const validShifts = ['morning', 'afternoon', 'night', 'flexible'];
+        if (!validShifts.includes(shift_preference.toLowerCase())) {
+            errors.push('Invalid shift preference');
+        }
+    }
+
+    if (errors.length > 0) {
+        return sendError(res, 'Validation failed', 400, ERROR_CODES.VALIDATION_ERROR, { message: errors });
+    }
+
+    next();
+};
