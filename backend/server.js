@@ -182,8 +182,6 @@ const PORT = process.env.PORT || 5000;
  * If any step fails, the process exits with code 1
  */
 const startServer = async () => {
-    let dbConnected = false;
-
     try {
         // Test database connection
         const dbConnected = await testConnection();
@@ -227,7 +225,7 @@ const startServer = async () => {
 // Export app for testing
 export default app;
 
-// Start server
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-startServer();
+// Start server only if this file is run directly
+if (process.env.NODE_ENV !== 'test') {
+    startServer();
+}

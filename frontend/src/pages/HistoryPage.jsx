@@ -84,12 +84,13 @@ const HistoryPage = () => {
             const response = await surgeryService.getSurgeryHistory(filters);
             if (response?.success) {
                 setHistory(response.data || []);
-                if (response.pagination) {
-                    setPagination(response.pagination);
+                const paginationData = response.meta?.pagination || response.pagination;
+                if (paginationData) {
+                    setPagination(paginationData);
  
                     // Keep local request page in sync if backend clamps page bounds.
-                    if (response.pagination.page !== filters.page) {
-                        setFilters(prev => ({ ...prev, page: response.pagination.page }));
+                    if (paginationData.page !== filters.page) {
+                        setFilters(prev => ({ ...prev, page: paginationData.page }));
                     }
                 }
             } else {

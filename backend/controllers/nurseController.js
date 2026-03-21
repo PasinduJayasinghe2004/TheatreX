@@ -62,7 +62,9 @@ export const createNurse = async (req, res, next) => {
             name.trim(),
             specialization.trim(),
             license_number.trim(),
-            years_of_experience ? parseInt(years_of_experience, 10) : null,
+            (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '') 
+                ? parseInt(years_of_experience, 10) 
+                : null,
             phone.trim(),
             email.trim().toLowerCase(),
             is_available,
@@ -245,7 +247,9 @@ export const updateNurse = async (req, res, next) => {
 
         const values = [
             name.trim(), specialization.trim(), license_number.trim(),
-            years_of_experience ? parseInt(years_of_experience, 10) : null,
+            (years_of_experience !== undefined && years_of_experience !== null && years_of_experience !== '')
+                ? parseInt(years_of_experience, 10)
+                : null,
             phone.trim(), email.trim().toLowerCase(), is_available,
             shift_preference || 'flexible', nurseId
         ];

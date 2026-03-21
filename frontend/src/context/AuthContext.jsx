@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
             setToken(data.token);
             return data;
         }
+        throw new Error(data.message || 'Login failed');
     };
 
     // ========================================
