@@ -182,8 +182,6 @@ const PORT = process.env.PORT || 5000;
  * If any step fails, the process exits with code 1
  */
 const startServer = async () => {
-    let dbConnected = false;
-
     try {
         // Test database connection
         const dbConnected = await testConnection();
