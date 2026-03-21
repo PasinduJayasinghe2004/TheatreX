@@ -1,0 +1,1061 @@
+
+> theatrex-backend@1.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js backend/tests/surgeryController.test.js
+
+(node:8144) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8144) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+FAIL tests/surgeryController.test.js (51.018 s)
+  Surgery API Tests
+    POST /api/surgeries
+      ├ù should create a new surgery with valid data (1 ms)
+      ├ù should reject surgery creation without authentication
+      ├ù should reject surgery with missing required fields
+      ├ù should reject surgery with invalid date format
+      ├ù should reject surgery with invalid time format
+      ├ù should reject surgery with invalid status
+      ├ù should reject surgery with invalid priority
+      ├ù should reject surgery with negative duration
+      ├ù should create emergency surgery successfully
+      ├ù should create urgent surgery successfully
+    GET /api/surgeries
+      ├ù should return list of all surgeries
+      ├ù should return surgeries with nested surgeon data
+      ├ù should reject unauthenticated request
+      ├ù should return surgeries sorted by date
+    GET /api/surgeries/:id
+      ├ù should return surgery by valid ID
+      ├ù should return 404 for non-existent surgery ID
+      ├ù should return 400 for invalid surgery ID format (1 ms)
+      ├ù should return 400 for negative surgery ID
+      ├ù should reject unauthenticated request
+      ├ù should return surgery with complete data structure
+    GET /api/surgeries/surgeons
+      ├ù should return list of surgeons
+      ├ù should return surgeons with correct structure
+      ├ù should reject unauthenticated request
+    Surgery Validation Middleware
+      ├ù should accept all valid statuses
+      ├ù should accept all valid priorities
+      ├ù should validate patient age range
+    Surgery RBAC Tests
+      ├ù should allow coordinator to create surgery
+      ├ù should deny nurse from creating surgery
+      ├ù should allow nurse to view surgeries
+      ├ù should allow nurse to view surgery by ID
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should create a new surgery with valid data
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery creation without authentication
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery with missing required fields
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery with invalid date format
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery with invalid time format
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery with invalid status
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery with invalid priority
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should reject surgery with negative duration
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should create emergency surgery successfully
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ POST /api/surgeries ΓÇ║ should create urgent surgery successfully
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries ΓÇ║ should return list of all surgeries
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries ΓÇ║ should return surgeries with nested surgeon data
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries ΓÇ║ should reject unauthenticated request
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries ΓÇ║ should return surgeries sorted by date
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/:id ΓÇ║ should return surgery by valid ID
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/:id ΓÇ║ should return 404 for non-existent surgery ID
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/:id ΓÇ║ should return 400 for invalid surgery ID format
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/:id ΓÇ║ should return 400 for negative surgery ID
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/:id ΓÇ║ should reject unauthenticated request
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/:id ΓÇ║ should return surgery with complete data structure
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/surgeons ΓÇ║ should return list of surgeons
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/surgeons ΓÇ║ should return surgeons with correct structure
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ GET /api/surgeries/surgeons ΓÇ║ should reject unauthenticated request
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery Validation Middleware ΓÇ║ should accept all valid statuses
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery Validation Middleware ΓÇ║ should accept all valid priorities
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery Validation Middleware ΓÇ║ should validate patient age range
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should allow coordinator to create surgery
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should allow coordinator to create surgery
+
+    thrown: "Exceeded timeout of 20000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      526 |         let nurseToken;
+      527 |
+    > 528 |         beforeAll(async () => {
+          |         ^
+      529 |             // Register a nurse user (should not be able to create surgeries)
+      530 |             const nurseUser = {
+      531 |                 name: 'Test Nurse',
+
+      at tests/surgeryController.test.js:528:9
+      at tests/surgeryController.test.js:525:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should deny nurse from creating surgery
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should deny nurse from creating surgery
+
+    thrown: "Exceeded timeout of 20000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      526 |         let nurseToken;
+      527 |
+    > 528 |         beforeAll(async () => {
+          |         ^
+      529 |             // Register a nurse user (should not be able to create surgeries)
+      530 |             const nurseUser = {
+      531 |                 name: 'Test Nurse',
+
+      at tests/surgeryController.test.js:528:9
+      at tests/surgeryController.test.js:525:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should allow nurse to view surgeries
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should allow nurse to view surgeries
+
+    thrown: "Exceeded timeout of 20000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      526 |         let nurseToken;
+      527 |
+    > 528 |         beforeAll(async () => {
+          |         ^
+      529 |             // Register a nurse user (should not be able to create surgeries)
+      530 |             const nurseUser = {
+      531 |                 name: 'Test Nurse',
+
+      at tests/surgeryController.test.js:528:9
+      at tests/surgeryController.test.js:525:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should allow nurse to view surgery by ID
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      54 |     // Setup: Register and login test user (increased timeout for DB connection)
+      55 |     // ========================================================================
+    > 56 |     beforeAll(async () => {
+         |     ^
+      57 |         // Register a coordinator user
+      58 |         await request(app)
+      59 |             .post('/api/auth/register')
+
+      at tests/surgeryController.test.js:56:5
+      at tests/surgeryController.test.js:22:1
+
+  ΓùÅ Surgery API Tests ΓÇ║ Surgery RBAC Tests ΓÇ║ should allow nurse to view surgery by ID
+
+    thrown: "Exceeded timeout of 20000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      526 |         let nurseToken;
+      527 |
+    > 528 |         beforeAll(async () => {
+          |         ^
+      529 |             // Register a nurse user (should not be able to create surgeries)
+      530 |             const nurseUser = {
+      531 |                 name: 'Test Nurse',
+
+      at tests/surgeryController.test.js:528:9
+      at tests/surgeryController.test.js:525:5
+      at tests/surgeryController.test.js:22:1
+
+Test Suites: 1 failed, 1 total
+Tests:       30 failed, 30 total
+Snapshots:   0 total
+Time:        51.069 s
+Ran all test suites matching /backend\\tests\\surgeryController.test.js/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+node:events:510
+    throw err; // Unhandled 'error' event
+    ^
+
+Error: Unhandled error. (Error: Connection terminated unexpectedly
+    at Connection.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+    at Object.onceWrapper (node:events:633:28)
+    at Connection.emit (node:events:519:28)
+    at Socket.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+    at Socket.emit (node:events:531:35)
+    at TCP.<anonymous> (node:net:346:12) {
+  client: Client {
+    _events: [Object: null prototype] { error: [Function (anonymous)] },
+    _eventsCount: 1,
+    _maxListeners: undefined,
+    connectionParameters: ConnectionParameters {
+      user: 'neondb_owner',
+      database: 'neondb',
+      port: 5432,
+      host: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+      binary: false,
+      options: undefined,
+      ssl: {},
+      client_encoding: '',
+      replication: undefined,
+      isDomainSocket: false,
+      application_name: undefined,
+      fallback_application_name: undefined,
+      statement_timeout: false,
+      lock_timeout: false,
+      idle_in_transaction_session_timeout: false,
+      query_timeout: false,
+      connect_timeout: 30,
+      keepalives: 1,
+      keepalives_idle: 10
+    },
+    user: 'neondb_owner',
+    database: 'neondb',
+    port: 5432,
+    host: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+    replication: undefined,
+    _Promise: [Function: Promise],
+    _types: TypeOverrides { _types: [Object], text: {}, binary: {} },
+    _ending: true,
+    _ended: true,
+    _connecting: false,
+    _connected: true,
+    _connectionError: false,
+    _queryable: false,
+    _activeQuery: null,
+    enableChannelBinding: false,
+    connection: Connection {
+      _events: [Object: null prototype],
+      _eventsCount: 23,
+      _maxListeners: undefined,
+      stream: [TLSSocket],
+      _keepAlive: true,
+      _keepAliveInitialDelayMillis: 10000,
+      parsedStatements: {},
+      ssl: {},
+      _ending: true,
+      _emitMessage: false,
+      _connecting: true,
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    _queryQueue: [],
+    binary: false,
+    processID: 411679288,
+    secretKey: 1420159081,
+    ssl: {},
+    _connectionTimeoutMillis: 30000,
+    _connectionCallback: null,
+    connectionTimeoutHandle: Timeout {
+      _idleTimeout: -1,
+      _idlePrev: null,
+      _idleNext: null,
+      _idleStart: 1444,
+      _onTimeout: null,
+      _timerArgs: undefined,
+      _repeat: null,
+      _destroyed: true,
+      [Symbol(refed)]: false,
+      [Symbol(kHasPrimitive)]: false,
+      [Symbol(asyncId)]: 328,
+      [Symbol(triggerId)]: 323,
+      [Symbol(kAsyncContextFrame)]: undefined
+    },
+    saslSession: null,
+    release: [Function (anonymous)],
+    readyForQuery: true,
+    hasExecuted: true,
+    _poolUseCount: 4,
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false
+  }
+})
+    at BoundPool.emit (node:events:508:17)
+    at Client.idleListener (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg-pool\index.js:62:10)
+    at Client.emit (node:events:519:28)
+    at Client._handleErrorEvent (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\client.js:390:10)
+    at Connection.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\client.js:195:16)
+    at Object.onceWrapper (node:events:633:28)
+    at Connection.emit (node:events:519:28)
+    at Socket.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+    at Socket.emit (node:events:531:35)
+    at TCP.<anonymous> (node:net:346:12) {
+  code: 'ERR_UNHANDLED_ERROR',
+  context: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+      at Object.onceWrapper (node:events:633:28)
+      at Connection.emit (node:events:519:28)
+      at Socket.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+      at Socket.emit (node:events:531:35)
+      at TCP.<anonymous> (node:net:346:12) {
+    client: Client {
+      _events: [Object: null prototype] { error: [Function (anonymous)] },
+      _eventsCount: 1,
+      _maxListeners: undefined,
+      connectionParameters: ConnectionParameters {
+        user: 'neondb_owner',
+        database: 'neondb',
+        port: 5432,
+        host: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+        binary: false,
+        options: undefined,
+        ssl: {},
+        client_encoding: '',
+        replication: undefined,
+        isDomainSocket: false,
+        application_name: undefined,
+        fallback_application_name: undefined,
+        statement_timeout: false,
+        lock_timeout: false,
+        idle_in_transaction_session_timeout: false,
+        query_timeout: false,
+        connect_timeout: 30,
+        keepalives: 1,
+        keepalives_idle: 10
+      },
+      user: 'neondb_owner',
+      database: 'neondb',
+      port: 5432,
+      host: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+      replication: undefined,
+      _Promise: [Function: Promise],
+      _types: TypeOverrides {
+        _types: {
+          getTypeParser: [Function: getTypeParser],
+          setTypeParser: [Function: setTypeParser],
+          arrayParser: { create: [Function: create] },
+          builtins: {
+            BOOL: 16,
+            BYTEA: 17,
+            CHAR: 18,
+            INT8: 20,
+            INT2: 21,
+            INT4: 23,
+            REGPROC: 24,
+            TEXT: 25,
+            OID: 26,
+            TID: 27,
+            XID: 28,
+            CID: 29,
+            JSON: 114,
+            XML: 142,
+            PG_NODE_TREE: 194,
+            SMGR: 210,
+            PATH: 602,
+            POLYGON: 604,
+            CIDR: 650,
+            FLOAT4: 700,
+            FLOAT8: 701,
+            ABSTIME: 702,
+            RELTIME: 703,
+            TINTERVAL: 704,
+            CIRCLE: 718,
+            MACADDR8: 774,
+            MONEY: 790,
+            MACADDR: 829,
+            INET: 869,
+            ACLITEM: 1033,
+            BPCHAR: 1042,
+            VARCHAR: 1043,
+            DATE: 1082,
+            TIME: 1083,
+            TIMESTAMP: 1114,
+            TIMESTAMPTZ: 1184,
+            INTERVAL: 1186,
+            TIMETZ: 1266,
+            BIT: 1560,
+            VARBIT: 1562,
+            NUMERIC: 1700,
+            REFCURSOR: 1790,
+            REGPROCEDURE: 2202,
+            REGOPER: 2203,
+            REGOPERATOR: 2204,
+            REGCLASS: 2205,
+            REGTYPE: 2206,
+            UUID: 2950,
+            TXID_SNAPSHOT: 2970,
+            PG_LSN: 3220,
+            PG_NDISTINCT: 3361,
+            PG_DEPENDENCIES: 3402,
+            TSVECTOR: 3614,
+            TSQUERY: 3615,
+            GTSVECTOR: 3642,
+            REGCONFIG: 3734,
+            REGDICTIONARY: 3769,
+            JSONB: 3802,
+            REGNAMESPACE: 4089,
+            REGROLE: 4096
+          }
+        },
+        text: {},
+        binary: {}
+      },
+      _ending: true,
+      _ended: true,
+      _connecting: false,
+      _connected: true,
+      _connectionError: false,
+      _queryable: false,
+      _activeQuery: null,
+      enableChannelBinding: false,
+      connection: Connection {
+        _events: [Object: null prototype] {
+          newListener: [Function (anonymous)],
+          connect: [Function (anonymous)],
+          sslconnect: [Function (anonymous)],
+          authenticationCleartextPassword: [Function: bound _handleAuthCleartextPassword],
+          authenticationMD5Password: [Function: bound _handleAuthMD5Password],
+          authenticationSASL: [Function: bound _handleAuthSASL],
+          authenticationSASLContinue: [Function: bound _handleAuthSASLContinue] AsyncFunction,
+          authenticationSASLFinal: [Function: bound _handleAuthSASLFinal],
+          backendKeyData: [Function: bound _handleBackendKeyData],
+          error: [Function: bound _handleErrorEvent],
+          errorMessage: [Function: bound _handleErrorMessage],
+          readyForQuery: [Function: bound _handleReadyForQuery],
+          notice: [Function: bound _handleNotice],
+          rowDescription: [Function: bound _handleRowDescription],
+          dataRow: [Function: bound _handleDataRow],
+          portalSuspended: [Function: bound _handlePortalSuspended],
+          emptyQuery: [Function: bound _handleEmptyQuery],
+          commandComplete: [Function: bound _handleCommandComplete],
+          parseComplete: [Function: bound _handleParseComplete],
+          copyInResponse: [Function: bound _handleCopyInResponse],
+          copyData: [Function: bound _handleCopyData],
+          notification: [Function: bound _handleNotification],
+          end: [Function: bound onceWrapper] {
+            listener: [Function (anonymous)]
+          }
+        },
+        _eventsCount: 23,
+        _maxListeners: undefined,
+        stream: <ref *1> TLSSocket {
+          _tlsOptions: {
+            allowHalfOpen: undefined,
+            pipe: false,
+            secureContext: [SecureContext],
+            isServer: false,
+            requestCert: true,
+            rejectUnauthorized: true,
+            session: undefined,
+            ALPNProtocols: undefined,
+            requestOCSP: undefined,
+            enableTrace: undefined,
+            pskCallback: undefined,
+            highWaterMark: undefined,
+            onread: undefined,
+            signal: undefined
+          },
+          _secureEstablished: true,
+          _securePending: false,
+          _newSessionPending: false,
+          _controlReleased: true,
+          secureConnecting: false,
+          _SNICallback: null,
+          servername: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+          alpnProtocol: false,
+          authorized: true,
+          authorizationError: null,
+          encrypted: true,
+          _events: [Object: null prototype] {
+            close: [Function: onSocketCloseDestroySSL],
+            end: [Array],
+            error: [Function: reportStreamError],
+            newListener: [Array],
+            secure: [Function: onConnectSecure],
+            data: [Function (anonymous)]
+          },
+          _eventsCount: 6,
+          connecting: false,
+          _hadError: false,
+          _parent: Socket {
+            connecting: false,
+            _hadError: false,
+            _parent: null,
+            _host: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+            _closeAfterHandlingError: false,
+            _events: [Object],
+            _readableState: [ReadableState],
+            _writableState: [WritableState],
+            allowHalfOpen: false,
+            _maxListeners: undefined,
+            _eventsCount: 4,
+            _sockname: null,
+            _pendingData: null,
+            _pendingEncoding: '',
+            server: null,
+            _server: null,
+            autoSelectFamilyAttemptedAddresses: [Array],
+            [Symbol(async_id_symbol)]: 350,
+            [Symbol(kHandle)]: null,
+            [Symbol(lastWriteQueueSize)]: 0,
+            [Symbol(timeout)]: null,
+            [Symbol(kBuffer)]: null,
+            [Symbol(kBufferCb)]: null,
+            [Symbol(kBufferGen)]: null,
+            [Symbol(shapeMode)]: true,
+            [Symbol(kCapture)]: false,
+            [Symbol(kSetNoDelay)]: true,
+            [Symbol(kSetKeepAlive)]: true,
+            [Symbol(kSetKeepAliveInitialDelay)]: 10,
+            [Symbol(kBytesRead)]: 4829,
+            [Symbol(kBytesWritten)]: 3164
+          },
+          _host: null,
+          _closeAfterHandlingError: false,
+          _readableState: ReadableState {
+            highWaterMark: 16384,
+            buffer: [],
+            bufferIndex: 0,
+            length: 0,
+            pipes: [],
+            awaitDrainWriters: null,
+            [Symbol(kState)]: 194512756
+          },
+          _writableState: WritableState {
+            highWaterMark: 16384,
+            length: 0,
+            corked: 0,
+            onwrite: [Function: bound onwrite],
+            writelen: 0,
+            bufferedIndex: 0,
+            pendingcb: 0,
+            [Symbol(kState)]: 1091450228,
+            [Symbol(kBufferedValue)]: null,
+            [Symbol(kWriteCbValue)]: null
+          },
+          allowHalfOpen: false,
+          _maxListeners: undefined,
+          _sockname: null,
+          _pendingData: null,
+          _pendingEncoding: '',
+          server: undefined,
+          _server: null,
+          ssl: null,
+          _requestCert: true,
+          _rejectUnauthorized: true,
+          write: [Function: writeAfterFIN],
+          [Symbol(alpncallback)]: null,
+          [Symbol(res)]: TLSWrap {
+            _parent: [TCP],
+            _parentWrap: [Socket],
+            _secureContext: [SecureContext],
+            reading: true,
+            onkeylog: [Function: onkeylog],
+            onhandshakestart: [Function: noop],
+            onhandshakedone: [Function (anonymous)],
+            onocspresponse: [Function: onocspresponse],
+            onnewsession: [Function: onnewsessionclient],
+            onerror: [Function: onerror],
+            [Symbol(owner_symbol)]: [Circular *1]
+          },
+          [Symbol(verified)]: true,
+          [Symbol(pendingSession)]: null,
+          [Symbol(async_id_symbol)]: 358,
+          [Symbol(kHandle)]: null,
+          [Symbol(lastWriteQueueSize)]: 0,
+          [Symbol(timeout)]: null,
+          [Symbol(kBuffer)]: null,
+          [Symbol(kBufferCb)]: null,
+          [Symbol(kBufferGen)]: null,
+          [Symbol(shapeMode)]: true,
+          [Symbol(kCapture)]: false,
+          [Symbol(kSetNoDelay)]: false,
+          [Symbol(kSetKeepAlive)]: false,
+          [Symbol(kSetKeepAliveInitialDelay)]: 0,
+          [Symbol(kBytesRead)]: 1395,
+          [Symbol(kBytesWritten)]: 1260,
+          [Symbol(connect-options)]: {
+            rejectUnauthorized: true,
+            ciphers: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA',
+            checkServerIdentity: [Function: checkServerIdentity],
+            minDHSize: 1024,
+            socket: [Socket],
+            servername: 'ep-polished-hill-a1ophvun-pooler.ap-southeast-1.aws.neon.tech',
+            singleUse: true
+          }
+        },
+        _keepAlive: true,
+        _keepAliveInitialDelayMillis: 10000,
+        parsedStatements: {},
+        ssl: {},
+        _ending: true,
+        _emitMessage: false,
+        _connecting: true,
+        [Symbol(shapeMode)]: false,
+        [Symbol(kCapture)]: false
+      },
+      _queryQueue: [],
+      binary: false,
+      processID: 411679288,
+      secretKey: 1420159081,
+      ssl: {},
+      _connectionTimeoutMillis: 30000,
+      _connectionCallback: null,
+      connectionTimeoutHandle: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 1444,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 328,
+        [Symbol(triggerId)]: 323,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      saslSession: null,
+      release: [Function (anonymous)],
+      readyForQuery: true,
+      hasExecuted: true,
+      _poolUseCount: 4,
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    }
+  }
+}
+
+Node.js v22.20.0
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\chand\Documents\GitHub\SDGP-Project\backend
+npm error workspace theatrex-backend@1.0.0
+npm error location C:\Users\chand\Documents\GitHub\SDGP-Project\backend
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c node --experimental-vm-modules node_modules/jest/bin/jest.js backend/tests/surgeryController.test.js

@@ -30,7 +30,7 @@ const MOCK_PATIENTS = [
 
 // MOCK_THEATRES removed — now fetched from API (M2 - Day 8)
 
-const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
+const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }) => {
     const { token } = useAuth();
     const navigate = useNavigate();
 
@@ -67,19 +67,19 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
 
     // Form state - enhanced for emergency booking with manual patient entry
     const [formData, setFormData] = useState({
-        procedure_name: '',
-        patient_id: '',
-        patient_name: '',
-        patient_age: '',
-        patient_gender: '',
-        surgeon_id: '',
-        nurse_ids: [],  // M2 Day 9: array of up to 3 nurse IDs
-        anaesthetist_id: '',
-        theatre_id: '',
-        scheduled_date: '',
-        scheduled_time: '',
-        duration_minutes: '60',
-        priority: 'routine',
+        procedure_name: initialData?.surgery_type || '',
+        patient_id: initialData?.patient_id || '',
+        patient_name: initialData?.patient_name || '',
+        patient_age: initialData?.patient_age || '',
+        patient_gender: initialData?.patient_gender || '',
+        surgeon_id: initialData?.surgeon_id || '',
+        nurse_ids: initialData?.nurses ? initialData.nurses.map(n => n.id) : [],
+        anaesthetist_id: initialData?.anaesthetist_id || '',
+        theatre_id: initialData?.theatre_id || '',
+        scheduled_date: initialData?.scheduled_date ? new Date(initialData.scheduled_date).toISOString().split('T')[0] : '',
+        scheduled_time: initialData?.scheduled_time ? initialData.scheduled_time.substring(0, 5) : '',
+        duration_minutes: initialData?.duration_minutes?.toString() || '60',
+        priority: initialData?.priority || 'routine',
     });
 
     // Fetch initial data (Surgeons, Nurses, Anaesthetists, Theatres)
@@ -150,44 +150,44 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             setCheckingAvailability(true); // Theatre
 
             const [surgeonRes, nurseRes, anaesthetistRes, theatreRes] = await Promise.all([
-                surgeryService.getAvailableSurgeons(scheduled_date, scheduled_time, duration_minutes),
-                surgeryService.getAvailableNurses(scheduled_date, scheduled_time, duration_minutes),
-                surgeryService.getAvailableAnaesthetists(scheduled_date, scheduled_time, duration_minutes),
-                surgeryService.checkTheatreAvailability(scheduled_date, scheduled_time, duration_minutes)
+                surgeryService.getAvailableSurgeons(scheduled_date, scheduled_time, duration_minutes, initialData?.id),
+                surgeryService.getAvailableNurses(scheduled_date, scheduled_time, duration_minutes, initialData?.id),
+                surgeryService.getAvailableAnaesthetists(scheduled_date, scheduled_time, duration_minutes, initialData?.id),
+                surgeryService.checkTheatreAvailability(scheduled_date, scheduled_time, duration_minutes, initialData?.id)
             ]);
 
             // Process Surgeon Availability
-            if (surgeonRes.success) {
-                setSurgeons(surgeonRes.data);
+            if (surgeonRes.success && surgeonRes.data && Array.isArray(surgeonRes.data.data)) {
+                setSurgeons(surgeonRes.data.data);
                 const availMap = {};
-                surgeonRes.data.forEach(s => availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason });
+                surgeonRes.data.data.forEach(s => availMap[s.id] = { available: s.available, conflict_reason: s.conflict_reason });
                 setSurgeonAvailability(availMap);
             }
 
             // Process Nurse Availability
-            if (nurseRes.success) {
-                setNurses(nurseRes.data);
+            if (nurseRes.success && nurseRes.data && Array.isArray(nurseRes.data.data)) {
+                setNurses(nurseRes.data.data);
                 setLoadingNurses(false);
                 const availMap = {};
-                nurseRes.data.forEach(n => availMap[n.id] = { available: n.available, conflict_reason: n.conflict_reason });
+                nurseRes.data.data.forEach(n => availMap[n.id] = { available: n.available, conflict_reason: n.conflict_reason });
                 setNurseAvailability(availMap);
             }
 
             // Process Anaesthetist Availability
-            if (anaesthetistRes.success) {
-                setAnaesthetists(anaesthetistRes.data);
+            if (anaesthetistRes.success && anaesthetistRes.data && Array.isArray(anaesthetistRes.data.data)) {
+                setAnaesthetists(anaesthetistRes.data.data);
                 setLoadingAnaesthetists(false);
                 const availMap = {};
-                anaesthetistRes.data.forEach(a => availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason });
+                anaesthetistRes.data.data.forEach(a => availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason });
                 setAnaesthetistAvailability(availMap);
             }
 
             // Process Theatre Availability
-            if (theatreRes.success) {
-                setTheatres(theatreRes.data);
+            if (theatreRes.success && theatreRes.data && Array.isArray(theatreRes.data.data)) {
+                setTheatres(theatreRes.data.data);
                 setLoadingTheatres(false);
                 const availMap = {};
-                theatreRes.data.forEach(t => availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason });
+                theatreRes.data.data.forEach(t => availMap[t.id] = { available: t.available, conflict_reason: t.conflict_reason });
                 setTheatreAvailability(availMap);
             }
 
@@ -219,13 +219,14 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             const result = await surgeryService.getAvailableNurses(
                 scheduled_date,
                 scheduled_time,
-                duration_minutes
+                duration_minutes,
+                initialData?.id
             );
-            if (result.success) {
-                setNurses(result.data);
+            if (result.success && result.data && Array.isArray(result.data.data)) {
+                setNurses(result.data.data);
                 setLoadingNurses(false);
                 const availMap = {};
-                result.data.forEach(n => {
+                result.data.data.forEach(n => {
                     availMap[n.id] = { available: n.available, conflict_reason: n.conflict_reason };
                 });
                 setNurseAvailability(availMap);
@@ -259,13 +260,14 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
             const result = await surgeryService.getAvailableAnaesthetists(
                 scheduled_date,
                 scheduled_time,
-                duration_minutes
+                duration_minutes,
+                initialData?.id
             );
-            if (result.success) {
-                setAnaesthetists(result.data);
+            if (result.success && result.data && Array.isArray(result.data.data)) {
+                setAnaesthetists(result.data.data);
                 setLoadingAnaesthetists(false);
                 const availMap = {};
-                result.data.forEach(a => {
+                result.data.data.forEach(a => {
                     availMap[a.id] = { available: a.available, conflict_reason: a.conflict_reason };
                 });
                 setAnaesthetistAvailability(availMap);
@@ -309,7 +311,8 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 duration_minutes: parseInt(duration_minutes),
                 surgeon_id: surgeon_id ? parseInt(surgeon_id) : null,
                 anaesthetist_id: anaesthetist_id ? parseInt(anaesthetist_id) : null,
-                nurse_ids: nurse_ids.map(Number).filter(id => !isNaN(id))
+                nurse_ids: nurse_ids.map(Number).filter(id => !isNaN(id)),
+                exclude_surgery_id: initialData?.id
             });
             if (result.success) {
                 setStaffConflicts(result);
@@ -430,9 +433,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 duration_minutes: formData.duration_minutes,
                 theatre_id: formData.theatre_id,
                 surgeon_id: formData.surgeon_id,
-                nurse_ids: formData.nurse_id ? [formData.nurse_id] : [], // passing as array for future proofing
-                nurse_id: formData.nurse_id, // passing as single ID for current logic
-                anaesthetist_id: formData.anaesthetist_id
+                nurse_ids: formData.nurse_ids.map(Number),
+                anaesthetist_id: formData.anaesthetist_id,
+                exclude_surgery_id: initialData?.id
             });
 
             if (conflictCheck.has_conflicts) {
@@ -442,52 +445,58 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 return;
             }
 
-            const response = await axios.post(
-                'http://localhost:5000/api/surgeries',
-                {
-                    surgery_type: formData.procedure_name,
-                    patient_id: formData.patient_id ? parseInt(formData.patient_id) : null,
-                    patient_name: formData.patient_name || null,
-                    patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
-                    patient_gender: formData.patient_gender || null,
-                    surgeon_id: formData.surgeon_id ? parseInt(formData.surgeon_id) : null,
-                    nurse_ids: formData.nurse_ids.map(Number),  // M2 Day 9: send nurse_ids array
-                    anaesthetist_id: formData.anaesthetist_id ? parseInt(formData.anaesthetist_id) : null,
-                    theatre_id: formData.theatre_id ? parseInt(formData.theatre_id) : null,
-                    scheduled_date: formData.scheduled_date,
-                    scheduled_time: formData.scheduled_time,
-                    duration_minutes: parseInt(formData.duration_minutes) || 60,
-                    status: 'scheduled',
-                    priority: formData.priority || 'routine',
-                },
-                {
+            const payload = {
+                surgery_type: formData.procedure_name,
+                patient_id: formData.patient_id ? parseInt(formData.patient_id) : null,
+                patient_name: formData.patient_name || null,
+                patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
+                patient_gender: formData.patient_gender || null,
+                surgeon_id: formData.surgeon_id ? parseInt(formData.surgeon_id) : null,
+                nurse_ids: formData.nurse_ids.map(Number),
+                anaesthetist_id: formData.anaesthetist_id ? parseInt(formData.anaesthetist_id) : null,
+                theatre_id: formData.theatre_id ? parseInt(formData.theatre_id) : null,
+                scheduled_date: formData.scheduled_date,
+                scheduled_time: formData.scheduled_time,
+                duration_minutes: parseInt(formData.duration_minutes) || 60,
+                status: initialData?.status || 'scheduled',
+                priority: formData.priority || 'routine',
+            };
+
+            let response;
+            if (initialData) {
+                response = await surgeryService.updateSurgery(initialData.id, payload);
+            } else {
+                response = await axios.post('http://localhost:5000/api/surgeries', payload, {
                     headers: { Authorization: `Bearer ${token}` }
-                }
-            );
-
-            if (response.data.success) {
-                setMessage({ type: 'success', text: 'Surgery scheduled successfully!' });
-
-                // Reset form
-                setFormData({
-                    procedure_name: '',
-                    patient_id: '',
-                    patient_name: '',
-                    patient_age: '',
-                    patient_gender: '',
-                    surgeon_id: '',
-                    nurse_ids: [],
-                    anaesthetist_id: '',
-                    theatre_id: '',
-                    scheduled_date: '',
-                    scheduled_time: '',
-                    duration_minutes: '60',
-                    priority: 'routine',
                 });
+                response = response.data; // Standardize with service return
+            }
+
+            if (response.success) {
+                setMessage({ type: 'success', text: initialData ? 'Surgery updated successfully!' : 'Surgery scheduled successfully!' });
+
+                if (!initialData) {
+                    // Reset form only if creating new
+                    setFormData({
+                        procedure_name: '',
+                        patient_id: '',
+                        patient_name: '',
+                        patient_age: '',
+                        patient_gender: '',
+                        surgeon_id: '',
+                        nurse_ids: [],
+                        anaesthetist_id: '',
+                        theatre_id: '',
+                        scheduled_date: '',
+                        scheduled_time: '',
+                        duration_minutes: '60',
+                        priority: 'routine',
+                    });
+                }
 
                 // Callback or navigate
                 if (onSuccess) {
-                    onSuccess(response.data.data);
+                    onSuccess(response.data);
                 } else {
                     setTimeout(() => {
                         navigate('/surgeries');
@@ -495,7 +504,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true }) => {
                 }
             }
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Error scheduling surgery';
+            const errorMessage = error.message || 'Error saving surgery';
             setMessage({ type: 'error', text: errorMessage });
         } finally {
             setLoading(false);

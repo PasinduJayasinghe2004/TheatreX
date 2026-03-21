@@ -9,7 +9,7 @@
 
 
 import { useNavigate } from 'react-router-dom';
-import { Clock, Calendar, User, Activity, Eye, Users } from 'lucide-react';
+import { Clock, Calendar, User, Activity, Eye, Users, MapPin } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 
 const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
@@ -73,6 +73,10 @@ const SurgeryCard = ({ surgery, onEdit, onDelete }) => {
                         {formatTime(surgery.scheduled_time)}
                         {surgery.duration_minutes != null ? ` (${surgery.duration_minutes} min)` : ''}
                     </span>
+                </div>
+                <div className="flex items-center">
+                    <MapPin className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />
+                    <span className="font-medium text-gray-800 dark:text-slate-100">{surgery.theatre_name || 'Unassigned'}</span>
                 </div>
                 <div className="flex items-center col-span-2">
                     <Activity className="w-4 h-4 mr-2 text-gray-400 dark:text-slate-500" />

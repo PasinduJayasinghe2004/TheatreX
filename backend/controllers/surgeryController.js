@@ -217,23 +217,16 @@ export const createSurgery = async (req, res) => {
         const { rows } = await pool.query(insertQuery, values);
         const newSurgery = rows[0];
 
-        // Assign nurses if nurse_ids provided (M2 Day 9)
-        let assignedNurses = [];
-        if (nurse_ids && Array.isArray(nurse_ids) && nurse_ids.length > 0) {
-            try {
-                const validNurseIds = nurse_ids.filter(id => id && !isNaN(id)).map(Number).slice(0, 3);
-                if (validNurseIds.length > 0) {
-                    await assignNursesToSurgery(newSurgery.id, validNurseIds);
-                    assignedNurses = await getNursesBySurgeryId(newSurgery.id);
-                }
-            } catch (nurseErr) {
-                console.error('Warning: Error assigning nurses:', nurseErr.message);
-                // Don't fail the entire create — surgery is already created
-            }
+        // Fetch theatre name for response
+        let theatreName = null;
+        if (newSurgery.theatre_id) {
+            const theatreRes = await pool.query('SELECT name FROM theatres WHERE id = $1', [newSurgery.theatre_id]);
+            if (theatreRes.rows.length > 0) theatreName = theatreRes.rows[0].name;
         }
 
         sendSuccess(res, {
             ...newSurgery,
+            theatre_name: theatreName,
             nurses: assignedNurses
         }, 'Surgery created successfully', 201);
 
@@ -328,9 +321,11 @@ export const getAllSurgeries = async (req, res) => {
             SELECT
                 s.*,
                 u.name as surgeon_name,
-                u.email as surgeon_email
+                u.email as surgeon_email,
+                t.name as theatre_name
             FROM surgeries s
             LEFT JOIN users u ON s.surgeon_id = u.id
+            LEFT JOIN theatres t ON s.theatre_id = t.id
             ${whereClause}
             ORDER BY s.scheduled_date ASC, s.scheduled_time ASC
             LIMIT $${paramCounter} OFFSET $${paramCounter + 1}
@@ -352,6 +347,7 @@ export const getAllSurgeries = async (req, res) => {
             scheduled_time: row.scheduled_time,
             duration_minutes: row.duration_minutes,
             theatre_id: row.theatre_id,
+            theatre_name: row.theatre_name,
             surgeon_id: row.surgeon_id,
             surgeon: row.surgeon_id ? {
                 id: row.surgeon_id,
@@ -677,9 +673,11 @@ export const getSurgeryById = async (req, res) => {
             `SELECT
                 s.*,
                 u.name   AS surgeon_name,
-                u.email  AS surgeon_email
+                u.email  AS surgeon_email,
+                t.name   AS theatre_name
              FROM surgeries s
              LEFT JOIN users u ON s.surgeon_id = u.id
+             LEFT JOIN theatres t ON s.theatre_id = t.id
              WHERE s.id = $1`,
             [id]
         );
@@ -706,6 +704,7 @@ export const getSurgeryById = async (req, res) => {
             scheduled_time: row.scheduled_time,
             duration_minutes: row.duration_minutes,
             theatre_id: row.theatre_id,
+            theatre_name: row.theatre_name,
             surgeon_id: row.surgeon_id,
             surgeon: row.surgeon_id ? {
                 id: row.surgeon_id,
@@ -1299,6 +1298,22 @@ export const updateSurgery = async (req, res) => {
             }
         }
 
+        // Fetch theatre name for response
+        let theatreName = null;
+        if (updatedSurgery.theatre_id) {
+            try {
+                const theatreResult = await pool.query(
+                    'SELECT name FROM theatres WHERE id = $1',
+                    [updatedSurgery.theatre_id]
+                );
+                if (theatreResult.rows.length > 0) {
+                    theatreName = theatreResult.rows[0].name;
+                }
+            } catch (err) {
+                console.log('Warning: Error fetching theatre name:', err.message);
+            }
+        }
+
         // Update nurse assignments if nurse_ids provided (M2 Day 9)
         let assignedNurses = [];
         if (nurse_ids !== undefined && Array.isArray(nurse_ids)) {
@@ -1323,6 +1338,7 @@ export const updateSurgery = async (req, res) => {
             message: 'Surgery updated successfully',
             data: {
                 ...updatedSurgery,
+                theatre_name: theatreName,
                 surgeon: surgeonDetails,
                 anaesthetist: anaesthetistDetails,
                 nurses: assignedNurses
@@ -1521,11 +1537,22 @@ export const assignStaff = async (req, res) => {
         let anaesthetistDetails = null;
         if (updatedSurgery.anaesthetist_id) {
             const anaesResult = await pool.query(
-                'SELECT id, name, email, specialization FROM anaesthetists WHERE id = $1',
+                'SELECT id, name, email FROM anaesthetists WHERE id = $1',
                 [updatedSurgery.anaesthetist_id]
             );
             if (anaesResult.rows.length > 0) {
                 anaesthetistDetails = anaesResult.rows[0];
+            }
+        }
+
+        let theatreName = null;
+        if (updatedSurgery.theatre_id) {
+            const theatreResult = await pool.query(
+                'SELECT name FROM theatres WHERE id = $1',
+                [updatedSurgery.theatre_id]
+            );
+            if (theatreResult.rows.length > 0) {
+                theatreName = theatreResult.rows[0].name;
             }
         }
 
@@ -1534,6 +1561,7 @@ export const assignStaff = async (req, res) => {
             message: 'Staff assigned successfully',
             data: {
                 ...updatedSurgery,
+                theatre_name: theatreName,
                 surgeon: surgeonDetails,
                 anaesthetist: anaesthetistDetails,
                 nurses: assignedNurses
