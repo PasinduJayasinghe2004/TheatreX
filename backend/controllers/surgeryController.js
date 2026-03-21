@@ -36,6 +36,7 @@
 import { pool } from '../config/database.js';
 import { assignNursesToSurgery, getNursesBySurgeryId } from '../models/surgeryNurseModel.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
+import { ERROR_CODES } from '../constants/errorCodes.js';
 
 const escapeCsvValue = (value) => {
     if (value === null || value === undefined) {
@@ -250,7 +251,7 @@ export const createSurgery = async (req, res) => {
             return sendError(res, 'Validation failed - check patient data or enum values', 400);
         }
 
-        next(error);
+        sendError(res, 'Error creating surgery', 500, ERROR_CODES.INTERNAL_SERVER_ERROR, error);
     }
 };
 
@@ -727,7 +728,7 @@ export const getSurgeryById = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error fetching surgery',
-            error: error.message
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 };
@@ -792,7 +793,7 @@ export const deleteSurgery = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error deleting surgery',
-            error: error.message
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 };
