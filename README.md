@@ -1,6 +1,6 @@
 # TheatreX Operating Theatre Management System
 
-**Version:** 1.0.0 | **Last Updated:** March 21, 2025
+**Version:** 1.0.0 | **Status:** 🚀 Production Live | **Last Updated:** March 21, 2026
 
 > A comprehensive operating theatre management system for hospitals to efficiently manage surgeries, theatre operations, staff scheduling, and patient records.
 
@@ -507,36 +507,116 @@ npm run seed         # Seed test data
 
 ## 📤 Deployment
 
+> **STATUS:** ✅ LIVE IN PRODUCTION (Deployed Day 30, March 21, 2026)
+
+### Live URLs
+
+- **Frontend:** [TheatreX Application](https://theatrex-frontend.vercel.app)
+- **Backend API:** [TheatreX API](https://theatrex-backend.railway.app)
+
+### Quick Deploy
+
+For detailed deployment instructions, see:
+- 📖 **[Day 30 Deployment Guide](./DAY_30_DEPLOYMENT_GUIDE.md)** - Complete step-by-step guide
+- ✅ **[Deployment Checklist](./DAY_30_DEPLOYMENT_CHECKLIST.md)** - Pre-launch verification checklist
+- 🔧 **[Production Configuration](./PRODUCTION_CONFIG.md)** - Environment variables and setup
+
 ### Frontend Deployment
 
-**Vercel Deployment**
-1. Connect GitHub repository to Vercel
-2. Set environment variables
-3. Deploy from main branch
-
-**Environment Variables**
-```
-VITE_API_URL=https://api.theatrex.app
+**Vercel Deployment (Recommended)**
+```bash
+# 1. Connect GitHub repository to Vercel
+# 2. Configure environment variables
+VITE_API_URL=https://your-backend-deployed-url.com
 VITE_APP_NAME=TheatreX
-VITE_APP_VERSION=1.0.0
+
+# 3. Deploy from main branch
+# Automatic on push or manual via dashboard
+```
+
+**Build & Preview**
+```bash
+cd frontend
+npm install
+npm run build  # Creates optimized dist/ folder
+npm run preview  # Preview production build locally
 ```
 
 ### Backend Deployment
 
-**Railway / Heroku Deployment**
-1. Connect repository
-2. Set environment variables
-3. Configure database connection
-4. Deploy
-
-**Environment Variables**
-```
+**Railway Deployment (Recommended)**
+```bash
+# 1. Create Railway project
+# 2. Connect GitHub repository
+# 3. Configure environment variables
 DATABASE_URL=postgresql://...
-JWT_SECRET=your-secret-key
-JWT_REFRESH_SECRET=your-refresh-secret
+JWT_SECRET=<secure-32-character-string>
+CORS_ORIGINS=https://your-frontend-domain.com
+RESEND_API_KEY=your-api-key
+GEMINI_API_KEY=your-api-key
 NODE_ENV=production
 PORT=5000
+
+# 4. Deploy
+# Automatic on push to main branch
 ```
+
+**Test Deployment**
+```bash
+cd backend
+npm install --production
+npm start
+# Server runs on http://localhost:5000
+```
+
+### Production Environment Variables
+
+**Backend (.env.production)**
+```env
+# Core Configuration
+NODE_ENV=production
+PORT=5000
+DATABASE_URL=postgresql://user:password@host/database
+
+# Security
+JWT_SECRET=your-secure-32-character-minimum-secret
+SESSION_SECRET=another-secure-secret
+CORS_ORIGINS=https://your-frontend.com
+
+# External APIs
+RESEND_API_KEY=your-resend-api-key
+GEMINI_API_KEY=your-gemini-api-key
+
+# Logging
+LOG_LEVEL=info
+```
+
+**Frontend (.env.production)**
+```env
+VITE_API_URL=https://your-backend-deployed-url.com
+VITE_APP_NAME=TheatreX
+VITE_ENABLE_CHARTS=true
+VITE_ENABLE_NOTIFICATIONS=true
+VITE_ENABLE_EXPORT=true
+```
+
+### Post-Deployment Verification
+
+```bash
+# Run verification tests
+node backend/scripts/verify-production.js https://backend-url https://frontend-url
+
+# Expected output: ✅ ALL TESTS PASSED - DEPLOYMENT VERIFIED!
+```
+
+### Monitoring & Support
+
+Once deployed:
+- ✅ Monitor dashboard: Railway/Vercel dashboard
+- ✅ Check logs: Platform-specific logging
+- ✅ Health endpoints: `/health` and `/api/health`
+- ✅ Performance: Monitor response times and error rates
+- ✅ On-call support: See [Day 30 Launch Report](./DAY_30_LAUNCH_REPORT.md#-support--escalation)
 
 ---
 
