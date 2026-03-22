@@ -1,20 +1,13 @@
-import { useState } from 'react';
+import SurgeryForm from './SurgeryForm';
 
-const EditSurgeryModal = () => {
-    // Existing state declarations
-    const [_theatres, _setTheatres] = useState([]);
-    const [_loadingTheatres, _setLoadingTheatres] = useState(true);
-    const [_theatreAvailability, _setTheatreAvailability] = useState(null);
-    const [_checkingAvailability, _setCheckingAvailability] = useState(false);
-
-    // Existing code... 
-
-    // Remove MOCK_THEATRES constant
-
+const EditSurgeryModal = ({ surgery, onSuccess, onCancel }) => {
     return (
-        <div>
-            {/* Modal content goes here */}
-        </div>
+        <SurgeryForm 
+            initialData={surgery} 
+            onSuccess={onSuccess} 
+            onCancel={onCancel} 
+            isModal={true} 
+        />
     );
 };
 

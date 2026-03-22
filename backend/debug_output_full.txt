@@ -1,0 +1,23 @@
+Testing availability for Date: 2026-03-24, Time: 08:00:00, Duration: 60
+Running conflict query...
+(node:18780) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Error in debugAvailability: Error: Connection terminated due to connection timeout
+    at C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async debugAvailability (file:///C:/Users/chand/Documents/GitHub/SDGP-Project/backend/debug-availability.js:43:37) {
+  [cause]: Error: Connection terminated unexpectedly
+      at Connection.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\client.js:177:73)
+      at Object.onceWrapper (node:events:633:28)
+      at Connection.emit (node:events:519:28)
+      at Socket.<anonymous> (C:\Users\chand\Documents\GitHub\SDGP-Project\backend\node_modules\pg\lib\connection.js:61:12)
+      at Socket.emit (node:events:531:35)
+      at TCP.<anonymous> (node:net:346:12)
+}

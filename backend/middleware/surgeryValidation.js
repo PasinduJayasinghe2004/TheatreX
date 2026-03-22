@@ -37,14 +37,17 @@ export const validateSurgery = (req, res, next) => {
     }
 
     if (scheduled_time) {
-        const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+        const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/;
         if (!timeFormatRegex.test(scheduled_time)) {
-            errors.push('Scheduled time must be in HH:MM 24-hour format');
+            errors.push('Scheduled time must be in HH:MM or HH:MM:SS 24-hour format');
         }
     }
 
     if (scheduled_date && scheduled_time) {
-        const dateTimeString = `${scheduled_date}T${scheduled_time}:00`;
+        // Ensure date is YYYY-MM-DD and time is HH:MM before constructing string
+        const formattedDate = scheduled_date.substring(0, 10);
+        const formattedTime = scheduled_time.substring(0, 5);
+        const dateTimeString = `${formattedDate}T${formattedTime}:00`;
         const scheduledDateTime = new Date(dateTimeString);
         if (isNaN(scheduledDateTime.getTime())) {
             errors.push('Scheduled date and time must form a valid datetime');
