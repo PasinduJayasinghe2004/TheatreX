@@ -31,12 +31,18 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
                 surgeryService.getAvailableAnaesthetists(scheduled_date, scheduled_time, duration_minutes, id)
             ]);
 
-            setSurgeons(surgeonsRes.data);
-            setNurses(nursesRes.data);
-            setAnaesthetists(anaesthetistsRes.data);
+            setSurgeons(surgeonsRes?.data?.data || surgeonsRes?.data || []);
+            setNurses(nursesRes?.data?.data || nursesRes?.data || []);
+            setAnaesthetists(anaesthetistsRes?.data?.data || anaesthetistsRes?.data || []);
+            
+            // If we have a surgeon ID assigned, find that surgeon in the list and set it as selected
+            if (surgery.surgeon_id) {
+                const currentSurgeon = (surgeonsRes?.data?.data || surgeonsRes?.data || []).find(s => s.id === surgery.surgeon_id);
+                if (currentSurgeon) setSelectedSurgeon(currentSurgeon.id);
+            }
         } catch (err) {
             console.error('Error fetching available staff:', err);
-            setError(err.message || 'Failed to fetch available staff');
+            setError(err.message || 'Error fetching available staff. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -70,9 +76,19 @@ const AssignStaffModal = ({ isOpen, onClose, surgery, onStaffAssigned }) => {
             }
 
             try {
+                // Ensure date and time are in correct format (YYYY-MM-DD and HH:mm)
+                const formattedDate = surgery.scheduled_date instanceof Date
+                    ? surgery.scheduled_date.toISOString().split('T')[0]
+                    : String(surgery.scheduled_date).split('T')[0];
+
+                // Extract HH:mm from time string if it contains extra info
+                const formattedTime = String(surgery.scheduled_time).includes(':')
+                    ? String(surgery.scheduled_time).substring(0, 5)
+                    : surgery.scheduled_time;
+
                 const conflictData = {
-                    scheduled_date: surgery.scheduled_date,
-                    scheduled_time: surgery.scheduled_time,
+                    scheduled_date: formattedDate,
+                    scheduled_time: formattedTime,
                     duration_minutes: surgery.duration_minutes,
                     surgeon_id: selectedSurgeon || null,
                     anaesthetist_id: selectedAnaesthetist || null,

@@ -861,8 +861,8 @@ export const getAvailableSurgeons = async (req, res) => {
 
         // 2. Find surgeon IDs that have conflicting surgeries at the given time
         const conflictQuery = `
-            SELECT DISTINCT s.surgeon_id,
-                   json_agg(json_build_object(
+            SELECT s.surgeon_id,
+                   jsonb_agg(jsonb_build_object(
                        'surgery_id', s.id,
                        'surgery_type', s.surgery_type,
                        'scheduled_time', s.scheduled_time,
@@ -875,8 +875,8 @@ export const getAvailableSurgeons = async (req, res) => {
               AND s.status IN ('scheduled', 'in_progress')
               ${excludeClause}
               AND (
-                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
-                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
+                  s.scheduled_time < ($2::time + ($3::text || ' minutes')::interval)
+                  AND (s.scheduled_time + (s.duration_minutes::text || ' minutes')::interval) > $2::time
               )
             GROUP BY s.surgeon_id
         `;
@@ -965,7 +965,7 @@ export const getAvailableNurses = async (req, res) => {
         //    to a surgery that overlaps the requested time slot.
         const conflictQuery = `
             SELECT sn.nurse_id,
-                   json_agg(json_build_object(
+                   jsonb_agg(jsonb_build_object(
                        'surgery_id', s.id,
                        'surgery_type', s.surgery_type,
                        'scheduled_time', s.scheduled_time,
@@ -978,8 +978,8 @@ export const getAvailableNurses = async (req, res) => {
               AND s.status IN ('scheduled', 'in_progress')
               ${excludeClause}
               AND (
-                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
-                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
+                  s.scheduled_time < ($2::time + ($3::text || ' minutes')::interval)
+                  AND (s.scheduled_time + (s.duration_minutes::text || ' minutes')::interval) > $2::time
               )
             GROUP BY sn.nurse_id
         `;
@@ -1070,7 +1070,7 @@ export const getAvailableAnaesthetists = async (req, res) => {
         //    to a surgery that overlaps the requested time slot.
         const conflictQuery = `
             SELECT s.anaesthetist_id,
-                   json_agg(json_build_object(
+                   jsonb_agg(jsonb_build_object(
                        'surgery_id', s.id,
                        'surgery_type', s.surgery_type,
                        'scheduled_time', s.scheduled_time,
@@ -1083,8 +1083,8 @@ export const getAvailableAnaesthetists = async (req, res) => {
               AND s.status IN ('scheduled', 'in_progress')
               ${excludeClause}
               AND (
-                  s.scheduled_time < ($2::time + ($3 || ' minutes')::interval)
-                  AND (s.scheduled_time + (s.duration_minutes || ' minutes')::interval) > $2::time
+                  s.scheduled_time < ($2::time + ($3::text || ' minutes')::interval)
+                  AND (s.scheduled_time + (s.duration_minutes::text || ' minutes')::interval) > $2::time
               )
             GROUP BY s.anaesthetist_id
         `;
@@ -1113,19 +1113,14 @@ export const getAvailableAnaesthetists = async (req, res) => {
 
         const availableCount = anaesthetistsWithAvailability.filter(a => a.available).length;
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             count: anaesthetistsWithAvailability.length,
             available_count: availableCount,
             data: anaesthetistsWithAvailability
-        });
+        }, 'Available anaesthetists fetched successfully', 200);
     } catch (error) {
         console.error('Error fetching available anaesthetists:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching available anaesthetists',
-            error: error.message
-        });
+        sendError(res, 'Error fetching available anaesthetists', 500, ERROR_CODES.INTERNAL_SERVER_ERROR, error);
     }
 };
 
