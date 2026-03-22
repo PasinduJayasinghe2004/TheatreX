@@ -293,6 +293,8 @@ const EmergencyBooking = () => {
                     patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
                     patient_gender: formData.patient_gender || null,
                     surgeon_id: formData.surgeon_id ? parseInt(formData.surgeon_id) : null,
+                    nurse_ids: formData.nurse_id ? [parseInt(formData.nurse_id)] : [],
+                    anaesthetist_id: formData.anaesthetist_id ? parseInt(formData.anaesthetist_id) : null,
                     theatre_id: formData.theatre_id ? parseInt(formData.theatre_id) : null,
                     scheduled_date: formData.scheduled_date,
                     scheduled_time: formData.scheduled_time,
