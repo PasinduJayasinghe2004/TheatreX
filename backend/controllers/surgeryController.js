@@ -172,6 +172,7 @@ export const createSurgery = async (req, res) => {
             notes
         } = req.body;
 
+
         // Build the INSERT query dynamically
         const insertQuery = `
             INSERT INTO surgeries (
@@ -216,6 +217,18 @@ export const createSurgery = async (req, res) => {
 
         const { rows } = await pool.query(insertQuery, values);
         const newSurgery = rows[0];
+
+        // Assign nurses if nurse_ids provided (M2 Day 9)
+        let assignedNurses = [];
+        if (nurse_ids !== undefined && Array.isArray(nurse_ids)) {
+            try {
+                const validNurseIds = nurse_ids.filter(nid => nid && !isNaN(nid)).map(Number).slice(0, 3);
+                await assignNursesToSurgery(newSurgery.id, validNurseIds);
+                assignedNurses = await getNursesBySurgeryId(newSurgery.id);
+            } catch (nurseErr) {
+                console.error('Warning: Error assigning nurses during surgery creation:', nurseErr.message);
+            }
+        }
 
         // Fetch theatre name for response
         let theatreName = null;
