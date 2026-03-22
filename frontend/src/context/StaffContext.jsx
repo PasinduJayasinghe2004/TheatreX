@@ -1,24 +1,23 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useRef } from 'react';
 
 const StaffContext = createContext(null);
 
 export const StaffProvider = ({ children }) => {
-    // Array of listeners that will be called when staff data changes
-    // Each listener is a { refresh: Function }
-    const listeners = [];
+    // Use useRef to store listeners array (doesn't trigger re-renders)
+    const listenersRef = useRef([]);
 
     // ========================================
     // Subscribe to staff data changes
     // Returns unsubscribe function
     // ========================================
     const subscribe = useCallback((refreshCallback) => {
-        listeners.push(refreshCallback);
+        listenersRef.current.push(refreshCallback);
         // Return unsubscribe function
         return () => {
-            const index = listeners.indexOf(refreshCallback);
+            const index = listenersRef.current.indexOf(refreshCallback);
             if (index > -1) {
-                listeners.splice(index, 1);
+                listenersRef.current.splice(index, 1);
             }
         };
     }, []);
@@ -28,7 +27,7 @@ export const StaffProvider = ({ children }) => {
     // Called when surgeon, nurse, anaesthetist, or technician is added/updated/deleted
     // ========================================
     const notifyStaffDataChanged = useCallback((staffType) => {
-        listeners.forEach(callback => {
+        listenersRef.current.forEach(callback => {
             if (typeof callback === 'function') {
                 callback(staffType);
             }

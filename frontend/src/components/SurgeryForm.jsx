@@ -148,7 +148,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
         });
 
         return unsubscribe;
-    }, [subscribe, fetchStaffData];
+    }, [subscribe, fetchStaffData]);
 
     // Check staff & theatre availability when date/time/duration change
     const checkAllAvailability = useCallback(async () => {
