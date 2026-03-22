@@ -21,6 +21,7 @@ import Layout from '../components/Layout';
 import TechnicianForm from '../components/TechnicianForm';
 import technicianService from '../services/technicianService';
 import { useAuth } from '../context/AuthContext';
+import { useStaff } from '../context/StaffContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
@@ -181,6 +182,7 @@ const DeleteConfirmModal = ({ tech, onConfirm, onCancel, loading }) => (
 
 const TechniciansPage = () => {
     const { user } = useAuth();
+    const { notifyStaffDataChanged } = useStaff();
 
     const [technicians, setTechnicians] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -240,6 +242,8 @@ const TechniciansPage = () => {
     const handleCreated = (newTech) => {
         setShowForm(false);
         setTechnicians(prev => [newTech, ...prev]);
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('technician');
     };
 
     const handleUpdated = (updatedTech) => {
@@ -247,6 +251,8 @@ const TechniciansPage = () => {
         setTechnicians(prev =>
             prev.map(t => (t.id === updatedTech.id ? updatedTech : t))
         );
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('technician');
     };
 
     const handleDelete = async () => {
@@ -257,6 +263,8 @@ const TechniciansPage = () => {
             setTechnicians(prev => prev.filter(t => t.id !== deletingTech.id));
             toast.success(response.message || `Technician '${deletingTech.name}' deleted successfully`);
             setDeletingTech(null);
+            // Notify other components that staff data has changed
+            notifyStaffDataChanged('technician');
         } catch (err) {
             const msg = err.message || 'Failed to delete technician.';
             setError(msg);

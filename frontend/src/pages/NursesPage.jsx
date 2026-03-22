@@ -19,6 +19,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import nurseService from '../services/nurseService';
 import { useAuth } from '../context/AuthContext';
+import { useStaff } from '../context/StaffContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
@@ -536,6 +537,7 @@ const DeleteNurseModal = ({ nurse, onClose, onDeleted }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const NursesPage = () => {
     const { user } = useAuth();
+    const { notifyStaffDataChanged } = useStaff();
     const [nurses, setNurses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -572,16 +574,22 @@ const NursesPage = () => {
     const handleCreated = (newNurse) => {
         setShowCreateModal(false);
         setNurses(prev => [newNurse, ...prev]);
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('nurse');
     };
 
     const handleUpdated = (updatedNurse) => {
         setEditingNurse(null);
         setNurses(prev => prev.map(n => n.id === updatedNurse.id ? { ...n, ...updatedNurse } : n));
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('nurse');
     };
 
     const handleDeleted = (deletedId) => {
         setDeletingNurse(null);
         setNurses(prev => prev.filter(n => n.id !== deletedId));
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('nurse');
     };
 
     return (
