@@ -259,8 +259,22 @@ const surgeryService = {
     // ========================================
     getAvailableSurgeons: async (date, time, duration, excludeSurgeryId = null) => {
         try {
-            const params = new URLSearchParams({ date, time, duration: String(duration) });
-            if (excludeSurgeryId) {
+            // Ensure date and time are in correct format (YYYY-MM-DD and HH:mm)
+            const formattedDate = date instanceof Date
+                ? date.toISOString().split('T')[0]
+                : String(date).split('T')[0];
+
+            // Extract HH:mm from time string if it contains extra info
+            const formattedTime = String(time).includes(':')
+                ? String(time).substring(0, 5)
+                : time;
+
+            const params = new URLSearchParams({
+                date: formattedDate,
+                time: formattedTime,
+                duration: String(duration)
+            });
+            if (excludeSurgeryId && excludeSurgeryId !== 'null' && excludeSurgeryId !== 'undefined') {
                 params.append('exclude_surgery_id', String(excludeSurgeryId));
             }
             const response = await api.get(`/surgeries/surgeons/available?${params.toString()}`);
@@ -278,8 +292,21 @@ const surgeryService = {
     // ========================================
     getAvailableNurses: async (date, time, duration, excludeSurgeryId = null) => {
         try {
-            const params = new URLSearchParams({ date, time, duration: String(duration) });
-            if (excludeSurgeryId) {
+            // Ensure date and time are in correct format
+            const formattedDate = date instanceof Date
+                ? date.toISOString().split('T')[0]
+                : String(date).split('T')[0];
+
+            const formattedTime = String(time).includes(':')
+                ? String(time).substring(0, 5)
+                : time;
+
+            const params = new URLSearchParams({
+                date: formattedDate,
+                time: formattedTime,
+                duration: String(duration)
+            });
+            if (excludeSurgeryId && excludeSurgeryId !== 'null' && excludeSurgeryId !== 'undefined') {
                 params.append('exclude_surgery_id', String(excludeSurgeryId));
             }
             const response = await api.get(`/surgeries/nurses/available?${params.toString()}`);
@@ -297,8 +324,21 @@ const surgeryService = {
     // ========================================
     getAvailableAnaesthetists: async (date, time, duration, excludeSurgeryId = null) => {
         try {
-            const params = new URLSearchParams({ date, time, duration: String(duration) });
-            if (excludeSurgeryId) {
+            // Ensure date and time are in correct format
+            const formattedDate = date instanceof Date
+                ? date.toISOString().split('T')[0]
+                : String(date).split('T')[0];
+
+            const formattedTime = String(time).includes(':')
+                ? String(time).substring(0, 5)
+                : time;
+
+            const params = new URLSearchParams({
+                date: formattedDate,
+                time: formattedTime,
+                duration: String(duration)
+            });
+            if (excludeSurgeryId && excludeSurgeryId !== 'null' && excludeSurgeryId !== 'undefined') {
                 params.append('exclude_surgery_id', String(excludeSurgeryId));
             }
             const response = await api.get(`/surgeries/anaesthetists/available?${params.toString()}`);

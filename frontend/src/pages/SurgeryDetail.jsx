@@ -411,9 +411,7 @@ const SurgeryDetail = () => {
                                     <div>
                                         <p className="text-sm text-gray-500">Theatre</p>
                                         <p className="font-medium text-gray-800">
-                                            {surgery.theatre_id
-                                                ? `Theatre #${surgery.theatre_id}`
-                                                : 'Unassigned'}
+                                            {surgery.theatre_name || 'Unassigned'}
                                         </p>
                                     </div>
                                 </div>

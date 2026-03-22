@@ -23,6 +23,7 @@ import EditSurgeryModal from '../components/EditSurgeryModal';
 import AssignStaffModal from '../components/AssignStaffModal';
 import { ALL_STATUSES, STATUS_LABELS } from '../components/StatusBadge';
 import surgeryService from '../services/surgeryService';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 
 const SurgeryList = () => {
@@ -50,6 +51,11 @@ const SurgeryList = () => {
 
     const [assigningStaffSurgery, setAssigningStaffSurgery] = useState(null);
     const [showStaffModal, setShowStaffModal] = useState(false);
+
+    // Delete confirmation state
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [surgeryToDelete, setSurgeryToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Fetch surgeries on component mount and when filters change
     useEffect(() => {
@@ -131,11 +137,41 @@ const SurgeryList = () => {
 
     // Handle delete surgery
     const handleDelete = (surgeryId) => {
-        console.log('Delete surgery:', surgeryId);
+        const surgery = surgeries.find(s => s.id === surgeryId);
+        if (!surgery) return;
+        setSurgeryToDelete(surgery);
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!surgeryToDelete) return;
+
+        try {
+            setIsDeleting(true);
+            const response = await surgeryService.deleteSurgery(surgeryToDelete.id);
+            if (response.success) {
+                toast.success('Surgery deleted successfully');
+                setShowDeleteModal(false);
+                setSurgeryToDelete(null);
+                fetchSurgeries(); // Refresh the list
+            } else {
+                toast.error(response.message || 'Failed to delete surgery');
+            }
+        } catch (err) {
+            toast.error(err.message || 'An error occurred while deleting the surgery');
+            console.error('Error deleting surgery:', err);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setShowDeleteModal(false);
+        setSurgeryToDelete(null);
     };
 
     // Filter handlers
-    const handleFilterChange = (startDate, endDate) => {
+    const handleFilterChange = ({ startDate, endDate }) => {
         setPage(1);
         setFilters(prev => ({ ...prev, startDate, endDate }));
     };
@@ -301,6 +337,17 @@ const SurgeryList = () => {
                         onStaffAssigned={handleStaffAssigned}
                     />
                 )}
+
+                {/* Delete Confirmation Modal */}
+                <DeleteConfirmationModal
+                    isOpen={showDeleteModal}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    isLoading={isDeleting}
+                    title="Delete Surgery"
+                    itemName={surgeryToDelete ? `Type: ${surgeryToDelete.surgery_type} - Patient: ${surgeryToDelete.patient_name}` : ""}
+                    message="Are you sure you want to delete this surgery record? This action cannot be undone and will remove all associated data."
+                />
             </div>
         </Layout>
     );
