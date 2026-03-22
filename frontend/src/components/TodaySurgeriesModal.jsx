@@ -29,6 +29,7 @@ const THEATRE_UTILIZATION = [
     { name: 'Theatre 1', surgeries: 2, max: 4 },
     { name: 'Theatre 2', surgeries: 0, max: 4 },
     { name: 'Theatre 3', surgeries: 1, max: 4 },
+    { name: 'Theatre 4', surgeries: 0, max: 4 },
 ];
 
 const StatCard = ({ label, value, color }) => (
