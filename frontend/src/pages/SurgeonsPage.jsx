@@ -19,6 +19,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import surgeonService from '../services/surgeonService';
 import { useAuth } from '../context/AuthContext';
+import { useStaff } from '../context/StaffContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
@@ -695,6 +696,7 @@ const DeleteSurgeonModal = ({ surgeon, onClose, onDeleted }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const SurgeonsPage = () => {
     const { user } = useAuth();
+    const { notifyStaffDataChanged } = useStaff();
 
     const [surgeons, setSurgeons] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -733,6 +735,8 @@ const SurgeonsPage = () => {
     const handleCreated = (newSurgeon) => {
         setShowCreateModal(false);
         setSurgeons(prev => [newSurgeon, ...prev]);
+        // Notify other components (forms) that staff data has changed
+        notifyStaffDataChanged('surgeon');
     };
 
     // ── Handle surgeon updated (Day 14) ──────────────────────────────────────
@@ -741,12 +745,16 @@ const SurgeonsPage = () => {
         setSurgeons(prev =>
             prev.map(s => (s.id === updatedSurgeon.id ? { ...s, ...updatedSurgeon } : s))
         );
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('surgeon');
     };
 
     // ── Handle surgeon deleted (Day 14) ──────────────────────────────────────
     const handleDeleted = (deletedId) => {
         setDeletingSurgeon(null);
         setSurgeons(prev => prev.filter(s => s.id !== deletedId));
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('surgeon');
     };
 
     return (

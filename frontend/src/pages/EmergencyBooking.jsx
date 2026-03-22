@@ -15,6 +15,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useStaff } from '../context/StaffContext';
 import { useNavigate } from 'react-router-dom';
 import surgeryService from '../services/surgeryService';
 import axios from 'axios';
@@ -37,6 +38,7 @@ const MOCK_ANAESTHETISTS = [
 
 const EmergencyBooking = () => {
     const { token } = useAuth();
+    const { subscribe } = useStaff();
     const navigate = useNavigate();
 
     // Loading states
@@ -74,43 +76,56 @@ const EmergencyBooking = () => {
         notes: '',
     });
 
-    // Fetch surgeons for dropdown
-    useEffect(() => {
-        const fetchSurgeons = async () => {
-            try {
-                const response = await axios.get(
+    // Function to fetch surgeons and theatres
+    const fetchStaffData = useCallback(async () => {
+        try {
+            const [surgeonRes, theatreRes] = await Promise.all([
+                axios.get(
                     'http://localhost:5000/api/surgeries/surgeons',
                     { headers: { Authorization: `Bearer ${token}` } }
-                );
-                if (response.data.success) {
-                    setSurgeons(response.data.data);
-                }
-            } catch (error) {
-                console.error('Error fetching surgeons:', error);
-            } finally {
-                setLoadingSurgeons(false);
-            }
-        };
+                ).catch(error => {
+                    console.error('Error fetching surgeons:', error);
+                    return { data: { success: false, data: [] } };
+                }),
+                surgeryService.getTheatres().catch(error => {
+                    console.error('Error fetching theatres:', error);
+                    return { success: false, data: [] };
+                })
+            ]);
 
-        if (token) fetchSurgeons();
+            if (surgeonRes.data.success) {
+                setSurgeons(surgeonRes.data.data);
+            }
+
+            if (theatreRes.success) {
+                setTheatres(theatreRes.data);
+            }
+        } catch (error) {
+            console.error('Error fetching staff data:', error);
+        } finally {
+            setLoadingSurgeons(false);
+            setLoadingTheatres(false);
+        }
     }, [token]);
 
-    // Fetch theatres for dropdown
+    // Fetch surgeons and theatres on component mount
     useEffect(() => {
-        const fetchTheatres = async () => {
-            try {
-                const result = await surgeryService.getTheatres();
-                if (result.success) {
-                    setTheatres(result.data);
-                }
-            } catch (error) {
-                console.error('Error fetching theatres:', error);
-            } finally {
-                setLoadingTheatres(false);
-            }
-        };
-        fetchTheatres();
-    }, []);
+        if (token) {
+            fetchStaffData();
+        }
+    }, [token, fetchStaffData]);
+
+    // Subscribe to staff data changes - when staff is added/updated/deleted, refetch
+    useEffect(() => {
+        const unsubscribe = subscribe(() => {
+            // Reset loading states and refetch
+            setLoadingSurgeons(true);
+            setLoadingTheatres(true);
+            fetchStaffData();
+        });
+
+        return unsubscribe;
+    }, [subscribe, fetchStaffData]);
 
     // Check theatre availability when date/time/duration change
     const checkAvailability = useCallback(async () => {
@@ -278,6 +293,8 @@ const EmergencyBooking = () => {
                     patient_age: formData.patient_age ? parseInt(formData.patient_age) : null,
                     patient_gender: formData.patient_gender || null,
                     surgeon_id: formData.surgeon_id ? parseInt(formData.surgeon_id) : null,
+                    nurse_ids: formData.nurse_id ? [parseInt(formData.nurse_id)] : [],
+                    anaesthetist_id: formData.anaesthetist_id ? parseInt(formData.anaesthetist_id) : null,
                     theatre_id: formData.theatre_id ? parseInt(formData.theatre_id) : null,
                     scheduled_date: formData.scheduled_date,
                     scheduled_time: formData.scheduled_time,

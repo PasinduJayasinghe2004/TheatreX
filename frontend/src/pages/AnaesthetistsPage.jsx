@@ -17,6 +17,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import anaesthetistService from '../services/anaesthetistService';
 import { useAuth } from '../context/AuthContext';
+import { useStaff } from '../context/StaffContext';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
@@ -650,6 +651,7 @@ const DeleteAnaesthetistModal = ({ anaesthetist, onClose, onDeleted }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const AnaesthetistsPage = () => {
     const { user } = useAuth();
+    const { notifyStaffDataChanged } = useStaff();
 
     const [anaesthetists, setAnaesthetists] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -690,6 +692,8 @@ const AnaesthetistsPage = () => {
     const handleCreated = (newAnaesthetist) => {
         setShowCreateModal(false);
         setAnaesthetists(prev => [newAnaesthetist, ...prev]);
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('anaesthetist');
     };
 
     // ── Handle anaesthetist updated (Day 14) ────────────────────────────────
@@ -698,12 +702,16 @@ const AnaesthetistsPage = () => {
         setAnaesthetists(prev =>
             prev.map(a => (a.id === updatedAnaesthetist.id ? { ...a, ...updatedAnaesthetist } : a))
         );
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('anaesthetist');
     };
 
     // ── Handle anaesthetist deleted (Day 14) ────────────────────────────────
     const handleDeleted = (deletedId) => {
         setDeletingAnaesthetist(null);
         setAnaesthetists(prev => prev.filter(a => a.id !== deletedId));
+        // Notify other components that staff data has changed
+        notifyStaffDataChanged('anaesthetist');
     };
 
     // ── Client-side search filtering ────────────────────────────────────────
