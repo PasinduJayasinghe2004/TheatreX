@@ -65,6 +65,20 @@ const createTheatresTable = async () => {
     await pool.query(createTableQuery);
     await pool.query(createIndexes);
     await pool.query(createTrigger);
+
+    // Seed default theatres if the table is empty
+    const seedTheatresQuery = `
+      INSERT INTO theatres (name, location, capacity, theatre_type, status)
+      SELECT * FROM (VALUES 
+        ('Theatre 1', 'Main Floor', 10, 'general', 'available'),
+        ('Theatre 2', 'Main Floor', 10, 'general', 'available'),
+        ('Theatre 3', 'Second Floor', 15, 'general', 'available'),
+        ('Theatre 4', 'Second Floor', 15, 'general', 'available')
+      ) AS v(name, location, capacity, theatre_type, status)
+      WHERE NOT EXISTS (SELECT 1 FROM theatres LIMIT 1);
+    `;
+    await pool.query(seedTheatresQuery);
+
     console.log('✅ Theatres table created/verified successfully');
   } catch (error) {
     console.error('❌ Error creating theatres table:', error.message);
