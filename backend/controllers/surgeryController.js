@@ -873,6 +873,8 @@ export const getSurgeonsDropdown = async (req, res) => {
             SELECT id, name, email
             FROM users
             WHERE role = 'surgeon' AND is_active = true
+              AND name NOT ILIKE 'E2E%'
+              AND name NOT ILIKE 'Test%'
             ORDER BY name ASC
         `);
 
@@ -918,11 +920,13 @@ export const getAvailableSurgeons = async (req, res) => {
             ? [date, time, durationMins, parseInt(exclude_surgery_id, 10)]
             : [date, time, durationMins];
 
-        // 1. Get all active surgeons from users table
+        // 1. Get all active surgeons from users table (exclude E2E/test data)
         const { rows: allSurgeons } = await pool.query(`
             SELECT id, name, email
             FROM users
             WHERE role = 'surgeon' AND is_active = true
+              AND name NOT ILIKE 'E2E%'
+              AND name NOT ILIKE 'Test%'
             ORDER BY name ASC
         `);
 
