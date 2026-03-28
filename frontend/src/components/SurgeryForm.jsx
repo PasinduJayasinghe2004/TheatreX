@@ -15,6 +15,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useStaff } from '../context/StaffContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import surgeryService from '../services/surgeryService';
 import StaffConflictWarning from './StaffConflictWarning';
@@ -491,7 +492,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
             }
 
             if (response.success) {
-                setMessage({ type: 'success', text: initialData ? 'Surgery updated successfully!' : 'Surgery scheduled successfully!' });
+                const successMessage = initialData ? 'Surgery updated successfully!' : 'Surgery scheduled successfully!';
+                setMessage({ type: 'success', text: successMessage });
+                toast.success(successMessage);
 
                 if (!initialData) {
                     // Reset form only if creating new
@@ -524,6 +527,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
         } catch (error) {
             const errorMessage = error.message || 'Error saving surgery';
             setMessage({ type: 'error', text: errorMessage });
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }

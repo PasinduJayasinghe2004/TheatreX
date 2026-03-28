@@ -35,6 +35,7 @@
 
 import { pool } from '../config/database.js';
 import { assignNursesToSurgery, getNursesBySurgeryId } from '../models/surgeryNurseModel.js';
+import { Notification } from '../models/notificationModel.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
 import { ERROR_CODES } from '../constants/errorCodes.js';
 
@@ -235,6 +236,62 @@ export const createSurgery = async (req, res) => {
         if (newSurgery.theatre_id) {
             const theatreRes = await pool.query('SELECT name FROM theatres WHERE id = $1', [newSurgery.theatre_id]);
             if (theatreRes.rows.length > 0) theatreName = theatreRes.rows[0].name;
+        }
+
+        // Create notifications for assigned staff
+        try {
+            const notificationPromises = [];
+            const surgeryTitle = `Surgery Scheduled: ${newSurgery.surgery_type}`;
+            const surgeryMessage = `${surgeryTitle} on ${newSurgery.scheduled_date} at ${newSurgery.scheduled_time} for patient ${newSurgery.patient_name}`;
+
+            // Notify surgeon
+            if (newSurgery.surgeon_id) {
+                notificationPromises.push(
+                    Notification.create({
+                        user_id: newSurgery.surgeon_id,
+                        type: 'alert',
+                        title: surgeryTitle,
+                        message: surgeryMessage,
+                        surgery_id: newSurgery.id
+                    }).catch(err => console.error('Failed to create surgeon notification:', err))
+                );
+            }
+
+            // Notify nurses
+            if (assignedNurses && assignedNurses.length > 0) {
+                assignedNurses.forEach(nurse => {
+                    notificationPromises.push(
+                        Notification.create({
+                            user_id: nurse.id,
+                            type: 'alert',
+                            title: surgeryTitle,
+                            message: surgeryMessage,
+                            surgery_id: newSurgery.id
+                        }).catch(err => console.error('Failed to create nurse notification:', err))
+                    );
+                });
+            }
+
+            // Notify anaesthetist
+            if (newSurgery.anaesthetist_id) {
+                notificationPromises.push(
+                    Notification.create({
+                        user_id: newSurgery.anaesthetist_id,
+                        type: 'alert',
+                        title: surgeryTitle,
+                        message: surgeryMessage,
+                        surgery_id: newSurgery.id
+                    }).catch(err => console.error('Failed to create anaesthetist notification:', err))
+                );
+            }
+
+            // Wait for all notifications to be created (but don't block the response)
+            if (notificationPromises.length > 0) {
+                await Promise.all(notificationPromises);
+            }
+        } catch (notificationError) {
+            console.error('Notification creation encountered an error:', notificationError);
+            // Don't fail the surgery creation if notifications fail
         }
 
         sendSuccess(res, {
@@ -819,6 +876,8 @@ export const getSurgeonsDropdown = async (req, res) => {
             SELECT id, name, email
             FROM users
             WHERE role = 'surgeon' AND is_active = true
+              AND name NOT ILIKE 'E2E%'
+              AND name NOT ILIKE 'Test%'
             ORDER BY name ASC
         `);
 
@@ -864,11 +923,13 @@ export const getAvailableSurgeons = async (req, res) => {
             ? [date, time, durationMins, parseInt(exclude_surgery_id, 10)]
             : [date, time, durationMins];
 
-        // 1. Get all active surgeons from users table
+        // 1. Get all active surgeons from users table (exclude E2E/test data)
         const { rows: allSurgeons } = await pool.query(`
             SELECT id, name, email
             FROM users
             WHERE role = 'surgeon' AND is_active = true
+              AND name NOT ILIKE 'E2E%'
+              AND name NOT ILIKE 'Test%'
             ORDER BY name ASC
         `);
 
@@ -1409,7 +1470,7 @@ export const updateSurgeryStatus = async (req, res) => {
         }
 
         const { rows: existingSurgery } = await pool.query(
-            'SELECT id, status FROM surgeries WHERE id = $1',
+            'SELECT id, status, surgery_type, patient_name, scheduled_date, scheduled_time, surgeon_id, anaesthetist_id FROM surgeries WHERE id = $1',
             [id]
         );
 
@@ -1418,6 +1479,7 @@ export const updateSurgeryStatus = async (req, res) => {
         }
 
         const currentStatus = existingSurgery[0].status;
+        const surgeryData = existingSurgery[0];
 
         // Validate status transition
         const allowedTransitions = VALID_STATUS_TRANSITIONS[currentStatus];
@@ -1432,6 +1494,73 @@ export const updateSurgeryStatus = async (req, res) => {
             'UPDATE surgeries SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
             [status, id]
         );
+
+        // Create notifications for status update
+        try {
+            const notificationPromises = [];
+            const statusMessages = {
+                in_progress: 'Surgery has started',
+                completed: 'Surgery has been completed',
+                cancelled: 'Surgery has been cancelled'
+            };
+
+            const statusMessage = statusMessages[status];
+            if (statusMessage) {
+                const notificationTitle = `Surgery ${statusMessage.toLowerCase()}: ${surgeryData.surgery_type}`;
+                const notificationBody = `${notificationTitle} for patient ${surgeryData.patient_name}`;
+
+                // Notify surgeon
+                if (surgeryData.surgeon_id) {
+                    notificationPromises.push(
+                        Notification.create({
+                            user_id: surgeryData.surgeon_id,
+                            type: status === 'cancelled' ? 'warning' : 'alert',
+                            title: notificationTitle,
+                            message: notificationBody,
+                            surgery_id: surgeryData.id
+                        }).catch(err => console.error('Failed to create surgeon status notification:', err))
+                    );
+                }
+
+                // Notify anaesthetist
+                if (surgeryData.anaesthetist_id) {
+                    notificationPromises.push(
+                        Notification.create({
+                            user_id: surgeryData.anaesthetist_id,
+                            type: status === 'cancelled' ? 'warning' : 'alert',
+                            title: notificationTitle,
+                            message: notificationBody,
+                            surgery_id: surgeryData.id
+                        }).catch(err => console.error('Failed to create anaesthetist status notification:', err))
+                    );
+                }
+
+                // Notify nurses
+                const { rows: nurses } = await pool.query(
+                    'SELECT user_id FROM surgery_nurses WHERE surgery_id = $1',
+                    [surgeryData.id]
+                ).catch(() => ({ rows: [] }));
+
+                nurses.forEach(nurse => {
+                    notificationPromises.push(
+                        Notification.create({
+                            user_id: nurse.user_id,
+                            type: status === 'cancelled' ? 'warning' : 'alert',
+                            title: notificationTitle,
+                            message: notificationBody,
+                            surgery_id: surgeryData.id
+                        }).catch(err => console.error('Failed to create nurse status notification:', err))
+                    );
+                });
+
+                if (notificationPromises.length > 0) {
+                    await Promise.all(notificationPromises);
+                }
+            }
+        } catch (notificationError) {
+            console.error('Status notification creation encountered an error:', notificationError);
+            // Don't fail the status update if notifications fail
+        }
 
         res.status(200).json({
             success: true,
