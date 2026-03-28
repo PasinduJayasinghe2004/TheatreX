@@ -173,6 +173,7 @@ export const createSurgery = async (req, res) => {
             notes
         } = req.body;
 
+
         // Build the INSERT query dynamically
         const insertQuery = `
             INSERT INTO surgeries (
@@ -218,13 +219,15 @@ export const createSurgery = async (req, res) => {
         const { rows } = await pool.query(insertQuery, values);
         const newSurgery = rows[0];
 
-        // Assign nurses if provided
+        // Assign nurses if nurse_ids provided (M2 Day 9)
         let assignedNurses = [];
-        if (nurse_ids && Array.isArray(nurse_ids) && nurse_ids.length > 0) {
-            const validNurseIds = nurse_ids.filter(id => Number.isInteger(Number(id)));
-            if (validNurseIds.length > 0) {
+        if (nurse_ids !== undefined && Array.isArray(nurse_ids)) {
+            try {
+                const validNurseIds = nurse_ids.filter(nid => nid && !isNaN(nid)).map(Number).slice(0, 3);
                 await assignNursesToSurgery(newSurgery.id, validNurseIds);
                 assignedNurses = await getNursesBySurgeryId(newSurgery.id);
+            } catch (nurseErr) {
+                console.error('Warning: Error assigning nurses during surgery creation:', nurseErr.message);
             }
         }
 
@@ -873,6 +876,8 @@ export const getSurgeonsDropdown = async (req, res) => {
             SELECT id, name, email
             FROM users
             WHERE role = 'surgeon' AND is_active = true
+              AND name NOT ILIKE 'E2E%'
+              AND name NOT ILIKE 'Test%'
             ORDER BY name ASC
         `);
 
@@ -918,11 +923,13 @@ export const getAvailableSurgeons = async (req, res) => {
             ? [date, time, durationMins, parseInt(exclude_surgery_id, 10)]
             : [date, time, durationMins];
 
-        // 1. Get all active surgeons from users table
+        // 1. Get all active surgeons from users table (exclude E2E/test data)
         const { rows: allSurgeons } = await pool.query(`
             SELECT id, name, email
             FROM users
             WHERE role = 'surgeon' AND is_active = true
+              AND name NOT ILIKE 'E2E%'
+              AND name NOT ILIKE 'Test%'
             ORDER BY name ASC
         `);
 
