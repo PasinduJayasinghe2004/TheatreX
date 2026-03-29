@@ -20,13 +20,7 @@ import axios from 'axios';
 import surgeryService from '../services/surgeryService';
 import StaffConflictWarning from './StaffConflictWarning';
 
-// Mock data for dropdowns (replace with API calls when available)
-const MOCK_PATIENTS = [
-    { id: 1, name: 'John Smith' },
-    { id: 2, name: 'Sarah Johnson' },
-    { id: 3, name: 'Michael Brown' },
-    { id: 4, name: 'Emily Davis' },
-];
+// Patient data is now fetched from the API (no more mock data)
 
 // MOCK_ANAESTHETISTS removed — now fetched from API (M3 - Day 9)
 
@@ -40,6 +34,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
+    // Patient state
+    const [patients, setPatients] = useState([]);
+    const [loadingPatients, setLoadingPatients] = useState(true);
     // Surgeon State
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
@@ -134,6 +131,15 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     useEffect(() => {
         if (token) {
             fetchStaffData();
+            // Fetch patients from real API
+            axios.get('http://localhost:5000/api/patients', { headers: { Authorization: `Bearer ${token}` } })
+                .then(res => {
+                    if (res.data.success) {
+                        setPatients(Array.isArray(res.data.data) ? res.data.data : []);
+                    }
+                })
+                .catch(err => console.error('Error fetching patients:', err))
+                .finally(() => setLoadingPatients(false));
         }
     }, [token, fetchStaffData]);
 
@@ -630,12 +636,12 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
                         value={formData.patient_id}
                         onChange={handleChange}
                         className={selectClass}
-                        disabled={!!(formData.patient_name || formData.patient_age || formData.patient_gender)}
+                        disabled={!!(formData.patient_name || formData.patient_age || formData.patient_gender) || loadingPatients}
                     >
-                        <option value="">-- Select Patient --</option>
-                        {MOCK_PATIENTS.map(patient => (
+                        <option value="">{loadingPatients ? 'Loading...' : '-- Select Patient --'}</option>
+                        {patients.map(patient => (
                             <option key={patient.id} value={patient.id}>
-                                {patient.name}
+                                {patient.name || patient.full_name}
                             </option>
                         ))}
                     </select>
@@ -1005,7 +1011,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
             <div className="max-w-lg mx-auto">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-transparent dark:border-slate-700">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-transparent dark:border-slate-700">
                     {/* Header */}
                     <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-slate-700">
                         <h2 className="text-xl font-semibold text-gray-800 dark:text-slate-100">Schedule Surgery</h2>
