@@ -23,18 +23,7 @@ import Layout from '../components/Layout';
 import StaffConflictWarning from '../components/StaffConflictWarning';
 import { toast } from 'react-toastify';
 
-// Mock data for staff (replace with API calls when available)
-const MOCK_NURSES = [
-    { id: 1, name: 'Nancy Williams' },
-    { id: 2, name: 'Ruth Garcia' },
-    { id: 3, name: 'Maria Martinez' },
-];
-
-const MOCK_ANAESTHETISTS = [
-    { id: 1, name: 'Dr. James Wilson' },
-    { id: 2, name: 'Dr. Lisa Anderson' },
-    { id: 3, name: 'Dr. Robert Taylor' },
-];
+// Staff data is now fetched from the API (no more mock data)
 
 const EmergencyBooking = () => {
     const { token } = useAuth();
@@ -47,6 +36,10 @@ const EmergencyBooking = () => {
     // Data states
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
+    const [nurses, setNurses] = useState([]);
+    const [loadingNurses, setLoadingNurses] = useState(true);
+    const [anaesthetists, setAnaesthetists] = useState([]);
+    const [loadingAnaesthetists, setLoadingAnaesthetists] = useState(true);
     const [theatres, setTheatres] = useState([]);
     const [loadingTheatres, setLoadingTheatres] = useState(true);
 
@@ -76,15 +69,29 @@ const EmergencyBooking = () => {
         notes: '',
     });
 
-    // Function to fetch surgeons and theatres
+    // Function to fetch surgeons, nurses, anaesthetists, and theatres
     const fetchStaffData = useCallback(async () => {
         try {
-            const [surgeonRes, theatreRes] = await Promise.all([
+            const [surgeonRes, nurseRes, anaesthetistRes, theatreRes] = await Promise.all([
                 axios.get(
                     'http://localhost:5000/api/surgeries/surgeons',
                     { headers: { Authorization: `Bearer ${token}` } }
                 ).catch(error => {
                     console.error('Error fetching surgeons:', error);
+                    return { data: { success: false, data: [] } };
+                }),
+                axios.get(
+                    'http://localhost:5000/api/nurses',
+                    { headers: { Authorization: `Bearer ${token}` } }
+                ).catch(error => {
+                    console.error('Error fetching nurses:', error);
+                    return { data: { success: false, data: [] } };
+                }),
+                axios.get(
+                    'http://localhost:5000/api/anaesthetists',
+                    { headers: { Authorization: `Bearer ${token}` } }
+                ).catch(error => {
+                    console.error('Error fetching anaesthetists:', error);
                     return { data: { success: false, data: [] } };
                 }),
                 surgeryService.getTheatres().catch(error => {
@@ -97,6 +104,14 @@ const EmergencyBooking = () => {
                 setSurgeons(surgeonRes.data.data);
             }
 
+            if (nurseRes.data.success) {
+                setNurses(Array.isArray(nurseRes.data.data) ? nurseRes.data.data : []);
+            }
+
+            if (anaesthetistRes.data.success) {
+                setAnaesthetists(Array.isArray(anaesthetistRes.data.data) ? anaesthetistRes.data.data : []);
+            }
+
             if (theatreRes.success) {
                 setTheatres(theatreRes.data);
             }
@@ -104,6 +119,8 @@ const EmergencyBooking = () => {
             console.error('Error fetching staff data:', error);
         } finally {
             setLoadingSurgeons(false);
+            setLoadingNurses(false);
+            setLoadingAnaesthetists(false);
             setLoadingTheatres(false);
         }
     }, [token]);
@@ -120,6 +137,8 @@ const EmergencyBooking = () => {
         const unsubscribe = subscribe(() => {
             // Reset loading states and refetch
             setLoadingSurgeons(true);
+            setLoadingNurses(true);
+            setLoadingAnaesthetists(true);
             setLoadingTheatres(true);
             fetchStaffData();
         });
@@ -567,11 +586,12 @@ const EmergencyBooking = () => {
                                         value={formData.nurse_id}
                                         onChange={handleChange}
                                         className={selectClass}
+                                        disabled={loadingNurses}
                                     >
-                                        <option value="">Select Nurse</option>
-                                        {MOCK_NURSES.map(nurse => (
+                                        <option value="">{loadingNurses ? 'Loading...' : 'Select Nurse'}</option>
+                                        {nurses.map(nurse => (
                                             <option key={nurse.id} value={nurse.id}>
-                                                {nurse.name}
+                                                {nurse.name || nurse.full_name}
                                             </option>
                                         ))}
                                     </select>
@@ -583,11 +603,12 @@ const EmergencyBooking = () => {
                                         value={formData.anaesthetist_id}
                                         onChange={handleChange}
                                         className={selectClass}
+                                        disabled={loadingAnaesthetists}
                                     >
-                                        <option value="">Select Anaesthetist</option>
-                                        {MOCK_ANAESTHETISTS.map(anaesthetist => (
+                                        <option value="">{loadingAnaesthetists ? 'Loading...' : 'Select Anaesthetist'}</option>
+                                        {anaesthetists.map(anaesthetist => (
                                             <option key={anaesthetist.id} value={anaesthetist.id}>
-                                                {anaesthetist.name}
+                                                {anaesthetist.name || anaesthetist.full_name}
                                             </option>
                                         ))}
                                     </select>
