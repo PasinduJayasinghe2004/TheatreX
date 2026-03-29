@@ -766,7 +766,7 @@ export const getSurgeryById = async (req, res) => {
 
         // 2. Fetch assigned nurses
         const { rows: nurseRows } = await pool.query(
-            `SELECT n.id, n.name, n.email, n.role 
+            `SELECT n.id, n.name, n.email, n.specialization 
              FROM nurses n
              JOIN surgery_nurses sn ON n.id = sn.nurse_id
              WHERE sn.surgery_id = $1`,
