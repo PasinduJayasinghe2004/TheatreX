@@ -12,6 +12,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import notificationService from '../services/notificationService.js';
 import TYPE_CONFIG from '../constants/notificationTypes.js';
 
@@ -49,32 +50,81 @@ const NotificationDropdown = () => {
     const prevCountRef = useRef(0);
     const dropdownRef = useRef(null);
     const pollRef = useRef(null);
+    const lastPolledRef = useRef(new Date().toISOString());
 
     // ──────────────────────────────────────────────────────────────
-    // Fetch unread count (lightweight poll)
+    // Poll for new notifications (delta updates)
+    // ──────────────────────────────────────────────────────────────
+    const pollNewNotifications = useCallback(async () => {
+        try {
+            const res = await notificationService.pollNotifications(lastPolledRef.current);
+            if (res.success) {
+                const newNotifications = res.data || [];
+                const newCount = res.unreadCount;
+
+                // 1. Update unread count and trigger animation if increased
+                if (newCount > prevCountRef.current) {
+                    setShouldAnimate(true);
+                    setTimeout(() => setShouldAnimate(false), 1000); // Reset animation after 1s
+                }
+                setUnreadCount(newCount);
+                prevCountRef.current = newCount;
+
+                // 2. Clear old polls to prevent overlapping Toast notifications
+                // if the same list is returned twice (shouldn't happen with correct 'since')
+                lastPolledRef.current = res.polledAt;
+
+                // 3. Show toasts for each NEW notification
+                newNotifications.forEach(notif => {
+                    const type = notif.type === 'reminder' ? 'info' :
+                        notif.type === 'alert' ? 'error' :
+                            notif.type === 'warning' ? 'warning' :
+                                notif.type === 'success' ? 'success' : 'info';
+
+                    toast(notif.message, {
+                        type,
+                        onClick: () => {
+                            if (window.location.pathname !== '/notifications') {
+                                navigate('/notifications');
+                            }
+                        }
+                    });
+                });
+
+                // 4. Update internal list if dropdown is OPEN
+                if (isOpen && newNotifications.length > 0) {
+                    setNotifications(prev => {
+                        // Concatenate and sort
+                        const combined = [...newNotifications, ...prev];
+                        // Deduplicate by ID
+                        const unique = combined.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+                        return unique.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 20);
+                    });
+                }
+            }
+        } catch {
+            // Silently ignore poll errors
+        }
+    }, [isOpen, navigate]);
+
+    // ──────────────────────────────────────────────────────────────
+    // Initial fetch unread count (legacy/fallback)
     // ──────────────────────────────────────────────────────────────
     const fetchUnreadCount = useCallback(async () => {
         try {
             const res = await notificationService.getUnreadCount();
             if (res.success) {
-                const newCount = res.data.unread_count || res.count; // Compatibility with both response structures
-
-                // Trigger animation if count increased
-                if (newCount > prevCountRef.current) {
-                    setShouldAnimate(true);
-                    setTimeout(() => setShouldAnimate(false), 1000); // Reset animation after 1s
-                }
-
+                const newCount = res.data?.unread_count ?? res.count ?? res.unreadCount;
                 setUnreadCount(newCount);
                 prevCountRef.current = newCount;
             }
         } catch {
-            // Silently ignore count errors — non-critical
+            // Silently ignore
         }
     }, []);
 
     // ──────────────────────────────────────────────────────────────
-    // Fetch notification list
+    // Fetch full notification list
     // ──────────────────────────────────────────────────────────────
     const fetchNotifications = useCallback(async () => {
         setLoading(true);
@@ -92,13 +142,14 @@ const NotificationDropdown = () => {
     }, []);
 
     // ──────────────────────────────────────────────────────────────
-    // Poll unread count every 30s
+    // Global Polling (regardless of dropdown state)
+    // every 30 seconds
     // ──────────────────────────────────────────────────────────────
     useEffect(() => {
         fetchUnreadCount();
-        const interval = setInterval(fetchUnreadCount, 30000);
+        const interval = setInterval(pollNewNotifications, 30000);
         return () => clearInterval(interval);
-    }, [fetchUnreadCount]);
+    }, [pollNewNotifications, fetchUnreadCount]);
 
     // ──────────────────────────────────────────────────────────────
     // Fetch full list when dropdown opens
@@ -106,13 +157,6 @@ const NotificationDropdown = () => {
     useEffect(() => {
         if (isOpen) {
             fetchNotifications();
-            // Poll every 30 seconds while open
-            pollRef.current = setInterval(fetchNotifications, 30000);
-        } else {
-            if (pollRef.current) {
-                clearInterval(pollRef.current);
-                pollRef.current = null;
-            }
         }
     }, [isOpen, fetchNotifications]);
 
