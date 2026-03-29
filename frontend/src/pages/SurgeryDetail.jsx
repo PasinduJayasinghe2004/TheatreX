@@ -471,12 +471,15 @@ const SurgeryDetail = () => {
 
                         {/* — Surgeon Info — */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h2 className="text-lg font-semibold text-gray-900 mb-4">Surgeon</h2>
+                            <div className="flex items-center gap-2 mb-4">
+                                <Stethoscope className="w-5 h-5 text-blue-600" />
+                                <h2 className="text-lg font-semibold text-gray-900">Lead Surgeon</h2>
+                            </div>
 
                             {surgery.surgeon ? (
                                 <div className="space-y-4">
                                     <div className="flex items-start gap-3">
-                                        <Activity className="w-5 h-5 text-gray-400 mt-0.5" />
+                                        <User className="w-5 h-5 text-gray-400 mt-0.5" />
                                         <div>
                                             <p className="text-sm text-gray-500">Name</p>
                                             <p className="font-medium text-gray-800">
@@ -496,6 +499,65 @@ const SurgeryDetail = () => {
                                 </div>
                             ) : (
                                 <p className="text-gray-500 italic">No surgeon assigned yet.</p>
+                            )}
+                        </div>
+
+                        {/* — Anaesthetist Info — */}
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Activity className="w-5 h-5 text-indigo-600" />
+                                <h2 className="text-lg font-semibold text-gray-900">Anaesthetist</h2>
+                            </div>
+
+                            {surgery.anaesthetist ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-start gap-3">
+                                        <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm text-gray-500">Name</p>
+                                            <p className="font-medium text-gray-800">
+                                                {surgery.anaesthetist.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm text-gray-500">Specialization</p>
+                                            <p className="font-medium text-gray-800">
+                                                {surgery.anaesthetist.specialization || 'General Anaesthesia'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 italic">No anaesthetist assigned yet.</p>
+                            )}
+                        </div>
+
+                        {/* — Nurses Info — */}
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:col-span-2">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Users className="w-5 h-5 text-emerald-600" />
+                                <h2 className="text-lg font-semibold text-gray-900">Assigned Nurses</h2>
+                            </div>
+
+                            {surgery.nurses && surgery.nurses.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                    {surgery.nurses.map((nurse) => (
+                                        <div key={nurse.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">
+                                                {nurse.name.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-gray-800">{nurse.name}</p>
+                                                <p className="text-[10px] text-gray-500 uppercase font-bold">{nurse.role || 'Assistant'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 italic">No nurses assigned to this surgery.</p>
                             )}
                         </div>
 
