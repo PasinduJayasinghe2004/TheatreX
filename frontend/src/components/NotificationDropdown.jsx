@@ -49,7 +49,6 @@ const NotificationDropdown = () => {
     const [markingAllRead, setMarkingAllRead] = useState(false);
     const prevCountRef = useRef(0);
     const dropdownRef = useRef(null);
-    const pollRef = useRef(null);
     const lastPolledRef = useRef(new Date().toISOString());
 
     // ──────────────────────────────────────────────────────────────

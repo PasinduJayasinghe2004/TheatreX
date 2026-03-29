@@ -754,6 +754,25 @@ export const getSurgeryById = async (req, res) => {
 
         const row = rows[0];
 
+        // 1. Fetch anaesthetist details if present
+        let anaesthetist = null;
+        if (row.anaesthetist_id) {
+            const { rows: anaRows } = await pool.query(
+                `SELECT id, name, email, specialization FROM anaesthetists WHERE id = $1`,
+                [row.anaesthetist_id]
+            );
+            if (anaRows.length > 0) anaesthetist = anaRows[0];
+        }
+
+        // 2. Fetch assigned nurses
+        const { rows: nurseRows } = await pool.query(
+            `SELECT n.id, n.name, n.email, n.role 
+             FROM nurses n
+             JOIN surgery_nurses sn ON n.id = sn.nurse_id
+             WHERE sn.surgery_id = $1`,
+            [id]
+        );
+
         // Transform into a nested structure consistent with getAllSurgeries
         const surgery = {
             id: row.id,
@@ -774,6 +793,9 @@ export const getSurgeryById = async (req, res) => {
                 name: row.surgeon_name,
                 email: row.surgeon_email
             } : null,
+            anaesthetist_id: row.anaesthetist_id,
+            anaesthetist,
+            nurses: nurseRows,
             status: row.status,
             priority: row.priority,
             notes: row.notes,

@@ -12,7 +12,7 @@ const getSessionStore = () => {
         if (typeof window !== 'undefined' && window.sessionStorage) {
             return window.sessionStorage;
         }
-    } catch (_error) {
+    } catch {
         // Ignore storage access errors and fallback to in-memory storage.
     }
 
@@ -85,7 +85,7 @@ const migrateLegacyStorage = () => {
         legacyStorage.removeItem('token');
         legacyStorage.removeItem('refreshToken');
         legacyStorage.removeItem('user');
-    } catch (_error) {
+    } catch {
         // Ignore migration errors. App can continue using whichever storage works.
     }
 };
@@ -128,7 +128,7 @@ export const authStorage = {
 
         try {
             return JSON.parse(userRaw);
-        } catch (_error) {
+        } catch {
             remove(STORAGE_KEYS.user);
             return null;
         }

@@ -21,11 +21,11 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { AlertCircle, RefreshCw, X, Clock, User, MapPin, Activity, Flag } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import Layout from '../components/Layout';
 import surgeryService from '../services/surgeryService';
 import { toast } from 'react-toastify';
-import Loading from '../components/common/Loading';
+import SurgeryDetailsModal from '../components/SurgeryDetailsModal';
 
 
 // ── Legend colour config (matches backend STATUS_COLORS / PRIORITY_COLORS) ──
@@ -53,8 +53,10 @@ const Calendar = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedEvent, setSelectedEvent] = useState(null);
-    const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 });
+
+    // Details Modal State
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [selectedSurgeryId, setSelectedSurgeryId] = useState(null);
 
 
     // ── Fetch events from the new /events API ──
@@ -104,15 +106,12 @@ const Calendar = () => {
     }, [fetchEvents]);
 
 
-    // ── Event click → show popover ──
+    // ── Event click → show Modal ──
 
     const handleEventClick = useCallback((clickInfo) => {
-        const rect = clickInfo.el.getBoundingClientRect();
-        setPopoverPos({
-            top: rect.top + window.scrollY - 10,
-            left: rect.right + 12
-        });
-        setSelectedEvent(clickInfo.event);
+        const surgeryId = clickInfo.event.extendedProps.surgeryId;
+        setSelectedSurgeryId(surgeryId);
+        setIsDetailsModalOpen(true);
     }, []);
 
 
@@ -135,17 +134,6 @@ const Calendar = () => {
             toast.info('Calendar schedule refreshed');
         }
     }, [fetchEvents]);
-
-
-    // ── Close popover on outside click ──
-
-    useEffect(() => {
-        const close = () => setSelectedEvent(null);
-        if (selectedEvent) {
-            window.addEventListener('click', close, { once: true });
-        }
-        return () => window.removeEventListener('click', close);
-    }, [selectedEvent]);
 
 
     // ── Custom event content renderer ──
@@ -172,12 +160,6 @@ const Calendar = () => {
     };
 
 
-    // ── Helper: format status label ──
-
-    const formatStatus = (s) =>
-        s ? s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : '';
-
-
     // ── Render ──
 
     return (
@@ -188,15 +170,15 @@ const Calendar = () => {
                     {/* ── Page header ── */}
                     <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Theatre Schedule Calendar</h1>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Theatre Schedule Calendar</h1>
+                            <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                                 Click an event for details · Click a date to schedule
                             </p>
                         </div>
                         <button
                             onClick={handleRefresh}
                             disabled={loading}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 self-start"
+                            className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 self-start shadow-sm"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                             Refresh
@@ -204,11 +186,11 @@ const Calendar = () => {
                     </div>
 
                     {/* ── Legend ── */}
-                    <div className="mb-4 flex flex-col sm:flex-row gap-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-3">
+                    <div className="mb-4 flex flex-col sm:flex-row gap-4 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-3 shadow-sm">
                         <div className="flex items-center gap-3 flex-wrap">
                             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status:</span>
                             {STATUS_LEGEND.map(({ label, color }) => (
-                                <span key={label} className="flex items-center gap-1.5 text-xs text-gray-700">
+                                <span key={label} className="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
                                     <span
                                         className="w-3 h-3 rounded-sm inline-block"
                                         style={{ backgroundColor: color }}
@@ -217,11 +199,11 @@ const Calendar = () => {
                                 </span>
                             ))}
                         </div>
-                        <div className="hidden sm:block w-px bg-gray-200" />
+                        <div className="hidden sm:block w-px bg-gray-200 dark:bg-gray-700" />
                         <div className="flex items-center gap-3 flex-wrap">
                             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Priority:</span>
                             {PRIORITY_LEGEND.map(({ label, color }) => (
-                                <span key={label} className="flex items-center gap-1.5 text-xs text-gray-700">
+                                <span key={label} className="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
                                     <span
                                         className="w-3 h-3 rounded-full inline-block"
                                         style={{ backgroundColor: color }}
@@ -234,10 +216,10 @@ const Calendar = () => {
 
                     {/* ── Error state ── */}
                     {error && (
-                        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
+                        <div className="mb-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg p-4 flex items-start">
                             <AlertCircle className="w-5 h-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-red-700">{error}</p>
+                                <p className="text-red-700 dark:text-red-400">{error}</p>
                                 <button
                                     onClick={handleRefresh}
                                     className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
@@ -249,7 +231,7 @@ const Calendar = () => {
                     )}
 
                     {/* ── Calendar container ── */}
-                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4 theatre-calendar">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4 theatre-calendar overflow-hidden">
                         <FullCalendar
                             ref={calendarRef}
                             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -293,136 +275,64 @@ const Calendar = () => {
                             loading={(isLoading) => setLoading(isLoading)}
                         />
                     </div>
-
-                    {/* ── Event detail popover ── */}
-                    {selectedEvent && (
-                        <div
-                            className="fixed z-50 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden"
-                            style={{ top: popoverPos.top, left: Math.min(popoverPos.left, window.innerWidth - 300) }}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {/* Popover header */}
-                            <div
-                                className="px-4 py-3 flex items-center justify-between"
-                                style={{ backgroundColor: selectedEvent.backgroundColor || '#3B82F6' }}
-                            >
-                                <h3 className="text-sm font-semibold text-white truncate pr-2">
-                                    {selectedEvent.title}
-                                </h3>
-                                <button
-                                    onClick={() => setSelectedEvent(null)}
-                                    className="text-white/80 hover:text-white transition-colors"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
-                            </div>
-
-                            {/* Popover body */}
-                            <div className="p-4 space-y-2.5 text-sm text-gray-700">
-                                <div className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-gray-400" />
-                                    <span className="font-medium">Patient:</span>
-                                    <span>{selectedEvent.extendedProps.patientName}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-gray-400" />
-                                    <span className="font-medium">Surgeon:</span>
-                                    <span>{selectedEvent.extendedProps.surgeonName}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="w-4 h-4 text-gray-400" />
-                                    <span className="font-medium">Theatre:</span>
-                                    <span>{selectedEvent.extendedProps.theatreName}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-gray-400" />
-                                    <span className="font-medium">Duration:</span>
-                                    <span>{selectedEvent.extendedProps.duration} min</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Activity className="w-4 h-4 text-gray-400" />
-                                    <span className="font-medium">Status:</span>
-                                    <span className="capitalize">{formatStatus(selectedEvent.extendedProps.status)}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Flag className="w-4 h-4 text-gray-400" />
-                                    <span className="font-medium">Priority:</span>
-                                    <span className="capitalize">{selectedEvent.extendedProps.priority}</span>
-                                </div>
-                            </div>
-
-                            {/* View full details button */}
-                            <div className="px-4 pb-3">
-                                <button
-                                    onClick={() => navigate(`/surgeries/${selectedEvent.extendedProps.surgeryId}`)}
-                                    className="w-full px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-                                >
-                                    View Full Details
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ── Loading overlay ── */}
-                    {loading && (
-                        <Loading message="Fetching surgery schedule..." />
-                    )}
                 </div>
+
+                {/* ── Surgery Details Modal ── */}
+                <SurgeryDetailsModal
+                    isOpen={isDetailsModalOpen}
+                    onClose={() => setIsDetailsModalOpen(false)}
+                    surgeryId={selectedSurgeryId}
+                />
+
+                {/* ── Loading overlay ── */}
+                {loading && (
+                    <div className="fixed inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-[2px] z-[60] flex items-center justify-center">
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-4">
+                            <RefreshCw className="w-10 h-10 text-blue-600 animate-spin" />
+                            <p className="text-gray-600 dark:text-gray-300 font-medium">Updating Schedule...</p>
+                        </div>
+                    </div>
+                )}
 
                 {/* ── Custom FullCalendar styles ── */}
                 <style>{`
-                .theatre-calendar .fc {
-                    font-family: inherit;
-                }
-                .theatre-calendar .fc-toolbar-title {
-                    font-size: 1rem;
-                    font-weight: 500;
-                }
+                .theatre-calendar .fc { font-family: inherit; }
+                .theatre-calendar .fc-toolbar-title { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+                .dark .theatre-calendar .fc-toolbar-title { color: #f1f5f9; }
                 .theatre-calendar .fc-button {
                     background-color: white !important;
-                    border: 1px solid #d1d5db !important;
-                    color: #374151 !important;
-                    font-weight: 500;
-                    padding: 0.5rem 1rem;
+                    border: 1px solid #e2e8f0 !important;
+                    color: #475569 !important;
+                    font-weight: 600;
+                    padding: 0.5rem 0.8rem !important;
                     text-transform: capitalize;
+                    font-size: 0.85rem !important;
+                    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
                 }
-                .theatre-calendar .fc-button:hover {
-                    background-color: #f3f4f6 !important;
+                .dark .theatre-calendar .fc-button {
+                    background-color: #1e293b !important;
+                    border-color: #334155 !important;
+                    color: #cbd5e1 !important;
                 }
+                .theatre-calendar .fc-button:hover { background-color: #f8fafc !important; }
+                .dark .theatre-calendar .fc-button:hover { background-color: #334155 !important; }
                 .theatre-calendar .fc-button-active {
                     background-color: #3b82f6 !important;
                     border-color: #3b82f6 !important;
                     color: white !important;
                 }
-                .theatre-calendar .fc-today-button {
-                    background-color: white !important;
-                    border: 1px solid #d1d5db !important;
-                    color: #374151 !important;
-                }
-                .theatre-calendar .fc-col-header-cell {
-                    background-color: #f9fafb;
-                    padding: 0.75rem 0;
-                }
-                .theatre-calendar .fc-col-header-cell-cushion {
-                    color: #374151;
-                    font-weight: 500;
-                }
-                .theatre-calendar .fc-timegrid-slot-label {
-                    font-size: 0.75rem;
-                    color: #6b7280;
-                }
-                .theatre-calendar .fc-event {
-                    border-radius: 6px;
-                    border: none !important;
-                    cursor: pointer;
-                }
-                .theatre-calendar .fc-daygrid-day-number {
-                    color: #374151;
-                    font-weight: 500;
-                }
-                .theatre-calendar .fc-day-today {
-                    background-color: #eff6ff !important;
-                }
+                .theatre-calendar .fc-col-header-cell { background-color: #f8fafc; padding: 0.75rem 0; border-color: #e2e8f0 !important; }
+                .dark .theatre-calendar .fc-col-header-cell { background-color: #0f172a; border-color: #1e293b !important; }
+                .theatre-calendar .fc-col-header-cell-cushion { color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; }
+                .theatre-calendar .fc-event { border-radius: 4px; border: none !important; cursor: pointer; transition: transform 0.1s; }
+                .theatre-calendar .fc-event:hover { transform: scale(1.02); filter: brightness(1.1); }
+                .theatre-calendar .fc-daygrid-day-number { color: #64748b; font-weight: 600; font-size: 0.85rem; padding: 8px !important; }
+                .theatre-calendar .fc-day-today { background-color: #eff6ff !important; }
+                .dark .theatre-calendar .fc-day-today { background-color: #1e293b/50 !important; }
+                .theatre-calendar .fc-scrollgrid { border-radius: 8px; overflow: hidden; border-color: #e2e8f0 !important; }
+                .dark .theatre-calendar .fc-scrollgrid { border-color: #1e293b !important; }
+                .theatre-calendar td, .theatre-calendar th { border-color: #f1f5f9 !important; }
+                .dark .theatre-calendar td, .dark .theatre-calendar th { border-color: #1e293b !important; }
             `}</style>
             </div>
         </Layout>
