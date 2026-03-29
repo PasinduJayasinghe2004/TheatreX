@@ -20,13 +20,7 @@ import axios from 'axios';
 import surgeryService from '../services/surgeryService';
 import StaffConflictWarning from './StaffConflictWarning';
 
-// Mock data for dropdowns (replace with API calls when available)
-const MOCK_PATIENTS = [
-    { id: 1, name: 'John Smith' },
-    { id: 2, name: 'Sarah Johnson' },
-    { id: 3, name: 'Michael Brown' },
-    { id: 4, name: 'Emily Davis' },
-];
+// Patient data is now fetched from the API (no more mock data)
 
 // MOCK_ANAESTHETISTS removed — now fetched from API (M3 - Day 9)
 
@@ -40,6 +34,9 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
+    // Patient state
+    const [patients, setPatients] = useState([]);
+    const [loadingPatients, setLoadingPatients] = useState(true);
     // Surgeon State
     const [surgeons, setSurgeons] = useState([]);
     const [loadingSurgeons, setLoadingSurgeons] = useState(true);
@@ -86,38 +83,27 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     });
 
     // Function to fetch initial data (Surgeons, Nurses, Anaesthetists, Theatres)
-    // Updated to support Staff Context - will be called when staff data changes
+    // Uses dedicated endpoints for each staff type — no users-table fallback
     const fetchStaffData = useCallback(async () => {
         try {
-            const [surgeonsRes, nursesRes, _anaesthetistsRes, theatresRes] = await Promise.all([
-                surgeryService.getSurgeons(),
-                axios.get('http://localhost:5000/api/users?role=nurse', { headers: { Authorization: `Bearer ${token}` } }).then(res => ({ success: true, data: res.data.data.filter(u => u.role === 'nurse') })).catch(() => ({ success: false, data: [] })),
-                axios.get('http://localhost:5000/api/users?role=anaesthetist', { headers: { Authorization: `Bearer ${token}` } }).then(res => ({ success: true, data: res.data.data.filter(u => u.role === 'anaesthetist') })).catch(() => ({ success: false, data: [] })),
-                surgeryService.getTheatres()
+            const [surgeonsRes, nursesRes, anaesthetistsRes, theatresRes] = await Promise.all([
+                // Surgeons from the dedicated surgeons table
+                surgeryService.getSurgeons().catch(() => ({ success: false, data: [] })),
+                // Nurses from the dedicated nurses table
+                axios.get('http://localhost:5000/api/nurses', { headers: { Authorization: `Bearer ${token}` } })
+                    .then(res => ({ success: res.data.success, data: res.data.data || [] }))
+                    .catch(() => ({ success: false, data: [] })),
+                // Anaesthetists from the dedicated anaesthetists table
+                axios.get('http://localhost:5000/api/anaesthetists', { headers: { Authorization: `Bearer ${token}` } })
+                    .then(res => ({ success: res.data.success, data: res.data.data || [] }))
+                    .catch(() => ({ success: false, data: [] })),
+                // Theatres
+                surgeryService.getTheatres().catch(() => ({ success: false, data: [] })),
             ]);
 
-            if (surgeonsRes.success) setSurgeons(surgeonsRes.data);
-            if (nursesRes.success) setNurses(nursesRes.data);
-            // Fallback for nurses/anaesthetists if the filtered user endpoint isn't perfectly set up yet
-            // But ideally surgeryService should have specific methods or we use generic user fetch. 
-            // For now, let's use the fetched data.
-            // Note: The previous axios.get calls above are a bit hacky if the endpoint doesn't support role filtering directly like that.
-            // Let's assume there's a generic way or we'll rely on the availability endpoints to populate the lists fully if needed.
-            // Actually, let's use the availability endpoints to get the lists initially (without params they might error or return empty).
-            // Better approach: Use the getAvailable... methods with dummy params or just wait for date selection.
-            // BUT we want to show the list even before date selection.
-            // So we will stick to fetching all users and filtering by role if the API supports it, or assume api/users returns all.
-
-            // Refined approach for Nurses/Anaesthetists:
-            // Since we don't have explicit `getNurses` in service yet, we can rely on `getAvailableNurses` when date is selected,
-            // OR we can fetch all users and filter.
-            // Let's try to fetch all users and filter for now as a fallback.
-            const usersRes = await axios.get('http://localhost:5000/api/users', { headers: { Authorization: `Bearer ${token}` } });
-            if (usersRes.data.success) {
-                setNurses(usersRes.data.data.filter(u => u.role === 'nurse'));
-                setAnaesthetists(usersRes.data.data.filter(u => u.role === 'anaesthetist'));
-            }
-
+            if (surgeonsRes.success) setSurgeons(Array.isArray(surgeonsRes.data) ? surgeonsRes.data : []);
+            if (nursesRes.success) setNurses(Array.isArray(nursesRes.data) ? nursesRes.data : []);
+            if (anaesthetistsRes.success) setAnaesthetists(Array.isArray(anaesthetistsRes.data) ? anaesthetistsRes.data : []);
             if (theatresRes.success) setTheatres(theatresRes.data);
 
         } catch (error) {
@@ -134,6 +120,15 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     useEffect(() => {
         if (token) {
             fetchStaffData();
+            // Fetch patients from real API
+            axios.get('http://localhost:5000/api/patients', { headers: { Authorization: `Bearer ${token}` } })
+                .then(res => {
+                    if (res.data.success) {
+                        setPatients(Array.isArray(res.data.data) ? res.data.data : []);
+                    }
+                })
+                .catch(err => console.error('Error fetching patients:', err))
+                .finally(() => setLoadingPatients(false));
         }
     }, [token, fetchStaffData]);
 
@@ -630,12 +625,12 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
                         value={formData.patient_id}
                         onChange={handleChange}
                         className={selectClass}
-                        disabled={!!(formData.patient_name || formData.patient_age || formData.patient_gender)}
+                        disabled={!!(formData.patient_name || formData.patient_age || formData.patient_gender) || loadingPatients}
                     >
-                        <option value="">-- Select Patient --</option>
-                        {MOCK_PATIENTS.map(patient => (
+                        <option value="">{loadingPatients ? 'Loading...' : '-- Select Patient --'}</option>
+                        {patients.map(patient => (
                             <option key={patient.id} value={patient.id}>
-                                {patient.name}
+                                {patient.name || patient.full_name}
                             </option>
                         ))}
                     </select>
@@ -1005,7 +1000,7 @@ const SurgeryForm = ({ onSuccess, onCancel, isModal = true, initialData = null }
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
             <div className="max-w-lg mx-auto">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-transparent dark:border-slate-700">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-transparent dark:border-slate-700">
                     {/* Header */}
                     <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-slate-700">
                         <h2 className="text-xl font-semibold text-gray-800 dark:text-slate-100">Schedule Surgery</h2>
