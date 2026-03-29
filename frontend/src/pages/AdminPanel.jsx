@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
-import StatusBadge from '../components/StatusBadge';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import UserFormModal from '../components/UserFormModal';
 import { toast } from 'react-toastify';
@@ -260,8 +259,8 @@ const AdminPanel = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
-                                            ${u.is_active !== false 
-                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800' 
+                                            ${u.is_active !== false
+                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
                                                 : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800'}`}
                                         >
                                             <span className={`w-1.5 h-1.5 rounded-full ${u.is_active !== false ? 'bg-emerald-500' : 'bg-red-500'}`} />

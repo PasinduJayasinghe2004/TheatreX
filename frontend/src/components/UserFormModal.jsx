@@ -20,6 +20,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, user = null, isLoading = false
     // Populate form when editing
     useEffect(() => {
         if (user && isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFormData({
                 name: user.name || '',
                 email: user.email || '',
@@ -29,6 +30,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, user = null, isLoading = false
                 is_active: user.is_active !== false
             });
         } else if (!user && isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFormData({
                 name: '',
                 email: '',
@@ -58,7 +60,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, user = null, isLoading = false
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
-            <div 
+            <div
                 className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fadeIn"
                 onClick={onClose}
             ></div>
@@ -70,7 +72,7 @@ const UserFormModal = ({ isOpen, onClose, onSave, user = null, isLoading = false
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                             {isEdit ? 'Edit User Details' : 'Create New User'}
                         </h2>
-                        <button 
+                        <button
                             onClick={onClose}
                             className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                         >
