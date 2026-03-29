@@ -8,6 +8,7 @@ import Register from '../pages/Register';
 import Login from '../pages/Login';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
+import AdminPanel from '../pages/AdminPanel';
 
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
@@ -33,6 +34,7 @@ import HistoryPage from '../pages/HistoryPage'; // M1 - Day 20
 import SurgeryPrintView from '../pages/SurgeryPrintView'; // M3 - Day 21
 import LandingPage from '../pages/LandingPage';
 import NotFound from '../pages/NotFound';
+import Layout from '../components/Layout';
 
 import RoleBasedRoute from '../components/RoleBasedRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -40,13 +42,6 @@ import { useAuth } from '../context/AuthContext';
 
 import DatePickerTest from '../pages/DatePickerTest';
 
-// Admin-only test page
-const AdminPanel = () => (
-    <div className="p-8">
-        <h1 className="text-3xl font-bold">Admin Panel</h1>
-        <p className="mt-4">This page is only accessible to administrators</p>
-    </div>
-);
 
 // NotFound component is now imported from '../pages/NotFound'
 
@@ -123,7 +118,9 @@ const AppRoutes = () => {
             {/* Role-Based Routes - Require Specific Roles */}
             <Route path="/admin" element={
                 <RoleBasedRoute allowedRoles={['admin']}>
-                    <AdminPanel />
+                    <Layout>
+                        <AdminPanel />
+                    </Layout>
                 </RoleBasedRoute>
             } />
 

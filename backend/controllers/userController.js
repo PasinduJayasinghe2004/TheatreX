@@ -96,11 +96,56 @@ export const createUser = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @returns {Object} 501 Not Implemented status
  */
-export const updateUser = async (req, res) => {
-    res.status(501).json({
-        success: false,
-        message: 'Update user endpoint - Coming in Day 4 (Authentication)'
-    });
+export const updateUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, email, role, phone, is_active } = req.body;
+
+        // Check if user exists
+        const { rows: userCheck } = await pool.query(
+            'SELECT id FROM users WHERE id = $1',
+            [id]
+        );
+
+        if (userCheck.length === 0) {
+            return sendError(res, 'User not found', 404, ERROR_CODES.NOT_FOUND);
+        }
+
+        // If email is changing, check for duplicates
+        if (email) {
+            const { rows: emailCheck } = await pool.query(
+                'SELECT id FROM users WHERE email = $1 AND id != $2',
+                [email.trim().toLowerCase(), id]
+            );
+
+            if (emailCheck.length > 0) {
+                return sendError(res, 'Email already exists', 409, ERROR_CODES.CONFLICT);
+            }
+        }
+
+        // Build update query dynamically
+        const fields = [];
+        const values = [];
+        let idx = 1;
+
+        if (name) { fields.push(`name = $${idx++}`); values.push(name.trim()); }
+        if (email) { fields.push(`email = $${idx++}`); values.push(email.trim().toLowerCase()); }
+        if (role) { fields.push(`role = $${idx++}`); values.push(role); }
+        if (phone !== undefined) { fields.push(`phone = $${idx++}`); values.push(phone); }
+        if (is_active !== undefined) { fields.push(`is_active = $${idx++}`); values.push(is_active); }
+
+        if (fields.length === 0) {
+            return sendError(res, 'No fields to update', 400, ERROR_CODES.BAD_REQUEST);
+        }
+
+        values.push(id);
+        const query = `UPDATE users SET ${fields.join(', ')} WHERE id = $${idx} RETURNING id, name, email, role, phone, is_active, created_at`;
+
+        const { rows } = await pool.query(query, values);
+        sendSuccess(res, rows[0], 'User updated successfully', 200);
+    } catch (error) {
+        next(error);
+    }
 };
 
 /**
@@ -120,9 +165,22 @@ export const updateUser = async (req, res) => {
  * @param {Object} res - Express response object
  * @returns {Object} 501 Not Implemented status
  */
-export const deleteUser = async (req, res) => {
-    res.status(501).json({
-        success: false,
-        message: 'Delete user endpoint - Coming in Day 4 (Authentication)'
-    });
+export const deleteUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        // Hard delete: remove from database
+        const { rowCount } = await pool.query(
+            'DELETE FROM users WHERE id = $1',
+            [id]
+        );
+
+        if (rowCount === 0) {
+            return sendError(res, 'User not found', 404, ERROR_CODES.NOT_FOUND);
+        }
+
+        sendSuccess(res, null, 'User removed from system successfully', 200);
+    } catch (error) {
+        next(error);
+    }
 };
