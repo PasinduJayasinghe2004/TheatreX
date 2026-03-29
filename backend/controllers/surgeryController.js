@@ -238,51 +238,44 @@ export const createSurgery = async (req, res) => {
             if (theatreRes.rows.length > 0) theatreName = theatreRes.rows[0].name;
         }
 
-        // Create notifications for assigned staff
+        // Create notifications for assigned staff - M3/M5 linkage fix
         try {
             const notificationPromises = [];
             const surgeryTitle = `Surgery Scheduled: ${newSurgery.surgery_type}`;
             const surgeryMessage = `${surgeryTitle} on ${newSurgery.scheduled_date} at ${newSurgery.scheduled_time} for patient ${newSurgery.patient_name}`;
 
-            // Notify surgeon
+            // Resolve all staff user IDs by email to ensure notifications go to the right accounts
+            // (surgeon_id, nurse_ids, and anaesthetist_id refer to their professional table IDs)
+            let staffEmails = [];
             if (newSurgery.surgeon_id) {
-                notificationPromises.push(
-                    Notification.create({
-                        user_id: newSurgery.surgeon_id,
-                        type: 'alert',
-                        title: surgeryTitle,
-                        message: surgeryMessage,
-                        surgery_id: newSurgery.id
-                    }).catch(err => console.error('Failed to create surgeon notification:', err))
-                );
+                const sRes = await pool.query('SELECT email FROM surgeons WHERE id = $1', [newSurgery.surgeon_id]);
+                if (sRes.rows[0]) staffEmails.push(sRes.rows[0].email);
+            }
+            if (newSurgery.anaesthetist_id) {
+                const aRes = await pool.query('SELECT email FROM anaesthetists WHERE id = $1', [newSurgery.anaesthetist_id]);
+                if (aRes.rows[0]) staffEmails.push(aRes.rows[0].email);
+            }
+            if (assignedNurses && assignedNurses.length > 0) {
+                assignedNurses.forEach(n => staffEmails.push(n.email));
             }
 
-            // Notify nurses
-            if (assignedNurses && assignedNurses.length > 0) {
-                assignedNurses.forEach(nurse => {
+            if (staffEmails.length > 0) {
+                const { rows: users } = await pool.query(
+                    'SELECT id FROM users WHERE email = ANY($1)',
+                    [staffEmails]
+                );
+
+                users.forEach(user => {
                     notificationPromises.push(
                         Notification.create({
-                            user_id: nurse.id,
+                            user_id: user.id,
                             type: 'alert',
                             title: surgeryTitle,
                             message: surgeryMessage,
                             surgery_id: newSurgery.id
-                        }).catch(err => console.error('Failed to create nurse notification:', err))
+                        }).catch(err => console.error('Failed to create staff notification:', err))
                     );
                 });
-            }
-
-            // Notify anaesthetist
-            if (newSurgery.anaesthetist_id) {
-                notificationPromises.push(
-                    Notification.create({
-                        user_id: newSurgery.anaesthetist_id,
-                        type: 'alert',
-                        title: surgeryTitle,
-                        message: surgeryMessage,
-                        surgery_id: newSurgery.id
-                    }).catch(err => console.error('Failed to create anaesthetist notification:', err))
-                );
             }
 
             // Wait for all notifications to be created (but don't block the response)
@@ -1505,49 +1498,42 @@ export const updateSurgeryStatus = async (req, res) => {
                 const notificationTitle = `Surgery ${statusMessage.toLowerCase()}: ${surgeryData.surgery_type}`;
                 const notificationBody = `${notificationTitle} for patient ${surgeryData.patient_name}`;
 
-                // Notify surgeon
+                // Resolve staff user IDs by email (linkage fix)
+                let staffEmails = [];
                 if (surgeryData.surgeon_id) {
-                    notificationPromises.push(
-                        Notification.create({
-                            user_id: surgeryData.surgeon_id,
-                            type: status === 'cancelled' ? 'warning' : 'alert',
-                            title: notificationTitle,
-                            message: notificationBody,
-                            surgery_id: surgeryData.id
-                        }).catch(err => console.error('Failed to create surgeon status notification:', err))
-                    );
+                    const sRes = await pool.query('SELECT email FROM surgeons WHERE id = $1', [surgeryData.surgeon_id]);
+                    if (sRes.rows[0]) staffEmails.push(sRes.rows[0].email);
                 }
-
-                // Notify anaesthetist
                 if (surgeryData.anaesthetist_id) {
-                    notificationPromises.push(
-                        Notification.create({
-                            user_id: surgeryData.anaesthetist_id,
-                            type: status === 'cancelled' ? 'warning' : 'alert',
-                            title: notificationTitle,
-                            message: notificationBody,
-                            surgery_id: surgeryData.id
-                        }).catch(err => console.error('Failed to create anaesthetist status notification:', err))
-                    );
+                    const aRes = await pool.query('SELECT email FROM anaesthetists WHERE id = $1', [surgeryData.anaesthetist_id]);
+                    if (aRes.rows[0]) staffEmails.push(aRes.rows[0].email);
                 }
 
-                // Notify nurses
-                const { rows: nurses } = await pool.query(
-                    'SELECT user_id FROM surgery_nurses WHERE surgery_id = $1',
+                const { rows: assignedNurses } = await pool.query(
+                    'SELECT n.email FROM surgery_nurses sn JOIN nurses n ON sn.nurse_id = n.id WHERE sn.surgery_id = $1',
                     [surgeryData.id]
                 ).catch(() => ({ rows: [] }));
 
-                nurses.forEach(nurse => {
-                    notificationPromises.push(
-                        Notification.create({
-                            user_id: nurse.user_id,
-                            type: status === 'cancelled' ? 'warning' : 'alert',
-                            title: notificationTitle,
-                            message: notificationBody,
-                            surgery_id: surgeryData.id
-                        }).catch(err => console.error('Failed to create nurse status notification:', err))
+                assignedNurses.forEach(n => staffEmails.push(n.email));
+
+                if (staffEmails.length > 0) {
+                    const { rows: users } = await pool.query(
+                        'SELECT id FROM users WHERE email = ANY($1)',
+                        [staffEmails]
                     );
-                });
+
+                    users.forEach(user => {
+                        notificationPromises.push(
+                            Notification.create({
+                                user_id: user.id,
+                                type: status === 'cancelled' ? 'warning' : 'alert',
+                                title: notificationTitle,
+                                message: notificationBody,
+                                surgery_id: surgeryData.id
+                            }).catch(err => console.error('Failed to create staff status notification:', err))
+                        );
+                    });
+                }
 
                 if (notificationPromises.length > 0) {
                     await Promise.all(notificationPromises);
