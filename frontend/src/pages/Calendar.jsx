@@ -21,7 +21,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { AlertCircle, RefreshCw, X, Clock, User, MapPin, Activity, Flag } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import Layout from '../components/Layout';
 import surgeryService from '../services/surgeryService';
 import { toast } from 'react-toastify';

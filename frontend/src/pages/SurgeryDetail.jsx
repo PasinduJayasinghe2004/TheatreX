@@ -25,7 +25,9 @@ import {
     Edit,
     Trash2,
     ChevronDown,
-    CheckCircle2
+    CheckCircle2,
+    Stethoscope,
+    Users
 } from 'lucide-react';
 import surgeryService from '../services/surgeryService';
 import Layout from '../components/Layout';

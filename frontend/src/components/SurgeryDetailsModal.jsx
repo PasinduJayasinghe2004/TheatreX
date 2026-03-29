@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
-    X,
     Calendar,
-    Clock,
     User,
-    Activity,
-    MapPin,
     FileText,
     Stethoscope,
     Users,
-    Flag,
     AlertCircle,
     ChevronRight
 } from 'lucide-react';
@@ -29,13 +24,7 @@ const SurgeryDetailsModal = ({ isOpen, onClose, surgeryId }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (isOpen && surgeryId) {
-            fetchSurgeryDetails();
-        }
-    }, [isOpen, surgeryId]);
-
-    const fetchSurgeryDetails = async () => {
+    const fetchSurgeryDetails = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -51,7 +40,13 @@ const SurgeryDetailsModal = ({ isOpen, onClose, surgeryId }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [surgeryId]);
+
+    useEffect(() => {
+        if (isOpen && surgeryId) {
+            fetchSurgeryDetails();
+        }
+    }, [isOpen, surgeryId, fetchSurgeryDetails]);
 
     const formatDate = (dateStr) => {
         if (!dateStr) return 'N/A';

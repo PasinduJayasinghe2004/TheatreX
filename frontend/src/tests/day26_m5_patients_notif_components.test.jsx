@@ -3,8 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useState, useEffect, useRef } from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import patientService from '../services/patientService';
 import notificationService from '../services/notificationService';
@@ -16,7 +15,7 @@ vi.mock('../services/patientService', () => ({
 }));
 
 vi.mock('../services/notificationService', () => ({
-     default: {
+    default: {
         getNotifications: vi.fn().mockResolvedValue({ success: true, data: [] }),
         getUnreadCount: vi.fn().mockResolvedValue({ success: true, count: 0 }),
         markAsRead: vi.fn(),
@@ -50,8 +49,8 @@ vi.mock('../components/FilterTabs', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
-    Search: () => <span />, Filter: () => <span />, UserPlus: () => <span />, 
-    Edit3: () => <span />, Trash2: () => <span />, Phone: () => <span />, 
+    Search: () => <span />, Filter: () => <span />, UserPlus: () => <span />,
+    Edit3: () => <span />, Trash2: () => <span />, Phone: () => <span />,
     Mail: () => <span />, MapPin: () => <span />, Heart: () => <span />,
     Droplets: () => <span />, AlertTriangle: () => <span />, XCircle: () => <span />,
     CheckCircle: () => <span />, Bell: () => <span />, Trash: () => <span />,
@@ -69,7 +68,7 @@ vi.mock('../components/common/EmptyState', () => ({ default: () => <div data-tes
 vi.mock('react-toastify', () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }));
 
 vi.mock('../components/NotificationList', () => ({
-    default: ({ onPollingStatus }) => {
+    default: () => {
         /*
         useEffect(() => {
             if (onPollingStatus && !hasCalled.current) {
