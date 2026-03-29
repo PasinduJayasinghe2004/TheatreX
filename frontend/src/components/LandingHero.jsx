@@ -49,7 +49,11 @@ export default function LandingHero() {
                             <Link to="/register" className="btn btn-primary" style={{ textDecoration: 'none' }}>
                                 Get started <ArrowRight size={18} />
                             </Link>
-                            <button className="btn btn-outline" style={{ border: '1px solid #E5E7EB', color: '#111827' }}>
+                            <button
+                                className="btn btn-outline"
+                                style={{ border: '1px solid #E5E7EB', color: '#111827' }}
+                                onClick={() => window.open('https://youtu.be/ktFAgIr8dO4', '_blank', 'noopener,noreferrer')}
+                            >
                                 <PlayCircle size={18} style={{ marginRight: '0.5rem' }} /> Live demo
                             </button>
                         </div>
