@@ -47,7 +47,7 @@
 - **Automated Reminders**: Built-in scheduler sends reminders **1 hour** and **15 minutes** before surgery.
 - **Role-Based Routing**: Notifications are accurately linked to user accounts via email-staff mapping.
 
-### 🎭 Theatre Operations
+###  Theatre Operations
 - Monitor theatre status (Available, In Use, Cleaning, Maintenance).
 - Maintenance and cleaning record tracking.
 - Equipment health monitoring and alerts.
