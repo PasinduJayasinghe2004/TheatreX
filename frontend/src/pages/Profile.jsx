@@ -16,14 +16,18 @@ import { Camera, User } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Loading from '../components/common/Loading';
 import authStorage from '../utils/authStorage';
+import ImageCropperModal from '../components/ImageCropperModal';
+import { blobToFile } from '../utils/canvasUtils';
 
 const Profile = () => {
-    const { user, token } = useAuth();
+    const { user, token, checkAuth } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef(null);
-    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // Normalize backend URL (remove /api if it exists) to serve static files correctly
+    const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const backendUrl = rawApiUrl.replace(/\/api$/, '').replace(/\/$/, '');
 
     // Form state
     const [formData, setFormData] = useState({
@@ -32,6 +36,10 @@ const Profile = () => {
         password: '',
         confirmPassword: ''
     });
+
+    // Cropper state
+    const [isCropperOpen, setIsCropperOpen] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState(null);
 
     // Initialize form with user data
     useEffect(() => {
@@ -100,10 +108,8 @@ const Profile = () => {
                     confirmPassword: ''
                 });
 
-                // Reload page to update user context
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                // Reload after a short delay to update context
+                await checkAuth();
             }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Error updating profile');
@@ -113,7 +119,7 @@ const Profile = () => {
     };
 
     // Handle profile image upload
-    const handleImageUpload = async (e) => {
+    const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -129,11 +135,25 @@ const Profile = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('image', file);
+        // Create a URL for the cropper
+        const imageUrl = URL.createObjectURL(file);
+        setImageToCrop(imageUrl);
+        setIsCropperOpen(true);
+        
+        // Reset file input value so same file can be selected again
+        e.target.value = '';
+    };
+
+    const handleCropComplete = async (croppedBlobUrl) => {
+        setIsCropperOpen(false);
+        setUploading(true);
 
         try {
-            setUploading(true);
+            // Convert blob URL back to a File object for multipart upload
+            const croppedFile = await blobToFile(croppedBlobUrl, 'profile-picture.jpg');
+            
+            const uploadFormData = new FormData();
+            uploadFormData.append('image', croppedFile);
 
             // 1. Upload the image
             const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -141,7 +161,7 @@ const Profile = () => {
 
             const uploadRes = await axios.post(
                 UPLOAD_URL,
-                formData,
+                uploadFormData,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -173,10 +193,8 @@ const Profile = () => {
                     const updatedUser = { ...user, profile_image: imageUrl };
                     authStorage.setUser(updatedUser);
 
-                    // Reload after a short delay
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    // Refresh user context without full page reload
+                    await checkAuth();
                 }
             }
         } catch (error) {
@@ -184,6 +202,7 @@ const Profile = () => {
             toast.error(error.response?.data?.message || 'Error uploading image');
         } finally {
             setUploading(false);
+            setImageToCrop(null);
         }
     };
 
@@ -411,6 +430,15 @@ const Profile = () => {
                         )}
                     </div>
                 </div>
+                <ImageCropperModal
+                    isOpen={isCropperOpen}
+                    image={imageToCrop}
+                    onCropComplete={handleCropComplete}
+                    onCancel={() => {
+                        setIsCropperOpen(false);
+                        setImageToCrop(null);
+                    }}
+                />
             </div>
         </Layout>
     );

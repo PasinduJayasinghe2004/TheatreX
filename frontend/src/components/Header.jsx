@@ -182,15 +182,22 @@ const Header = ({ pageTitle = 'Theatre Management Dashboard', pageSubtitle = 'Re
                     {/* Notifications - M3 Day 16 */}
                     <NotificationDropdown />
 
-                    {/* User Avatar */}
                     <div className="relative mx-1">
                         <button
                             id="header-user-menu-btn"
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                            className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm hover:shadow-md transition-all duration-200 ring-2 ring-white hover:ring-blue-200"
+                            className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm shadow-sm hover:shadow-md transition-all duration-200 ring-2 ring-white hover:ring-blue-200 overflow-hidden"
                             aria-label="User menu"
                         >
-                            {userInitial}
+                            {user?.profile_image ? (
+                                <img 
+                                    src={`${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/api$/, '').replace(/\/$/, '')}${user.profile_image}`} 
+                                    alt={user.name} 
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                userInitial
+                            )}
                         </button>
 
                         {/* User Dropdown */}
