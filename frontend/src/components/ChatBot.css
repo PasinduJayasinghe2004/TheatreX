@@ -12,7 +12,7 @@
     height: 56px;
     border-radius: 50%;
     background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%);
-    color: #fff; /* Fixed color */
+    color: #277ff3; /* Fixed color */
     border: none;
     cursor: pointer;
     display: flex;
@@ -45,7 +45,7 @@
     width: 24px;
     height: 24px;
     display: block;
-    filter: brightness(0) invert(1);
+    filter: brightness(1) ;
 }
 
 .chatbot-toggle-open .chatbot-toggle-icon {
@@ -116,7 +116,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgb(255, 255, 255);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -247,7 +247,7 @@
 }
 
 .chatbot-bubble-bot {
-    background: #EFF6FF;
+    background: #ffffff;
     color: #1E293B;
     border-bottom-left-radius: 0.25rem;
     border: 1px solid #BFDBFE;
